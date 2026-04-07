@@ -8,11 +8,18 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx style-dictionary build --config style-dictionary.config.mjs",
+        "command": "node build.mjs",
         "cwd": "packages/tokens"
       },
       "inputs": ["default"],
       "outputs": ["{projectRoot}/dist"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run",
+        "cwd": "packages/tokens"
+      }
     }
   }
 }

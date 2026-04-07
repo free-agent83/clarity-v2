@@ -1,14 +1,25 @@
 {
   "name": "@nivoda/tokens",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
-  "description": "Nivoda design tokens — W3C DTCG format, transformed by Style Dictionary",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "description": "Nivoda design tokens — W3C DTCG format, bespoke build pipeline",
+  "main": "dist/js/tokens.js",
+  "types": "dist/js/tokens.d.ts",
+  "exports": {
+    ".": "./dist/web/tokens.css",
+    "./shadcn": "./dist/shadcn/tokens.css",
+    "./js": "./dist/js/tokens.js",
+    "./react-native": "./dist/react-native/tokens.js",
+    "./json": "./dist/json/tokens.json"
+  },
   "scripts": {
-    "build": "style-dictionary build --config style-dictionary.config.mjs"
+    "build": "node build.mjs",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "style-dictionary": "^5.4.0"
+    "culori": "^4.0.0",
+    "style-dictionary": "^5.4.0",
+    "vitest": "^3.1.0"
   }
 }
