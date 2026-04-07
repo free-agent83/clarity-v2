@@ -21,8 +21,7 @@
   ],
   "scripts": {
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_923a06027fb30d6"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -41,7 +40,6 @@
     "@tailwindcss/vite": "^4.1.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
-    "chromatic": "^16.1.0",
     "storybook": "8.6.18",
     "tailwindcss": "^4.1.0",
     "typescript": "~5.9.2",
