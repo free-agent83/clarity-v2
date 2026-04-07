@@ -1,0 +1,14 @@
+{
+  "name": "@nivoda/tokens",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Nivoda design tokens — W3C DTCG format, transformed by Style Dictionary",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "style-dictionary build --config style-dictionary.config.mjs"
+  },
+  "devDependencies": {
+    "style-dictionary": "^5.4.0"
+  }
+}

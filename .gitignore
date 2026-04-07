@@ -7,6 +7,18 @@
 node_modules/
 dist/
 
+# Build outputs
+storybook-static/
+build-storybook.log
+
+# Nx cache
+.nx/cache
+.nx/workspace-data
+
+# Environment
+.env
+.env.local
+
 # Compiled Java class files
 *.class
 

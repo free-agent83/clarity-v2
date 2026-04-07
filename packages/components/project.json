@@ -1,0 +1,36 @@
+{
+  "name": "components",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/components/src",
+  "projectType": "library",
+  "tags": ["scope:components", "type:ui"],
+  "implicitDependencies": ["tokens"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "command": "npx vite build && npx tsc --project tsconfig.lib.json",
+        "cwd": "packages/components"
+      },
+      "inputs": ["default", "{workspaceRoot}/packages/tokens/dist/**/*"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx storybook dev -p 6006",
+        "cwd": "packages/components"
+      }
+    },
+    "build-storybook": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "command": "CI=1 npx storybook build",
+        "cwd": "packages/components"
+      },
+      "outputs": ["{projectRoot}/storybook-static"]
+    }
+  }
+}

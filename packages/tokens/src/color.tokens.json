@@ -1,0 +1,120 @@
+{
+  "color": {
+    "$type": "color",
+    "primitive": {
+      "white": {
+        "$value": "#ffffff",
+        "$description": "Pure white"
+      },
+      "black": {
+        "$value": "#0c0a09",
+        "$description": "Nivoda black (stone-950)"
+      },
+      "stone": {
+        "$description": "Warm gray neutral scale — Nivoda's neutral palette",
+        "50": { "$value": "#fafaf9" },
+        "100": { "$value": "#f5f5f4" },
+        "200": { "$value": "#e7e5e4" },
+        "300": { "$value": "#d6d3d1" },
+        "400": { "$value": "#a8a29e" },
+        "500": { "$value": "#78716c" },
+        "600": { "$value": "#57534e" },
+        "700": { "$value": "#44403c" },
+        "800": { "$value": "#292524" },
+        "900": { "$value": "#1c1917" },
+        "950": { "$value": "#0c0a09" }
+      },
+      "purple": {
+        "$description": "Nivoda brand purple — primary accent",
+        "50": { "$value": "#f4f2ff" },
+        "100": { "$value": "#e9e8ff" },
+        "200": { "$value": "#d4d0ff" },
+        "300": { "$value": "#9886ff" },
+        "400": { "$value": "#7c5ce7" },
+        "500": { "$value": "#6930e8" },
+        "600": { "$value": "#5620e1" },
+        "700": { "$value": "#481abd" },
+        "800": { "$value": "#3b1599" },
+        "900": { "$value": "#2e1075" }
+      },
+      "green": {
+        "$description": "Nivoda success green",
+        "50": { "$value": "#f3faf6" },
+        "100": { "$value": "#d6f2e3" },
+        "200": { "$value": "#b0e5ca" },
+        "300": { "$value": "#7dd4aa" },
+        "400": { "$value": "#59b186" },
+        "500": { "$value": "#479570" },
+        "600": { "$value": "#3a7a5c" },
+        "700": { "$value": "#2d5f47" }
+      },
+      "red": {
+        "$description": "Error and destructive actions",
+        "50": { "$value": "#fef2f2" },
+        "100": { "$value": "#fee2e2" },
+        "200": { "$value": "#fecaca" },
+        "300": { "$value": "#fca5a5" },
+        "400": { "$value": "#f87171" },
+        "500": { "$value": "#ef4444" },
+        "600": { "$value": "#dc2626" },
+        "700": { "$value": "#b91c1c" }
+      },
+      "amber": {
+        "$description": "Warning states",
+        "50": { "$value": "#fffbeb" },
+        "100": { "$value": "#fef3c7" },
+        "500": { "$value": "#f59e0b" },
+        "600": { "$value": "#d97706" },
+        "700": { "$value": "#b45309" }
+      }
+    },
+    "semantic": {
+      "background": {
+        "default": { "$value": "{color.primitive.white}" },
+        "subtle": { "$value": "{color.primitive.stone.50}" },
+        "muted": { "$value": "{color.primitive.stone.100}" },
+        "inverse": { "$value": "{color.primitive.stone.950}" }
+      },
+      "foreground": {
+        "default": { "$value": "{color.primitive.stone.950}" },
+        "muted": { "$value": "{color.primitive.stone.700}" },
+        "subtle": { "$value": "{color.primitive.stone.400}" },
+        "inverse": { "$value": "{color.primitive.white}" }
+      },
+      "primary": {
+        "default": { "$value": "{color.primitive.stone.950}", "$description": "Primary actions — near black" },
+        "hover": { "$value": "{color.primitive.purple.600}", "$description": "Primary hover — brand purple" },
+        "active": { "$value": "{color.primitive.purple.700}", "$description": "Primary active — darker purple" },
+        "subtle": { "$value": "{color.primitive.purple.50}" }
+      },
+      "secondary": {
+        "default": { "$value": "{color.primitive.stone.100}" },
+        "hover": { "$value": "{color.primitive.stone.100}" },
+        "active": { "$value": "{color.primitive.stone.200}" },
+        "text": { "$value": "{color.primitive.stone.950}" }
+      },
+      "border": {
+        "default": { "$value": "{color.primitive.stone.300}" },
+        "strong": { "$value": "{color.primitive.stone.400}" },
+        "subtle": { "$value": "{color.primitive.stone.200}" },
+        "focus": { "$value": "{color.primitive.purple.300}" },
+        "disabled": { "$value": "{color.primitive.stone.200}" }
+      },
+      "disabled": {
+        "background": { "$value": "{color.primitive.stone.100}" },
+        "text": { "$value": "{color.primitive.stone.400}" },
+        "border": { "$value": "{color.primitive.stone.200}" }
+      },
+      "feedback": {
+        "error": { "$value": "{color.primitive.red.600}" },
+        "error-hover": { "$value": "{color.primitive.red.500}" },
+        "error-subtle": { "$value": "{color.primitive.red.50}" },
+        "success": { "$value": "{color.primitive.green.500}" },
+        "success-hover": { "$value": "{color.primitive.green.400}" },
+        "success-subtle": { "$value": "{color.primitive.green.50}" },
+        "warning": { "$value": "{color.primitive.amber.600}" },
+        "warning-subtle": { "$value": "{color.primitive.amber.50}" }
+      }
+    }
+  }
+}

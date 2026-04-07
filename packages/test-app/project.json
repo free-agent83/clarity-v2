@@ -1,0 +1,21 @@
+{
+  "name": "test-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/test-app/src",
+  "projectType": "application",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd packages/test-app && npm run dev"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd packages/test-app && npm run build"
+      }
+    }
+  },
+  "tags": ["type:app", "scope:test"]
+}

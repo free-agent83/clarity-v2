@@ -1,0 +1,50 @@
+{
+  "name": "@nivoda/components",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Nivoda component library — shadcn/ui + Radix UI + Tailwind CSS",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles.css": "./dist/index.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=chpt_923a06027fb30d6"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.511.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwind-merge": "^3.3.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "8.6.18",
+    "@storybook/blocks": "8.6.18",
+    "@storybook/react": "8.6.18",
+    "@storybook/react-vite": "^8.6.18",
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "chromatic": "^16.1.0",
+    "storybook": "8.6.18",
+    "tailwindcss": "^4.1.0",
+    "typescript": "~5.9.2",
+    "vite": "^6.0.0"
+  }
+}

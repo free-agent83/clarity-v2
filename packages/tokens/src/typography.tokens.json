@@ -1,0 +1,32 @@
+{
+  "fontSize": {
+    "$type": "dimension",
+    "xs": { "$value": "12px", "$description": "Caption, labels" },
+    "sm": { "$value": "14px", "$description": "Body small, secondary text" },
+    "base": { "$value": "16px", "$description": "Body default" },
+    "lg": { "$value": "18px", "$description": "Body large, lead text" },
+    "xl": { "$value": "20px", "$description": "Heading 5" },
+    "2xl": { "$value": "24px", "$description": "Heading 4" },
+    "3xl": { "$value": "30px", "$description": "Heading 3" },
+    "4xl": { "$value": "36px", "$description": "Heading 2" },
+    "5xl": { "$value": "48px", "$description": "Heading 1" }
+  },
+  "fontWeight": {
+    "$type": "fontWeight",
+    "normal": { "$value": 400 },
+    "medium": { "$value": 500 },
+    "semibold": { "$value": 600 },
+    "bold": { "$value": 700 }
+  },
+  "lineHeight": {
+    "$type": "number",
+    "tight": { "$value": 1.25 },
+    "normal": { "$value": 1.5 },
+    "relaxed": { "$value": 1.625 }
+  },
+  "fontFamily": {
+    "$type": "fontFamily",
+    "sans": { "$value": ["Inter", "system-ui", "sans-serif"], "$description": "Primary font family" },
+    "mono": { "$value": ["JetBrains Mono", "monospace"], "$description": "Code and data" }
+  }
+}

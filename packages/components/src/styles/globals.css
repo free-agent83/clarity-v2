@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@import "../../../tokens/dist/web/tokens.css";
+
+/*
+ * Map design tokens to Tailwind's @theme layer.
+ * This bridges DTCG tokens → Tailwind utility classes.
+ * e.g. bg-background, text-foreground, border-border
+ */
+@theme {
+  /* Colors — semantic */
+  --color-background: var(--color-semantic-background-default);
+  --color-background-subtle: var(--color-semantic-background-subtle);
+  --color-background-muted: var(--color-semantic-background-muted);
+  --color-background-inverse: var(--color-semantic-background-inverse);
+
+  --color-foreground: var(--color-semantic-foreground-default);
+  --color-foreground-muted: var(--color-semantic-foreground-muted);
+  --color-foreground-subtle: var(--color-semantic-foreground-subtle);
+  --color-foreground-inverse: var(--color-semantic-foreground-inverse);
+
+  --color-primary: var(--color-semantic-primary-default);
+  --color-primary-hover: var(--color-semantic-primary-hover);
+  --color-primary-active: var(--color-semantic-primary-active);
+  --color-primary-subtle: var(--color-semantic-primary-subtle);
+
+  --color-secondary: var(--color-semantic-secondary-default);
+  --color-secondary-hover: var(--color-semantic-secondary-hover);
+  --color-secondary-active: var(--color-semantic-secondary-active);
+  --color-secondary-text: var(--color-semantic-secondary-text);
+
+  --color-border: var(--color-semantic-border-default);
+  --color-border-strong: var(--color-semantic-border-strong);
+  --color-border-subtle: var(--color-semantic-border-subtle);
+  --color-border-focus: var(--color-semantic-border-focus);
+
+  --color-disabled-bg: var(--color-semantic-disabled-background);
+  --color-disabled-text: var(--color-semantic-disabled-text);
+  --color-disabled-border: var(--color-semantic-disabled-border);
+
+  --color-error: var(--color-semantic-feedback-error);
+  --color-error-hover: var(--color-semantic-feedback-error-hover);
+  --color-error-subtle: var(--color-semantic-feedback-error-subtle);
+  --color-success: var(--color-semantic-feedback-success);
+  --color-success-hover: var(--color-semantic-feedback-success-hover);
+  --color-success-subtle: var(--color-semantic-feedback-success-subtle);
+  --color-warning: var(--color-semantic-feedback-warning);
+  --color-warning-subtle: var(--color-semantic-feedback-warning-subtle);
+
+  /* Border radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  /* Font families */
+  --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
+}
