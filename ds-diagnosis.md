@@ -30,6 +30,8 @@ A risk worth noting: the **Radix UI team has shifted focus to Base UI** (now und
 
 ## Style Dictionary is correct but the token pipeline is incomplete
 
+> **Update (April 2026):** Style Dictionary has been replaced by a bespoke build script. See architecture.md ADR-001 for rationale.
+
 Style Dictionary remains the most battle-tested token build tool, now at **v5.4.0** and co-maintained by Tokens Studio. The W3C Design Token Community Group (DTCG) specification reached its **first stable version (2025.10) in October 2025** — this is a landmark that changes the calculus for token management. **Figma announced native DTCG import/export at Schema 2025**, with availability from November 2025. The specification is co-authored by Adobe, Amazon, Google, Microsoft, Meta, Shopify, and Figma, among others. It is now the definitive standard.
 
 The current setup — Style Dictionary outputting plain JSON consumed by web, microfrontends, and legacy monorepo — is **architecturally correct but operationally incomplete** in three ways:
@@ -54,7 +56,11 @@ The best practice, used by Uber, Decathlon, Shopify, and Atlassian, is a **layer
 - **Zeroheight or Supernova** for cross-functional documentation: embeds live Storybook stories within a non-technical context, syncs Figma designs, supports no-code editing by designers and PMs, tracks component adoption analytics
 - **Chromatic** for visual regression testing and UI review workflows integrated into PRs
 
+> **Update (April 2026):** Chromatic removed. See architecture.md ADR-002.
+
 Zeroheight (used by Uber, Intuit, The Guardian) is the more focused documentation platform at **~$16–49/editor/month**. Supernova is more ambitious — a full design system operating system with token management, code automation, and AI-powered Portal — but is heavier to adopt. For a team that already has Style Dictionary and Storybook working, **zeroheight is the lower-risk addition** that directly solves the cross-functional visibility gap.
+
+> **Update (April 2026):** Zeroheight replaced by Fumadocs. See architecture.md ADR-004.
 
 The broader vision described — "design system as one layer within a knowledge framework including business context, UX research, principles, guidelines" — is precisely what zeroheight or Supernova enables. This cannot live in Storybook.
 

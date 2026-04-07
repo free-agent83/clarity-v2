@@ -60,6 +60,8 @@ For cross-platform systems spanning React and React Native, the recommended arch
 
 **Design token adoption jumped from 56% to 84% in a single year** (2024 to 2025, per zeroheight's report) — mass adoption is achieved. Figma announced native import/export of variables aligned with the W3C 1.0 spec, available November 2026, which will close the last major interoperability gap.
 
+> **Note:** Nivoda chose a bespoke build script over Style Dictionary for its token pipeline. See architecture.md ADR-001 for rationale.
+
 ---
 
 ## Designers are learning to code, and the role is splitting
@@ -97,6 +99,8 @@ The practical consensus: Figma serves as exploration and ideation tool, prototyp
 The mature code-first documentation stack works in layers. Design tokens defined in JSON flow through Style Dictionary or Terrazzo into CSS custom properties, Tailwind config, and native platform values. Components consume those tokens and are developed in Storybook with interactive stories, auto-generated controls, and MDX-based usage guidelines. Documentation sites — whether custom-built (Shopify Polaris, GitHub Primer) or platform-hosted (**zeroheight**, **Supernova**) — embed live Storybook stories alongside token tables, accessibility guidelines, and code snippets.
 
 zeroheight won Design System Awards 2025 and integrates directly with Figma and Storybook for a unified documentation experience. Supernova excels at automation: its CLI keeps "documentation, code, and Figma always in sync all the time without us doing anything." A case study from Mews showed table components that previously took **3–4 weeks** to implement now require "just a couple of days" with Supernova's pipeline.
+
+> **Note:** Nivoda chose Fumadocs rather than zeroheight or Supernova as its documentation platform. See architecture.md ADR-004 for rationale.
 
 The "no handoff" movement is gaining ground with hard economics behind it. Builder.io's research found **66% of teams waste 25–50% of their time on design-delivery inefficiencies**, with an estimated **$298,000 annual productivity loss per product pod** from handoff friction. Modern alternatives include Figma Dev Mode for native CSS/iOS/Android values, design tokens as the single spec (eliminating manual value copying), Storybook as living specification, and AI-powered code generation from design context.
 
