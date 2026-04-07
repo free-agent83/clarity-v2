@@ -1,0 +1,40 @@
+{
+  "shadcn": {
+    "$type": "color",
+
+    "background":             { "$value": "{color.primitive.stone.950}" },
+    "foreground":             { "$value": "{color.primitive.stone.50}" },
+    "card":                   { "$value": "{color.primitive.stone.900}" },
+    "card-foreground":        { "$value": "{color.primitive.stone.50}" },
+    "popover":                { "$value": "{color.primitive.stone.900}" },
+    "popover-foreground":     { "$value": "{color.primitive.stone.50}" },
+    "primary":                { "$value": "{color.primitive.stone.50}" },
+    "primary-foreground":     { "$value": "{color.primitive.stone.950}" },
+    "secondary":              { "$value": "{color.primitive.stone.800}" },
+    "secondary-foreground":   { "$value": "{color.primitive.stone.50}" },
+    "muted":                  { "$value": "{color.primitive.stone.800}" },
+    "muted-foreground":       { "$value": "{color.primitive.stone.400}" },
+    "accent":                 { "$value": "{color.primitive.stone.800}" },
+    "accent-foreground":      { "$value": "{color.primitive.stone.50}" },
+    "destructive":            { "$value": "{color.primitive.red.500}" },
+    "destructive-foreground": { "$value": "{color.primitive.white}" },
+    "border":                 { "$value": "oklch(1 0 0 / 0.1)", "$description": "White at 10% opacity" },
+    "input":                  { "$value": "oklch(1 0 0 / 0.15)", "$description": "White at 15% opacity" },
+    "ring":                   { "$value": "{color.primitive.stone.600}" },
+
+    "chart-1":                { "$value": "{color.primitive.purple.300}" },
+    "chart-2":                { "$value": "{color.primitive.purple.500}" },
+    "chart-3":                { "$value": "{color.primitive.purple.600}" },
+    "chart-4":                { "$value": "{color.primitive.purple.700}" },
+    "chart-5":                { "$value": "{color.primitive.purple.800}" },
+
+    "sidebar":                         { "$value": "{color.primitive.stone.900}" },
+    "sidebar-foreground":              { "$value": "{color.primitive.stone.50}" },
+    "sidebar-primary":                 { "$value": "{color.primitive.stone.50}" },
+    "sidebar-primary-foreground":      { "$value": "{color.primitive.stone.900}" },
+    "sidebar-accent":                  { "$value": "{color.primitive.stone.800}" },
+    "sidebar-accent-foreground":       { "$value": "{color.primitive.stone.50}" },
+    "sidebar-border":                  { "$value": "oklch(1 0 0 / 0.1)", "$description": "White at 10% opacity" },
+    "sidebar-ring":                    { "$value": "{color.primitive.stone.600}" }
+  }
+}
