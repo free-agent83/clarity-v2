@@ -136,3 +136,68 @@ describe("resolveRefs", () => {
     expect(() => resolveRefs(tokens)).toThrow();
   });
 });
+
+// ─── Integration tests for build.mjs ───
+
+import { execSync } from "node:child_process";
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+
+describe("build.mjs integration", () => {
+  const dist = join(import.meta.dirname, "..", "dist");
+
+  it("builds without errors", () => {
+    execSync("node build.mjs", {
+      cwd: join(import.meta.dirname, ".."),
+      stdio: "pipe",
+    });
+  });
+
+  it("produces dist/web/tokens.css with OKLCH values", () => {
+    const css = readFileSync(join(dist, "web/tokens.css"), "utf-8");
+    expect(css).toContain(":root {");
+    expect(css).toContain("--color-primitive-white:");
+    expect(css).toContain("oklch(");
+    expect(css).toContain("--color-semantic-background-default:");
+    expect(css).toContain("--spacing-4:");
+    expect(css).toContain("--font-size-base:");
+    expect(css).toContain("--radius-lg:");
+    expect(css).toContain("--shadow-md:");
+  });
+
+  it("produces dist/shadcn/tokens.css with :root and .dark scopes", () => {
+    const css = readFileSync(join(dist, "shadcn/tokens.css"), "utf-8");
+    expect(css).toContain(":root {");
+    expect(css).toContain(".dark {");
+    expect(css).toContain("--background:");
+    expect(css).toContain("--primary:");
+    expect(css).toContain("--destructive-foreground:");
+    expect(css).toContain("--chart-1:");
+    expect(css).toContain("--sidebar:");
+    expect(css).toContain("--radius:");
+    expect(css).not.toContain("var(--");
+  });
+
+  it("produces dist/js/tokens.js with ES6 exports", () => {
+    const js = readFileSync(join(dist, "js/tokens.js"), "utf-8");
+    expect(js).toContain("export const");
+    expect(js).toContain("ColorPrimitiveWhite");
+    expect(js).toMatch(/Spacing[A-Z0-9]/);
+  });
+
+  it("produces dist/js/tokens.d.ts", () => {
+    expect(existsSync(join(dist, "js/tokens.d.ts"))).toBe(true);
+  });
+
+  it("produces dist/react-native/tokens.js with hex values", () => {
+    const js = readFileSync(join(dist, "react-native/tokens.js"), "utf-8");
+    expect(js).toContain("export const");
+    expect(js).toContain("#");
+  });
+
+  it("produces dist/json/tokens.json", () => {
+    const json = JSON.parse(readFileSync(join(dist, "json/tokens.json"), "utf-8"));
+    expect(json.color).toBeDefined();
+    expect(json.spacing).toBeDefined();
+  });
+});
