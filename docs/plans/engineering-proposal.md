@@ -9,13 +9,13 @@
 
 ## TL;DR
 
-I've been rebuilding Nivoda's design system from the ground up. It's called Clarity V2. It's designed to work with AI coding agents so that designers and product people can build real, working UI themselves — and so that engineering can gradually migrate away from the MUI-based design system in platform without a big rewrite.
+I've been rebuilding Nivoda's design system from the ground up. It's called Clarity V2. It's designed so that **whatever your engineers build using it ships design-correct on the first pass** — no design QA loop, no drift, no revision cycles. The same library is also agent-consumable, so design and PM can build directly against it when they want to. But the primary structural win is for engineering: your team stops waiting on design review, and design stops burning hours catching MUI drift.
 
 **I'm not asking for a migration commitment yet.** I'm asking for three things:
 
 1. **A review conversation** — 30 minutes to walk you through what's built and why
 2. **Permission to land Clarity V2 in the platform monorepo** as a dependency when the time comes — no code changes on your side, just agreement that the package is safe to import
-3. **Input on migration strategy** — whenever you're ready to have that conversation. I have three options drafted below that we should pick between together.
+3. **Input on migration strategy** — whenever you're ready. I have three options drafted below that we should pick between together.
 
 Everything else I can continue building without blocking you. I'll come back when there's something concrete to decide on.
 
@@ -71,26 +71,41 @@ See `TRIAD.md`. Clarity V2 is the "law" — components with clear intent and bin
 
 ## Why this matters commercially
 
-The commercial case has two parts:
+### The core outcome: design QA collapses to near zero
 
-### Part 1 — Self-service UI delivery
+Today, Nivoda features ship through a design → engineering → design-QA loop. Design specs the screen, your team implements it, design reviews the implementation, catches drift, files corrections, your team revises, design re-reviews. Ship.
 
-With Clarity V2 in place and AI coding agents available (Claude Code, Cursor), designers and product managers can build real, working frontends themselves. Prototypes in hours. Feature changes without engineering tickets. Meaningful UI work stops blocking on engineering capacity.
+That loop exists because the current MUI-based design system doesn't guarantee that "correctly implemented" means "design-correct". Engineers have to interpret mockups. Design has to catch the drift. MUI's `sx` prop makes it easy to deviate from the theme. Component variants are inconsistent across the library. The token system was built before the component library and the two have drifted. None of this is anyone's fault — it's a decade of normal legacy.
 
-This is the biggest structural change Nivoda can make to product velocity right now. It's only possible because (a) agent-based coding is reliable enough, and (b) Clarity V2 is specifically built to be consumed by agents. An old MUI-based design system can't do this — the API surface is too messy, the documentation isn't agent-readable, and the patterns are inconsistent enough that agents hallucinate.
+The loop is where design and engineering velocity both go. And it's where most of your engineers' "waiting on design" time comes from.
 
-**Proof point (Phase B deliverable):** I'm rebuilding a real Nivoda customer screen with Claude Code + Clarity V2 in the next two weeks, as a demonstration. The CEO will see a working screen that I (a designer, not an engineer) built myself in hours.
+**With Clarity V2, the loop collapses.** Engineers import components from `@nivoda/components`. Those components ARE the design — they encode the tokens, spacing, typography, accessibility, and variants that design already approved when the component was built. There is no path by which an engineer can build something "correctly" that is also "design-incorrect". The guard-rails are in the component APIs.
 
-### Part 2 — Platform modernisation, without a rewrite
+Concretely, this means:
 
-Because the token values are already aligned with platform production, Clarity V2 components can be introduced into platform gradually:
+- Your team ships features without waiting for design review
+- Design doesn't need to review implementations because there's nothing to catch
+- The design hours freed from QA go into building more components, better documentation, governance — work that makes the system stronger, which compounds
+- Your engineers stop context-switching between "write code" and "wait for feedback"
+
+This is the single biggest structural change to product velocity Nivoda can make right now, and **it's the primary reason I'm bringing this to you first**. Self-service for design/PM is a bonus enabled by the same work. But the main commercial lever is what happens when your team is building with it.
+
+### The secondary benefit: platform modernisation without a rewrite
+
+Because the token values are already aligned with platform production (I did a full audit and made 15 explicit alignment decisions — see `docs/design/token-decisions.md`), Clarity V2 components can be introduced into platform gradually:
 
 - New features built on Clarity V2 components instead of MUI
 - When an existing MUI component is touched for any reason, it can optionally be replaced with its Clarity V2 equivalent
 - Over time, platform becomes Clarity V2-native without a single "big migration sprint"
 - Engineering doesn't have to stop what they're doing to adopt it
 
-The incremental path is explicit. No big bang. No feature freeze. No "migrate Q3 2026 or bust."
+The incremental path is explicit. No big bang. No feature freeze. No "migrate Q3 2026 or bust." Legacy MUI stays stable until the code is touched for another reason.
+
+### The tertiary benefit: self-service for design and product
+
+Because the library is built to be consumed by AI coding agents, designers and PMs with tools like Claude Code can also build directly against it. Feature prototypes in hours. Meaningful UI changes without engineering tickets. Pressure relieved from your team for small changes, quick experiments, and one-off internal tools.
+
+**Proof point (Phase B deliverable):** I'm rebuilding a real Nivoda customer screen with Claude Code + Clarity V2 in the next two weeks, as a demonstration for the CEO. The screen will be functional and recognisable. The message to the CEO: *"A designer built this in hours. The same library is what engineering will import to ship without waiting for design review."*
 
 ---
 

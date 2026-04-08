@@ -9,21 +9,32 @@ This is the master plan for Clarity V2. It sits alongside `STATE.md` (the narrat
 
 ## The vision
 
-Clarity V2 is a **code-first design system built to be consumed by AI coding agents**. Its purpose is to enable two things in parallel:
+Clarity V2 is a **code-first design system built to be consumed by AI coding agents and by engineers writing code directly**. Its purpose is to produce a single structural change:
 
-1. **Self-service UI delivery.** Designers and product people use Claude Code / Cursor / AI agents to build working frontends directly against Clarity V2 — without waiting for engineering capacity. The design system provides the vocabulary; the governance framework provides the rules; AI agents provide the hands.
+**Whoever builds UI — an engineer writing code, a designer prompting an AI agent, a product manager prototyping a flow — produces design-correct output automatically.** The components ARE the design. There is no interpretation step where drift can happen, and therefore no iteration loop to catch it.
 
-2. **Platform consistency at scale.** The same components gradually replace the existing MUI-based design system in the production Nivoda platform, delivered opportunistically as new features are built or existing ones are touched.
+Two delivery paths open up from the same library:
 
-Both goals use the same underlying library. Both are enabled by the same technical foundation. The commercial case is compounding: every new use case reinforces the other.
+1. **Engineering builds faster and without design gates.** Engineers import from Clarity V2 instead of MUI. Features ship design-correct on the first pass. Design review stops being a bottleneck because the components are pre-approved at the source. The "design → engineering → design QA" loop collapses into "design has already happened, build ships".
 
-## Why both goals matter
+2. **Design and product self-service.** Because the library is built to be agent-consumable, designers and PMs with AI coding tools can build directly against it — real working UI, not just mockups — without waiting for engineering capacity.
 
-**The self-service goal** removes engineering capacity as the single bottleneck for UI delivery. This is the commercial lever most visible to the CEO. In a world where AI agents can write code reliably, the limiting factor is no longer "can this person code" — it's "does this person know what should be built." Designers and PMs are exactly the people who know that. Giving them a tested, governed, agent-consumable library unlocks a delivery path that didn't exist 18 months ago.
+Both paths use the same underlying library. Both depend on the same enabling work (build it, document it for agents, prove it). The commercial case compounds: every new consumer reinforces the value for the others.
 
-**The platform consistency goal** solves the structural problem with the existing design system: MUI legacy, mobile drift, inconsistent surfaces, accessibility gaps. Migration is incremental — new work builds on Clarity V2, old MUI code gets replaced as features are touched, and the parallel systems converge over time. No big bang.
+## Why this matters commercially
 
-The two goals share the same enabling work: build the library, document it for agents, prove it works.
+**Today, most Nivoda UI ships through a design → engineering → design-QA loop.** Design specs a screen. Engineering implements it. Design reviews the implementation, catches drift, files corrections, waits for revisions, reviews again. Ship. That loop exists because the current MUI-based design system doesn't guarantee that "correctly implemented" means "design-correct" — engineers interpret, and design has to catch the drift.
+
+The loop is where velocity goes. It's also where design capacity goes — most design hours today are spent reviewing implementations, not designing.
+
+**With Clarity V2, the loop collapses.**
+
+- The components are the design. A feature built with Clarity V2 components is design-correct by construction.
+- Engineers ship without waiting for design review. Design doesn't need to catch what the system already prevents.
+- The hours design currently burns on QA iterations get redirected to work that actually needs a designer — more components, better documentation, governance, user research.
+- Self-service becomes possible as a bonus: because the library is agent-ready for engineers, it's also agent-ready for designers and PMs with the same AI tools.
+
+The commercial case is specific: **we are removing both design QA iteration and engineering capacity as single points of failure for UI delivery.** Multiple delivery paths open up in parallel, and none of them are gated on design review. This is the biggest structural change to product velocity Nivoda can make right now, and it's only possible because AI-assisted code is reliable enough and Clarity V2 is built to take advantage of it.
 
 ---
 

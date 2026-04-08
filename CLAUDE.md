@@ -6,11 +6,9 @@ This file orients Claude Code at the start of every session in this repo. It is 
 
 Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components + Tailwind v4, in an Nx monorepo. Owned by the design function (Chris). It replaces an older MUI-based design system that lives in the `platform` repo.
 
-**Dual purpose:**
-1. Enable design and product people to build working frontends themselves using AI coding agents (Claude Code, Cursor) — removing engineering as a bottleneck for UI delivery
-2. Gradually replace the existing MUI-based design system in the production Nivoda platform
+**Core outcome:** Whoever builds UI — engineer, designer, or PM — produces design-correct output automatically. The components ARE the design. This collapses the design → engineering → design-QA iteration loop that currently dominates UI delivery. Both engineers writing code directly and designers/PMs using AI coding agents consume the same library and get the same guarantee.
 
-Both goals use the same underlying library. See `STATE.md` and `docs/plans/ROADMAP.md` for the full picture.
+See `STATE.md` and `docs/plans/ROADMAP.md` for the full picture.
 
 ## Required reading (in this order)
 

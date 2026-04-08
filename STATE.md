@@ -6,10 +6,14 @@
 
 Clarity V2 is Nivoda's new design system — a rebuild of the component library, design tokens, and documentation that underpin every product surface we ship. It replaces an older Storybook system built on MUI that has accumulated legacy, is not properly mobile responsive, and was not built with AI coding agents in mind.
 
-It exists to enable two things in parallel:
+The core outcome is structural: **whoever builds UI — an engineer writing code, a designer prompting an AI agent, a product manager prototyping a flow — produces design-correct output automatically, because the components ARE the design.** Design QA as an iteration loop largely disappears. There is nothing to catch that wasn't already resolved when the component was built.
 
-1. **Self-service UI delivery** — designers and product people build working frontends themselves using AI coding agents (Claude Code, Cursor) against Clarity V2, without waiting for engineering capacity.
-2. **Platform consistency** — the same components gradually replace the existing MUI-based design system in the production Nivoda platform as new features are built or old ones are touched.
+This unlocks two delivery paths running in parallel:
+
+1. **Engineering builds faster and without design gates.** Engineers import from Clarity V2 instead of MUI. Features ship design-correct on the first pass. Design review stops being a bottleneck because the components are pre-approved at the source.
+2. **Design and product self-service.** Because the library is built to be agent-consumable, designers and PMs with AI coding tools (Claude Code, Cursor) can also build directly against it — real working UI, not just mockups — without waiting for engineering capacity.
+
+Both paths use the same underlying library, same tokens, same governance. The commercial lever they both produce is the same: **UI delivery is no longer gated by either design review OR engineering capacity**. Whoever is best placed to build, builds.
 
 This document is a factual record of where we are, what we're building, and where it's headed. See `docs/plans/ROADMAP.md` for the full phased plan and `TRIAD.md` for how this repo relates to the governance framework and design engine.
 
@@ -21,9 +25,13 @@ The previous design system is holding velocity back in three ways:
 2. **Not mobile-ready.** Responsive behaviour was retrofitted rather than designed in. The mobile app maintains parallel components that drift from the web source of truth.
 3. **Not agent-ready.** It wasn't built for AI coding agents to consume. Components lack the machine-readable metadata, clean type contracts, and colocated documentation that let an agent implement features reliably without hallucinating patterns.
 
-Point three is the commercial lever. As the organisation moves to AI-assisted delivery, an agent-ready design system means features get built faster, more consistently, and with less rework — **and it means the people who know what should be built (designers, product managers) can ship it themselves, without engineering as a bottleneck.**
+Point three is the commercial lever. As the organisation moves to AI-assisted delivery, an agent-ready design system means features get built faster, more consistently, and with less rework — regardless of who's building them.
 
-This is the commercial case most visible to leadership: we are removing engineering capacity as the single point of failure for UI delivery.
+The structural shift is this: **today, most Nivoda UI ships through a design → engineering → design-QA loop.** Design specs the screen, engineering implements, design reviews the implementation, iterations happen, ship. The QA loop is where time and velocity go. It exists because the current design system doesn't guarantee that "correctly implemented" means "design-correct" — engineers have to interpret, and design has to catch drift.
+
+With Clarity V2, that loop collapses. The components are the design. A correctly-built feature using Clarity V2 components is design-correct by construction. Whoever builds it — engineer, designer, or PM — produces the same output quality. Design QA as an iteration cycle largely disappears and design capacity gets redirected from reviewing implementations to building the system.
+
+This is the commercial case most visible to leadership: **we are removing both design QA and engineering capacity as single points of failure for UI delivery.** Multiple delivery paths open up in parallel, and none of them are gated on design review.
 
 ## What we're building
 
@@ -95,9 +103,12 @@ The unifying idea: **design becomes a system the rest of the org (and its agents
 
 When Clarity V2 is in place, several commercial levers change:
 
-- **Self-service velocity.** Designers and PMs with AI coding agents can build real, working UI directly. Feature prototypes ship in hours. Meaningful UI changes stop blocking on engineering capacity. Engineering is freed up for infrastructure, performance, and genuinely hard work — not boilerplate.
-- **Consistency.** Nivoda product feels like one product across web, mobile, and admin surfaces. The same tokens feed every platform. The same components appear in every screen.
+- **Design QA near-zero.** Engineers importing Clarity V2 ship design-correct output on the first pass. The design review loop that today catches MUI drift, styling inconsistencies, spacing mistakes, and token violations stops being necessary — because the components are pre-approved at the source. Design review becomes an exception, not a step.
+- **Design capacity redirected.** The hours design currently spends in QA iterations get freed. Those hours can go into building the system (more components, better docs, governance), running the design engine (user research, archetypes, priorities), or into design work that actually needs a designer — not reviewing buttons.
+- **Engineering velocity.** Features ship without waiting for design review. Engineers stop context-switching between "write code" and "wait for feedback". Parallel delivery replaces sequential handoff.
+- **Self-service delivery.** Designers and PMs with AI coding agents build real working UI directly. Prototypes in hours. Feature changes without engineering tickets. Meaningful UI work stops blocking on engineering OR design capacity.
+- **Consistency by construction.** Nivoda product feels like one product across web, mobile, and admin surfaces. The same tokens feed every platform. The same components appear in every screen. Drift stops being possible because there's no path for it to happen.
 - **Mobile parity.** The same token system feeds the mobile app, ending the drift between platforms.
-- **Agent leverage.** Every component is built to be read, reasoned about, and composed by AI agents. The organisation's investment in AI coding tools produces more output per hour.
+- **Agent leverage.** Every component is built to be read, reasoned about, and composed by AI agents. The organisation's investment in AI coding tools produces more output per hour, regardless of who's prompting.
 
-The component library on its own is meaningful progress. The Experience Framework and Design Engine, as they mature, will turn design from a delivery function into a system that scales with the business without adding headcount.
+The component library on its own is meaningful progress. The Experience Framework and Design Engine, as they mature, will turn design from a delivery function into a system that scales with the business without adding headcount — and the headcount that exists spends its time on the work that actually requires a designer.
