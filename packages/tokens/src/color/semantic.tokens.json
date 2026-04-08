@@ -16,9 +16,9 @@
       },
       "primary": {
         "default": { "$value": "{color.primitive.stone.950}", "$description": "Primary actions — near black" },
-        "hover": { "$value": "{color.primitive.purple.600}", "$description": "Primary hover — brand purple" },
-        "active": { "$value": "{color.primitive.purple.700}", "$description": "Primary active — darker purple" },
-        "subtle": { "$value": "{color.primitive.purple.50}" }
+        "hover": { "$value": "{color.primitive.violet.600}", "$description": "Primary hover — brand violet" },
+        "active": { "$value": "{color.primitive.violet.700}", "$description": "Primary active — darker violet" },
+        "subtle": { "$value": "{color.primitive.violet.50}" }
       },
       "secondary": {
         "default": { "$value": "{color.primitive.stone.100}" },
@@ -30,7 +30,7 @@
         "default": { "$value": "{color.primitive.stone.300}" },
         "strong": { "$value": "{color.primitive.stone.400}" },
         "subtle": { "$value": "{color.primitive.stone.200}" },
-        "focus": { "$value": "{color.primitive.purple.300}" },
+        "focus": { "$value": "{color.primitive.violet.300}" },
         "disabled": { "$value": "{color.primitive.stone.200}" }
       },
       "disabled": {

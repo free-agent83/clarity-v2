@@ -22,11 +22,11 @@
     "input":                  { "$value": "oklch(1 0 0 / 0.15)", "$description": "White at 15% opacity" },
     "ring":                   { "$value": "{color.primitive.stone.600}" },
 
-    "chart-1":                { "$value": "{color.primitive.purple.300}" },
-    "chart-2":                { "$value": "{color.primitive.purple.500}" },
-    "chart-3":                { "$value": "{color.primitive.purple.600}" },
-    "chart-4":                { "$value": "{color.primitive.purple.700}" },
-    "chart-5":                { "$value": "{color.primitive.purple.800}" },
+    "chart-1":                { "$value": "{color.primitive.violet.300}" },
+    "chart-2":                { "$value": "{color.primitive.violet.500}" },
+    "chart-3":                { "$value": "{color.primitive.violet.600}" },
+    "chart-4":                { "$value": "{color.primitive.violet.700}" },
+    "chart-5":                { "$value": "{color.primitive.violet.800}" },
 
     "sidebar":                         { "$value": "{color.primitive.stone.900}" },
     "sidebar-foreground":              { "$value": "{color.primitive.stone.50}" },
