@@ -11,8 +11,8 @@ Make clarity-v2 the single source of truth for all design tokens consumed by Min
 ## Key Decisions
 
 1. **OKLCH in DTCG source.** Primitives stored as DTCG structured color objects with `colorSpace: "oklch"` and a `hex` fallback for non-CSS platforms (email, React Native). This is the W3C DTCG v2025.10 standard format, used in production by Firefox Acorn and supported by Style Dictionary, Terrazzo, and Cobalt.
-2. **Bespoke build script, not Style Dictionary.** A ~200-line Node script (`build.mjs`) replaces Style Dictionary v5. See `architecture.md` → [ADR-001](../../../architecture.md#adr-001-bespoke-build-script-over-style-dictionary-april-2026) for full rationale.
-3. **Chromatic deferred.** Visual regression testing removed until 10+ components exist with CI/CD. See `architecture.md` → [ADR-002](../../../architecture.md#adr-002-chromatic-deferred-april-2026) for full rationale.
+2. **Bespoke build script, not Style Dictionary.** A ~200-line Node script (`build.mjs`) replaces Style Dictionary v5. See `architecture.md` → [ADR-001](../../architecture/architecture.md#adr-001-bespoke-build-script-over-style-dictionary-april-2026) for full rationale.
+3. **Chromatic deferred.** Visual regression testing removed until 10+ components exist with CI/CD. See `architecture.md` → [ADR-002](../../architecture/architecture.md#adr-002-chromatic-deferred-april-2026) for full rationale.
 4. **shadcn-compatible flat output** — the build script produces `--background`, `--primary`, etc. as a drop-in replacement for Minivoda's `globals.css` token blocks.
 5. **Dark mode: complete token set per theme.** Both `light.tokens.json` and `dark.tokens.json` contain all 32 color tokens. No layering/merge strategy — each file is self-contained.
 6. **Primitives referenced by semantics** — shadcn tokens reference the primitive palette via DTCG references (`{color.primitive.white}`), so changing a primitive cascades automatically.

@@ -1,6 +1,6 @@
 # This design system needs surgery, not a rebuild
 
-> **Status: Point-in-time assessment.** This document is the diagnostic analysis that informed the target architecture defined in [architecture.md](architecture.md). It captures the evidence, industry benchmarks, and reasoning behind the architectural decisions. Refer to architecture.md for the current target state; refer to this document for the "why" behind those decisions.
+> **Status: Point-in-time assessment.** This document is the diagnostic analysis that informed the target architecture defined in [architecture.md](../architecture/architecture.md). It captures the evidence, industry benchmarks, and reasoning behind the architectural decisions. Refer to architecture.md for the current target state; refer to this document for the "why" behind those decisions.
 
 The current architecture is **fundamentally sound in its monorepo + tokens + Storybook spine**, but three decisions are creating compounding technical debt: the continued coupling to Material UI's styled runtime, the unresolved mobile token fragmentation, and the emerging shadcn/ui greenfield that risks becoming a parallel universe. The good news: the highest-leverage fixes are token-layer and distribution-layer changes — not a full rewrite. Here's what the evidence says about each layer of the stack.
 

@@ -1,6 +1,6 @@
 # Clarity V2 — Design System & Component Library
 
-The design system, component library, and technical architecture for Nivoda's product surfaces. Built on shadcn/ui, Tailwind CSS, and Storybook.
+The design system, component library, and technical architecture for Nivoda's product surfaces. Built on shadcn/ui, Tailwind CSS, and a bespoke W3C DTCG token pipeline.
 
 For governance, agent instructions, business context, and surface-specific rules, see the [Experience Framework](../experience-framework/) repo.
 
@@ -8,20 +8,52 @@ For governance, agent instructions, business context, and surface-specific rules
 
 ## Start Here
 
-- **[architecture.md](./architecture.md)** — technical architecture: token pipeline, component libraries, Nx monorepo, MCP servers, and documentation layer
-- **[ds-diagnosis.md](./ds-diagnosis.md)** — evidence-based assessment of the current design system stack and priority recommendations
-- **[mobile-ds-diagnosis.md](./mobile-ds-diagnosis.md)** — mobile design system state of play and alignment roadmap
-- **[code-first-ds.md](./code-first-ds.md)** — industry research: code-first design systems, AI tooling, W3C token spec
+**New to the project?**
+- [`CHANGELOG.md`](./CHANGELOG.md) — what's been built, what's in progress, what's next
+
+**Looking for the technical architecture?**
+- [`docs/architecture/architecture.md`](./docs/architecture/architecture.md) — token pipeline, component libraries, documentation layer, and ADRs 001-004
+
+**Designer / token decisions?**
+- [`docs/design/token-decisions.md`](./docs/design/token-decisions.md) — the 15 decisions made during the platform-vs-clarity audit
+- [`docs/design/token-alignment.md`](./docs/design/token-alignment.md) — side-by-side comparison of platform and Clarity V2 tokens
+
+**Implementation plans?**
+- [`docs/plans/`](./docs/plans/) — phased implementation plans and specs
+
+**Research and context?**
+- [`docs/research/ds-diagnosis.md`](./docs/research/ds-diagnosis.md) — evidence-based assessment of the current design system stack
+- [`docs/research/mobile-ds-diagnosis.md`](./docs/research/mobile-ds-diagnosis.md) — mobile state of play and alignment roadmap
+- [`docs/research/code-first-ds.md`](./docs/research/code-first-ds.md) — industry research: code-first design systems, AI tooling, W3C token spec
+
+---
+
+## Repo Structure
+
+```
+clarity-v2/
+├── CHANGELOG.md                 # Progress log
+├── README.md                    # This file
+├── docs/
+│   ├── architecture/            # Technical architecture + ADRs
+│   ├── design/                  # Designer-facing docs (token decisions, comparisons)
+│   ├── plans/                   # Implementation plans and specs
+│   ├── research/                # Point-in-time research and diagnostics
+│   └── archive/                 # Historical documents
+└── packages/
+    ├── tokens/                  # W3C DTCG token source + bespoke build pipeline
+    ├── components/              # shadcn/ui + Radix UI + Tailwind CSS component library
+    └── test-app/                # Vite test harness for component development
+```
 
 ---
 
 ## What This Repo Contains
 
-- Design tokens (W3C DTCG JSON, transformed by a bespoke build pipeline — see architecture.md ADR-001)
-- Component library (shadcn/ui + Radix UI + Tailwind CSS)
-- Storybook for component development and documentation
-- Platform-specific implementations (web and React Native)
-- MCP server configuration for AI-assisted implementation
+- **Design tokens** — W3C DTCG JSON source, transformed by a bespoke build script into web CSS, shadcn-compatible CSS, JS/TS, React Native, and JSON outputs
+- **Component library** — shadcn/ui + Radix UI + Tailwind CSS v4 (early stage — one component so far)
+- **Storybook** — component development and documentation
+- **Test app** — Vite harness for live component iteration
 
 ## What This Repo Does Not Contain
 
