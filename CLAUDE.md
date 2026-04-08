@@ -6,18 +6,24 @@ This file orients Claude Code at the start of every session in this repo. It is 
 
 Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components + Tailwind v4, in an Nx monorepo. Owned by the design function (Chris). It replaces an older MUI-based design system that lives in the `platform` repo.
 
+**Dual purpose:**
+1. Enable design and product people to build working frontends themselves using AI coding agents (Claude Code, Cursor) — removing engineering as a bottleneck for UI delivery
+2. Gradually replace the existing MUI-based design system in the production Nivoda platform
+
+Both goals use the same underlying library. See `STATE.md` and `docs/plans/ROADMAP.md` for the full picture.
+
 ## Required reading (in this order)
 
-1. `STATE.md` — current progress, next two weeks, what's done vs not
-2. `TRIAD.md` — the conceptual model (design system / experience framework / design engine)
-3. `CHANGELOG.md` — phase-by-phase progress log
-4. `docs/architecture/architecture.md` — technical architecture + ADRs 001–004
+1. `STATE.md` — current progress, dual-purpose vision, next two weeks
+2. `docs/plans/ROADMAP.md` — master phased plan (A done, B active, C/D pending)
+3. `TRIAD.md` — conceptual model (design system / experience framework / design engine)
+4. `CHANGELOG.md` — phase-by-phase progress log
+5. `docs/architecture/architecture.md` — technical architecture + ADRs 001–004
 
 ## Related repos on disk
 
 - `../experience-framework/` — governance, principles, agent instructions, personas, surface rules. Owned by design. Clarity V2 is the "law"; this is the "constitution". See TRIAD.md.
-- `../minivoda/clarity-digital-twin/` — interactive prototype / functional spec of buyer experience. Consumer of Clarity V2 tokens (eventually).
-- `../platform/` — the production Nivoda monorepo. Contains the current MUI-based design system at `libs/shared/style-dictionary/`, `libs/shared/components/`, `libs/shared/theme/`. Reference implementation — do not modify.
+- `../platform/` — the production Nivoda monorepo. Contains the current MUI-based design system at `libs/shared/style-dictionary/`, `libs/shared/components/`, `libs/shared/theme/`. **This is the eventual consumer of Clarity V2.** Reference for token alignment and component APIs. Do not modify platform code — that's engineering-owned.
 
 ## Key conventions
 

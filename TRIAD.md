@@ -4,7 +4,7 @@
 
 ## The idea in one paragraph
 
-Design at Nivoda runs as three connected parts: a **component library** that provides the building blocks, a **governance framework** that establishes the principles for using them, and an **intelligence layer** that observes users and decides what to work on. The three are distinct in role, cadence, and audience — but together they form one system. The working analogy: a **design system** (law), an **experience framework** (constitution), and a **design engine** (government).
+Design at Nivoda runs as a small **republic**: three branches with distinct roles, separation of powers between them, and rule of law binding on all of them. A **component library** provides the building blocks (the law), a **governance framework** establishes the principles for using them (the constitution), and an **intelligence layer** observes users and decides what to work on (the government). The three are distinct in role, cadence, and audience — but together they form one coherent system.
 
 ---
 
@@ -74,11 +74,15 @@ Archetypes and journey maps, which are born in the engine, are eventually adopte
 
 ---
 
-## Three rules that hold across the system
+## Separation of powers
+
+Three rules hold across the system. They're what make the republic stable:
 
 1. **Law can't contradict the constitution.** A component cannot violate the framework's principles.
 2. **Government operates within constitutional bounds.** The engine can set priorities but cannot override how things get built.
 3. **New law is made when precedent doesn't exist.** Agents don't invent. They flag, and the design function rules.
+
+No branch dominates the others. The engine can't reach down into implementation. The framework can't legislate components into existence. The design system can't set its own priorities. Each branch is sovereign in its own domain and bound by the rules of the others.
 
 ---
 
@@ -92,7 +96,7 @@ Three connected parts, three different cadences. That's what lets the system sca
 
 Each layer protects the one below it from the churn of the one above it. And agents — which increasingly do the implementation work — can trust each layer to be stable within its own rhythm.
 
-This is what makes design a system the rest of the organisation can plug into, rather than a bottleneck it has to wait for.
+A republic, not a monarchy. That's what makes design a system the rest of the organisation can plug into, rather than a bottleneck it has to wait for.
 
 ---
 

@@ -107,7 +107,7 @@ Tokens Studio was evaluated and rejected — bidirectional Figma sync adds compl
 **Bespoke Build Script (`build.mjs`)**
 A ~200-line Node.js script transforms the DTCG JSON into platform-specific outputs:
 - **Web** — CSS custom properties (OKLCH) consumed by Tailwind CSS theme configuration
-- **shadcn** — flat-named CSS custom properties (`:root` + `.dark` scopes) for direct consumption by shadcn/ui-based frontends (e.g., Minivoda)
+- **shadcn** — flat-named CSS custom properties (`:root` + `.dark` scopes) for direct consumption by shadcn/ui-based frontends and the eventual platform migration
 - **React Native** — JS/TS objects with hex values and unitless dimensions
 - **Email templates** — inline CSS values (hex) for backend template injection
 - **Backend** — plain JSON for any surface that needs token values without a framework dependency
@@ -176,7 +176,7 @@ This approach means documentation is never out of sync with the component it des
 **Fumadocs site**
 A single Fumadocs site serves as the browsable front door for both the experience framework (governance, strategy, personas, surface rules) and the design system (components, tokens, patterns). It provides full-text search, responsive layout, dark mode, and MDX support for interactive content. Storybook stories can be embedded via iframes when the component library matures.
 
-The site deploys to Vercel on push — same infrastructure as Minivoda. No external vendor, no sync to maintain, no cost beyond hosting.
+The site deploys to Vercel on push. No external vendor, no sync to maintain, no cost beyond hosting.
 
 **Audience split**
 - **Fumadocs site** — cross-functional audience. Governance, strategy, usage guidelines, component documentation, design principles. The internal face of how Nivoda designs and builds products.

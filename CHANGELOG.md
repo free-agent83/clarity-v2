@@ -60,14 +60,13 @@ Initial repo setup: Nx monorepo structure, token source files, single Button com
 
 ## Roadmap — what's next
 
-**Phase 2 — Minivoda integration** (deferred until a fresh Minivoda checkout is available)
-Connect Minivoda to clarity-v2's shadcn token output. Mechanical change: one `@import` added, hand-written token blocks removed.
+See [`docs/plans/ROADMAP.md`](docs/plans/ROADMAP.md) for the full phased plan.
 
-**Phase 3 — Component library buildout**
-Build shadcn/ui components fresh in clarity-v2 using the new tokens. Wire to Storybook. Refactor Minivoda imports to consume `@nivoda/components` instead of local copies.
+**Phase B — Proof** (active, 2-week window)
+Build the core component set (~10-15 components). Rebuild a real Nivoda screen using Claude Code + Clarity V2 as the headline demo. Write the engineering proposal for Abhishek. Storybook runs locally.
 
-**Documentation site** (Fumadocs)
-Single static site serving both the Experience Framework (governance, strategy) and Clarity V2 (components, tokens). Deployed to Vercel. Non-technical face for stakeholders.
+**Phase C — Distribution**
+Fumadocs documentation site deployed. Onboarding material for self-service UI delivery. First external person (designer or PM) builds something real with Clarity V2 + AI. Engineering conversation converges on a migration strategy.
 
-**Platform migration** (long-term)
-Gradual migration of existing MUI-based platform components to Clarity V2 equivalents. Enabled by the token alignment — visual consistency preserved during migration.
+**Phase D — Adoption** (conditional, multi-quarter)
+Design and PM use Clarity V2 to ship real features. Platform migration proceeds opportunistically as new features replace old MUI code. Governance (Experience Framework) becomes load-bearing as more people build.
