@@ -381,15 +381,32 @@ Verify Button renders correctly after the change.
 
 ---
 
-## Phase 3: Component Extraction (deferred)
+## Phase 3: Component Library Buildout (deferred)
 
-After Phase 2 is stable, progressively extract Minivoda's shadcn components into clarity-v2's component library. Storybook becomes the documentation layer at this point. Extraction priority:
+After Phase 2 is stable, build the component library in clarity-v2 using the shadcn CLI, wire components to clarity-v2's tokens, write Storybook stories, then refactor Minivoda to import from `@nivoda/components` instead of its local `components/ui/`.
+
+**Rationale for building fresh rather than extracting from Minivoda:** Minivoda uses vanilla shadcn CLI output with minimal customization. There is no meaningful work to extract — copying templates from one repo to another provides no value. Building fresh in clarity-v2 establishes the design system as the source of truth by design, gives Chris authority over component definitions from day 1, and makes Storybook valuable immediately (real content from commit #1 of component work). Minivoda's refactor becomes a mechanical import path swap.
+
+**Build order** (same priority as before — this defines what to build first, not what to extract):
 
 1. Leaf components (badge, separator, skeleton, spinner, label, kbd)
 2. Simple interactive (button, input, textarea, checkbox, radio, switch)
 3. Composed (card, alert, avatar, progress, tooltip)
 4. Complex interactive (select, dialog, sheet, dropdown, combobox)
 5. Layout/navigation (sidebar, nav menu, breadcrumb, pagination, tabs)
+
+**Process per component:**
+1. `npx shadcn@latest add <component>` in `packages/components`
+2. Wire to clarity-v2 tokens (may require adjusting `@theme` mappings)
+3. Write Storybook stories covering all variants and states
+4. Design review by Chris before merging
+5. Once batch of components is ready, publish `@nivoda/components` and refactor Minivoda imports
+
+**What stays in Minivoda (not design system concerns):**
+- Product-specific compositions: `ProductListItem`, `LayoutProductList`, `LayoutProductDetail`
+- App chrome: `BuyerNav`, `AppFooter`, `CategoriesMenu`
+- Feature components: `ShareModal`, `ProductActions`
+- These import from `@nivoda/components` but are not part of it
 
 ---
 
