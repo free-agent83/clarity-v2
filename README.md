@@ -9,7 +9,12 @@ For governance, agent instructions, business context, and surface-specific rules
 ## Start Here
 
 **New to the project?**
+- [`STATE.md`](./STATE.md) — where we are, what we're building, and where it's headed
+- [`TRIAD.md`](./TRIAD.md) — the conceptual model: how this repo relates to the experience framework and design engine
 - [`CHANGELOG.md`](./CHANGELOG.md) — what's been built, what's in progress, what's next
+
+**Claude Code / AI agents?**
+- [`CLAUDE.md`](./CLAUDE.md) — project bootstrap for AI agents: required reading, conventions, things to avoid
 
 **Looking for the technical architecture?**
 - [`docs/architecture/architecture.md`](./docs/architecture/architecture.md) — token pipeline, component libraries, documentation layer, and ADRs 001-004
