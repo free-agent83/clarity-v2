@@ -16,7 +16,7 @@ The commercial case and governing model live in `VISION.md`. This spec is the **
 
 ### What "done" looks like at end of sprint
 
-- ~49 components built, each with stories, a colocated README, a Figma link, and a design-match record
+- **42 components** built (28 Phase B + 14 Phase C candidate) and **6 page templates**, each with stories, a colocated README, a Figma link, and a design-match record — 48 items total
 - Storybook running locally with a category-based sidebar covering Foundations, seven component categories, Templates, and Docs stubs
 - Engineering proposal sent to Abhishek
 - Buyer PLP rebuilt in a demo context using Clarity V2 components, with learnings captured
@@ -36,7 +36,7 @@ Build the **28 core components** that cover forms, actions, overlays, feedback, 
 
 ### Phase C — Full Library (week 2, candidate + rescope checkpoint)
 
-Build the **~15 additional components** and **~6 page templates** needed for the full library. This includes two heavy components that live in their own packages (Data Grid, Date Picker). At the **end of week 1** (after Phase B wraps) there is a formal rescope checkpoint: the Phase C component list in this spec is a **candidate**, not a commitment, and will be refined based on what Phase B surfaced.
+Build the **14 additional components** and **6 page templates** needed for the full library. This includes two heavy components that live in their own packages (Data Grid, Date Picker). At the **end of week 1** (after Phase B wraps) there is a formal rescope checkpoint: the Phase C component list in this spec is a **candidate**, not a commitment, and will be refined based on what Phase B surfaced.
 
 Phase C ends with the **Buyer PLP rebuild** — Nivoda's primary revenue surface, rebuilt from scratch using the completed Clarity V2 library via Claude Code. This is the proof artefact for the whole sprint.
 
@@ -58,11 +58,11 @@ Insert a new **Phase C — Full Library** between the current Phase B and Phase 
 
 | Current ROADMAP | New structure |
 |---|---|
-| Phase A · Foundation ✅ | Phase A · Foundation ✅ *(unchanged)* |
-| Phase B · Proof 🟡 | Phase B · Core Proof 🟡 *(scope reduced to core 28 components + proposal)* |
-| — | **Phase C · Full Library (NEW)** — remaining components, heavies, templates, PLP rebuild |
-| Phase C · Distribution | Phase D · Distribution *(renamed)* |
-| Phase D · Adoption | Phase E · Adoption *(renamed)* |
+| Phase A — Foundation ✅ | Phase A — Foundation ✅ *(unchanged)* |
+| Phase B — Proof 🟡 | Phase B — Core Proof 🟡 *(scope reduced to core 28 components + proposal)* |
+| — | **Phase C — Full Library (NEW)** — remaining components, heavies, templates, PLP rebuild |
+| Phase C — Distribution | Phase D — Distribution *(renamed)* |
+| Phase D — Adoption | Phase E — Adoption *(renamed)* |
 
 This amendment lands as a small PR against `ROADMAP.md` alongside this spec.
 
@@ -122,7 +122,7 @@ Ordered so that no component is built before its dependencies. Total: 28 compone
 
 ### Phase C — candidate list (subject to rescope checkpoint at end of week 1)
 
-~15 additional components + 6 page templates. **This list is a working draft**; the authoritative version is finalised at the rescope checkpoint based on Phase B learnings.
+**14 additional components + 6 page templates.** This list is a working draft; the authoritative version is finalised at the rescope checkpoint based on Phase B learnings.
 
 **Extended form inputs:**
 - **Autocomplete / Combobox** *(depends on Popover + Input)*
@@ -138,6 +138,7 @@ Ordered so that no component is built before its dependencies. Total: 28 compone
 - **Menu** — application menu (distinct from Dropdown Menu — likely delete if redundant)
 - **Stepper** — multi-step flow indicator
 - **Segmented Control** — may collapse into Toggle Group
+- **Pagination** — page-number navigation (Button + IconButton composition with logic) — **explicitly included because the PLP validation build depends on it**
 
 **Layout and surfaces:**
 - **App Shell** — page chrome template (header + sidebar + content slots)
@@ -161,7 +162,7 @@ Templates live in Storybook under a new **Templates** sidebar section. Empty-sta
 
 ### What is explicitly not built (either deferred, duplicated, or obsoleted by Tailwind)
 
-- Table (Data Grid — full virtualisation, filter UI — deferred to iteration)
+- Data Grid full virtualisation + filter UI (Data Grid itself is in scope, but scoped to render + sort + selection only; virtualisation and filter UI defer to a post-sprint iteration)
 - Rich Text Editor
 - Charts (future)
 - Paper → covered by Card
@@ -300,6 +301,7 @@ Category-based with Foundations at the top and Templates / Docs slots at the bot
   · Link                [Phase C]
   · Stepper             [Phase C]
   · Segmented Control   [Phase C]
+  · Pagination          [Phase C]
   · App Shell           [Phase C]
 
 🎨 Templates            [Phase C]
@@ -368,7 +370,7 @@ packages/
 ```
 packages/
 ├── tokens/              → @nivoda/clarity-tokens
-├── components/          → @nivoda/components            (~43 components: all B + all Phase C non-heavy)
+├── components/          → @nivoda/components            (40 components: 28 Phase B + 12 Phase C non-heavy + 6 page templates as stories)
 ├── date-picker/         → @nivoda/clarity-date-picker   (Phase C, heavy, date-fns/dayjs deps)
 ├── data-grid/           → @nivoda/clarity-data-grid     (Phase C, heavy, tanstack-table deps)
 └── test-app/            → private dev sandbox
@@ -506,7 +508,7 @@ At end of the 2-week window:
 
 ### Task naming
 
-Tasks are numbered `T001..T050` in dependency order (see §3). Each task ID maps to:
+Tasks are numbered `T001..T0NN` in dependency order (see §3). 48 tasks at sprint kickoff — 27 Phase B component builds (Button is already shipped, so 28 Phase B components minus 1 done = 27 new builds) + 14 Phase C candidate components + 6 page templates + 1 engineering-proposal-send task. The upper bound has headroom for rescope additions. Each task ID maps to:
 - A row in the plan file
 - A GitHub Issue (title: `T012 · Component · Checkbox`)
 - A branch name (`feat/comp/checkbox`)
@@ -590,11 +592,13 @@ Genuine proof work is inherently unpredictable. If the rebuild reveals the libra
 
 | Day | Focus | Review |
 |---|---|---|
-| **D6** | Phase C mediums: Autocomplete, Phone Input, Table, Banner, Link, Menu, Stepper, Segmented Control | End-of-day review |
+| **D6** | Phase C mediums: Autocomplete, Phone Input, Table, Banner, Link, Menu, Stepper, Segmented Control, Pagination | End-of-day review |
 | **D7** | Phase C extras: File Upload, App Shell, Carousel. Start Date Picker package scaffold | End-of-day review |
 | **D8** | Finish Date Picker. Start Data Grid package scaffold. | End-of-day review |
 | **D9** | Finish Data Grid (scoped to render + sort + selection; defer filter/virtualisation if squeezed). | End-of-day review |
 | **D10** | Page templates: PLP, PDP, Dashboard, Auth, Checkout step, Settings. **Buyer PLP validation rebuild.** Sprint closing review. Final ROADMAP amendment. | Final review + merge |
+
+**D6 ceiling note:** D6 already carries 9 components. If the rescope checkpoint on D5 adds more items, they slot into D7 (reducing the extras budget) or defer to a post-sprint follow-up — D6 is the busiest day and should not be overloaded further.
 
 ### Buffer built in
 
@@ -608,7 +612,7 @@ Genuine proof work is inherently unpredictable. If the rebuild reveals the libra
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| **Data Grid eats more than 1 day** | Phase C scope slip or quality drop on other heavies | Scope Data Grid to render + sort + selection for the sprint. Filter and virtualisation become a post-sprint iteration. Decision made at D8 morning standup. |
+| **Data Grid eats more than 1 day** | Phase C scope slip or quality drop on other heavies | Scope Data Grid to render + sort + selection for the sprint. Filter and virtualisation become a post-sprint iteration. Scope decision re-confirmed at D8 morning between CL and JG. |
 | **Review checkpoints are the human bottleneck** | At AI pace, build waits on JG's review availability | Review cadence is end-of-day specifically to minimise interruption and fit around JG's schedule. If JG can't review one day, it rolls to next morning without blocking the build. |
 | **Validation build reveals major gaps** | PLP rebuild hits too many missing components, exercise stops being proof and starts being painful | Accept the learning — a build that surfaces 5 specific gaps is more valuable than no attempt. Feed findings into the rescope checkpoint and Phase D scope. |
 | **Token alignment values don't match Figma** | Visual drift between designs and implemented components | JG's token-level fixes propagate to every component immediately. This is the single highest-leverage fix pattern and is explicitly documented in the commit rules. |
