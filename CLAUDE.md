@@ -8,12 +8,12 @@ Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components
 
 **Core outcome:** Whoever builds UI — engineer, designer, or PM — produces design-correct output automatically. The components ARE the design. This collapses the design → engineering → design-QA iteration loop that currently dominates UI delivery. Both engineers writing code directly and designers/PMs using AI coding agents consume the same library and get the same guarantee.
 
-See `STATE.md` and `docs/plans/ROADMAP.md` for the full picture.
+See `STATE.md` and `ROADMAP.md` for the full picture.
 
 ## Required reading (in this order)
 
 1. `STATE.md` — current progress, dual-purpose vision, next two weeks
-2. `docs/plans/ROADMAP.md` — master phased plan (A done, B active, C/D pending)
+2. `ROADMAP.md` — master phased plan (A done, B active, C/D pending)
 3. `TRIAD.md` — conceptual model (design system / experience framework / design engine)
 4. `CHANGELOG.md` — phase-by-phase progress log
 5. `docs/architecture/architecture.md` — technical architecture + ADRs 001–004

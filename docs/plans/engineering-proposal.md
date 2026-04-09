@@ -216,7 +216,7 @@ I want to be specific about this because I don't want to appear to be asking eng
 
 - **Phase A complete:** token pipeline, architecture, 15 token alignment decisions, one production component, full test suite, 4 ADRs
 - **Platform audit done:** full inventory of platform's existing design system is in `docs/research/` and informed the token decisions
-- **ROADMAP written:** phased plan is in `docs/plans/ROADMAP.md`
+- **ROADMAP written:** phased plan is in `ROADMAP.md`
 - **Governance model documented:** `TRIAD.md` explains how this relates to the Experience Framework
 
 All of it is in a clean, reviewable Git history on the `feat/token-alignment-phase1` branch.

@@ -11,7 +11,7 @@ For governance, agent instructions, business context, and surface-specific rules
 **New to the project?**
 - [`STATE.md`](./STATE.md) — where we are, what we're building, and where it's headed
 - [`TRIAD.md`](./TRIAD.md) — the conceptual model: how this repo relates to the experience framework and design engine
-- [`docs/plans/ROADMAP.md`](./docs/plans/ROADMAP.md) — the master phased plan
+- [`ROADMAP.md`](./ROADMAP.md) — the master phased plan
 - [`CHANGELOG.md`](./CHANGELOG.md) — what's been built, what's in progress, what's next
 
 **Claude Code / AI agents?**

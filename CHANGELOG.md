@@ -60,7 +60,7 @@ Initial repo setup: Nx monorepo structure, token source files, single Button com
 
 ## Roadmap — what's next
 
-See [`docs/plans/ROADMAP.md`](docs/plans/ROADMAP.md) for the full phased plan.
+See [`ROADMAP.md`](ROADMAP.md) for the full phased plan.
 
 **Phase B — Proof** (active, 2-week window)
 Build the core component set (~10-15 components). Rebuild a real Nivoda screen using Claude Code + Clarity V2 as the headline demo. Write the engineering proposal for Abhishek. Storybook runs locally.

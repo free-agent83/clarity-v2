@@ -15,7 +15,7 @@ This unlocks two delivery paths running in parallel:
 
 Both paths use the same underlying library, same tokens, same governance. The commercial lever they both produce is the same: **UI delivery is no longer gated by either design review OR engineering capacity**. Whoever is best placed to build, builds.
 
-This document is a factual record of where we are, what we're building, and where it's headed. See `docs/plans/ROADMAP.md` for the full phased plan and `TRIAD.md` for how this repo relates to the governance framework and design engine.
+This document is a factual record of where we are, what we're building, and where it's headed. See `ROADMAP.md` for the full phased plan and `TRIAD.md` for how this repo relates to the governance framework and design engine.
 
 ## Why we're rebuilding
 
@@ -69,7 +69,7 @@ Honest state as of 8 April 2026:
 
 ## The next two weeks
 
-This is the **Phase B — Proof** window. See `docs/plans/ROADMAP.md` for the full phase breakdown.
+This is the **Phase B — Proof** window. See `ROADMAP.md` for the full phase breakdown.
 
 Concrete targets:
 
