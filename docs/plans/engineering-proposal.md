@@ -105,7 +105,7 @@ The incremental path is explicit. No big bang. No feature freeze. No "migrate Q3
 
 Because the library is built to be consumed by AI coding agents, designers and PMs with tools like Claude Code can also build directly against it. Feature prototypes in hours. Meaningful UI changes without engineering tickets. Pressure relieved from your team for small changes, quick experiments, and one-off internal tools.
 
-**Proof point (Phase B deliverable):** I'm rebuilding a real Nivoda customer screen with Claude Code + Clarity V2 in the next two weeks, as a demonstration for the CEO. The screen will be functional and recognisable. The message to the CEO: *"A designer built this in hours. The same library is what engineering will import to ship without waiting for design review."*
+**Planned validation (Phase B):** Once the core component set is in place, I intend to rebuild a real Nivoda customer screen with Claude Code + Clarity V2 as a live test of the self-service loop. The goal isn't a polished demo on a deadline — it's to validate that the components hold up under real use and to surface any gaps. If it works as expected, the result is a recognisable screen that shows *"a designer built this in hours; the same library is what engineering will import to ship without waiting for design review."*
 
 ---
 
@@ -119,7 +119,7 @@ Walk through the repo together. I'll show you:
 - The token pipeline and how it's aligned with platform
 - The architecture and the ADRs
 - The Button component and how it's built
-- The next 2-week plan and the CEO demo
+- The next 2-week plan and the leadership demo
 - This document and the migration options in the next section
 
 The goal of the conversation is **mutual understanding and your technical feedback**, not a commitment.

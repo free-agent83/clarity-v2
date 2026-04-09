@@ -74,9 +74,11 @@ This is the **Phase B — Proof** window. See `docs/plans/ROADMAP.md` for the fu
 Concrete targets:
 
 - **Core component set in place** — ~10-15 components covering the primitives and composites for most near-term UI: Input, Textarea, Select, Checkbox, Radio, Switch, Card, Badge, Dialog, Tooltip, Tabs, Alert, Separator, Label (plus the existing Button)
-- **Working Nivoda screen demo** — Chris picks a real customer-facing Nivoda screen and rebuilds it using Claude Code + Clarity V2. This is the headline deliverable for the CEO. The message: *"I (a designer, not an engineer) built this in [X hours] using AI, against Clarity V2. Here's what that unlocks."*
-- **Engineering proposal document** (`docs/plans/engineering-proposal.md`) — a formal pitch for Abhishek covering what Clarity V2 is, what's built, what we need from engineering, and the migration strategy options for discussion
 - **Storybook accessible to the team** so engineers and agents have a place to look up components (local for now; deployment later)
+- **Engineering proposal document** (`docs/plans/engineering-proposal.md`) — a formal pitch for Abhishek covering what Clarity V2 is, what's built, what we need from engineering, and the migration strategy options for discussion
+- **ROADMAP, STATE, and supporting docs** — coherent and shareable
+
+The stretch ambition — once the component set is in place — is to rebuild a real Nivoda screen with Claude Code + Clarity V2 as a live validation of the self-service delivery loop. This isn't a fixed deliverable on a fixed date; it's an experiment that becomes viable once the components exist, and the learnings from it (whatever they are) feed into Phase C.
 
 What won't be done in two weeks:
 

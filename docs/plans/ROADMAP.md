@@ -66,29 +66,11 @@ The commercial case is specific: **we are removing both design QA iteration and 
 
 ## Phase B — Proof (active, 2-week window)
 
-**Goal:** Prove that Clarity V2 works end-to-end for both goals. Show the CEO a working Nivoda screen that a designer built themselves. Give engineering a formal proposal they can react to.
+**Goal:** Prove that Clarity V2 works end-to-end. Build the core component set. Have the engineering proposal ready for Abhishek. Establish the conditions under which a real-world validation (a working Nivoda screen built with Clarity V2 + AI) becomes viable.
 
-### Primary deliverable — the demo
+### Primary deliverables
 
-Chris rebuilds a **real Nivoda screen** using Claude Code + Clarity V2 + the in-progress component library. The screen should be:
-
-- Recognisable to the CEO (a screen from customer-facing production, not an abstract prototype)
-- Visually close-enough to the current production version that the CEO immediately sees what it is
-- Functional — clickable, scrollable, responsive
-- Built primarily by Chris prompting an AI agent, not by an engineer
-
-**Screen candidates to choose from** (Chris to pick):
-- Buyer product list (e.g., diamond search results)
-- Buyer product detail
-- Order details / order history
-- Account / settings page
-- Checkout step
-
-The chosen screen becomes the headline for the CEO demo: *"This is built with Clarity V2. I (Chris) built it in [X hours] using Claude Code. Here's how it compares to the current version."*
-
-### Supporting deliverables
-
-- **Core component set in Storybook** — ~10-15 components covering the demands of the demo screen and most near-term use cases:
+- **Core component set in Storybook** — ~10-15 components covering the primitives and composites needed for most near-term UI:
   - Button (done)
   - Input, Textarea, Select
   - Checkbox, Radio, Switch
@@ -98,7 +80,21 @@ The chosen screen becomes the headline for the CEO demo: *"This is built with Cl
   - Separator, Label
 - **Storybook runs locally** for the team; deployment deferred to Phase C
 - **Engineering proposal document** (`docs/plans/engineering-proposal.md`) — a formal pitch for Abhishek covering what Clarity V2 is, what's built, what we need from engineering, and three migration-strategy options for discussion (strangler fig / surface-by-surface / opportunistic replacement)
-- **This ROADMAP, STATE.md, and supporting docs** — ready to share with CEO
+- **ROADMAP, STATE.md, and supporting docs** — coherent, shareable, telling the story clearly
+
+### Ambition — the validation build
+
+Once the component set is in place, the most powerful thing Clarity V2 can show is a **working Nivoda screen rebuilt with Claude Code + Clarity V2**. The point isn't to produce a polished demo on a deadline — it's to validate that the self-service delivery loop actually works in practice.
+
+Chris picks a candidate screen from customer-facing production (buyer product list, PDP, order detail, account settings, or a checkout step), rebuilds it against the in-progress component library, and observes what happens:
+- Which components were missing or insufficient
+- What the AI agent got right, what it struggled with
+- How long the build actually took
+- Whether the output is genuinely "design-correct by construction"
+
+The resulting build — if it works — becomes the proof artefact: *"This is built with Clarity V2. It was built by a designer, not an engineer. The same library is what engineering will import when they want to skip the design review loop."*
+
+**This is an ambition, not a commitment on a fixed schedule.** The component buildout is the gate — once the core set is in place, the validation attempt becomes meaningful. If component buildout takes the full 2 weeks, the validation happens in week 3. If it moves faster, sooner. Either way, the ROADMAP is not a promise that any specific screen will exist on any specific day.
 
 ### What's explicitly out of scope for Phase B
 
@@ -107,13 +103,14 @@ The chosen screen becomes the headline for the CEO demo: *"This is built with Cl
 - Any actual platform migration work (Phase D)
 - Component tokens (per-component token files like the platform's 48 files) — not needed yet
 - Formal engineering commitment — that's Phase C
+- Polished, pixel-perfect UI — the validation build is a proof of the loop, not a production ship
 
 ### Success criteria
 
-- Chris can demonstrate the rebuilt Nivoda screen to the CEO within the 2-week window
-- The engineering proposal is written and ready to send to Abhishek
-- Storybook runs locally with 10+ components
-- ROADMAP and STATE.md tell a coherent story to a CEO in under 10 minutes
+- Core component set (10+ components) is in Storybook, runs locally
+- Engineering proposal is written and ready to send to Abhishek
+- ROADMAP, STATE.md, and supporting docs tell a coherent story
+- Validation build attempted — regardless of outcome, the exercise produces learnings about what's missing, what works, and what Phase C needs to focus on
 
 ---
 
@@ -183,7 +180,7 @@ This phase is deliberately light on detail because its shape depends on what Pha
 | Risk | Impact | Mitigation |
 |---|---|---|
 | **Engineering doesn't engage or actively resists** | Platform migration track stalls; self-service track continues unblocked but half the value story is lost | Engineering proposal document written carefully; offer multiple migration options; let eng pick; start with non-blocking asks |
-| **Demo screen takes longer than 2 weeks** | CEO window missed; pressure increases | Pick a simpler screen candidate; use shadcn CLI components as-is where possible; accept visual approximation over pixel perfection |
+| **Validation build reveals major gaps in the component library** | Phase B doesn't produce the "design-correct by construction" proof as cleanly as hoped | Accept the learning — a failed attempt that surfaces specific gaps is more valuable than no attempt. Feed the findings into Phase C component additions. |
 | **Chris is the only person who can build with this** | Self-service goal collapses to "Chris builds everything" | Phase C explicitly includes a second person (designer or PM) building something real, validated as success criterion |
 | **Token alignment values don't match Figma libraries** | Visual drift between designs and implemented UI | Figma DS Foundation audit scheduled; Chris or designer cross-references when a conflict is found |
 | **Component library quality isn't agent-readable** | Agents hallucinate, produce broken code, self-service loop breaks | Each component must ship with clean TypeScript interface, working Storybook story, and colocated markdown doc explaining intent |
