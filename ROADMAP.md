@@ -1,51 +1,58 @@
 # Clarity V2 — Roadmap
 
-*Last updated: 8 April 2026*
-*Status: active, 2-week proof window*
-
-This is the master plan for Clarity V2. It sits alongside `STATE.md` (the narrative status) and `TRIAD.md` (the conceptual model). Individual phase plans live under `docs/plans/` as they become active.
+Current status and phased plan for Clarity V2. For the vision, commercial case, and conceptual model, see `VISION.md`. Individual phase implementation plans live under `docs/plans/` as they become active.
 
 ---
 
-## The vision
+## Status
 
-Clarity V2 is a **code-first design system built to be consumed by AI coding agents and by engineers writing code directly**. Its purpose is to produce a single structural change:
+_Last updated: 2026-04-09_
 
-**Whoever builds UI — an engineer writing code, a designer prompting an AI agent, a product manager prototyping a flow — produces design-correct output automatically.** The components ARE the design. There is no interpretation step where drift can happen, and therefore no iteration loop to catch it.
+### Phase A — Foundation ✅ Done
 
-Two delivery paths open up from the same library:
+▓▓▓▓▓▓▓▓▓▓ 100%
 
-1. **Engineering builds faster and without design gates.** Engineers import from Clarity V2 instead of MUI. Features ship design-correct on the first pass. Design review stops being a bottleneck because the components are pre-approved at the source. The "design → engineering → design QA" loop collapses into "design has already happened, build ships".
+- [x] Token pipeline with OKLCH (20 tests passing)
+- [x] Four ADRs decided (bespoke build, Chromatic, Tokens Studio, Fumadocs)
+- [x] Platform audit (60+ components inventoried)
+- [x] 15 token alignment decisions applied
+- [x] One production component (Button) complete
 
-2. **Design and product self-service.** Because the library is built to be agent-consumable, designers and PMs with AI coding tools can build directly against it — real working UI, not just mockups — without waiting for engineering capacity.
+### Phase B — Proof 🟡 Active (2-week window)
 
-Both paths use the same underlying library. Both depend on the same enabling work (build it, document it for agents, prove it). The commercial case compounds: every new consumer reinforces the value for the others.
+▓▓░░░░░░░░ 20%
 
-## Why this matters commercially
+- [ ] Core component set (**1 / 15** components built)
+- [x] Engineering proposal drafted
+- [ ] Engineering proposal reviewed and sent to Abhishek
+- [ ] Storybook with 10+ components running locally
+- [ ] Validation build attempted (stretch ambition)
 
-**Today, most Nivoda UI ships through a design → engineering → design-QA loop.** Design specs a screen. Engineering implements it. Design reviews the implementation, catches drift, files corrections, waits for revisions, reviews again. Ship. That loop exists because the current MUI-based design system doesn't guarantee that "correctly implemented" means "design-correct" — engineers interpret, and design has to catch the drift.
+**Metrics:** 1/15 components · 20/20 tests · 18 commits · proposal drafted
 
-The loop is where velocity goes. It's also where design capacity goes — most design hours today are spent reviewing implementations, not designing.
+**Critical path:** Build the remaining 14 components. Everything else in Phase B is either done or waiting on components.
 
-**With Clarity V2, the loop collapses.**
+### Phase C — Distribution ⚪ Pending
 
-- The components are the design. A feature built with Clarity V2 components is design-correct by construction.
-- Engineers ship without waiting for design review. Design doesn't need to catch what the system already prevents.
-- The hours design currently burns on QA iterations get redirected to work that actually needs a designer — more components, better documentation, governance, user research.
-- Self-service becomes possible as a bonus: because the library is agent-ready for engineers, it's also agent-ready for designers and PMs with the same AI tools.
+░░░░░░░░░░ 0%
 
-The commercial case is specific: **we are removing both design QA iteration and engineering capacity as single points of failure for UI delivery.** Multiple delivery paths open up in parallel, and none of them are gated on design review. This is the biggest structural change to product velocity Nivoda can make right now, and it's only possible because AI-assisted code is reliable enough and Clarity V2 is built to take advantage of it.
+- [ ] Fumadocs documentation site deployed
+- [ ] Onboarding material for designers/PMs
+- [ ] Engineering conversation + migration strategy decided
+- [ ] First person other than Chris builds something real
 
----
+### Phase D — Adoption ⚪ Pending
 
-## Phases
+░░░░░░░░░░ 0%
 
-| Phase | Name | Scope | Status |
-|---|---|---|---|
-| **A** | Foundation | Token pipeline, architecture decisions, platform alignment | ✅ Done |
-| **B** | Proof | Core components + working Nivoda screen demo + engineering proposal | 🟡 Active (2-week window) |
-| **C** | Distribution | Fumadocs site, self-service documentation, first external use case | ⚪ Pending |
-| **D** | Adoption | Design/PM build real features; platform migrates opportunistically | ⚪ Pending |
+Scope to be defined based on Phase C outcomes. Expected themes:
+
+- Design/PM self-service for real features
+- Platform migration (opportunistic)
+- Experience Framework governance at scale
+- React Native component library
+
+For the vision, commercial case, and conceptual model of how this repo relates to the Experience Framework and Design Engine, see `VISION.md`.
 
 ---
 
@@ -80,7 +87,7 @@ The commercial case is specific: **we are removing both design QA iteration and 
   - Separator, Label
 - **Storybook runs locally** for the team; deployment deferred to Phase C
 - **Engineering proposal document** (`docs/plans/engineering-proposal.md`) — a formal pitch for Abhishek covering what Clarity V2 is, what's built, what we need from engineering, and three migration-strategy options for discussion (strangler fig / surface-by-surface / opportunistic replacement)
-- **ROADMAP, STATE.md, and supporting docs** — coherent, shareable, telling the story clearly
+- **ROADMAP and supporting docs** — coherent, shareable, telling the story clearly
 
 ### Ambition — the validation build
 
@@ -109,7 +116,7 @@ The resulting build — if it works — becomes the proof artefact: *"This is bu
 
 - Core component set (10+ components) is in Storybook, runs locally
 - Engineering proposal is written and ready to send to Abhishek
-- ROADMAP, STATE.md, and supporting docs tell a coherent story
+- ROADMAP and supporting docs tell a coherent story
 - Validation build attempted — regardless of outcome, the exercise produces learnings about what's missing, what works, and what Phase C needs to focus on
 
 ---
@@ -186,23 +193,3 @@ This phase is deliberately light on detail because its shape depends on what Pha
 | **Component library quality isn't agent-readable** | Agents hallucinate, produce broken code, self-service loop breaks | Each component must ship with clean TypeScript interface, working Storybook story, and colocated markdown doc explaining intent |
 | **Scope creep toward "big bang platform migration"** | Team gets pulled into MUI replacement instead of proving the self-service loop | ROADMAP explicitly frames migration as opportunistic in Phase D; protect Phase B from migration asks |
 
----
-
-## Relationship to the Experience Framework
-
-Clarity V2 is the **law** — it provides components with clear intent and binding precedent for what exists to build with. The Experience Framework is the **constitution** — it provides the principles, surface rules, and quality standards that govern how the law gets applied. The Design Engine (currently inside experience-framework) is the **government** — it decides what should be worked on based on user signal.
-
-See `TRIAD.md` for the full conceptual model.
-
-A designer or PM building with Clarity V2 + AI is operating at the intersection of all three:
-- They pull components from the **design system** (what to build with)
-- They follow the rules set by the **framework** (how to build correctly)
-- They work on priorities set by the **engine** (what's worth building)
-
-The ROADMAP for each repo is distinct, but they're designed to reinforce each other. Clarity V2's Phase B proof is also the first real test of whether the framework's rules hold up under AI-assisted delivery.
-
----
-
-## What happens after Phase D
-
-Not planned yet. Deliberately. By the time Phase D is real, the world will have changed enough that planning now is premature. The next-after-D question is probably something like: does Clarity V2 become the foundation for a broader internal tools platform? Does it get open-sourced? Does it merge with Experience Framework into a single delivery system? Those are conversations for 2027.

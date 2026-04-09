@@ -65,7 +65,7 @@ A standalone design system monorepo (`clarity-v2`) that contains:
 
 ### 4. A clear governance model
 
-See `TRIAD.md`. Clarity V2 is the "law" — components with clear intent and binding precedent. It sits alongside the Experience Framework (the "constitution" — rules for how to build correctly) and the Design Engine (the "government" — what to build and why). Together they form the system the rest of the org (and its agents) plug into.
+See `VISION.md`. Clarity V2 is the "law" — components with clear intent and binding precedent. It sits alongside the Experience Framework (the "constitution" — rules for how to build correctly) and the Design Engine (the "government" — what to build and why). Together they form the system the rest of the org (and its agents) plug into.
 
 ---
 
@@ -217,7 +217,7 @@ I want to be specific about this because I don't want to appear to be asking eng
 - **Phase A complete:** token pipeline, architecture, 15 token alignment decisions, one production component, full test suite, 4 ADRs
 - **Platform audit done:** full inventory of platform's existing design system is in `docs/research/` and informed the token decisions
 - **ROADMAP written:** phased plan is in `ROADMAP.md`
-- **Governance model documented:** `TRIAD.md` explains how this relates to the Experience Framework
+- **Governance model documented:** `VISION.md` explains how this relates to the Experience Framework and Design Engine
 
 All of it is in a clean, reviewable Git history on the `feat/token-alignment-phase1` branch.
 
