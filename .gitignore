@@ -60,3 +60,6 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Superpowers brainstorming session artefacts (transient)
+.superpowers/
+
