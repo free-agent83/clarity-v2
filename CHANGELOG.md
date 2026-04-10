@@ -4,6 +4,22 @@ All notable progress on Clarity V2 is recorded here. Most recent entries first.
 
 ---
 
+## 2026-04-10 — Architectural correction: tokens package is surface-agnostic
+
+Removed the shadcn-specific layer from the tokens package. The tokens package now emits only primitives and the surface-agnostic semantic layer; any mapping to a specific surface theme (shadcn, Tailwind `@theme`, etc.) lives in-loco in the consumer.
+
+**Why:** surface-specific theme mapping is an implementation detail of each consumer, not a concern of the foundation. The previous layout had the tokens package carrying a parallel shadcn semantic layer (`src/shadcn/light.tokens.json`, `dark.tokens.json`, `radius.tokens.json`) and emitting `dist/shadcn/tokens.css` — leaking surface decisions into a layer that should be theme-agnostic.
+
+**Removed:**
+- `packages/tokens/src/shadcn/` (all three JSON files)
+- `buildShadcnCSS()` in `packages/tokens/build.mjs`
+- `./shadcn` subpath export in `packages/tokens/package.json`
+- `dist/shadcn/tokens.css` output and its integration test
+
+**Minivoda implication:** Minivoda will consume `@nivoda/components` as a finished product — it imports the components package and gets the shadcn theme mapping baked in via `packages/components/src/styles/globals.css`. Minivoda does not need to maintain any token mapping on its end; that mapping already lives alongside the components that use it.
+
+---
+
 ## 2026-04-08 — Token alignment with platform
 
 Applied 15 design decisions after auditing the platform design system (MUI + Style Dictionary v3) against Clarity V2. The token foundation now reflects production-vetted color values with Clarity V2's modern naming conventions.

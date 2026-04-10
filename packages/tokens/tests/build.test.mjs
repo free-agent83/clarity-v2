@@ -165,19 +165,6 @@ describe("build.mjs integration", () => {
     expect(css).toContain("--shadow-md:");
   });
 
-  it("produces dist/shadcn/tokens.css with :root and .dark scopes", () => {
-    const css = readFileSync(join(dist, "shadcn/tokens.css"), "utf-8");
-    expect(css).toContain(":root {");
-    expect(css).toContain(".dark {");
-    expect(css).toContain("--background:");
-    expect(css).toContain("--primary:");
-    expect(css).toContain("--destructive-foreground:");
-    expect(css).toContain("--chart-1:");
-    expect(css).toContain("--sidebar:");
-    expect(css).toContain("--radius:");
-    expect(css).not.toContain("var(--");
-  });
-
   it("produces dist/js/tokens.js with ES6 exports", () => {
     const js = readFileSync(join(dist, "js/tokens.js"), "utf-8");
     expect(js).toContain("export const");
