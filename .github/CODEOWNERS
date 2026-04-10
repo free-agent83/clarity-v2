@@ -1,0 +1,11 @@
+# CODEOWNERS — see packages/tokens/CONTRIBUTING.md for the rationale.
+#
+# Token definitions and the contribution rules that protect them are
+# human-only and design-owned. Any PR touching these paths requires
+# review from design leadership.
+#
+# Replace <CHRIS_GH_HANDLE> with Chris's GitHub handle (or a
+# @nivoda/design team) before merging to main.
+
+packages/tokens/src/               @<CHRIS_GH_HANDLE>
+packages/tokens/CONTRIBUTING.md    @<CHRIS_GH_HANDLE>
