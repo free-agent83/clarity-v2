@@ -1,0 +1,8 @@
+# CODEOWNERS — see packages/tokens/CONTRIBUTING.md for the rationale.
+#
+# Token definitions and the contribution rules that protect them are
+# human-only and design-owned. Any PR touching these paths requires
+# review from design leadership.
+
+packages/tokens/src/               @free-agent83
+packages/tokens/CONTRIBUTING.md    @free-agent83
