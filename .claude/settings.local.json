@@ -2,7 +2,22 @@
   "permissions": {
     "allow": [
       "Bash(git --version)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "WebFetch(domain:skills.sh)",
+      "WebFetch(domain:mcpmarket.com)",
+      "WebSearch",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create --base main --title 'docs: add component library contribution guidelines' --body ':*)",
+      "Bash(gh pr:*)",
+      "Bash(git fetch:*)",
+      "Bash(gh api:*)",
+      "Bash(node build.mjs)",
+      "Bash(npx vitest:*)",
+      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2 branch -a)",
+      "Bash(grep -r \"test\\\\|lint\\\\|typecheck\" /Users/jlfgms/Desktop/Code/clarity-v2/packages/*/project.json)"
     ]
   }
 }

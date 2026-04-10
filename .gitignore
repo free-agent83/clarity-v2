@@ -63,3 +63,5 @@ Thumbs.db
 # Superpowers brainstorming session artefacts (transient)
 .superpowers/
 
+# User's local settings for Claude
+.claude/settings.local.json
