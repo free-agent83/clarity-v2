@@ -6,6 +6,88 @@ This is a living document. Conventions will evolve as Phase B progresses and rea
 
 ---
 
+## COMPONENT.md: the entry point for every component
+
+`COMPONENT.md` is the primary source of truth for a component's **documentation** and the entry point for anyone — human or AI agent — who wants to understand the component. Treat it as a single-page entry on an internal design system documentation site: the one document a reader can open and come away with a complete picture of what the component is, when to use it, how it behaves, and what decisions shaped it.
+
+Its job is to encapsulate and summarise every decision that shapes the component. The TSX file and the stories carry the code and the executable examples — variants, props, states, interactions, compound behaviours. `COMPONENT.md` rolls all of that up into narrative documentation alongside the usage guidelines and best practices that don't belong in either of the other two. When the component's API, variant matrix, or recommended usage changes, `COMPONENT.md` must change in the same commit — it is not an afterthought document, and a stale `COMPONENT.md` is a broken one.
+
+This is the most important file in the component folder for anyone who isn't actively editing the code. Invest in it accordingly.
+
+Every component folder contains a `COMPONENT.md` with YAML frontmatter and content sections.
+
+### Frontmatter
+
+```yaml
+---
+name: Button
+slug: button
+version: 0.1.0
+status: unstable
+lastUpdated: 2026-04-09
+---
+```
+
+| Field | Format | Description |
+|-------|--------|-------------|
+| `name` | PascalCase | Component name as used in code |
+| `slug` | kebab-case | For tooling and quick referencing |
+| `version` | semver | Component-level version, independent of package version |
+| `status` | `stable` / `unstable` / `deprecated` | Current lifecycle status |
+| `lastUpdated` | `YYYY-MM-DD` | Must be updated whenever the component or its docs are touched |
+
+### Content sections
+
+#### 1. Component name
+
+Heading and one-line description of what the component is and does.
+
+#### 2. Props
+
+Table derived from the TypeScript interface:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `"contained" \| "outlined" \| ...` | `"contained"` | Visual style of the button |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button size |
+| `asChild` | `boolean` | `false` | Render as child element via Radix Slot |
+
+#### 3. Usage guidelines
+
+When to use this component. When NOT to use it — and what to use instead.
+
+#### 4. Best practices
+
+Dos and don'ts with short code examples:
+
+```md
+**Do:** Use `contained` for primary actions — one per screen section.
+
+**Don't:** Use `link` variant for navigation that leaves the current page — use an actual `<a>` tag or Next.js `<Link>`.
+```
+
+#### 5. Writing (optional)
+
+Guidance on user-facing text rendered by this component. Include only when the component renders text that contributors need guidance on (button labels, alert messages, tooltip content, etc.). Omit this section entirely for components where it doesn't apply.
+
+Example for Button:
+- Use action verbs: "Save", "Delete", "Continue" — not "OK" or "Click here"
+- Keep labels short: 1-3 words
+- No ALL CAPS — the component handles text styling
+
+#### 6. Quality checklist
+
+Filled-in checklist for this specific component:
+
+```md
+- [x] Accessibility: passes axe-core, keyboard navigable, screen reader tested
+- [x] Figma parity: matches DSW-Web-Components Figma source
+- [ ] Responsive: works at all breakpoints
+- [x] Tokens only: no hardcoded visual values
+```
+
+---
+
 ## Folder structure
 
 Components are organised using atomic design taxonomy:
@@ -17,7 +99,8 @@ src/components/
 └── organisms/    Complex compositions (DataTable, AppShell)
 ```
 
-**Classification guidance:**
+### Classification guidance
+
 - **Atoms** render a single interactive or display element. They don't compose other components from this library.
 - **Molecules** combine two or more atoms into a reusable unit with its own behaviour.
 - **Organisms** are complex, page-level compositions. Rare in a design system — most components are atoms or molecules.
@@ -95,14 +178,67 @@ export interface ButtonProps
 }
 ```
 
-### Named exports only
+### Exports
 
-Every component uses named exports. No default exports.
+Every component uses named exports — no default exports. Each component file exports three things: the component itself, the variants object (when using CVA), and the Props interface as a type-only export.
 
 ```tsx
+// button.tsx
 export { Button, buttonVariants };
 export type { ButtonProps };
 ```
+
+Every stable component must then be re-exported from `src/index.ts` using the same three-export pattern. The package barrel is the single import point for consumers — they should never reach into a component folder directly.
+
+```tsx
+// src/index.ts
+export { Button, buttonVariants } from "./components/atoms/button/button";
+export type { ButtonProps } from "./components/atoms/button/button";
+```
+
+### Comments
+
+Component files default to zero comments. Two kinds of documentation are mandatory; everything else stays uncommented to keep the signal-to-noise ratio high for both humans and AI agents reading the source.
+
+#### cva()
+
+When a component uses `cva`, prefix the definition with a JSDoc block naming each variant axis and its purpose. This is where an agent should be able to learn what the component supports without scanning the full config object.
+
+```tsx
+/**
+ * Button variants mapped to Nivoda DS Foundation.
+ *
+ * Variant axis = visual style (contained, outlined, text, link)
+ * Intent axis  = semantic colour (primary, success, error)
+ * Size axis    = sm, md, lg
+ *
+ */
+const buttonVariants = cva( ... );
+```
+
+One line per axis, ordered as they appear in the `variants` object. Enum the options inline rather than listing them underneath — keep the block scannable.
+
+#### Named exports
+
+Every named export gets a JSDoc block: the component itself, the variants object, and any exported types. The block should describe what it is, when to use it, and any non-obvious constraints on its use. Standard JSDoc tags (`@param`, `@returns`, `@example`, `@see`, `@deprecated`) are encouraged wherever they add signal.
+
+```tsx
+/**
+ * Primary interactive element for triggering actions.
+ *
+ * Wraps a native `<button>` by default. Pass `asChild` to render as a
+ * different element (e.g. an anchor styled as a button) while keeping
+ * the same variant styling.
+ *
+ * @see {@link buttonVariants} for the full variant/intent/size matrix.
+ */
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(...);
+
+export { Button, buttonVariants };
+export type { ButtonProps };
+```
+
+Internal helpers, locals, and non-exported values stay uncommented. Documentation noise belongs only on the public API surface and the variant axes above.
 
 ### Other patterns
 
@@ -118,7 +254,9 @@ See the Button implementation for a reference that uses all of these.
 
 ## Token consumption rules
 
-**Use Tailwind utility classes only.** Components reference design tokens through Tailwind's theme — never through raw CSS variables.
+#### Rule 1 — Components consume tokens only through the CSS theme
+
+Components never import from `packages/tokens/` and never reference raw token CSS variables. They see tokens only through the Tailwind theme, as utility classes.
 
 ```tsx
 // Do
@@ -128,14 +266,23 @@ See the Button implementation for a reference that uses all of these.
 "bg-[var(--color-semantic-primary-default)]"
 ```
 
-The `@theme` block in `src/styles/globals.css` bridges DTCG tokens to Tailwind utility classes. If a token you need doesn't have a Tailwind mapping, add it to `globals.css` — don't use arbitrary values in components.
+Corollaries:
 
-**Hard rules:**
 - No hardcoded colors, spacing, border-radius, or shadows anywhere in component code.
 - No Tailwind arbitrary value syntax (`bg-[#hex]`, `p-[14px]`) for values that should be tokens.
-- If the design calls for a value not in the token set, flag it — don't invent a token.
+- If the design calls for a value not in the token set, flag it — NEVER invent a token.
 
-> **Note:** The current Button has 3 instances of `bg-[var(...)]` on lines 27, 48, and 55. This is tech debt to fix, not a pattern to follow.
+#### Rule 2 — The token flow is always top-down
+
+```
+packages/tokens/  →  globals.css (shadcn theme)  →  components
+```
+
+Each layer reads only from the one above it. The components layer never feeds into the shadcn theme; the shadcn theme never feeds into `packages/tokens/`. If you catch yourself wanting to flow information upward — a component-specific value leaking into the theme, a theme-specific assumption leaking into tokens — stop and rethink the design.
+
+#### Rule 3 — Always ask before changing the shadcn theme
+
+Adding a new token assignment to `globals.css`, changing what an existing semantic variable resolves to, or otherwise touching the shadcn theme layer all require approval from the design lead before the change lands. The theme is the single source of truth for what the design system looks like — silent edits ripple out to every component downstream. If a component needs a token that isn't mapped yet, flag it and wait for a ruling.
 
 ---
 
@@ -150,7 +297,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Component } from "./component";
 
 const meta: Meta<typeof Component> = {
-  title: "Atoms/Component",
+  title: "Category/Component",
   component: Component,
   tags: ["autodocs"],
   argTypes: {
@@ -173,7 +320,28 @@ export const Primary: Story = {
 
 - **`tags: ["autodocs"]`** on every meta — auto-generates the docs page.
 - **`argTypes`** with `control: "select"` for all variant/enum props.
-- **Sidebar title** follows the atomic taxonomy: `"Atoms/Button"`, `"Molecules/Card"`, etc.
+- **Sidebar title** uses the category taxonomy below — e.g. `"Actions/Button"`, `"Forms/Input"`. This is independent of folder structure: files still live under `atoms/`, `molecules/`, `organisms/` on disk.
+
+### Sidebar taxonomy
+
+Sidebar titles follow a category-based structure. Categories group components by task and domain — more discoverable when an agent or designer is browsing by intent ("I need error feedback" → Feedback section, "I need to show a dataset" → Data section) than atomic labels, which force irrelevant "is Select an atom or molecule?" debates.
+
+```
+Foundations/    Colors, spacing, typography, radius
+Forms/          Input, Textarea, Select, Checkbox, Radio Group, Switch, Slider, Label, Toggle Group
+Actions/        Button, Icon Button, Dropdown Menu
+Overlays/       Dialog, Sheet, Popover, Tooltip
+Feedback/       Alert, Toast, Progress, Skeleton
+Display/        Card, Badge, Chip, Avatar, Separator, Carousel
+Data/           Table, Data Grid
+Navigation/     Tabs, Accordion, Breadcrumbs
+Templates/      [Phase C — PLP, PDP, Dashboard, Auth, Checkout, Settings]
+Docs/           [Phase C — Getting started, Prompt patterns, Migration from MUI]
+```
+
+`Data/` is a top-level category separate from `Display/`. Table and Data Grid are heavy, stateful, dataset-oriented components — they don't sit naturally alongside decorative primitives like Badge or Avatar. Matches MUI's Data Display vs Data Grid split and leaves the section room to grow (charts, pivot tables, metrics in future phases).
+
+**Folder structure stays atomic.** `src/components/atoms/button/button.tsx` is unchanged. The story `title:` field only sets the sidebar location — two independent concerns.
 
 ### Story naming
 
@@ -246,98 +414,6 @@ vitest --project=storybook
 # In CI
 vitest --project=storybook --run
 ```
-
----
-
-## COMPONENT.md documentation
-
-Every component folder contains a `COMPONENT.md` with YAML frontmatter and content sections.
-
-### Frontmatter
-
-```yaml
----
-name: Button
-slug: button
-version: 0.1.0
-status: unstable
-lastUpdated: 2026-04-09
----
-```
-
-| Field | Format | Description |
-|-------|--------|-------------|
-| `name` | PascalCase | Component name as used in code |
-| `slug` | kebab-case | For tooling and quick referencing |
-| `version` | semver | Component-level version, independent of package version |
-| `status` | `stable` / `unstable` / `deprecated` | Current lifecycle status |
-| `lastUpdated` | `YYYY-MM-DD` | Must be updated whenever the component or its docs are touched |
-
-### Content sections
-
-#### 1. Component name
-
-Heading and one-line description of what the component is and does.
-
-#### 2. Props
-
-Table derived from the TypeScript interface:
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `"contained" \| "outlined" \| ...` | `"contained"` | Visual style of the button |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button size |
-| `asChild` | `boolean` | `false` | Render as child element via Radix Slot |
-
-#### 3. Usage guidelines
-
-When to use this component. When NOT to use it — and what to use instead.
-
-#### 4. Best practices
-
-Dos and don'ts with short code examples:
-
-```md
-**Do:** Use `contained` for primary actions — one per screen section.
-
-**Don't:** Use `link` variant for navigation that leaves the current page — use an actual `<a>` tag or Next.js `<Link>`.
-```
-
-#### 5. Writing (optional)
-
-Guidance on user-facing text rendered by this component. Include only when the component renders text that contributors need guidance on (button labels, alert messages, tooltip content, etc.). Omit this section entirely for components where it doesn't apply.
-
-Example for Button:
-- Use action verbs: "Save", "Delete", "Continue" — not "OK" or "Click here"
-- Keep labels short: 1-3 words
-- No ALL CAPS — the component handles text styling
-
-#### 6. Quality checklist
-
-Filled-in checklist for this specific component:
-
-```md
-- [x] Accessibility: passes axe-core, keyboard navigable, screen reader tested
-- [x] Figma parity: matches DSW-Web-Components Figma source
-- [ ] Responsive: works at all breakpoints
-- [x] Tokens only: no hardcoded visual values
-```
-
----
-
-## Export conventions
-
-Every stable component must be exported from `src/index.ts`:
-
-```tsx
-export { Button, buttonVariants } from "./components/atoms/button/button";
-export type { ButtonProps } from "./components/atoms/button/button";
-```
-
-Pattern:
-- Named export: the component itself
-- Named export: the variants object (when using CVA)
-- Type-only export: the Props interface
 
 ---
 
