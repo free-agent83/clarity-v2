@@ -47,10 +47,10 @@ _Last updated: 2026-04-09_
 
 Scope to be defined based on Phase C outcomes. Expected themes:
 
-- Design/PM self-service for real features
+- Design/PM self-service for real features (in Minivoda, handed to eng as branches)
 - Platform migration (opportunistic)
 - Experience Framework governance at scale
-- React Native component library
+- **Mobile as a fast-follow** — React Native component library built on the same tokens and component contracts, so the self-serve path extends to Nivoda's mobile surfaces without a second design system
 
 For the vision, commercial case, and conceptual model of how this repo relates to the Experience Framework and Design Engine, see `VISION.md`.
 
@@ -89,19 +89,22 @@ For the vision, commercial case, and conceptual model of how this repo relates t
 - **Engineering proposal document** (`docs/plans/engineering-proposal.md`) — a formal pitch for Abhishek covering what Clarity V2 is, what's built, what we need from engineering, and three migration-strategy options for discussion (strangler fig / surface-by-surface / opportunistic replacement)
 - **ROADMAP and supporting docs** — coherent, shareable, telling the story clearly
 
-### Ambition — the validation build
+### Ambition — the validation build (in Minivoda)
 
-Once the component set is in place, the most powerful thing Clarity V2 can show is a **working Nivoda screen rebuilt with Claude Code + Clarity V2**. The point isn't to produce a polished demo on a deadline — it's to validate that the self-service delivery loop actually works in practice.
+Once the component set is in place, the most powerful thing Clarity V2 can show is a **new flow built into Minivoda with Claude Code + Clarity V2**. The point isn't to produce a polished demo on a deadline — it's to validate that the self-service delivery loop actually works in practice, in the actual venue where that loop lives.
 
-Chris picks a candidate screen from customer-facing production (buyer product list, PDP, order detail, account settings, or a checkout step), rebuilds it against the in-progress component library, and observes what happens:
+Minivoda — the living digital twin of the Nivoda platform (`minivoda/clarity-digital-twin`) — already has a meaningful portion of the buyer product built and running against real data: marketing, auth, buyer home, six product browse categories, orders, share modal, dark mode. It is the right place to do the validation build, because it is the same venue the self-serve path will use after Phase B. See `VISION.md` → *Where the self-serve path actually happens — Minivoda*.
+
+Chris picks a candidate flow — either an existing Minivoda surface (rebuilt against the new component set) or a new flow that isn't in Minivoda yet (cart, checkout step, an under-construction page) — builds it with Clarity V2 components + AI, and observes:
 - Which components were missing or insufficient
 - What the AI agent got right, what it struggled with
 - How long the build actually took
 - Whether the output is genuinely "design-correct by construction"
+- Whether the hand-off-as-branch model is recognisable to engineering
 
-The resulting build — if it works — becomes the proof artefact: *"This is built with Clarity V2. It was built by a designer, not an engineer. The same library is what engineering will import when they want to skip the design review loop."*
+The resulting build — if it works — becomes the proof artefact: *"This is a working Nivoda flow, running in Minivoda, built with Clarity V2 by a designer with AI assistance, handed off as a branch. The same library is what engineering will import when they want to skip the design review loop."*
 
-**This is an ambition, not a commitment on a fixed schedule.** The component buildout is the gate — once the core set is in place, the validation attempt becomes meaningful. If component buildout takes the full 2 weeks, the validation happens in week 3. If it moves faster, sooner. Either way, the ROADMAP is not a promise that any specific screen will exist on any specific day.
+**This is an ambition, not a commitment on a fixed schedule.** The component buildout is the gate — once the core set is in place, the validation attempt becomes meaningful. If component buildout takes the full 2 weeks, the validation happens in week 3. If it moves faster, sooner. Either way, the ROADMAP is not a promise that any specific flow will exist on any specific day.
 
 ### What's explicitly out of scope for Phase B
 
