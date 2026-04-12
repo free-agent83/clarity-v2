@@ -40,6 +40,9 @@ component_body() {
   local tier="$3"
   local deps="$4"
   local task_id="$5"
+  local name_lower category_lower
+  name_lower=$(echo "$name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+  category_lower=$(echo "$category" | tr '[:upper:]' '[:lower:]')
 
   cat <<EOF
 ## ${task_id} · ${name}
@@ -50,7 +53,7 @@ component_body() {
 
 ## Acceptance criteria
 
-- [ ] Component exists at \`packages/components/src/components/${category,,}/${name,,}/\`
+- [ ] Component exists at \`packages/components/src/components/${category_lower}/${name_lower}/\`
 - [ ] Storybook story with all variants (CSF3, \`tags: ["autodocs"]\`)
 - [ ] TypeScript props interface exported
 - [ ] Uses Radix UI primitive (if applicable)
@@ -66,7 +69,7 @@ See spec §4: \`docs/superpowers/specs/2026-04-09-component-library-phase-b-c-de
 
 ## Branch
 
-\`feat/comp/${name,,}\` off \`feat/component-library-phase-b-c\`
+\`feat/comp/${name_lower}\` off \`feat/component-library-phase-b-c\`
 EOF
 }
 
@@ -233,6 +236,7 @@ echo "Creating Phase C template and validation issues..."
 for template in "T046:PLP" "T047:PDP" "T048:Dashboard" "T049:Auth" "T050:Checkout step" "T051:Settings"; do
   id="${template%%:*}"
   name="${template#*:}"
+  name_lower=$(echo "$name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
   gh issue create \
     --repo "$REPO" \
     --title "${id} · Template · ${name}" \
@@ -241,11 +245,11 @@ for template in "T046:PLP" "T047:PDP" "T048:Dashboard" "T049:Auth" "T050:Checkou
 
 Compose a full-page layout in Storybook using Clarity V2 components.
 
-**Location:** \`packages/components/src/templates/${name,,}/\`
+**Location:** \`packages/components/src/templates/${name_lower}/\`
 
 ## Acceptance criteria
 
-- [ ] Story file at \`packages/components/src/templates/${name,,}/${name,,}.stories.tsx\`
+- [ ] Story file at \`packages/components/src/templates/${name_lower}/${name_lower}.stories.tsx\`
 - [ ] Uses only Clarity V2 components (no raw HTML except structural wrappers)
 - [ ] Appears in Storybook under the Templates sidebar section
 - [ ] Realistic mock data
