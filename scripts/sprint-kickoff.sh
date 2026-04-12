@@ -165,24 +165,6 @@ echo "  ✓ T029 · Storybook config"
 
 gh issue create \
   --repo "$REPO" \
-  --title "T030 · Send engineering proposal to Abhishek" \
-  --body "$(cat <<'EOF'
-## T030 · Engineering proposal
-
-Polish and send `docs/plans/engineering-proposal.md` to Abhishek. Scheduled for D5 (2026-04-18).
-
-## Acceptance criteria
-
-- [ ] Proposal reviewed and polished
-- [ ] Sent to Abhishek (email or Slack — confirm delivery method)
-- [ ] Any feedback captured in the plan file
-EOF
-)" \
-  --label "phase-b,docs"
-echo "  ✓ T030 · Engineering proposal"
-
-gh issue create \
-  --repo "$REPO" \
   --title "T031 · ROADMAP amendment PR (new phase model)" \
   --body "$(cat <<'EOF'
 ## T031 · ROADMAP amendment

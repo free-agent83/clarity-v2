@@ -79,10 +79,10 @@ Initial repo setup: Nx monorepo structure, token source files, single Button com
 See [`ROADMAP.md`](ROADMAP.md) for the full phased plan.
 
 **Phase B — Proof** (active, 2-week window)
-Build the core component set (~10-15 components). Rebuild a real Nivoda screen using Claude Code + Clarity V2 as the headline demo. Write the engineering proposal for Abhishek. Storybook runs locally.
+Build the core component set (~10-15 components). Rebuild a real Nivoda screen using Claude Code + Clarity V2 as the headline demo. Storybook runs locally.
 
 **Phase C — Distribution**
-Fumadocs documentation site deployed. Onboarding material for self-service UI delivery. First external person (designer or PM) builds something real with Clarity V2 + AI. Engineering conversation converges on a migration strategy.
+Fumadocs documentation site deployed. Onboarding material for self-service UI delivery. First external person (designer or PM) builds something real with Clarity V2 + AI.
 
 **Phase D — Adoption** (conditional, multi-quarter)
 Design and PM use Clarity V2 to ship real features. Platform migration proceeds opportunistically as new features replace old MUI code. Governance (Experience Framework) becomes load-bearing as more people build.

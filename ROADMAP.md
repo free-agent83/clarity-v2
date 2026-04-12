@@ -23,12 +23,10 @@ _Last updated: 2026-04-09_
 ▓▓░░░░░░░░ 20%
 
 - [ ] Core component set (**1 / 15** components built)
-- [x] Engineering proposal drafted
-- [ ] Engineering proposal reviewed and sent to Abhishek
 - [ ] Storybook with 10+ components running locally
 - [ ] Validation build attempted (stretch ambition)
 
-**Metrics:** 1/15 components · 20/20 tests · 18 commits · proposal drafted
+**Metrics:** 1/15 components · 20/20 tests · 18 commits
 
 **Critical path:** Build the remaining 14 components. Everything else in Phase B is either done or waiting on components.
 
@@ -38,7 +36,7 @@ _Last updated: 2026-04-09_
 
 - [ ] Fumadocs documentation site deployed
 - [ ] Onboarding material for designers/PMs
-- [ ] Engineering conversation + migration strategy decided
+- [ ] Engineering conversation + migration strategy decided (post-Phase C)
 - [ ] First person other than Chris builds something real
 
 ### Phase D — Adoption ⚪ Pending
@@ -73,7 +71,7 @@ For the vision, commercial case, and conceptual model of how this repo relates t
 
 ## Phase B — Proof (active, 2-week window)
 
-**Goal:** Prove that Clarity V2 works end-to-end. Build the core component set. Have the engineering proposal ready for Abhishek. Establish the conditions under which a real-world validation (a working Nivoda screen built with Clarity V2 + AI) becomes viable.
+**Goal:** Prove that Clarity V2 works end-to-end. Build the core component set. Establish the conditions under which a real-world validation (a working Nivoda screen built with Clarity V2 + AI) becomes viable.
 
 ### Primary deliverables
 
@@ -86,7 +84,6 @@ For the vision, commercial case, and conceptual model of how this repo relates t
   - Tabs, Alert
   - Separator, Label
 - **Storybook runs locally** for the team; deployment deferred to Phase C
-- **Engineering proposal document** (`docs/plans/engineering-proposal.md`) — a formal pitch for Abhishek covering what Clarity V2 is, what's built, what we need from engineering, and three migration-strategy options for discussion (strangler fig / surface-by-surface / opportunistic replacement)
 - **ROADMAP and supporting docs** — coherent, shareable, telling the story clearly
 
 ### Ambition — the validation build (in Minivoda)
@@ -112,13 +109,12 @@ The resulting build — if it works — becomes the proof artefact: *"This is a 
 - React Native component implementations (later)
 - Any actual platform migration work (Phase D)
 - Component tokens (per-component token files like the platform's 48 files) — not needed yet
-- Formal engineering commitment — that's Phase C
+- Engineering proposal or engineering conversation — deferred until after Phase C
 - Polished, pixel-perfect UI — the validation build is a proof of the loop, not a production ship
 
 ### Success criteria
 
 - Core component set (10+ components) is in Storybook, runs locally
-- Engineering proposal is written and ready to send to Abhishek
 - ROADMAP and supporting docs tell a coherent story
 - Validation build attempted — regardless of outcome, the exercise produces learnings about what's missing, what works, and what Phase C needs to focus on
 
@@ -126,7 +122,7 @@ The resulting build — if it works — becomes the proof artefact: *"This is a 
 
 ## Phase C — Distribution
 
-**Goal:** Make Clarity V2 usable by people beyond Chris. Move from "Chris can build with this" to "any designer or PM can build with this" and "Abhishek knows what to do with this."
+**Goal:** Make Clarity V2 usable by people beyond Chris. Move from "Chris can build with this" to "any designer or PM can build with this."
 
 ### Deliverables
 
@@ -137,12 +133,10 @@ The resulting build — if it works — becomes the proof artefact: *"This is a 
   - The Experience Framework content (governance, surface rules) pulled from the experience-framework repo
   - A single site, two repos, one browsable face
 - **Onboarding material** — a short written guide ("prompt patterns that work well with Clarity V2") plus 2-3 worked examples showing design/PM self-service loops
-- **Engineering conversation happens** — Abhishek reviews the proposal, migration strategy is picked (or explicitly deferred), expectations set for what engineering will and won't do
 - **First external use case** — either another designer or a PM picks up Clarity V2 + agent and builds something real. This validates that the self-service loop works for people who aren't Chris.
 
 ### Open questions to resolve during Phase C
 
-- Migration strategy: strangler fig, surface-by-surface, or opportunistic? Eng and design decide together after reviewing the proposal.
 - Component tokens: do we add platform-style per-component token files now, or stay with semantic tokens only until a real need emerges?
 - Versioning and publishing: how does Clarity V2 get distributed? `file:` linking during development is fine; at some point we need real package publishing (private npm registry or similar).
 - Testing strategy: do we add visual regression testing now (self-hosted, not Chromatic — see ADR-002) or defer?
@@ -176,12 +170,12 @@ This phase is deliberately light on detail because its shape depends on what Pha
 
 ## Open decisions (not yet resolved)
 
-1. **Migration strategy for platform.** Strangler fig / surface-by-surface / opportunistic. Decision needed in Phase C with engineering.
-2. **First demo screen for Phase B.** Chris picks from candidates above.
-3. **Where Fumadocs lives.** Subdomain of nivoda.com? Separate URL? Internal only or public? Phase C decision.
-4. **Engineering commitment level.** What resources can engineering put toward migration? Unknown until Abhishek conversation.
-5. **Component tokens — now or later.** Platform has 48 component-specific token files. Clarity V2 has none. Decide during Phase C after real use reveals whether they're needed.
-6. **Storybook hosting.** Local only for now. At some point: deployed where? Behind VPN like the platform's current Storybook? Publicly? Inside Fumadocs?
+1. **First demo screen for Phase B.** Chris picks from candidates above.
+2. **Where Fumadocs lives.** Subdomain of nivoda.com? Separate URL? Internal only or public? Phase C decision.
+3. **Component tokens — now or later.** Platform has 48 component-specific token files. Clarity V2 has none. Decide during Phase C after real use reveals whether they're needed.
+4. **Storybook hosting.** Local only for now. At some point: deployed where? Behind VPN like the platform's current Storybook? Publicly? Inside Fumadocs?
+5. **Migration strategy for platform.** Strangler fig / surface-by-surface / opportunistic. Deferred until after Phase C — engineering conversation happens only once the library is proven.
+6. **Engineering commitment level.** What resources can engineering put toward migration? Deferred until after Phase C.
 
 ---
 
@@ -189,7 +183,7 @@ This phase is deliberately light on detail because its shape depends on what Pha
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| **Engineering doesn't engage or actively resists** | Platform migration track stalls; self-service track continues unblocked but half the value story is lost | Engineering proposal document written carefully; offer multiple migration options; let eng pick; start with non-blocking asks |
+| **Engineering doesn't engage or actively resists** | Platform migration track stalls; self-service track continues unblocked but half the value story is lost | Build the proof first (Phases B+C), then approach engineering with a working library and validation artefact. Let eng pick migration strategy; start with non-blocking asks |
 | **Validation build reveals major gaps in the component library** | Phase B doesn't produce the "design-correct by construction" proof as cleanly as hoped | Accept the learning — a failed attempt that surfaces specific gaps is more valuable than no attempt. Feed the findings into Phase C component additions. |
 | **Chris is the only person who can build with this** | Self-service goal collapses to "Chris builds everything" | Phase C explicitly includes a second person (designer or PM) building something real, validated as success criterion |
 | **Token alignment values don't match Figma libraries** | Visual drift between designs and implemented UI | Figma DS Foundation audit scheduled; Chris or designer cross-references when a conflict is found |

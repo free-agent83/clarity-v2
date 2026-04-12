@@ -44,7 +44,6 @@
 | ID   | Task                                    | Phase | Built by | Done |
 |------|-----------------------------------------|-------|----------|------|
 | T029 | Storybook config: category sidebar, retitle Button, Foundations section | B | | |
-| T030 | Send engineering proposal to Abhishek   | B     |          |      |
 | T031 | ROADMAP amendment PR (new phase model)  | B     |          |      |
 
 ---
@@ -97,7 +96,7 @@
 | D2  | 04-15 | Mediums batch 1 | T012–T017 (6 components) |
 | D3  | 04-16 | Mediums batch 2 | T018–T023 (6 components) |
 | D4  | 04-17 | Finalisers | T024–T027 (4 components) |
-| D5  | 04-18 | Proposal send + ROADMAP PR + rescope checkpoint | T030, T031, T052 |
+| D5  | 04-18 | ROADMAP PR + rescope checkpoint | T031, T052 |
 
 ## Week 2 schedule (Phase C — candidate, confirmed at rescope)
 
