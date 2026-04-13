@@ -3,7 +3,15 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
+import { Spinner } from "@/components/atoms/spinner/spinner"
 
+/**
+ * Button variants.
+ *
+ * Variant axis = visual style (default, outline, secondary, ghost, destructive, success, link)
+ * Size axis    = default, sm, lg, icon, icon-xs, icon-sm
+ * Block axis   = boolean, stretches the button to fill its container
+ */
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-md border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
@@ -49,27 +57,52 @@ const buttonVariants = cva(
 interface ButtonProps
   extends React.ComponentProps<"button">,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+  asChild?: boolean
+  loading?: boolean
 }
 
+/**
+ * Primary interactive element for triggering actions.
+ *
+ * Wraps a native `<button>` by default. Pass `asChild` to render as a
+ * different element (e.g. an anchor styled as a button) while keeping
+ * the same variant styling.
+ *
+ * When `loading` is true, a spinner is prepended to the children, the
+ * button is effectively disabled, and `aria-busy` is set. `loading` has
+ * no effect when `asChild` is true — consumers rendering via Slot must
+ * manage loading state on the child element themselves.
+ *
+ * @see {@link buttonVariants} for the full variant/size matrix.
+ */
 function Button({
   className,
   variant = "default",
   size = "default",
   block = false,
   asChild = false,
+  loading = false,
+  disabled,
+  children,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot.Root : "button"
+  const isLoading = loading && !asChild
+  const isDisabled = disabled || isLoading
 
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
       data-size={size}
+      data-loading={isLoading || undefined}
+      aria-busy={isLoading || undefined}
+      disabled={isDisabled}
       className={cn(buttonVariants({ variant, size, block, className }))}
       {...props}
-    />
+    >
+      {asChild ? children : <>{isLoading ? <Spinner /> : null}{children}</>}
+    </Comp>
   )
 }
 

@@ -35,6 +35,7 @@ const meta: Meta<typeof Button> = {
     },
     block: { control: "boolean" },
     asChild: { control: "boolean" },
+    loading: { control: "boolean" },
     disabled: { control: "boolean" },
   },
 };
@@ -80,4 +81,8 @@ export const AsChild: Story = {
       <a href="#">Link as button</a>
     </Button>
   ),
+};
+
+export const Loading: Story = {
+  args: { loading: true },
 };
