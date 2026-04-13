@@ -12,7 +12,7 @@ import {
 import {
   InputGroup,
   InputGroupAddon,
-} from "@/components/ui/input-group"
+} from "@/components/atoms/input-group/input-group"
 import { IconSearch, IconCheck } from "@tabler/icons-react"
 
 function Command({
