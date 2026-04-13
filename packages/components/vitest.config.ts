@@ -15,6 +15,21 @@ export default defineConfig({
             storybookScript: "npm run storybook -- --ci",
           }),
         ],
+        // Pre-bundle React + JSX runtime before the browser tests run.
+        // Without this, Vite's dep optimizer discovers `react/jsx-dev-runtime`
+        // mid-test-run on a cold cache (i.e. CI), reloads the test runtime,
+        // and whatever story was executing at that moment crashes with
+        // `useState` called on a null React. Locally it is hidden by the
+        // warm cache from prior runs.
+        optimizeDeps: {
+          include: [
+            "react",
+            "react/jsx-runtime",
+            "react/jsx-dev-runtime",
+            "react-dom",
+            "react-dom/client",
+          ],
+        },
         test: {
           name: "storybook",
           browser: {
