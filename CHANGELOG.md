@@ -4,40 +4,6 @@ All notable progress on Clarity V2 is recorded here. Most recent entries first.
 
 ---
 
-## 2026-04-13 — Button conformance pass and CONTRIBUTING realignment
-
-Promoted Button to `stable` after a conformance pass against `packages/components/CONTRIBUTING.md`, and amended CONTRIBUTING itself where its guidance had drifted from current decisions.
-
-**Button changes:**
-- Introduced a named `ButtonProps` interface, exported as a type. Previously the prop type was inlined on the function signature.
-- Added a `loading` prop that prepends a `Spinner`, forces the button disabled, and sets `aria-busy`. Uses the existing `atoms/spinner` atom.
-- Added JSDoc blocks on `buttonVariants` (naming each variant axis) and on the `Button` export (describing purpose, the `asChild` escape hatch, and a link to the variants object). Matches CONTRIBUTING's "two mandatory JSDoc blocks" rule.
-- Fixed indentation on the destructive/success/link variant entries in `buttonVariants`.
-- Fixed the Storybook `argTypes.size` options, removing the non-existent `icon-lg` option. Added a `Loading` story and a `loading` control.
-- Filled out `COMPONENT.md` (frontmatter, props, usage, best practices, writing, quality checklist). Version `0.0.0` → `0.1.0`, status `unstable` → `stable`.
-- Uncommented the Button line in `packages/components/src/index.ts` and added the `ButtonProps` type export alongside it.
-- Imported `Spinner` via the `@/components/atoms/spinner/spinner` alias (matching the existing `@/lib/utils` import right above it) rather than a relative path. This choice surfaced a latent `packages/components/vite.config.ts` bug once the barrel went live: the `@/` alias was wired in `tsconfig.json` and `.storybook/main.ts` but not in the library vite config, so rollup couldn't resolve `@/lib/utils` or `@/components/atoms/spinner/spinner` once `button.tsx` entered the build graph. Added the alias to the library vite config as part of the barrel commit.
-
-**CONTRIBUTING.md changes and reasoning:**
-
-- **Dropped the `forwardRef` / `displayName` convention.** Reason: we are following shadcn's React-19 defaults (plain function components, no ref forwarding). The ecosystem is transitioning to treating `ref` as a regular prop, and introducing `forwardRef` today would be premature overhead. This may be revisited if a consumer needs ref access that plain function components can't provide.
-- **Relaxed the minimum story set.** Reason: developers can exercise variants, sizes, and boolean states directly through Storybook's `argTypes` controls panel — dedicated stories for each permutation are redundant. The new rule: write a story only when a usage pattern isn't discoverable from the controls (icon children, `asChild` composition, wrapper-dependent behaviour, etc.). Every component still has at least one default story as an anchor for the controls playground.
-- **Removed Button-as-reference language and genericized all Button-shaped code examples.** Reason: the previous CONTRIBUTING pointed at Button as "a living reference", but Button didn't actually conform to the conventions it was supposed to exemplify. Examples are now genericized (`Component` / `componentVariants` / `ComponentProps`) so CONTRIBUTING teaches patterns without binding them to a specific real component. A real reference can be re-anchored later if useful.
-- **Removed Figma parity from the `COMPONENT.md` quality checklist.** Reason: how Clarity V2 components should be represented in Figma (authored there first, generated from code, hand-maintained in parallel, or something else) is an unresolved programme-level question. Until that decision is made, the component library is the source of truth, not Figma, and gating components on Figma parity would hold them hostage to an undecided process. Figma parity returns as a quality gate only after the Figma strategy lands.
-- **Deleted the "Setup: testing infrastructure" section.** Reason: the section claimed `@storybook/addon-a11y`, `@storybook/experimental-addon-test`, `@storybook/test`, and `vitest` still needed to be installed. Verified against `packages/components/package.json`: they are all already installed, and `test:storybook` is already in the package scripts. The section was stale.
-
-**Scope explicitly excluded from this pass** (documented here so future work doesn't assume they were silently considered and rejected):
-
-- **Variant / intent / size taxonomy redesign.** Current taxonomy is single-axis shadcn-flat (`default | outline | secondary | ghost | destructive | success | link`) with a separate `size` axis. CONTRIBUTING's illustrative example shows a two-axis `variant × intent` pattern, but that was always illustrative, not binding. A real taxonomy decision needs design-lead input and a breaking-change plan for any downstream consumers — neither of which belong in a conformance pass.
-- **Arbitrary `rounded-[min(var(--radius-md),10px)]` values.** Left in the code. They use CSS variables (not raw literals) so they don't violate the "tokens only" rule strictly, but they're a soft gap under the "no arbitrary value syntax" guidance. Flagged in Button's `COMPONENT.md` under "Known deviations".
-- **Slot import source.** `import { Slot } from "radix-ui"` remains. Changing it to `@radix-ui/react-slot` is a micro-cleanup, not a conformance issue.
-
-**Verification:** `tsc --noEmit`, `nx build components`, `vitest run --project=storybook`, and Storybook dev server smoke test all pass for Button. Grep of `button.tsx` confirms no hex values, no arbitrary pixel/colour syntax, and only the known `rounded-[min(...)]` deviation.
-
-See [`docs/superpowers/specs/2026-04-13-button-conformance-design.md`](docs/superpowers/specs/2026-04-13-button-conformance-design.md) for the full spec and [`docs/superpowers/plans/2026-04-13-button-conformance.md`](docs/superpowers/plans/2026-04-13-button-conformance.md) for the implementation plan.
-
----
-
 ## 2026-04-10 — Architectural correction: tokens package is surface-agnostic
 
 Removed the shadcn-specific layer from the tokens package. The tokens package now emits only primitives and the surface-agnostic semantic layer; any mapping to a specific surface theme (shadcn, Tailwind `@theme`, etc.) lives in-loco in the consumer.
