@@ -9,7 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Added
-- Seeded all base shadcn/ui components (51 total) with Default stories and scaffolded COMPONENT.md files (#103)
+- Seeded all base shadcn/ui components (52 total) with Default stories and scaffolded COMPONENT.md files (#103)
 - Resolved shadcn CLI approach in CONTRIBUTING.md — CLI scaffold + adapt
 - Updated sidebar taxonomy with full component-to-category mapping
 - Added Layout category (Direction, Item)
