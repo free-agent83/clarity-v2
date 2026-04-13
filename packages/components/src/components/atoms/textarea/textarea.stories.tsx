@@ -10,4 +10,6 @@ const meta: Meta<typeof Textarea> = {
 export default meta;
 type Story = StoryObj<typeof Textarea>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => <Textarea placeholder="Placeholder" className="w-64" />,
+};

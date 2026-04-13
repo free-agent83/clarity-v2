@@ -10,4 +10,12 @@ const meta: Meta<typeof AspectRatio> = {
 export default meta;
 type Story = StoryObj<typeof AspectRatio>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <div className="w-64">
+      <AspectRatio ratio={16 / 9}>
+        <div className="size-full bg-muted flex items-center justify-center">16:9</div>
+      </AspectRatio>
+    </div>
+  ),
+};

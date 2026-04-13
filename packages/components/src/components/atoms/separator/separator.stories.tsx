@@ -10,4 +10,12 @@ const meta: Meta<typeof Separator> = {
 export default meta;
 type Story = StoryObj<typeof Separator>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <div className="w-64 space-y-2">
+      <div>Above</div>
+      <Separator />
+      <div>Below</div>
+    </div>
+  ),
+};

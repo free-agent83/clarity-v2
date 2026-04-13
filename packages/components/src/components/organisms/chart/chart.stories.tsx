@@ -18,4 +18,9 @@ export const Default: Story = {
   parameters: {
     docs: { disable: true },
   },
+  render: () => (
+    <div className="p-4 text-muted-foreground">
+      Chart requires Recharts config + data — see per-component build ticket.
+    </div>
+  ),
 };

@@ -1,5 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Drawer } from "./drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./drawer";
 
 const meta: Meta<typeof Drawer> = {
   title: "Overlays/Drawer",
@@ -10,4 +17,16 @@ const meta: Meta<typeof Drawer> = {
 export default meta;
 type Story = StoryObj<typeof Drawer>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <Drawer defaultOpen>
+      <DrawerTrigger>Trigger</DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Title</DrawerTitle>
+          <DrawerDescription>Description</DrawerDescription>
+        </DrawerHeader>
+      </DrawerContent>
+    </Drawer>
+  ),
+};

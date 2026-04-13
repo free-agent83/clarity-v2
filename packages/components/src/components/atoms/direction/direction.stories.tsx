@@ -10,4 +10,10 @@ const meta: Meta<typeof DirectionProvider> = {
 export default meta;
 type Story = StoryObj<typeof DirectionProvider>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <DirectionProvider dir="ltr">
+      <div>Direction: ltr</div>
+    </DirectionProvider>
+  ),
+};

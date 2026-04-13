@@ -1,5 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Dialog } from "./dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./dialog";
 
 const meta: Meta<typeof Dialog> = {
   title: "Overlays/Dialog",
@@ -10,4 +17,16 @@ const meta: Meta<typeof Dialog> = {
 export default meta;
 type Story = StoryObj<typeof Dialog>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <Dialog defaultOpen>
+      <DialogTrigger>Trigger</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Title</DialogTitle>
+          <DialogDescription>Description</DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  ),
+};

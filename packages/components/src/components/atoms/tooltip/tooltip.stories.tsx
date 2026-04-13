@@ -1,10 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Overlays/Tooltip",
@@ -18,9 +13,9 @@ type Story = StoryObj<typeof Tooltip>;
 export const Default: Story = {
   render: () => (
     <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>Hover me</TooltipTrigger>
-        <TooltipContent>Tooltip content</TooltipContent>
+      <Tooltip defaultOpen>
+        <TooltipTrigger>Trigger</TooltipTrigger>
+        <TooltipContent>Content</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   ),

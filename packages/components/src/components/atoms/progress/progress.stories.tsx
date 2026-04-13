@@ -10,4 +10,6 @@ const meta: Meta<typeof Progress> = {
 export default meta;
 type Story = StoryObj<typeof Progress>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => <Progress value={33} className="w-64" />,
+};

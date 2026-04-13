@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Item } from "./item";
+import { Item, ItemContent, ItemTitle, ItemDescription } from "./item";
 
 const meta: Meta<typeof Item> = {
   title: "Display/Item",
@@ -10,4 +10,13 @@ const meta: Meta<typeof Item> = {
 export default meta;
 type Story = StoryObj<typeof Item>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <Item>
+      <ItemContent>
+        <ItemTitle>Title</ItemTitle>
+        <ItemDescription>Description</ItemDescription>
+      </ItemContent>
+    </Item>
+  ),
+};

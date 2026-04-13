@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { HoverCard } from "./hover-card";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "./hover-card";
 
 const meta: Meta<typeof HoverCard> = {
   title: "Overlays/HoverCard",
@@ -10,4 +10,11 @@ const meta: Meta<typeof HoverCard> = {
 export default meta;
 type Story = StoryObj<typeof HoverCard>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <HoverCard defaultOpen>
+      <HoverCardTrigger>Trigger</HoverCardTrigger>
+      <HoverCardContent>Content</HoverCardContent>
+    </HoverCard>
+  ),
+};

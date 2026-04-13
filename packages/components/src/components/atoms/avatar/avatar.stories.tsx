@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Avatar } from "./avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 
 const meta: Meta<typeof Avatar> = {
   title: "Display/Avatar",
@@ -10,4 +10,11 @@ const meta: Meta<typeof Avatar> = {
 export default meta;
 type Story = StoryObj<typeof Avatar>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <Avatar>
+      <AvatarImage src="https://github.com/shadcn.png" alt="" />
+      <AvatarFallback>CN</AvatarFallback>
+    </Avatar>
+  ),
+};

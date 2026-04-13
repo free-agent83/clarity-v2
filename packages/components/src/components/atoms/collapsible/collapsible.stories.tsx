@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Collapsible } from "./collapsible";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./collapsible";
 
 const meta: Meta<typeof Collapsible> = {
   title: "Display/Collapsible",
@@ -10,4 +10,11 @@ const meta: Meta<typeof Collapsible> = {
 export default meta;
 type Story = StoryObj<typeof Collapsible>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: () => (
+    <Collapsible defaultOpen>
+      <CollapsibleTrigger>Trigger</CollapsibleTrigger>
+      <CollapsibleContent>Content</CollapsibleContent>
+    </Collapsible>
+  ),
+};
