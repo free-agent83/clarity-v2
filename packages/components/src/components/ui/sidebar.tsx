@@ -13,7 +13,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet"
+} from "@/components/molecules/sheet/sheet"
 import { Skeleton } from "@/components/atoms/skeleton/skeleton"
 import {
   Tooltip,
