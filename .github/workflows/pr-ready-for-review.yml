@@ -1,0 +1,86 @@
+name: Move linked issue to Ready for design review
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+jobs:
+  update-project-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move linked issues to Ready for design review
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // Get linked issues via timeline events
+            const timeline = await github.paginate(
+              github.rest.issues.listEventsForTimeline,
+              { owner, repo, issue_number: pr.number, per_page: 100 }
+            );
+
+            const linkedIssueNumbers = timeline
+              .filter(e => e.event === 'cross-referenced' && e.source?.issue)
+              .map(e => e.source.issue.number);
+
+            // Also parse "Closes #N" from PR body
+            const bodyLinks = (pr.body || '').matchAll(/(?:closes?|fixes?|resolves?)\s+#(\d+)/gi);
+            for (const match of bodyLinks) {
+              linkedIssueNumbers.push(parseInt(match[1]));
+            }
+
+            const uniqueIssues = [...new Set(linkedIssueNumbers)];
+            if (uniqueIssues.length === 0) {
+              console.log('No linked issues found');
+              return;
+            }
+
+            const PROJECT_ID = 'PVT_kwHOAHPG9c4BUZBA';
+            const STATUS_FIELD_ID = 'PVTSSF_lAHOAHPG9c4BUZBAzhBheRA';
+            const READY_FOR_REVIEW_OPTION_ID = 'b193fc17';
+
+            for (const issueNumber of uniqueIssues) {
+              console.log(`Processing issue #${issueNumber}`);
+
+              // Find the issue's project item
+              const result = await github.graphql(`
+                query($owner: String!, $repo: String!, $issue: Int!) {
+                  repository(owner: $owner, name: $repo) {
+                    issue(number: $issue) {
+                      projectItems(first: 10) {
+                        nodes {
+                          id
+                          project { id }
+                        }
+                      }
+                    }
+                  }
+                }
+              `, { owner, repo, issue: issueNumber });
+
+              const items = result.repository.issue.projectItems.nodes
+                .filter(item => item.project.id === PROJECT_ID);
+
+              for (const item of items) {
+                await github.graphql(`
+                  mutation($project: ID!, $item: ID!, $field: ID!, $value: String!) {
+                    updateProjectV2ItemFieldValue(input: {
+                      projectId: $project
+                      itemId: $item
+                      fieldId: $field
+                      value: { singleSelectOptionId: $value }
+                    }) { projectV2Item { id } }
+                  }
+                `, {
+                  project: PROJECT_ID,
+                  item: item.id,
+                  field: STATUS_FIELD_ID,
+                  value: READY_FOR_REVIEW_OPTION_ID,
+                });
+                console.log(`Moved issue #${issueNumber} to Ready for design review`);
+              }
+            }
