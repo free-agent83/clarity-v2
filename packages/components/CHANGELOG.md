@@ -17,6 +17,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ### Changed
 - Button story sidebar title from `Atoms/Button` to `Actions/Button`
 - Removed Icon Button from taxonomy (will be an icon-only Button variant)
+- Chip deferred from Display taxonomy (not part of this issue)
 
 ### Removed
 - 7 shadcn components excluded from scope: Native Select, Date Picker, Calendar, Context Menu, Menubar, Toast, Resizable
