@@ -33,7 +33,7 @@ After this ticket lands, the package will have:
 
 ### In scope
 
-1. **Testing infrastructure setup** in `packages/components/`: install `vitest`, `@storybook/addon-vitest`, `@storybook/addon-a11y`, `@storybook/test`, `@vitest/browser`, `playwright`. Add `vitest.config.ts`. Update `.storybook/main.ts` addons array. Add `.storybook/preview.ts` with a global `a11y.test: "todo"` parameter (warn-only mode). Add `test` and `test:storybook` scripts to `package.json`.
+1. **Testing infrastructure setup** in `packages/components/`: install `vitest`, `@storybook/experimental-addon-test`, `@storybook/addon-a11y`, `@storybook/test`, `@vitest/browser`, `playwright`. Add `vitest.config.ts`. Update `.storybook/main.ts` addons array. Update `.storybook/preview.ts` with a global `a11y.test: "off"` parameter (violations surface in Storybook UI, do not fail CI). Add `test` and `test:storybook` scripts to `package.json`. (Addon name note: `@storybook/experimental-addon-test` is the correct package on Storybook 8.6.x; it was renamed to `@storybook/addon-vitest` in Storybook 9+.)
 2. **Folder reorganisation**: move all 50 in-scope components from `src/components/ui/<name>.tsx` into `src/components/{atoms|molecules|organisms}/<name>/<name>.tsx`. Rewrite all cross-component imports from the old `@/components/ui/<x>` path to the new atomic path.
 3. **Stories**: add a `<name>.stories.tsx` per component with one `Default` story, `tags: ["autodocs"]`, and a sidebar `title:` from CONTRIBUTING.md §"Sidebar taxonomy".
 4. **COMPONENT.md stubs**: add one per component, with YAML frontmatter (`status: unstable`, `version: 0.0.0`, `lastUpdated: 2026-04-13`) and every section body set to `[WIP]`.
@@ -87,7 +87,7 @@ Every one of the 50 components gets a commented-out line in `src/index.ts`, grou
 
 If any failure is encountered during seeding (axe-core violation, render quirk, missing context, broken compound-component mounting), the fix is **documentation, not source modification**:
 
-- **a11y violations** are surfaced by `@storybook/addon-a11y` but do not fail CI: the addon runs in `test: "todo"` mode (warn-only). Violations are noted in the affected component's `COMPONENT.md` as an unchecked item in the Quality checklist (e.g. `- [ ] axe: 2 violations flagged, see follow-up ticket`).
+- **a11y violations** are surfaced by `@storybook/addon-a11y` in the Storybook dev UI but do not fail CI: the addon runs in `test: "off"` mode on Storybook 8.6.x (the addon's 8.6 API does not support `"todo"`; `"off"` is the default and is set explicitly to document intent). Violations are noted in the affected component's `COMPONENT.md` as an unchecked item in the Quality checklist (e.g. `- [ ] axe: 2 violations flagged, see follow-up ticket`).
 - **Render quirks** where a component's `Default` story genuinely cannot mount (e.g. a Radix primitive that throws without required parent context) are handled by adding the smallest possible literal-children skeleton to the `Default` story. If even that is not possible, the story is excluded via `parameters.docs.disable` plus a `COMPONENT.md` note — never by patching the shadcn source.
 - **Cross-component import breakage** from the move is a structural fix and is resolved in the usual way (rewrite the import path). Not a documentation case.
 
@@ -287,30 +287,33 @@ Implementation rule: each commented line lists the **actual** named exports from
 
 Add to `devDependencies` in `packages/components/package.json`:
 
-- `vitest`
-- `@storybook/addon-vitest`
-- `@storybook/addon-a11y`
-- `@storybook/test`
-- `@vitest/browser`
-- `playwright`
+- `vitest@^3`
+- `@storybook/experimental-addon-test@8.6.18`
+- `@storybook/addon-a11y@8.6.18`
+- `@storybook/test@8.6.18`
+- `@vitest/browser@^3`
+- `playwright@^1`
 
-Pin versions to whatever is compatible with Storybook `8.6.18` (the line already in the package). Exact versions resolved at implementation time.
+Versions pinned against Storybook `8.6.18` (the line already in the package). `@storybook/experimental-addon-test@8.6.18` declares peer deps `vitest@^2.1.1 || ^3.0.0`, `@vitest/browser@^2.1.1 || ^3.0.0` — we take vitest 3.x for the current major.
 
 ### `vitest.config.ts`
 
-New file at `packages/components/vitest.config.ts`. One "storybook" project that uses `@storybook/addon-vitest/vitest-plugin` to discover every `*.stories.tsx` and turn each story into a render test. Browser mode enabled, headless, Chromium via Playwright. No other projects, no other test patterns — this is the only test surface.
+New file at `packages/components/vitest.config.ts`. One "storybook" project that uses `@storybook/experimental-addon-test/vitest-plugin` to discover every `*.stories.tsx` and turn each story into a render test. Browser mode enabled, headless, Chromium via Playwright. No other projects, no other test patterns — this is the only test surface.
 
 ### `.storybook/main.ts` update
 
-Add `"@storybook/addon-a11y"` and `"@storybook/addon-vitest"` to the `addons` array. The stories glob (`../src/**/*.stories.@(ts|tsx)`) is unchanged and already picks up the new folder layout.
+Add `"@storybook/addon-a11y"` and `"@storybook/experimental-addon-test"` to the `addons` array. The stories glob (`../src/**/*.stories.@(ts|tsx)`) is unchanged and already picks up the new folder layout.
 
 ### `.storybook/preview.ts` update
 
-Global `parameters` object with `a11y.test: "todo"` (warn-only mode). Violations surface in the Storybook UI but do not fail `vitest run`.
+Add a global `a11y` parameter with `test: "off"` — violations surface in the Storybook dev UI but do not fail `vitest run`. The existing `controls` parameters stay as-is.
 
 ```ts
-export const parameters = {
-  a11y: { test: "todo" },
+const preview: Preview = {
+  parameters: {
+    controls: { /* existing */ },
+    a11y: { test: "off" },
+  },
 };
 ```
 
@@ -396,8 +399,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Atomic design folder structure (`atoms/`, `molecules/`, `organisms/`) per CONTRIBUTING.md §"Folder structure". All 50 components moved into `components/<layer>/<name>/` folders with per-component Storybook story and `COMPONENT.md` stub.
 - One base Storybook story (`Default`) per component, with sidebar category from CONTRIBUTING.md §"Sidebar taxonomy".
 - `COMPONENT.md` skeleton per component with frontmatter (`status: unstable`, `version: 0.0.0`) and `[WIP]` section bodies.
-- Testing infrastructure: `vitest`, `@storybook/addon-vitest`, `@storybook/addon-a11y`, `@storybook/test`, `@vitest/browser`, `playwright`. `vitest.config.ts` runs every story as a render test via addon-vitest in headless Chromium. `test` and `test:storybook` scripts added.
-- `@storybook/addon-a11y` runs in `test: "todo"` warn-only mode — unaudited shadcn defaults may have violations; these are documented in each affected component's `COMPONENT.md` rather than fixed (deferred to per-component build tickets).
+- Testing infrastructure: `vitest@^3`, `@storybook/experimental-addon-test@8.6.18`, `@storybook/addon-a11y@8.6.18`, `@storybook/test@8.6.18`, `@vitest/browser@^3`, `playwright@^1`. `vitest.config.ts` runs every story as a render test via the experimental-addon-test vitest plugin in headless Chromium. `test` and `test:storybook` scripts added.
+- `@storybook/addon-a11y` runs in `test: "off"` mode (the SB 8.6.x default, set explicitly) — unaudited shadcn defaults may have violations; these surface in the Storybook dev UI but do not fail CI, and will be documented in each affected component's `COMPONENT.md` rather than fixed (deferred to per-component build tickets).
 - `CHANGELOG.md` (this file).
 - `.github/workflows/components.yml` — CI runs `test:storybook` and `build-storybook` on any change under `packages/components/**`.
 - Barrel surface in `src/index.ts`: commented-out export lines for every component, grouped by layer. Uncommenting a line publishes that component.
