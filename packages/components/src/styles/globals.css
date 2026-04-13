@@ -5,6 +5,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/**
+* Default mapping for shadcn theme
+* Do not overwrite directly — assign tokens below
+**/
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Inter Variable', sans-serif;
@@ -48,6 +52,10 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/**
+* Base shadcn token assignment, light mode
+* Overwrite with our own tokens
+**/
 :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.147 0.004 49.25);
@@ -83,6 +91,10 @@
     --sidebar-ring: oklch(0.709 0.01 56.259);
 }
 
+/**
+* Base shadcn token assignment, dark mode
+* Overwrite with our own tokens
+**/
 .dark {
     --background: oklch(0.147 0.004 49.25);
     --foreground: oklch(0.985 0.001 106.423);
