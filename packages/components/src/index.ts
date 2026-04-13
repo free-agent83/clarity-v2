@@ -260,6 +260,12 @@ export {
   PaginationEllipsis,
 } from "./components/molecules/pagination/pagination";
 
+// Layout — atoms
+export { DirectionProvider } from "./components/atoms/direction/direction";
+export type { DirectionProviderProps } from "./components/atoms/direction/direction";
+export { Item } from "./components/atoms/item/item";
+export type { ItemProps } from "./components/atoms/item/item";
+
 // Navigation — organisms
 export {
   Sidebar,
