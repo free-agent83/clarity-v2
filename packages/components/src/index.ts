@@ -148,3 +148,45 @@ export type { EmptyProps } from "./components/atoms/empty/empty";
 
 // Feedback — molecules
 export { Toaster } from "./components/molecules/sonner/sonner";
+
+// Display — atoms
+export { Badge, badgeVariants } from "./components/atoms/badge/badge";
+export {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  AvatarBadge,
+  AvatarGroup,
+  AvatarGroupCount,
+} from "./components/atoms/avatar/avatar";
+export { Separator } from "./components/atoms/separator/separator";
+export { AspectRatio } from "./components/atoms/aspect-ratio/aspect-ratio";
+export { ScrollArea, ScrollBar } from "./components/atoms/scroll-area/scroll-area";
+export { Typography } from "./components/atoms/typography/typography";
+export type { TypographyProps } from "./components/atoms/typography/typography";
+export { Kbd } from "./components/atoms/kbd/kbd";
+export type { KbdProps } from "./components/atoms/kbd/kbd";
+
+// Display — molecules
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+} from "./components/molecules/card/card";
+export {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "./components/molecules/carousel/carousel";
+export {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "./components/molecules/collapsible/collapsible";
