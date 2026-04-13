@@ -1,0 +1,41 @@
+name: components
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "packages/components/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/components.yml"
+  push:
+    branches: [main, dev]
+    paths:
+      - "packages/components/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/components.yml"
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: packages/components
+
+      - name: Run Storybook vitest tests
+        run: npm run test:storybook --workspace=@nivoda/components
+
+      - name: Verify Storybook build
+        run: npm run build-storybook --workspace=@nivoda/components
