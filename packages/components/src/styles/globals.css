@@ -57,16 +57,16 @@
   --font-mono: var(--font-family-mono);
 }
 
-/* Sidebar tokens */
+/* Sidebar tokens — mapped to semantic design tokens, no raw values */
 :root {
-  --sidebar: hsl(0 0% 98%);
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: var(--color-semantic-background-subtle);
+  --sidebar-foreground: var(--color-semantic-foreground-muted);
+  --sidebar-primary: var(--color-semantic-primary-default);
+  --sidebar-primary-foreground: var(--color-semantic-foreground-inverse);
+  --sidebar-accent: var(--color-semantic-background-muted);
+  --sidebar-accent-foreground: var(--color-semantic-primary-default);
+  --sidebar-border: var(--color-semantic-border-subtle);
+  --sidebar-ring: var(--color-semantic-border-focus);
 }
 
 @theme inline {
