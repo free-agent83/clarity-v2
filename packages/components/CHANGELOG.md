@@ -8,17 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Button conformance pass (2026-04-13)
 
-Promoted Button to `stable 0.1.0` after a conformance pass against `packages/components/CONTRIBUTING.md`, and amended CONTRIBUTING itself where its guidance had drifted from current decisions. See [`docs/superpowers/specs/2026-04-13-button-conformance-design.md`](../../docs/superpowers/specs/2026-04-13-button-conformance-design.md) for the full spec and [`docs/superpowers/plans/2026-04-13-button-conformance.md`](../../docs/superpowers/plans/2026-04-13-button-conformance.md) for the plan.
+Promoted Button to `stable 0.1.0` after a conformance pass against `packages/components/CONTRIBUTING.md`, and amended CONTRIBUTING itself where its guidance had drifted from current decisions.
 
 **Button changes:**
-- Introduced a named `ButtonProps` interface, exported as a type. Previously the prop type was inlined on the function signature.
-- Added a `loading` prop that prepends a `Spinner`, forces the button disabled, and sets `aria-busy` + `data-loading`. No effect when `asChild` is true — Radix Slot's single-child contract forbids injecting an additional spinner, and the Slot child is expected to manage its own loading state.
-- Added JSDoc blocks on `buttonVariants` (naming each variant axis) and on the `Button` export (describing purpose, the `asChild` escape hatch, and the `loading`/`asChild` interaction). Matches CONTRIBUTING's "two mandatory JSDoc blocks" rule.
-- Fixed indentation on the destructive/success/link variant entries in `buttonVariants`.
-- Removed the non-existent `icon-lg` option from `button.stories.tsx` `argTypes.size`. Added a `Loading` story and a `loading` argTypes control.
-- Filled out `button/COMPONENT.md` (frontmatter, props, usage, best practices, writing, known deviations, quality checklist). Version `0.0.0` → `0.1.0`, status `unstable` → `stable`.
-- Uncommented the Button line in `src/index.ts` and added the `ButtonProps` type export alongside it — Button is now publicly exported from the package barrel.
-- Imported `Spinner` via the `@/components/atoms/spinner/spinner` alias (matching the existing `@/lib/utils` import above it). This choice surfaced a latent `vite.config.ts` bug once the barrel went live: the `@/` alias was wired in `tsconfig.json` and `.storybook/main.ts` but not in the library vite config, so rollup couldn't resolve `@/lib/utils` or `@/components/atoms/spinner/spinner` once `button.tsx` entered the build graph. Added the alias to the library vite config as part of the barrel commit.
+- New `ButtonProps` interface (named, type-exported) and a new `loading?: boolean` prop — prepends a `Spinner`, forces the button disabled, sets `aria-busy` + `data-loading`. Silently ignored when `asChild` is true (Slot single-child contract).
+- JSDoc blocks on `buttonVariants` (each axis) and on `Button` (purpose, `asChild`, loading/asChild interaction) per CONTRIBUTING's two-JSDoc rule.
+- Fixes: indentation on destructive/success/link variants; removed the dead `icon-lg` option from `argTypes.size`.
+- Stories: new `Loading` story and `loading` argTypes control.
+- `button/COMPONENT.md` fleshed out end-to-end; promoted to `status: stable`, `version: 0.1.0`.
+- `Button`, `buttonVariants`, and `ButtonProps` now exported from the package barrel (`src/index.ts`).
+- Added the `@/` alias to `vite.config.ts` — previously wired in `tsconfig.json` and `.storybook/main.ts` but missing from the library build, which broke rollup once `button.tsx` entered the build graph via the barrel.
 
 **CONTRIBUTING.md changes and reasoning:**
 - **Dropped the `forwardRef` / `displayName` convention.** Reason: we are following shadcn's React-19 defaults (plain function components, no ref forwarding). The ecosystem is transitioning to treating `ref` as a regular prop, and introducing `forwardRef` today would be premature overhead. This may be revisited if a consumer needs ref access that plain function components can't provide.
