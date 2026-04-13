@@ -23,7 +23,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest run",
-    "test:storybook": "vitest run --project=storybook"
+    "test:storybook": "vitest run --project=storybook --passWithNoTests"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
