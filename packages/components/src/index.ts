@@ -160,6 +160,7 @@ export {
   AvatarGroupCount,
 } from "./components/atoms/avatar/avatar";
 export { Separator } from "./components/atoms/separator/separator";
+export type { SeparatorProps } from "./components/atoms/separator/separator";
 export { AspectRatio } from "./components/atoms/aspect-ratio/aspect-ratio";
 export { ScrollArea, ScrollBar } from "./components/atoms/scroll-area/scroll-area";
 export { Typography } from "./components/atoms/typography/typography";

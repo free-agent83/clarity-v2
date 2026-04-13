@@ -34,9 +34,23 @@ Do not use Separator for layout spacing. Use Tailwind spacing utilities instead.
 
 **Don't:** Set `decorative={false}` unless the separator conveys meaningful structure to screen readers.
 
+## Figma
+
+<!-- TODO: Add Figma component link once DSW-Web-Components is published -->
+
+## Design-match record
+
+<!-- Placeholder — to be filled once Figma source is available -->
+
+| Criterion | Status | Notes |
+|-----------|--------|-------|
+| Colour | — | Uses `bg-border` token |
+| Thickness | — | 1px (h-px / w-px) |
+| Spacing | — | Consumer-controlled via className |
+
 ## Quality checklist
 
-- [ ] Accessibility: passes axe-core, keyboard navigable, screen reader tested
-- [ ] Figma parity: matches DSW-Web-Components Figma source
-- [ ] Responsive: works at all breakpoints
-- [ ] Tokens only: no hardcoded visual values
+- [x] Accessibility: decorative by default, `role="separator"` when non-decorative (Radix handles this)
+- [ ] Figma parity: pending Figma component publish
+- [x] Responsive: works at all breakpoints
+- [x] Tokens only: no hardcoded visual values

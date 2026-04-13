@@ -10,6 +10,9 @@ const meta: Meta<typeof Separator> = {
       control: "select",
       options: ["horizontal", "vertical"],
     },
+    decorative: {
+      control: "boolean",
+    },
   },
 }
 
@@ -33,6 +36,48 @@ export const Default: Story = {
         <Separator orientation="vertical" />
         <div>Source</div>
       </div>
+    </div>
+  ),
+}
+
+export const Horizontal: Story = {
+  args: {
+    orientation: "horizontal",
+  },
+  render: (args) => (
+    <div className="space-y-3">
+      <p className="text-sm">Section above</p>
+      <Separator {...args} />
+      <p className="text-sm">Section below</p>
+    </div>
+  ),
+}
+
+export const Vertical: Story = {
+  args: {
+    orientation: "vertical",
+  },
+  render: (args) => (
+    <div className="flex h-5 items-center space-x-4 text-sm">
+      <span>Item A</span>
+      <Separator {...args} />
+      <span>Item B</span>
+      <Separator {...args} />
+      <span>Item C</span>
+    </div>
+  ),
+}
+
+export const NonDecorative: Story = {
+  args: {
+    decorative: false,
+    orientation: "horizontal",
+  },
+  render: (args) => (
+    <div className="space-y-3">
+      <p className="text-sm">Content group 1</p>
+      <Separator {...args} />
+      <p className="text-sm">Content group 2</p>
     </div>
   ),
 }
