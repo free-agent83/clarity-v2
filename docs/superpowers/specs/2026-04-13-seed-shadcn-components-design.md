@@ -8,7 +8,7 @@
 
 ## Goal
 
-Add all 50 remaining shadcn/ui components to the Clarity V2 component library (51 total including the existing Button). Each component gets a single Default story in Storybook. No tests, a11y, COMPONENT.md, or visual customisation — just seed and paint.
+Add all 50 remaining shadcn/ui components to the Clarity V2 component library (51 total including the existing Button). Each component gets a single Default story in Storybook and a scaffolded COMPONENT.md with all required sections present but marked `[WIP]`. No tests, a11y, token remapping, or visual customisation — just seed, paint, and scaffold docs.
 
 ## Scope decisions
 
@@ -36,6 +36,7 @@ For each batch:
 |---|---|
 | `<name>.tsx` | Component implementation (from shadcn CLI, adapted) |
 | `<name>.stories.tsx` | Single Default story |
+| `COMPONENT.md` | Scaffolded docs — frontmatter + all sections with `[WIP]` content |
 
 ### What a Default story looks like
 
@@ -59,12 +60,49 @@ export const Default: Story = {
 
 `argTypes` with `control: "select"` added only when the component has variant/enum props out of the box from shadcn.
 
+### What a scaffolded COMPONENT.md looks like
+
+```md
+---
+name: ComponentName
+slug: component-name
+version: 0.1.0
+status: unstable
+lastUpdated: 2026-04-13
+---
+
+# ComponentName
+
+[WIP]
+
+## Props
+
+[WIP]
+
+## Usage guidelines
+
+[WIP]
+
+## Best practices
+
+[WIP]
+
+## Quality checklist
+
+- [ ] Accessibility: passes axe-core, keyboard navigable, screen reader tested
+- [ ] Figma parity: matches DSW-Web-Components Figma source
+- [ ] Responsive: works at all breakpoints
+- [ ] Tokens only: no hardcoded visual values
+```
+
+The optional **Writing** section is omitted from the scaffold. It will be added per-component only when relevant during the individual component issues.
+
 ### What is NOT in scope
 
-- COMPONENT.md files
 - Tests, a11y checks, play functions
 - Token remapping or visual customisation
 - Multiple stories per component (variants, sizes, states, compound variants)
+- Populating COMPONENT.md content (that happens in individual component issues)
 
 ## Batch order
 
