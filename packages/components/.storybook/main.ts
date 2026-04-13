@@ -1,4 +1,5 @@
 import type { StorybookConfig } from "@storybook/react-vite";
+import { resolve } from "path";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.stories.@(ts|tsx)"],
@@ -11,6 +12,11 @@ const config: StorybookConfig = {
     const tailwindcss = await import("@tailwindcss/vite");
     config.plugins = config.plugins || [];
     config.plugins.push(tailwindcss.default());
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@": resolve(__dirname, "../src"),
+    };
     return config;
   },
 };
