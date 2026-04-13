@@ -190,3 +190,28 @@ export {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "./components/molecules/collapsible/collapsible";
+
+// Data — molecules
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from "./components/molecules/table/table";
+
+// Data — organisms
+export { DataTable } from "./components/organisms/data-table/data-table";
+export type { DataTableProps } from "./components/organisms/data-table/data-table";
+export {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  ChartStyle,
+} from "./components/organisms/chart/chart";
+export type { ChartConfig } from "./components/organisms/chart/chart";
