@@ -16,7 +16,7 @@ Promoted Button to `stable` after a conformance pass against `packages/component
 - Fixed the Storybook `argTypes.size` options, removing the non-existent `icon-lg` option. Added a `Loading` story and a `loading` control.
 - Filled out `COMPONENT.md` (frontmatter, props, usage, best practices, writing, quality checklist). Version `0.0.0` → `0.1.0`, status `unstable` → `stable`.
 - Uncommented the Button line in `packages/components/src/index.ts` and added the `ButtonProps` type export alongside it.
-- Fixed a latent `packages/components/vite.config.ts` bug surfaced by the barrel uncommit: the `@/` path alias was wired in `tsconfig.json` and `.storybook/main.ts` but not in the library vite config, so rollup couldn't resolve `@/lib/utils` once button.tsx entered the build graph. Added the alias to the library build.
+- Imported `Spinner` via the `@/components/atoms/spinner/spinner` alias (matching the existing `@/lib/utils` import right above it) rather than a relative path. This choice surfaced a latent `packages/components/vite.config.ts` bug once the barrel went live: the `@/` alias was wired in `tsconfig.json` and `.storybook/main.ts` but not in the library vite config, so rollup couldn't resolve `@/lib/utils` or `@/components/atoms/spinner/spinner` once `button.tsx` entered the build graph. Added the alias to the library vite config as part of the barrel commit.
 
 **CONTRIBUTING.md changes and reasoning:**
 

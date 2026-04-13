@@ -48,8 +48,8 @@ Table derived from the TypeScript interface:
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `"contained" \| "outlined" \| ...` | `"contained"` | Visual style of the button |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button size |
+| `variant` | `"contained" \| "outlined" \| ...` | `"contained"` | Visual style |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Component size |
 | `asChild` | `boolean` | `false` | Render as child element via Radix Slot |
 
 #### 3. Usage guidelines
