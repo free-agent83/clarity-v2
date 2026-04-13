@@ -573,26 +573,9 @@ After the move, any file still referencing `@/components/ui/{atom-name}` needs i
 - `tooltip` — imported by: `sidebar`
 - `input-group` — imported by: `combobox`, `command`
 
-- [ ] Run from repo root (a single `sed` pass per atom name, across all remaining `.tsx` files in `src/components/`):
+**Prefix-collision hazard:** atom names overlap as prefixes — `input` is a prefix of `input-group` and `input-otp`. A naive `sed "s|ui/input|atoms/input/input|g"` would clobber `ui/input-group` into `atoms/input/input-group`, which is wrong. The script below handles this two ways: (1) it sorts atom names by length **descending** so longer names are rewritten before shorter ones, and (2) each replacement is anchored to the closing quote (`"` or `'`) that ends every import path, so `ui/input"` only matches a full `ui/input` import and not the start of `ui/input-group"`.
 
-```bash
-cd packages/components
-
-ATOMS=(alert aspect-ratio avatar badge button button-group checkbox collapsible direction empty field hover-card input input-group input-otp item kbd label popover progress radio-group scroll-area separator skeleton slider sonner spinner switch textarea toggle toggle-group tooltip)
-
-for atom in "${ATOMS[@]}"; do
-  # Find any .tsx under src/components/ that still has an import from @/components/ui/${atom}
-  # and rewrite it to @/components/atoms/${atom}/${atom}
-  find src/components -name '*.tsx' -type f -print0 \
-    | xargs -0 sed -i '' "s|@/components/ui/${atom}|@/components/atoms/${atom}/${atom}|g"
-done
-
-cd ../..
-```
-
-**Why this sed form is safe:** Each atom name is a complete path segment and can't be a prefix of another atom name in our list (double-check: `input` is a prefix of `input-group` and `input-otp` — this matters!). The replacement pattern includes `/` before the name via `@/components/ui/`, but we're looking at `ui/input`, `ui/input-group`, `ui/input-otp`. If we sed `@/components/ui/input` → `@/components/atoms/input/input`, the line `ui/input-group` would become `atoms/input/input-group` which is wrong.
-
-- [ ] **Use a safer version that anchors the replacement to the end of an import path** (closing quote or end of path):
+- [ ] Run from repo root:
 
 ```bash
 cd packages/components
@@ -609,8 +592,6 @@ done
 
 cd ../..
 ```
-
-The trailing `\([\"']\)` anchors the match to a closing quote (`"` or `'`), which is what every import path ends with. Longer names are processed first so `input-group` and `input-otp` don't get clobbered by the shorter `input`.
 
 - [ ] Verify zero remaining `@/components/ui/{atom}` references:
 
