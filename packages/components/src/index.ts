@@ -215,3 +215,75 @@ export {
   ChartStyle,
 } from "./components/organisms/chart/chart";
 export type { ChartConfig } from "./components/organisms/chart/chart";
+
+// Navigation — molecules
+export {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  tabsListVariants,
+} from "./components/molecules/tabs/tabs";
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "./components/molecules/accordion/accordion";
+export {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  BreadcrumbEllipsis,
+} from "./components/molecules/breadcrumb/breadcrumb";
+export {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  NavigationMenuLink,
+  NavigationMenuIndicator,
+  NavigationMenuViewport,
+  navigationMenuTriggerStyle,
+} from "./components/molecules/navigation-menu/navigation-menu";
+export {
+  Pagination,
+  PaginationContent,
+  PaginationLink,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "./components/molecules/pagination/pagination";
+
+// Navigation — organisms
+export {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupAction,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInput,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSkeleton,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarSeparator,
+  SidebarTrigger,
+  useSidebar,
+} from "./components/organisms/sidebar/sidebar";
