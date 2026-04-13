@@ -60,6 +60,13 @@ docs/
 - `npx nx build components` — Nx build for components
 - `cd packages/components && npx storybook dev -p 6006` — run Storybook locally
 
+## Building a component
+
+1. Add via shadcn CLI: `cd packages/components && npx shadcn@latest add <name>`
+2. Write a Storybook story: `packages/components/src/components/<name>/<name>.stories.tsx` — cover all variants
+3. Write a vitest test: `packages/components/src/components/<name>/<name>.test.tsx`
+4. Commit referencing the task ID and GitHub issue: `feat(components): add Separator component (T001, Closes #5)`
+
 ## When in doubt
 
 Ask Chris. He's the design lead and owns all decisions. Do not improvise design or architectural decisions — flag gaps and wait for a ruling. See VISION.md "Separation of powers" for the operating model.
