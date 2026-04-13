@@ -1,0 +1,37 @@
+name: tokens
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "packages/tokens/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/tokens.yml"
+  push:
+    branches: [main, dev]
+    paths:
+      - "packages/tokens/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/tokens.yml"
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run tests
+        run: npm test --workspace=@nivoda/tokens
+
+      - name: Verify build
+        run: npm run build --workspace=@nivoda/tokens

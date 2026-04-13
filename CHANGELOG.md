@@ -4,6 +4,22 @@ All notable progress on Clarity V2 is recorded here. Most recent entries first.
 
 ---
 
+## 2026-04-10 — Architectural correction: tokens package is surface-agnostic
+
+Removed the shadcn-specific layer from the tokens package. The tokens package now emits only primitives and the surface-agnostic semantic layer; any mapping to a specific surface theme (shadcn, Tailwind `@theme`, etc.) lives in-loco in the consumer.
+
+**Why:** surface-specific theme mapping is an implementation detail of each consumer, not a concern of the foundation. The previous layout had the tokens package carrying a parallel shadcn semantic layer (`src/shadcn/light.tokens.json`, `dark.tokens.json`, `radius.tokens.json`) and emitting `dist/shadcn/tokens.css` — leaking surface decisions into a layer that should be theme-agnostic.
+
+**Removed:**
+- `packages/tokens/src/shadcn/` (all three JSON files)
+- `buildShadcnCSS()` in `packages/tokens/build.mjs`
+- `./shadcn` subpath export in `packages/tokens/package.json`
+- `dist/shadcn/tokens.css` output and its integration test
+
+**Minivoda implication:** Minivoda will consume `@nivoda/components` as a finished product — it imports the components package and gets the shadcn theme mapping baked in via `packages/components/src/styles/globals.css`. Minivoda does not need to maintain any token mapping on its end; that mapping already lives alongside the components that use it.
+
+---
+
 ## 2026-04-08 — Token alignment with platform
 
 Applied 15 design decisions after auditing the platform design system (MUI + Style Dictionary v3) against Clarity V2. The token foundation now reflects production-vetted color values with Clarity V2's modern naming conventions.
@@ -63,10 +79,10 @@ Initial repo setup: Nx monorepo structure, token source files, single Button com
 See [`ROADMAP.md`](ROADMAP.md) for the full phased plan.
 
 **Phase B — Proof** (active, 2-week window)
-Build the core component set (~10-15 components). Rebuild a real Nivoda screen using Claude Code + Clarity V2 as the headline demo. Write the engineering proposal for Abhishek. Storybook runs locally.
+Build the core component set (~10-15 components). Rebuild a real Nivoda screen using Claude Code + Clarity V2 as the headline demo. Storybook runs locally.
 
 **Phase C — Distribution**
-Fumadocs documentation site deployed. Onboarding material for self-service UI delivery. First external person (designer or PM) builds something real with Clarity V2 + AI. Engineering conversation converges on a migration strategy.
+Fumadocs documentation site deployed. Onboarding material for self-service UI delivery. First external person (designer or PM) builds something real with Clarity V2 + AI.
 
 **Phase D — Adoption** (conditional, multi-quarter)
 Design and PM use Clarity V2 to ship real features. Platform migration proceeds opportunistically as new features replace old MUI code. Governance (Experience Framework) becomes load-bearing as more people build.

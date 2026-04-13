@@ -8,7 +8,6 @@
   "types": "dist/js/tokens.d.ts",
   "exports": {
     ".": "./dist/web/tokens.css",
-    "./shadcn": "./dist/shadcn/tokens.css",
     "./js": "./dist/js/tokens.js",
     "./react-native": "./dist/react-native/tokens.js",
     "./json": "./dist/json/tokens.json"

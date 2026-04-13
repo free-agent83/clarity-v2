@@ -239,7 +239,7 @@ lg:   18px
 
 ## Next steps
 
-1. **Phase 2 (Minivoda integration)** — when a fresh Minivoda checkout is available, diff the new `dist/shadcn/tokens.css` against Minivoda's current `globals.css` and migrate.
+1. **Phase 2 (Minivoda integration)** — Minivoda will consume `@nivoda/components` directly as a finished product. The shadcn theme mapping lives in-loco in `packages/components/src/styles/globals.css` alongside the components themselves, so Minivoda does not need to maintain its own token mapping on its end.
 2. **Storybook rebuild (Phase 3)** — using the new tokens, begin building shadcn/ui components in clarity-v2. The violet brand color will now match what platform users are already used to seeing.
 3. **Platform migration guide** — when engineering is ready to migrate platform components to Clarity V2, produce a mapping document showing:
    - `neutral` → `stone` (rename, values identical)

@@ -20,6 +20,7 @@ See `ROADMAP.md` for the full picture.
 ## Related repos on disk
 
 - `../experience-framework/` — governance, principles, agent instructions, personas, surface rules. Owned by design. Clarity V2 is the "law"; this is the "constitution". See VISION.md.
+- `../minivoda/clarity-digital-twin/` — Minivoda: the living digital twin of the Nivoda platform. Next.js 16 + React 19 + Tailwind v4 + shadcn/ui on Supabase, deployed to Vercel. The venue where the self-serve delivery path happens — designers and PMs build new flows here using Clarity V2 components + AI, validate them with users, and hand them to engineering as branches. Consumes Clarity V2 tokens and (eventually) components. Figma is a scrapbook; Minivoda is the source of truth for flows. See VISION.md → "Where the self-serve path actually happens".
 - `../platform/` — the production Nivoda monorepo. Contains the current MUI-based design system at `libs/shared/style-dictionary/`, `libs/shared/components/`, `libs/shared/theme/`. **This is the eventual consumer of Clarity V2.** Reference for token alignment and component APIs. Do not modify platform code — that's engineering-owned.
 
 ## Key conventions

@@ -141,7 +141,7 @@ Law              ←    Constitution            ←    Implementation
 (new ruling)          (gap escalated)               (gap flagged)
 ```
 
-Archetypes and journey maps, which originate in the government, are eventually adopted into the constitution once stable — a constitutional amendment incorporating the government's findings into the foundational document.
+Archetypes and journey maps, which originate in the government, are eventually ratified into the constitution once stable — a constitutional amendment incorporating the government's findings into the foundational document.
 
 ---
 
@@ -194,8 +194,9 @@ A republic, not a monarchy. That's what makes design a system the rest of the or
 | **Design System** | `clarity-v2` | Foundation complete; 1 component shipped; core component set in active development |
 | **Experience Framework** | `experience-framework` | Core principles, surfaces, and quality standards scaffolded; skills pending |
 | **Design Engine** | `experience-framework/nivoda-design-engine-main/` *(temporary home)* | Archetypes and core journeys drafted; feedback pipeline prototyped |
+| **Minivoda Digital Twin** | `minivoda/clarity-digital-twin`  *(delivery venue)* | Deployed to Vercel; buyer-side marketing, auth, home, product browsing (6 categories), orders, share modal, and dark mode all working against real data |
 
-The three parts are at different stages of maturity. The design system is the near-term priority and the most commercially visible piece. The framework and engine are emerging alongside it and will come into focus as the library stabilises.
+The three parts of the triad are at different stages of maturity. The design system is the near-term priority and the most commercially visible piece. The framework and engine are emerging alongside it and will come into focus as the library stabilises. Minivoda sits outside the triad conceptually — it is not law, constitution, or government — but it is the venue where the self-serve delivery path actually happens, and it is the proof artefact that makes the commercial case tangible.
 
 ---
 

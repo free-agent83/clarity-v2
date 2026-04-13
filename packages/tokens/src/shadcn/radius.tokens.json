@@ -1,9 +1,0 @@
-{
-  "shadcn": {
-    "radius": {
-      "$type": "dimension",
-      "$value": "0.625rem",
-      "$description": "Base border radius (10px). Minivoda derives sm/md/lg/xl/2xl/3xl/4xl via calc()."
-    }
-  }
-}

@@ -18,7 +18,6 @@ The commercial case and governing model live in `VISION.md`. This spec is the **
 
 - **42 components** built (28 Phase B + 14 Phase C candidate) and **6 page templates**, each with stories, a colocated README, a Figma link, and a design-match record — 48 items total
 - Storybook running locally with a category-based sidebar covering Foundations, seven component categories, Templates, and Docs stubs
-- Engineering proposal sent to Abhishek
 - Buyer PLP rebuilt in a demo context using Clarity V2 components, with learnings captured
 - All decisions in this spec reflected in `ROADMAP.md` via a small amendment PR
 
@@ -30,9 +29,9 @@ This spec covers two phases executed in a single 2-week window:
 
 ### Phase B — Core Proof (week 1, committed)
 
-Build the **28 core components** that cover forms, actions, overlays, feedback, display, and basic navigation primitives. Send the engineering proposal. Core Phase B deliverables are fully specified and non-negotiable.
+Build the **28 core components** that cover forms, actions, overlays, feedback, display, and basic navigation primitives. Core Phase B deliverables are fully specified and non-negotiable.
 
-**No Phase B validation build.** Phase B ends when the 28 components ship and the proposal is sent. Validation moves to Phase C as a single showpiece rebuild.
+**No Phase B validation build.** Phase B ends when the 28 components ship. Validation moves to Phase C as a single showpiece rebuild.
 
 ### Phase C — Full Library (week 2, candidate + rescope checkpoint)
 
@@ -44,7 +43,7 @@ Phase C ends with the **Buyer PLP rebuild** — Nivoda's primary revenue surface
 
 - Fumadocs documentation site deployment (Phase D)
 - Onboarding material for designers/PMs (Phase D)
-- Engineering conversation, migration strategy decision (Phase D — coordination-bound)
+- Engineering proposal, engineering conversation, migration strategy decision (post-Phase C)
 - First non-Chris external builder (Phase D)
 - React Native component implementations
 - Component-specific token files (stay with semantic tokens only)
@@ -406,7 +405,7 @@ import "@nivoda/clarity-tokens/styles.css";
 
 ### Roles
 
-- **Chris (CL)** drives AI construction. Owns the spec, the plan file, daily AI execution, and the engineering proposal.
+- **Chris (CL)** drives AI construction. Owns the spec, the plan file, and daily AI execution.
 - **Joao (JG)** drives visual fidelity. Owns the design-match review pass, direct visual fixes, and token-level adjustments.
 
 ### Execution environment
@@ -490,7 +489,7 @@ At end of the 2-week window:
 
 1. Merge the sprint branch to `main` (single PR review on GitHub)
 2. Decide whether to keep dual-push on or remove the GitHub URL and return to Bitbucket-only
-3. Update CLAUDE.md, README, engineering-proposal.md with the final git host decision
+3. Update CLAUDE.md, README with the final git host decision
 4. Close the GitHub Project board (archive or leave for reference)
 
 ---
@@ -508,7 +507,7 @@ At end of the 2-week window:
 
 ### Task naming
 
-Tasks are numbered `T001..T0NN` in dependency order (see §3). 48 tasks at sprint kickoff — 27 Phase B component builds (Button is already shipped, so 28 Phase B components minus 1 done = 27 new builds) + 14 Phase C candidate components + 6 page templates + 1 engineering-proposal-send task. The upper bound has headroom for rescope additions. Each task ID maps to:
+Tasks are numbered `T001..T0NN` in dependency order (see §3). 47 tasks at sprint kickoff — 27 Phase B component builds (Button is already shipped, so 28 Phase B components minus 1 done = 27 new builds) + 14 Phase C candidate components + 6 page templates. The upper bound has headroom for rescope additions. Each task ID maps to:
 - A row in the plan file
 - A GitHub Issue (title: `T012 · Component · Checkbox`)
 - A branch name (`feat/comp/checkbox`)
@@ -586,7 +585,7 @@ Genuine proof work is inherently unpredictable. If the rebuild reveals the libra
 | **D2** | Mediums batch 1: Checkbox, Radio Group, Slider, Popover, Tooltip, Toggle Group — 6 components | End-of-day review |
 | **D3** | Mediums batch 2: Dialog, Sheet, Dropdown Menu, Select, Tabs, Accordion — 6 components | End-of-day review |
 | **D4** | Finalisers: Card, Icon Button, Breadcrumbs, Toast — 4 components. **Phase B components complete (28 total).** | End-of-day review |
-| **D5** | Engineering proposal polish and send to Abhishek. ROADMAP amendment PR. **Phase C rescope checkpoint** with JG — refine Phase C component list based on Phase B learnings. | Day of rest from new builds |
+| **D5** | ROADMAP amendment PR. **Phase C rescope checkpoint** with JG — refine Phase C component list based on Phase B learnings. | Day of rest from new builds |
 
 ### Week 2 — Phase C
 
@@ -630,7 +629,6 @@ At the end of Phase B (D5 afternoon), CL and JG hold a formal **Phase C rescope 
 ### Inputs to the checkpoint
 
 - The 28 shipped Phase B components in Storybook, design-matched by JG
-- The engineering proposal sent to Abhishek
 - Any Phase B learnings (components that were harder than expected, token gaps found, API patterns that didn't feel right)
 - The candidate Phase C list from §3
 
@@ -656,7 +654,6 @@ A short amendment to this spec (checked in as a new commit) that updates §3 wit
 5. **Hamster kanban** — use it or not? JG decides at sprint kickoff.
 6. **GitHub Projects custom fields** — what extra metadata on each issue? Tier + Phase + Status minimum. Anything else?
 7. **Visual regression testing** — defer to Phase D, but which tool? Playwright vs Lost Pixel vs something else. No sprint decision needed.
-8. **Engineering proposal wording** — does the current draft need tweaking before sending? Polish pass scheduled for D5.
 
 ---
 
@@ -664,10 +661,9 @@ A short amendment to this spec (checked in as a new commit) that updates §3 wit
 
 - **Merge sprint branch to main** via a single GitHub PR with full diff review
 - **Remove GitHub push target** (optional) if returning to Bitbucket-only
-- **Update CLAUDE.md, README.md, engineering-proposal.md** with final git host state
+- **Update CLAUDE.md, README.md** with final git host state
 - **Amend ROADMAP.md** to reflect the new phase model (B · Core Proof, C · Full Library, D · Distribution, E · Adoption)
 - **Extract generalisable collaboration patterns** into `docs/contributing/collaboration.md` (Figma link convention, plan-file-as-ledger, token-level fix philosophy, daily handoff rhythm). Sprint-specific details stay in this spec as historical record.
-- **Schedule engineering conversation** with Abhishek based on proposal feedback
 - **Pick first non-Chris external builder** for Phase D (designer or PM who wants to try Clarity V2 + AI)
 - **Evaluate visual regression tooling** for Phase D
 - **Phase D detail planning** — separate spec session
@@ -702,7 +698,6 @@ All key decisions from the 2026-04-09 brainstorm session, in the order they were
 - `CHANGELOG.md` — phase-by-phase progress log
 - `docs/architecture/architecture.md` — technical architecture + ADRs 001–004
 - `docs/design/token-decisions.md` — 15 token alignment decisions from Phase A
-- `docs/plans/engineering-proposal.md` — the formal pitch for Abhishek (sent in Phase B)
 - `packages/tokens/` — token source files and bespoke build script
 - `packages/components/src/components/atoms/button/` — the Button component, reference implementation for the per-component definition of done
 
