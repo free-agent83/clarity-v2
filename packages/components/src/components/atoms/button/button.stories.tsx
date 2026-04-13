@@ -31,7 +31,6 @@ const meta: Meta<typeof Button> = {
         "icon",
         "icon-xs",
         "icon-sm",
-        "icon-lg",
       ],
     },
     block: { control: "boolean" },
