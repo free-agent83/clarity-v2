@@ -35,3 +35,35 @@ export { Field } from "./components/molecules/field/field";
 export type { FieldProps } from "./components/molecules/field/field";
 export { Combobox } from "./components/molecules/combobox/combobox";
 export type { ComboboxProps } from "./components/molecules/combobox/combobox";
+
+// Actions — molecules
+export { ButtonGroup } from "./components/molecules/button-group/button-group";
+export type { ButtonGroupProps } from "./components/molecules/button-group/button-group";
+export {
+  DropdownMenu,
+  DropdownMenuPortal,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from "./components/molecules/dropdown-menu/dropdown-menu";
+export {
+  Command,
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandShortcut,
+  CommandSeparator,
+} from "./components/molecules/command/command";
