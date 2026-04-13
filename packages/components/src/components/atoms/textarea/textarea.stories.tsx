@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import { Textarea } from "./textarea"
+import type { Meta, StoryObj } from "@storybook/react";
+import { Textarea } from "./textarea";
 
 const meta: Meta<typeof Textarea> = {
   title: "Forms/Textarea",
   component: Textarea,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Textarea>
+export default meta;
+type Story = StoryObj<typeof Textarea>;
 
 export const Default: Story = {
-  args: { placeholder: "Type your message..." },
-}
+  render: () => <Textarea placeholder="Placeholder" className="w-64" />,
+};

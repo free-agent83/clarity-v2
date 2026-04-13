@@ -1,22 +1,21 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
-  PaginationPrevious,
   PaginationNext,
-  PaginationEllipsis,
-} from "./pagination"
+  PaginationPrevious,
+} from "./pagination";
 
 const meta: Meta<typeof Pagination> = {
   title: "Navigation/Pagination",
   component: Pagination,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Pagination>
+export default meta;
+type Story = StoryObj<typeof Pagination>;
 
 export const Default: Story = {
   render: () => (
@@ -26,18 +25,15 @@ export const Default: Story = {
           <PaginationPrevious href="#" />
         </PaginationItem>
         <PaginationItem>
+          <PaginationLink href="#">1</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
           <PaginationLink href="#" isActive>
-            1
+            2
           </PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#">2</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
           <PaginationLink href="#">3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
         </PaginationItem>
         <PaginationItem>
           <PaginationNext href="#" />
@@ -45,4 +41,4 @@ export const Default: Story = {
       </PaginationContent>
     </Pagination>
   ),
-}
+};

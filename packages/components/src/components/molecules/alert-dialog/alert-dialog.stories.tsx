@@ -1,41 +1,39 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react";
 import {
   AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogAction,
   AlertDialogCancel,
-} from "./alert-dialog"
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./alert-dialog";
 
 const meta: Meta<typeof AlertDialog> = {
-  title: "Overlays/Alert Dialog",
+  title: "Overlays/AlertDialog",
   component: AlertDialog,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof AlertDialog>
+export default meta;
+type Story = StoryObj<typeof AlertDialog>;
 
 export const Default: Story = {
   render: () => (
-    <AlertDialog>
-      <AlertDialogTrigger>Delete item</AlertDialogTrigger>
+    <AlertDialog defaultOpen>
+      <AlertDialogTrigger>Trigger</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the item.
-          </AlertDialogDescription>
+          <AlertDialogTitle>Title</AlertDialogTitle>
+          <AlertDialogDescription>Description</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction>Confirm</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   ),
-}
+};

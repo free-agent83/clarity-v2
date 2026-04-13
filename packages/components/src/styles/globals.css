@@ -1,81 +1,142 @@
 @import "tailwindcss";
-@import "../../../tokens/dist/web/tokens.css";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
 
-/*
- * Map design tokens to Tailwind's @theme layer.
- * This bridges DTCG tokens → Tailwind utility classes.
- * e.g. bg-background, text-foreground, border-border
- */
-@theme {
-  /* Colors — semantic */
-  --color-background: var(--color-semantic-background-default);
-  --color-background-subtle: var(--color-semantic-background-subtle);
-  --color-background-muted: var(--color-semantic-background-muted);
-  --color-background-inverse: var(--color-semantic-background-inverse);
+@custom-variant dark (&:is(.dark *));
 
-  --color-foreground: var(--color-semantic-foreground-default);
-  --color-foreground-muted: var(--color-semantic-foreground-muted);
-  --color-foreground-subtle: var(--color-semantic-foreground-subtle);
-  --color-foreground-inverse: var(--color-semantic-foreground-inverse);
-
-  --color-primary: var(--color-semantic-primary-default);
-  --color-primary-hover: var(--color-semantic-primary-hover);
-  --color-primary-active: var(--color-semantic-primary-active);
-  --color-primary-subtle: var(--color-semantic-primary-subtle);
-
-  --color-secondary: var(--color-semantic-secondary-default);
-  --color-secondary-hover: var(--color-semantic-secondary-hover);
-  --color-secondary-active: var(--color-semantic-secondary-active);
-  --color-secondary-text: var(--color-semantic-secondary-text);
-
-  --color-border: var(--color-semantic-border-default);
-  --color-border-strong: var(--color-semantic-border-strong);
-  --color-border-subtle: var(--color-semantic-border-subtle);
-  --color-border-focus: var(--color-semantic-border-focus);
-
-  --color-disabled-bg: var(--color-semantic-disabled-background);
-  --color-disabled-text: var(--color-semantic-disabled-text);
-  --color-disabled-border: var(--color-semantic-disabled-border);
-
-  --color-error: var(--color-semantic-feedback-error);
-  --color-error-hover: var(--color-semantic-feedback-error-hover);
-  --color-error-subtle: var(--color-semantic-feedback-error-subtle);
-  --color-success: var(--color-semantic-feedback-success);
-  --color-success-hover: var(--color-semantic-feedback-success-hover);
-  --color-success-subtle: var(--color-semantic-feedback-success-subtle);
-  --color-warning: var(--color-semantic-feedback-warning);
-  --color-warning-subtle: var(--color-semantic-feedback-warning-subtle);
-
-  /* Border radius */
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-
-  /* Font families */
-  --font-sans: var(--font-family-sans);
-  --font-mono: var(--font-family-mono);
-}
-
-/* Sidebar tokens — mapped to semantic design tokens, no raw values */
-:root {
-  --sidebar: var(--color-semantic-background-subtle);
-  --sidebar-foreground: var(--color-semantic-foreground-muted);
-  --sidebar-primary: var(--color-semantic-primary-default);
-  --sidebar-primary-foreground: var(--color-semantic-foreground-inverse);
-  --sidebar-accent: var(--color-semantic-background-muted);
-  --sidebar-accent-foreground: var(--color-semantic-primary-default);
-  --sidebar-border: var(--color-semantic-border-subtle);
-  --sidebar-ring: var(--color-semantic-border-focus);
-}
-
+/**
+* Default mapping for shadcn theme
+* Do not overwrite directly — assign tokens below
+**/
 @theme inline {
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+    --font-heading: var(--font-sans);
+    --font-sans: 'Inter Variable', sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/**
+* Base shadcn token assignment, light mode
+* Overwrite with our own tokens
+**/
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.147 0.004 49.25);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.147 0.004 49.25);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.147 0.004 49.25);
+    --primary: oklch(0.216 0.006 56.043);
+    --primary-foreground: oklch(0.985 0.001 106.423);
+    --secondary: oklch(0.97 0.001 106.424);
+    --secondary-foreground: oklch(0.216 0.006 56.043);
+    --muted: oklch(0.97 0.001 106.424);
+    --muted-foreground: oklch(0.553 0.013 58.071);
+    --accent: oklch(0.97 0.001 106.424);
+    --accent-foreground: oklch(0.216 0.006 56.043);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.923 0.003 48.717);
+    --input: oklch(0.923 0.003 48.717);
+    --ring: oklch(0.709 0.01 56.259);
+    --chart-1: oklch(0.869 0.005 56.366);
+    --chart-2: oklch(0.553 0.013 58.071);
+    --chart-3: oklch(0.444 0.011 73.639);
+    --chart-4: oklch(0.374 0.01 67.558);
+    --chart-5: oklch(0.268 0.007 34.298);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0.001 106.423);
+    --sidebar-foreground: oklch(0.147 0.004 49.25);
+    --sidebar-primary: oklch(0.216 0.006 56.043);
+    --sidebar-primary-foreground: oklch(0.985 0.001 106.423);
+    --sidebar-accent: oklch(0.97 0.001 106.424);
+    --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
+    --sidebar-border: oklch(0.923 0.003 48.717);
+    --sidebar-ring: oklch(0.709 0.01 56.259);
+}
+
+/**
+* Base shadcn token assignment, dark mode
+* Overwrite with our own tokens
+**/
+.dark {
+    --background: oklch(0.147 0.004 49.25);
+    --foreground: oklch(0.985 0.001 106.423);
+    --card: oklch(0.216 0.006 56.043);
+    --card-foreground: oklch(0.985 0.001 106.423);
+    --popover: oklch(0.216 0.006 56.043);
+    --popover-foreground: oklch(0.985 0.001 106.423);
+    --primary: oklch(0.923 0.003 48.717);
+    --primary-foreground: oklch(0.216 0.006 56.043);
+    --secondary: oklch(0.268 0.007 34.298);
+    --secondary-foreground: oklch(0.985 0.001 106.423);
+    --muted: oklch(0.268 0.007 34.298);
+    --muted-foreground: oklch(0.709 0.01 56.259);
+    --accent: oklch(0.268 0.007 34.298);
+    --accent-foreground: oklch(0.985 0.001 106.423);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.553 0.013 58.071);
+    --chart-1: oklch(0.869 0.005 56.366);
+    --chart-2: oklch(0.553 0.013 58.071);
+    --chart-3: oklch(0.444 0.011 73.639);
+    --chart-4: oklch(0.374 0.01 67.558);
+    --chart-5: oklch(0.268 0.007 34.298);
+    --sidebar: oklch(0.216 0.006 56.043);
+    --sidebar-foreground: oklch(0.985 0.001 106.423);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0.001 106.423);
+    --sidebar-accent: oklch(0.268 0.007 34.298);
+    --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.553 0.013 58.071);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
 }

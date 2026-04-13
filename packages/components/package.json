@@ -21,35 +21,49 @@
   ],
   "scripts": {
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest run",
+    "test:storybook": "vitest run --project=storybook --passWithNoTests"
   },
   "dependencies": {
+    "@base-ui/react": "^1.4.0",
+    "@fontsource-variable/inter": "^5.2.8",
     "@radix-ui/react-slot": "^1.2.4",
+    "@tabler/icons-react": "^3.41.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.511.0",
+    "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "recharts": "^3.8.0",
+    "shadcn": "^4.2.0",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.3.0",
+    "tailwind-merge": "^3.5.0",
+    "tw-animate-css": "^1.4.0",
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "8.6.18",
     "@storybook/addon-essentials": "8.6.18",
     "@storybook/blocks": "8.6.18",
+    "@storybook/experimental-addon-test": "8.6.18",
     "@storybook/react": "8.6.18",
     "@storybook/react-vite": "^8.6.18",
+    "@storybook/test": "8.6.18",
     "@tailwindcss/vite": "^4.1.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
+    "@vitest/browser": "^3.2.4",
+    "playwright": "^1.59.1",
     "storybook": "8.6.18",
     "tailwindcss": "^4.1.0",
     "typescript": "~5.9.2",
-    "vite": "^6.0.0"
+    "vite": "^6.0.0",
+    "vitest": "^3.2.4"
   }
 }

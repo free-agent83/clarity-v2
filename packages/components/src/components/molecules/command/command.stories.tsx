@@ -1,40 +1,34 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react";
 import {
   Command,
-  CommandInput,
-  CommandList,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
-  CommandSeparator,
-} from "./command"
+  CommandList,
+} from "./command";
 
 const meta: Meta<typeof Command> = {
   title: "Actions/Command",
   component: Command,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Command>
+export default meta;
+type Story = StoryObj<typeof Command>;
 
 export const Default: Story = {
   render: () => (
-    <Command>
-      <CommandInput placeholder="Search..." />
+    <Command className="w-64 rounded-lg border">
+      <CommandInput placeholder="Type a command..." />
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
-          <CommandItem>Item 1</CommandItem>
-          <CommandItem>Item 2</CommandItem>
-          <CommandItem>Item 3</CommandItem>
-        </CommandGroup>
-        <CommandSeparator />
-        <CommandGroup heading="Settings">
-          <CommandItem>Profile</CommandItem>
-          <CommandItem>Billing</CommandItem>
+        <CommandEmpty>No results.</CommandEmpty>
+        <CommandGroup heading="Group">
+          <CommandItem>One</CommandItem>
+          <CommandItem>Two</CommandItem>
+          <CommandItem>Three</CommandItem>
         </CommandGroup>
       </CommandList>
     </Command>
   ),
-}
+};

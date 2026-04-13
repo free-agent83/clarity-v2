@@ -1,32 +1,32 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react";
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
-} from "./sheet"
+  SheetTrigger,
+} from "./sheet";
 
 const meta: Meta<typeof Sheet> = {
   title: "Overlays/Sheet",
   component: Sheet,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Sheet>
+export default meta;
+type Story = StoryObj<typeof Sheet>;
 
 export const Default: Story = {
   render: () => (
-    <Sheet>
-      <SheetTrigger>Open sheet</SheetTrigger>
+    <Sheet defaultOpen>
+      <SheetTrigger>Trigger</SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Sheet title</SheetTitle>
-          <SheetDescription>Sheet description goes here.</SheetDescription>
+          <SheetTitle>Title</SheetTitle>
+          <SheetDescription>Description</SheetDescription>
         </SheetHeader>
       </SheetContent>
     </Sheet>
   ),
-}
+};

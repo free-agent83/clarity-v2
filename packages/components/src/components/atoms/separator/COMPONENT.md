@@ -1,38 +1,26 @@
 ---
 name: Separator
 slug: separator
-version: 0.1.0
+version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 ---
 
 # Separator
 
-A visual divider between content sections, rendered as a horizontal or vertical line.
+[WIP]
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Direction of the separator |
-| `decorative` | `boolean` | `true` | When true, the separator is purely visual and hidden from assistive technology |
-| `className` | `string` | — | Additional CSS classes |
+[WIP]
 
 ## Usage guidelines
 
-Use Separator to create visual breaks between sections of content, menu items, or inline elements.
-
-Do not use Separator for layout spacing. Use Tailwind spacing utilities instead.
+[WIP]
 
 ## Best practices
 
-**Do:** Use horizontal separators between stacked content sections.
-
-**Do:** Use vertical separators between inline items (e.g. breadcrumbs, toolbar buttons).
-
-**Don't:** Overuse separators — white space is often a better divider.
-
-**Don't:** Set `decorative={false}` unless the separator conveys meaningful structure to screen readers.
+[WIP]
 
 ## Quality checklist
 

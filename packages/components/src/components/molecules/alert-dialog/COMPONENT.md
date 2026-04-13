@@ -1,7 +1,7 @@
 ---
 name: AlertDialog
 slug: alert-dialog
-version: 0.1.0
+version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 ---

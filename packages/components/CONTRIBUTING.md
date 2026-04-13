@@ -328,14 +328,13 @@ Sidebar titles follow a category-based structure. Categories group components by
 
 ```
 Foundations/    Colors, spacing, typography, radius
-Forms/          Input, Textarea, Select, Checkbox, Radio Group, Switch, Slider, Label, Toggle Group, Toggle, Input OTP, Input Group, Field, Combobox
-Actions/        Button, Button Group, Dropdown Menu, Command
-Overlays/       Dialog, Alert Dialog, Sheet, Drawer, Popover, Tooltip, Hover Card
-Feedback/       Alert, Sonner, Progress, Skeleton, Spinner, Empty
-Display/        Card, Badge, Avatar, Separator, Carousel, Aspect Ratio, Scroll Area, Collapsible, Typography, Kbd
-Data/           Table, Data Table, Chart
-Navigation/     Tabs, Accordion, Breadcrumbs, Navigation Menu, Pagination, Sidebar
-Layout/         Direction, Item
+Forms/          Input, Textarea, Select, Checkbox, Radio Group, Switch, Slider, Label, Toggle Group
+Actions/        Button, Icon Button, Dropdown Menu
+Overlays/       Dialog, Sheet, Popover, Tooltip
+Feedback/       Alert, Toast, Progress, Skeleton
+Display/        Card, Badge, Chip, Avatar, Separator, Carousel
+Data/           Table, Data Grid
+Navigation/     Tabs, Accordion, Breadcrumbs
 Templates/      [Phase C — PLP, PDP, Dashboard, Auth, Checkout, Settings]
 Docs/           [Phase C — Getting started, Prompt patterns, Migration from MUI]
 ```
@@ -437,17 +436,14 @@ A component is considered done when all of the following are true:
 
 ---
 
-## shadcn CLI
+## shadcn CLI (open question)
 
-Components are scaffolded using the shadcn CLI and then adapted to project conventions:
+No `components.json` exists in this repo yet. During Phase B, both approaches will be tested:
 
-1. Run `npx shadcn@latest add <component>` — scaffolds into `src/components/ui/`
-2. Rename files to kebab-case if needed
-3. Move into the correct `atoms/`/`molecules/`/`organisms/` folder
-4. Adapt imports, exports, and conventions per this document
-5. Delete the `ui/` remnant
+1. **CLI scaffolding** — `npx shadcn add <component>`, then adapt to our conventions (rename, restructure, adjust tokens)
+2. **Manual build** — reference shadcn/Radix source, build from scratch following our conventions
 
-The `components.json` in this package root configures the CLI. Do not modify it without checking with the design lead.
+Decision will be made after trying both on a few components. Check with the design lead before committing to an approach.
 
 ---
 

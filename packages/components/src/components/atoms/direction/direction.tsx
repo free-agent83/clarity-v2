@@ -1,21 +1,22 @@
+"use client"
+
 import * as React from "react"
+import { Direction } from "radix-ui"
 
-export interface DirectionProviderProps {
-  dir?: "ltr" | "rtl"
-  children: React.ReactNode
+function DirectionProvider({
+  dir,
+  direction,
+  children,
+}: React.ComponentProps<typeof Direction.DirectionProvider> & {
+  direction?: React.ComponentProps<typeof Direction.DirectionProvider>["dir"]
+}) {
+  return (
+    <Direction.DirectionProvider dir={direction ?? dir}>
+      {children}
+    </Direction.DirectionProvider>
+  )
 }
 
-/**
- * Provides a text direction context to its children.
- *
- * Wraps children in a `<div>` with the HTML `dir` attribute set
- * to either `"ltr"` or `"rtl"`, enabling right-to-left layout
- * for internationalized content.
- */
-function DirectionProvider({ dir = "ltr", children }: DirectionProviderProps) {
-  return <div dir={dir}>{children}</div>
-}
+const useDirection = Direction.useDirection
 
-DirectionProvider.displayName = "DirectionProvider"
-
-export { DirectionProvider }
+export { DirectionProvider, useDirection }

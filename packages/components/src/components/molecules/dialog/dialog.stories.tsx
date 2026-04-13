@@ -1,32 +1,32 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-} from "./dialog"
+  DialogTrigger,
+} from "./dialog";
 
 const meta: Meta<typeof Dialog> = {
   title: "Overlays/Dialog",
   component: Dialog,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Dialog>
+export default meta;
+type Story = StoryObj<typeof Dialog>;
 
 export const Default: Story = {
   render: () => (
-    <Dialog>
-      <DialogTrigger>Open dialog</DialogTrigger>
+    <Dialog defaultOpen>
+      <DialogTrigger>Trigger</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Dialog title</DialogTitle>
-          <DialogDescription>Dialog description goes here.</DialogDescription>
+          <DialogTitle>Title</DialogTitle>
+          <DialogDescription>Description</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>
   ),
-}
+};

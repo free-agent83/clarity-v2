@@ -1,32 +1,32 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
-} from "./select"
+  SelectTrigger,
+  SelectValue,
+} from "./select";
 
 const meta: Meta<typeof Select> = {
   title: "Forms/Select",
   component: Select,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Select>
+export default meta;
+type Story = StoryObj<typeof Select>;
 
 export const Default: Story = {
   render: () => (
-    <Select>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select an option" />
+    <Select defaultValue="one">
+      <SelectTrigger className="w-48">
+        <SelectValue placeholder="Placeholder" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="option-1">Option 1</SelectItem>
-        <SelectItem value="option-2">Option 2</SelectItem>
-        <SelectItem value="option-3">Option 3</SelectItem>
+        <SelectItem value="one">One</SelectItem>
+        <SelectItem value="two">Two</SelectItem>
+        <SelectItem value="three">Three</SelectItem>
       </SelectContent>
     </Select>
   ),
-}
+};

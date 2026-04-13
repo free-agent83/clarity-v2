@@ -1,41 +1,33 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuLabel,
-  DropdownMenuShortcut,
-} from "./dropdown-menu"
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
 
 const meta: Meta<typeof DropdownMenu> = {
-  title: "Actions/Dropdown Menu",
+  title: "Actions/DropdownMenu",
   component: DropdownMenu,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof DropdownMenu>
+export default meta;
+type Story = StoryObj<typeof DropdownMenu>;
 
 export const Default: Story = {
   render: () => (
-    <DropdownMenu>
-      <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
+    <DropdownMenu defaultOpen>
+      <DropdownMenuTrigger>Trigger</DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>Label</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Profile
-          <DropdownMenuShortcut>Ctrl+P</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          Settings
-          <DropdownMenuShortcut>Ctrl+S</DropdownMenuShortcut>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+        <DropdownMenuItem>One</DropdownMenuItem>
+        <DropdownMenuItem>Two</DropdownMenuItem>
+        <DropdownMenuItem>Three</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   ),
-}
+};

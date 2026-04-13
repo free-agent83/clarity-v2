@@ -1,23 +1,22 @@
-import type { Meta, StoryObj } from "@storybook/react"
-import { Empty } from "./empty"
+import type { Meta, StoryObj } from "@storybook/react";
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from "./empty";
 
 const meta: Meta<typeof Empty> = {
   title: "Feedback/Empty",
   component: Empty,
   tags: ["autodocs"],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Empty>
+export default meta;
+type Story = StoryObj<typeof Empty>;
 
-export const Default: Story = {}
-
-export const CustomContent: Story = {
+export const Default: Story = {
   render: () => (
     <Empty>
-      <p className="text-sm text-muted-foreground">
-        No results found. Try adjusting your filters.
-      </p>
+      <EmptyHeader>
+        <EmptyTitle>Empty title</EmptyTitle>
+        <EmptyDescription>Empty description</EmptyDescription>
+      </EmptyHeader>
     </Empty>
   ),
-}
+};
