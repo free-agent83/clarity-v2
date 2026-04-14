@@ -44,12 +44,3 @@ export const WithIcon: Story = {
     </Badge>
   ),
 };
-
-export const AsLink: Story = {
-  args: { asChild: true, variant: "outline" },
-  render: (args) => (
-    <Badge {...args}>
-      <a href="#">View details</a>
-    </Badge>
-  ),
-};

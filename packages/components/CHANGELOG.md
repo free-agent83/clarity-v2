@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Badge is display-only — no links, no actions (2026-04-14)
+
+Hardened a Badge usage rule that the original shadcn import had left as an open door.
+
+- **Rule:** Badge must never be used as a link, a button, or any other interactive element. It is a display primitive, period. If the element needs to navigate or trigger an action, use a Button (or a real anchor styled separately).
+- **Story removed.** The `AsLink` story is gone from [`badge.stories.tsx`](src/components/atoms/badge/badge.stories.tsx) — wrapping a Badge around an `<a>` is no longer demonstrated as a valid pattern.
+- **`asChild` prop deprecated.** The shadcn-inherited `asChild` prop is now flagged as deprecated in Badge's [COMPONENT.md](src/components/atoms/badge/COMPONENT.md). The prop body is unchanged for now to avoid breaking the few existing consumers, but a follow-up pass will strip `asChild`, the `Slot.Root` import, and the Radix Slot dependency on Badge entirely. Documented under `## Pending changes` in the same file.
+- **Best practices and Usage guidelines rewritten** to make the rule unambiguous: there is no escape hatch.
+
 ### Hover state polish on interactive atoms (2026-04-14)
 
 Small post-Phase-B polish surfaced during a Storybook smoke pass on the newly published components. Three tightly scoped fixes plus a new theme token to back them.
