@@ -62,7 +62,7 @@ export const WithForm: Story = {
               <Input
                 id="width"
                 defaultValue="100%"
-                className="col-span-2 h-8"
+                className="col-span-2"
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
@@ -70,7 +70,7 @@ export const WithForm: Story = {
               <Input
                 id="maxWidth"
                 defaultValue="300px"
-                className="col-span-2 h-8"
+                className="col-span-2"
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
@@ -78,7 +78,7 @@ export const WithForm: Story = {
               <Input
                 id="height"
                 defaultValue="25px"
-                className="col-span-2 h-8"
+                className="col-span-2"
               />
             </div>
           </div>

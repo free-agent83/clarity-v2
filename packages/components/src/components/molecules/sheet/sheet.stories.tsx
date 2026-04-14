@@ -24,7 +24,7 @@ export default meta;
 type Story = StoryObj<typeof Sheet>;
 
 const ProfileForm = () => (
-  <div className="flex flex-col gap-4 py-4">
+  <div className="flex flex-col gap-4 px-4 py-2">
     <div className="flex flex-col gap-2">
       <Label htmlFor="name">Name</Label>
       <Input id="name" defaultValue="Jane Doe" />
