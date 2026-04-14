@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Breadcrumb separator is fixed by the design system (2026-04-14)
+
+Hardened a Breadcrumb usage rule that the original shadcn import had left as an open door.
+
+- **Rule:** `BreadcrumbSeparator` must be used as-is. Never pass children to swap in a slash, dot, arrow, or any other glyph. The default chevron is the design system's chosen separator; consistency across every breadcrumb instance in the product is more important than per-instance personality. If a future surface needs a different separator, the change happens in the component itself and applies uniformly — never per-instance.
+- **Story removed.** The `CustomSeparator` story is gone from [`breadcrumb.stories.tsx`](src/components/molecules/breadcrumb/breadcrumb.stories.tsx). Wrapping `BreadcrumbSeparator` around an `<IconSlash />` (or any other element) is no longer demonstrated as a valid pattern. The orphaned `IconSlash` import was pruned.
+- **COMPONENT.md updated** — the `BreadcrumbSeparator` props bullet now explicitly says "use as-is, do not pass children", and the Best practices list gains a `Do` (use as-is, with the rationale) and a `Don't` (no per-instance separator customization, ever).
+
+The Breadcrumb component itself is unchanged. `BreadcrumbSeparator` still accepts children at the type level — a follow-up pass can tighten that to forbid children entirely if we want hard enforcement.
+
 ### Dropdown menu polish: destructive item story API + uniform item heights (2026-04-14)
 
 Two fixes surfaced during the post-Phase-B Storybook smoke pass on Dropdown Menu.

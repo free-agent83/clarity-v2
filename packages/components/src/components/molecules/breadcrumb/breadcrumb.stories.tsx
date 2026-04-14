@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { IconSlash } from "@tabler/icons-react";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -63,26 +62,3 @@ export const WithEllipsis: Story = {
   ),
 };
 
-export const CustomSeparator: Story = {
-  render: () => (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="#">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <IconSlash />
-        </BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="#">Inventory</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator>
-          <IconSlash />
-        </BreadcrumbSeparator>
-        <BreadcrumbItem>
-          <BreadcrumbPage>Diamonds</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  ),
-};
