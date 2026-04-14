@@ -6,12 +6,24 @@ import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { IconCheck, IconChevronRight } from "@tabler/icons-react"
 
+interface DropdownMenuProps
+  extends React.ComponentProps<typeof DropdownMenuPrimitive.Root> {}
+
+interface DropdownMenuContentProps
+  extends React.ComponentProps<typeof DropdownMenuPrimitive.Content> {}
+
+/**
+ * Root of a dropdown menu. Controls open/close state and keyboard navigation.
+ */
 function DropdownMenu({
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
+}: DropdownMenuProps) {
   return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />
 }
 
+/**
+ * Portal wrapper for the floating menu content. Usually DropdownMenuContent renders this automatically — use explicitly only when manually composing.
+ */
 function DropdownMenuPortal({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
@@ -20,6 +32,9 @@ function DropdownMenuPortal({
   )
 }
 
+/**
+ * Element that opens the dropdown menu when clicked or activated via keyboard. Pass `asChild` to avoid wrapping in an extra element.
+ */
 function DropdownMenuTrigger({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
@@ -31,12 +46,15 @@ function DropdownMenuTrigger({
   )
 }
 
+/**
+ * Floating menu content. Accepts Radix positioning props.
+ */
 function DropdownMenuContent({
   className,
   align = "start",
   sideOffset = 4,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+}: DropdownMenuContentProps) {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -50,6 +68,9 @@ function DropdownMenuContent({
   )
 }
 
+/**
+ * Optional grouping wrapper for related menu items. Useful for accessibility — groups get announced as a unit.
+ */
 function DropdownMenuGroup({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Group>) {
@@ -58,6 +79,32 @@ function DropdownMenuGroup({
   )
 }
 
+/**
+ * Static, non-interactive label for a group of menu items.
+ */
+function DropdownMenuLabel({
+  className,
+  inset,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Label> & {
+  inset?: boolean
+}) {
+  return (
+    <DropdownMenuPrimitive.Label
+      data-slot="dropdown-menu-label"
+      data-inset={inset}
+      className={cn(
+        "px-2 py-1.5 text-xs font-medium text-muted-foreground data-inset:pl-8",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * Individual selectable menu item. Pass `disabled` to disable or `onSelect` to handle selection.
+ */
 function DropdownMenuItem({
   className,
   inset,
@@ -81,6 +128,9 @@ function DropdownMenuItem({
   )
 }
 
+/**
+ * Checkable menu item with a visible check mark when selected. Use for toggleable settings inside a menu.
+ */
 function DropdownMenuCheckboxItem({
   className,
   children,
@@ -115,6 +165,9 @@ function DropdownMenuCheckboxItem({
   )
 }
 
+/**
+ * Radio group container for mutually-exclusive menu items. Pair with DropdownMenuRadioItem children.
+ */
 function DropdownMenuRadioGroup({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>) {
@@ -126,6 +179,9 @@ function DropdownMenuRadioGroup({
   )
 }
 
+/**
+ * Individual radio item inside a DropdownMenuRadioGroup.
+ */
 function DropdownMenuRadioItem({
   className,
   children,
@@ -158,26 +214,9 @@ function DropdownMenuRadioItem({
   )
 }
 
-function DropdownMenuLabel({
-  className,
-  inset,
-  ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Label> & {
-  inset?: boolean
-}) {
-  return (
-    <DropdownMenuPrimitive.Label
-      data-slot="dropdown-menu-label"
-      data-inset={inset}
-      className={cn(
-        "px-2 py-1.5 text-xs font-medium text-muted-foreground data-inset:pl-8",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
+/**
+ * Visual divider between groups of menu items.
+ */
 function DropdownMenuSeparator({
   className,
   ...props
@@ -191,6 +230,9 @@ function DropdownMenuSeparator({
   )
 }
 
+/**
+ * Visual shortcut hint shown on the right of a menu item (e.g. "⌘K"). Non-functional — only renders the hint.
+ */
 function DropdownMenuShortcut({
   className,
   ...props
@@ -207,12 +249,18 @@ function DropdownMenuShortcut({
   )
 }
 
+/**
+ * Nested submenu root. Pair with DropdownMenuSubTrigger and DropdownMenuSubContent for nested menus.
+ */
 function DropdownMenuSub({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Sub>) {
   return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />
 }
 
+/**
+ * Trigger inside a parent menu that opens a nested submenu.
+ */
 function DropdownMenuSubTrigger({
   className,
   inset,
@@ -237,14 +285,21 @@ function DropdownMenuSubTrigger({
   )
 }
 
+/**
+ * Content of a nested submenu.
+ */
 function DropdownMenuSubContent({
   className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent>) {
   return (
+    // clarity-v2: token-gap — min-w-[96px] uses a raw px literal; replace with a spacing token when available
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
-      className={cn("z-50 min-w-[96px] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+      className={cn(
+        "z-50 min-w-[96px] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-md bg-popover p-1 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+        className
+      )}
       {...props}
     />
   )
@@ -266,4 +321,5 @@ export {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-}
+};
+export type { DropdownMenuProps, DropdownMenuContentProps };
