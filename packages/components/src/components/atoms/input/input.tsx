@@ -2,7 +2,16 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+interface InputProps extends React.ComponentProps<"input"> {}
+
+/**
+ * Single-line text input wrapping the native HTML `<input>` element.
+ *
+ * Pass `type` to switch between text, email, password, number,
+ * search, tel, url, date, etc. Use `aria-invalid` to visually mark
+ * validation errors.
+ */
+function Input({ className, type, ...props }: InputProps) {
   return (
     <input
       type={type}
@@ -16,4 +25,5 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   )
 }
 
-export { Input }
+export { Input };
+export type { InputProps };
