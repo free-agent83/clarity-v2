@@ -58,7 +58,16 @@ All Usage guidelines, Best practices, and Writing sections across the 14 `COMPON
 
 #### Verification
 
-Deferred to a final verification step before the PR opens: `tsc --noEmit`, `nx build components`, `vitest run --project=storybook`, and a Storybook dev smoke check — all run once at the end of the pass.
+`tsc --noEmit` clean. `nx build components` succeeds. `npm run test:storybook` passes (49 test files / 76 tests, 1 skipped — pre-existing Chart skip). Token grep across all 14 component TSX files confirms every Rule 1 match is accompanied by an inline `clarity-v2: token-gap` flag comment. Storybook dev smoke check is left for a manual click-through before merge.
+
+#### Test verification fixes (post-implementation)
+
+The full `test:storybook` run during final verification surfaced two unrelated issues that the per-component commits had not caught:
+
+- **Vite dep optimizer race condition.** The new stories were the first in the package to import `@storybook/test`. Vite's optimizer discovered it mid-test-run, invalidated the cached `radix-ui` bundle, and every test that ran after the cache reload crashed with "Invalid hook call" / "two copies of React". Fix: added `@storybook/test` to `vitest.config.ts`'s `optimizeDeps.include` block, alongside the existing React entries. Same pattern, same comment thread — the original config author had already fixed this exact failure mode for `react/jsx-dev-runtime`.
+- **Radix portal queries in play functions.** Four Default play functions (Popover, Tooltip, Dropdown Menu, Select) queried portal-rendered content via `within(canvasElement)`, but Radix renders these elements at `document.body`. Fix: switched each to `within(document.body)` for the post-open assertion, matching the pattern already used by Dialog and Sheet from the start. Tooltip additionally switched from `getByText` to `getByRole("tooltip")` because Radix Tooltip renders the content twice (visible + screen-reader), and `getByText` matched both.
+
+Both fixes land in this pass as small follow-ups, per the spec's allowance for in-pass test wiring corrections.
 
 #### Issues addressed
 

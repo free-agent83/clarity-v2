@@ -33,9 +33,10 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole("button", { name: "Open popover" });
     await userEvent.click(trigger);
+    const body = within(document.body);
     await waitFor(async () => {
       await expect(
-        canvas.getByText("Popover content goes here.")
+        body.getByText("Popover content goes here.")
       ).toBeInTheDocument();
     });
   },

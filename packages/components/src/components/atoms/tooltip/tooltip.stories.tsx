@@ -37,10 +37,11 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole("button", { name: "Hover me" });
     await userEvent.hover(trigger);
+    const body = within(document.body);
     await waitFor(async () => {
-      await expect(
-        canvas.getByText("Adds a new item to the list")
-      ).toBeInTheDocument();
+      await expect(body.getByRole("tooltip")).toHaveTextContent(
+        "Adds a new item to the list"
+      );
     });
   },
 };

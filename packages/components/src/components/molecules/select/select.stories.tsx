@@ -37,12 +37,13 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole("combobox");
     await userEvent.click(trigger);
+    const body = within(document.body);
     await waitFor(async () => {
       await expect(
-        canvas.getByRole("option", { name: "Princess" })
+        body.getByRole("option", { name: "Princess" })
       ).toBeInTheDocument();
     });
-    await userEvent.click(canvas.getByRole("option", { name: "Princess" }));
+    await userEvent.click(body.getByRole("option", { name: "Princess" }));
     await waitFor(async () => {
       await expect(trigger).toHaveTextContent("Princess");
     });
