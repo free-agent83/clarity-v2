@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Dropdown menu polish: destructive icon hover + uniform item heights (2026-04-14)
+
+Two fixes surfaced during the post-Phase-B Storybook smoke pass on Dropdown Menu.
+
+- **Destructive item icon kept its hover colour even when destructive.** When hovering a `variant="destructive"` `DropdownMenuItem`, the icon was inheriting `text-primary-hover` from the cascade instead of staying `text-destructive` alongside the label. Root cause: the existing rule `data-[variant=destructive]:*:[svg]:text-destructive` used Tailwind v4's `*:[svg]` syntax mix, which didn't resolve reliably. Replaced with `data-[variant=destructive]:[&_svg]:text-destructive`, matching the `[&_svg]` selector pattern the rest of the same file already uses for its other svg rules. Icon now stays destructive in both default and hover/focus states.
+- **Uniform item heights across all interactive menu types.** `DropdownMenuItem` was on `py-3` while `DropdownMenuCheckboxItem`, `DropdownMenuRadioItem`, and `DropdownMenuSubTrigger` were on `py-1.5`, so a menu mixing item types had visibly inconsistent row heights. Aligned all four to `py-3`. `DropdownMenuLabel` is intentionally left at `py-1.5` — it's a non-interactive heading, not an option, and its smaller height preserves the visual hierarchy between section labels and the items they group.
+
 ### Badge is display-only — no links, no actions (2026-04-14)
 
 Hardened a Badge usage rule that the original shadcn import had left as an open door.
