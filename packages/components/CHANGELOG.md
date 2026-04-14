@@ -42,7 +42,7 @@ For each of Badge, Breadcrumb, Dialog, Dropdown Menu, Input, Label, Popover, Sel
 - Each flagged violation is recorded inline in the TSX and under Known deviations in the COMPONENT.md, with the "Tokens only" quality checklist item left unticked per the publishing-with-flagged-violations exception.
 - Uncommented the corresponding lines in [`src/index.ts`](src/index.ts) as part of the final barrel-exports commit (next).
 
-**User-specified story sets** landed for Dropdown Menu (Default, WithSubmenus 3-deep, WithIcons, WithCheckboxes, Destructive, Complex — shortcuts explicitly skipped), Popover (Default, WithForm), Select (Default, WithGroups, Scrollable), and Toggle Group (Default, Multiple, Spacing, DiamondCutSelector). The Toggle Group `DiamondCutSelector` story uses `@tabler/icons-react` placeholders — `IconCircle`, `IconSquare`, `IconHexagon`, `IconDiamond`, `IconPentagon`, and `IconStar` (substituted for the unavailable `IconRhombus` in Tabler v3.41.1) — standing in for real diamond-cut icons. The story showcases the composition pattern, not the icon set.
+**User-specified story sets** landed for Dropdown Menu (Default, WithSubmenus 3-deep, WithIcons, WithCheckboxes, Destructive, Complex — shortcuts explicitly skipped), Popover (Default, WithForm), Select (Default, WithGroups, Scrollable), and Toggle Group (Default, Multiple, Spacing).
 
 #### Scope explicitly excluded from this pass
 

@@ -255,8 +255,7 @@ Only notable deviations are listed. If a component isn't mentioned for a given a
 **4.7 — Toggle Group — #74** (atom, `Forms/Toggle Group`)
 
 - CVA-based. `type` (`single` / `multiple`), `variant`, `size`, `spacing`. Minimal play function: click an item, assert pressed state changes.
-- Stories: `Default` (single-select), `Multiple` (multiple-select), `Spacing` (user-requested — showcases the `spacing` prop), `DiamondCutSelector` (user-requested — custom composition per the shadcn/radix custom example).
-- `DiamondCutSelector` uses `@tabler/icons-react` as placeholder icons (already installed). Six cut options stacked vertically with icon above and cut name label below. Icons are generic geometric shapes (e.g. `IconDiamond`, `IconSquare`, `IconCircle`, `IconPentagon`, `IconHexagon`, `IconRhombus`) — the story showcases the composition pattern, not the icon set. The placeholder nature is explicitly noted in the story code comments and in the commit body.
+- Stories: `Default` (single-select), `Multiple` (multiple-select), `Spacing` (user-requested — showcases the `spacing` prop).
 - Writing section: omitted (items are app-defined).
 
 **4.8 — Breadcrumb — #83** (molecule, `Navigation/Breadcrumb`)
@@ -519,6 +518,5 @@ Each of these is a legitimate follow-up; none belong in this pass.
 - **Status flip to `stable` × 14 is a commitment.** Once barrel exports are live, downstream consumers rely on current variant taxonomies inherited from shadcn. Changing them later is a breaking change. Confirm this is the right moment to promote — the interview confirmed this explicitly but it bears repeating.
 - **Rule 1 audits will surface flagged violations on at least some components.** Each flag is a ticket for a later per-component design review. The spec does not commit to a timeline for resolving them.
 - **Minimal play functions are smoke-level only.** They are not exhaustive coverage and do not exercise keyboard navigation, focus management edge cases, or Radix-specific behaviours. A follow-up play-function pass is implied but not scheduled.
-- **Tabler icon placeholders in `ToggleGroup.DiamondCutSelector`** are explicitly placeholders. The story showcases the custom composition pattern, not the icon set. A later pass swaps them for real cut icons when the visual asset library exists.
 - **`TooltipProvider` must wrap at the story level** for Tooltip stories to render correctly. The `COMPONENT.md` Usage guidelines call this out; the stories include it. Missing the provider is a common Radix foot-gun — worth noting in case Chris's review catches an unwrapped story.
 - **Final verification gate could reveal wiring gaps in `.storybook/main.ts` or `vitest.config.ts`.** Button's conformance pass assumed these were wired; if this pass reveals they aren't, wiring fixes land as a small follow-up commit before the PR, not as a new spec.

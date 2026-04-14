@@ -1672,7 +1672,7 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
 - Radix wrapper; likely uses CVA for variant/size (may re-use `toggleVariants` from the sibling Toggle atom)
 - Interactive — minimal play function required
 - Two named exports: `ToggleGroup`, `ToggleGroupItem`
-- Four user-specified stories required: Default, Multiple, Spacing, DiamondCutSelector
+- Three user-specified stories required: Default, Multiple, Spacing
 - No Writing section (items are app-defined)
 
 - [ ] **Step 9.1: Read the current file (T1)**
@@ -1739,17 +1739,7 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
   ```tsx
   import type { Meta, StoryObj } from "@storybook/react";
   import { userEvent, within, expect } from "@storybook/test";
-  import {
-    IconBold,
-    IconItalic,
-    IconUnderline,
-    IconCircle,
-    IconSquare,
-    IconDiamond,
-    IconHexagon,
-    IconPentagon,
-    IconRhombus,
-  } from "@tabler/icons-react";
+  import { IconBold, IconItalic, IconUnderline } from "@tabler/icons-react";
   import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 
   const meta: Meta<typeof ToggleGroup> = {
@@ -1839,37 +1829,6 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
       </div>
     ),
   };
-
-  // Custom composition pattern: each item is a larger tile with a
-  // placeholder icon above a label. Icons are Tabler placeholders —
-  // real diamond-cut icons arrive when the visual asset library exists.
-  const CUTS = [
-    { value: "round", label: "Round", Icon: IconCircle },
-    { value: "princess", label: "Princess", Icon: IconSquare },
-    { value: "emerald", label: "Emerald", Icon: IconHexagon },
-    { value: "oval", label: "Oval", Icon: IconDiamond },
-    { value: "cushion", label: "Cushion", Icon: IconPentagon },
-    { value: "marquise", label: "Marquise", Icon: IconRhombus },
-  ] as const;
-
-  export const DiamondCutSelector: Story = {
-    args: { type: "single", defaultValue: "round" },
-    render: (args) => (
-      <ToggleGroup {...args} className="flex flex-wrap gap-3">
-        {CUTS.map(({ value, label, Icon }) => (
-          <ToggleGroupItem
-            key={value}
-            value={value}
-            aria-label={label}
-            className="flex h-auto flex-col items-center gap-2 p-4 data-[state=on]:bg-accent"
-          >
-            <Icon className="size-8" />
-            <span className="text-xs">{label}</span>
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
-    ),
-  };
   ```
 
 - [ ] **Step 9.8: Rewrite toggle-group/COMPONENT.md**
@@ -1947,9 +1906,7 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
     exported as types
   - JSDoc blocks on both exports
   - Stories meta with autodocs and argTypes; Default (single),
-    Multiple, Spacing, and DiamondCutSelector stories. Diamond cut
-    selector uses Tabler icons as placeholders per the spec — real
-    cut icons land in a later pass.
+    Multiple, and Spacing stories.
   - Minimal play function on Default: click an item, assert
     data-state="on"
   - COMPONENT.md fully seeded (first draft)
@@ -4314,7 +4271,7 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
   - Rule 1 audit run on each component. Dialog was flagged for `max-w-[calc(100%-2rem)]` on `DialogContent`; recorded inline and under Known deviations in its COMPONENT.md. Other components either had no violations or were flagged with their own notes.
   - Uncommented the corresponding lines in [`src/index.ts`](src/index.ts) as part of the final barrel-exports commit.
 
-  **User-specified story sets** landed for Dropdown Menu (Default, WithSubmenus 3-deep, WithIcons, WithCheckboxes, Destructive, Complex — shortcuts explicitly skipped), Popover (Default, WithForm), Select (Default, WithGroups, Scrollable), and Toggle Group (Default, Multiple, Spacing, DiamondCutSelector). The Toggle Group `DiamondCutSelector` story uses `@tabler/icons-react` placeholders (`IconCircle`, `IconSquare`, `IconHexagon`, `IconDiamond`, `IconPentagon`, `IconRhombus`) standing in for real diamond-cut icons — the story showcases the composition pattern, not the icon set.
+  **User-specified story sets** landed for Dropdown Menu (Default, WithSubmenus 3-deep, WithIcons, WithCheckboxes, Destructive, Complex — shortcuts explicitly skipped), Popover (Default, WithForm), Select (Default, WithGroups, Scrollable), and Toggle Group (Default, Multiple, Spacing).
 
   ### Scope explicitly excluded from this pass
 
@@ -4695,7 +4652,7 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
   - **CONTRIBUTING.md** — reworded Rule 1 to forbid raw literals inside Tailwind arbitrary value syntax while explicitly allowing `var(--token)` inside arbitrary syntax. Added a violation policy (flag, don't fix). Updated the Definition of Done with a publishing-with-flagged-violations exception.
   - **Button retrofit** — flagged `rounded-[min(var(--radius-md),10px)]` under the new rule. No code change, no version bump.
   - **14 component commits** — named `Props` interfaces, JSDoc blocks, updated stories, seeded `COMPONENT.md` files, minimal play functions for interactive components.
-  - **User-specified stories** landed for Dropdown Menu (6 stories including Complex), Popover (WithForm), Select (WithGroups, Scrollable), and Toggle Group (including DiamondCutSelector with Tabler icon placeholders).
+  - **User-specified stories** landed for Dropdown Menu (6 stories including Complex), Popover (WithForm), Select (WithGroups, Scrollable), and Toggle Group (Default, Multiple, Spacing).
   - **Barrel exports** uncommented for all 14 components in [`src/index.ts`](packages/components/src/index.ts).
   - **CHANGELOG entry** — one consolidated `2026-04-14` entry at the top of `packages/components/CHANGELOG.md`.
 
