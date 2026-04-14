@@ -4,6 +4,19 @@ import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+interface BadgeProps
+  extends React.ComponentProps<"span">,
+    VariantProps<typeof badgeVariants> {
+  asChild?: boolean;
+}
+
+/**
+ * Badge variants.
+ *
+ * Variant axis = visual style (default, secondary, destructive, success, warning, info, outline, ghost, link)
+ * Size axis    = default, sm
+ */
+// clarity-v2: token-gap — ring-[3px] uses raw literal; needs focus-ring token in design tokens
 const badgeVariants = cva(
   "group/badge inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
@@ -38,14 +51,23 @@ const badgeVariants = cva(
   }
 )
 
+/**
+ * Small status or metadata indicator, typically used alongside
+ * another element (a list item, a heading, a navigation link).
+ *
+ * Renders a `<span>` by default. Pass `asChild` to render as a
+ * different element — e.g. an anchor — while preserving badge
+ * styling.
+ *
+ * @see {@link badgeVariants} for the full variant/size matrix.
+ */
 function Badge({
   className,
   variant = "default",
   size = "default",
   asChild = false,
   ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+}: BadgeProps) {
   const Comp = asChild ? Slot.Root : "span"
 
   return (
@@ -59,4 +81,5 @@ function Badge({
   )
 }
 
-export { Badge, badgeVariants }
+export { Badge, badgeVariants };
+export type { BadgeProps };
