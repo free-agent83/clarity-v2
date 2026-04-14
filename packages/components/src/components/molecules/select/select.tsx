@@ -6,12 +6,31 @@ import { Select as SelectPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { IconSelector, IconCheck, IconChevronUp, IconChevronDown } from "@tabler/icons-react"
 
+interface SelectProps extends React.ComponentProps<typeof SelectPrimitive.Root> {}
+
+interface SelectTriggerProps
+  extends React.ComponentProps<typeof SelectPrimitive.Trigger> {
+  size?: "sm" | "default"
+}
+
+interface SelectContentProps
+  extends React.ComponentProps<typeof SelectPrimitive.Content> {}
+
+/**
+ * Root of a Select control. Holds open state and the currently
+ * selected value. Pass `value` + `onValueChange` for controlled mode
+ * or `defaultValue` for uncontrolled.
+ */
 function Select({
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Root>) {
+}: SelectProps) {
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
 
+/**
+ * Grouping wrapper for related SelectItems. Pair with SelectLabel
+ * to label the group.
+ */
 function SelectGroup({
   className,
   ...props
@@ -25,20 +44,26 @@ function SelectGroup({
   )
 }
 
+/**
+ * Displays the current selected value inside the SelectTrigger.
+ * Renders the `placeholder` prop when nothing is selected.
+ */
 function SelectValue({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Value>) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
+/**
+ * Element that opens the Select when clicked. Typically wraps a
+ * SelectValue to show the current selection.
+ */
 function SelectTrigger({
   className,
   size = "default",
   children,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
-  size?: "sm" | "default"
-}) {
+}: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
@@ -57,13 +82,17 @@ function SelectTrigger({
   )
 }
 
+/**
+ * Floating listbox containing the SelectItems. Accepts Radix
+ * positioning props.
+ */
 function SelectContent({
   className,
   children,
   position = "item-aligned",
   align = "center",
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Content>) {
+}: SelectContentProps) {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -90,6 +119,10 @@ function SelectContent({
   )
 }
 
+/**
+ * Non-interactive label for a SelectGroup. Announced by assistive
+ * tech when scoped to the group.
+ */
 function SelectLabel({
   className,
   ...props
@@ -103,6 +136,10 @@ function SelectLabel({
   )
 }
 
+/**
+ * Individual selectable option inside the listbox. `value` is
+ * required and identifies the option in the Select's state.
+ */
 function SelectItem({
   className,
   children,
@@ -127,6 +164,9 @@ function SelectItem({
   )
 }
 
+/**
+ * Visual divider between SelectGroups or SelectItems.
+ */
 function SelectSeparator({
   className,
   ...props
@@ -140,6 +180,10 @@ function SelectSeparator({
   )
 }
 
+/**
+ * Scroll-up affordance shown at the top of an overflowing listbox.
+ * Renders automatically when content exceeds the container height.
+ */
 function SelectScrollUpButton({
   className,
   ...props
@@ -159,6 +203,10 @@ function SelectScrollUpButton({
   )
 }
 
+/**
+ * Scroll-down affordance shown at the bottom of an overflowing
+ * listbox.
+ */
 function SelectScrollDownButton({
   className,
   ...props
@@ -189,4 +237,5 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-}
+};
+export type { SelectProps, SelectTriggerProps, SelectContentProps };
