@@ -55,6 +55,24 @@ Use Button for any action that a user triggers synchronously on the current page
 - Keep labels short — 1-3 words.
 - No ALL CAPS — the component handles text styling.
 
+## Icon Button pattern
+
+Icon-only buttons are a Button usage pattern, not a separate component. Use the `icon`, `icon-sm`, or `icon-xs` sizes and pass exactly one icon as the child. Always provide `aria-label` — without it, the button has no accessible name.
+
+```tsx
+import { IconTrash } from "@tabler/icons-react";
+
+<Button size="icon" variant="ghost" aria-label="Delete item">
+  <IconTrash />
+</Button>
+```
+
+**Do:** Set `aria-label` to a short action verb phrase describing what the button does ("Delete item", "Close dialog", "Open menu").
+
+**Don't:** Render more than one child inside an icon button — the size variants are sized for a single icon.
+
+**Don't:** Use an icon button for an action whose meaning isn't clear from the icon alone. If a user might hesitate, add a Tooltip or use a labelled Button instead.
+
 ## Known deviations
 
 **Rule 1 — raw literals in arbitrary value syntax.** [`button.tsx`](./button.tsx) contains `rounded-[min(var(--radius-md),10px)]` (on `sm` and `icon-sm` sizes) and `rounded-[min(var(--radius-md),8px)]` (on `icon-xs`). The pixel values (`10px`, `8px`) are raw literals and violate the revised Rule 1 in CONTRIBUTING.md. These values represent a token gap — the min() function is a CSS runtime fallback when `--radius-md` is not defined. Flagged pending per-component review by the design lead — see the inline comments in the TSX.
