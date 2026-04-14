@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof Badge>;
 
 export const Default: Story = {
-  render: () => <Badge>Badge</Badge>,
+  render: () => <Badge variant="secondary">Badge</Badge>,
 };

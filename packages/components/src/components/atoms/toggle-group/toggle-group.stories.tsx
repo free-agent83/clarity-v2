@@ -12,10 +12,10 @@ type Story = StoryObj<typeof ToggleGroup>;
 
 export const Default: Story = {
   render: () => (
-    <ToggleGroup type="single" defaultValue="one">
-      <ToggleGroupItem value="one">One</ToggleGroupItem>
-      <ToggleGroupItem value="two">Two</ToggleGroupItem>
-      <ToggleGroupItem value="three">Three</ToggleGroupItem>
+    <ToggleGroup variant="outline" type="single" defaultValue="natural-diamonds">
+      <ToggleGroupItem value="natural-diamonds">Natural diamonds</ToggleGroupItem>
+      <ToggleGroupItem value="labgrown-diamonds">Lab grown diamonds</ToggleGroupItem>
+      <ToggleGroupItem value="gemstones">Gemstones</ToggleGroupItem>
     </ToggleGroup>
   ),
 };

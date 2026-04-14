@@ -11,5 +11,5 @@ export default meta;
 type Story = StoryObj<typeof Toggle>;
 
 export const Default: Story = {
-  render: () => <Toggle>Toggle</Toggle>,
+  render: () => <Toggle variant="outline">Toggle</Toggle>,
 };
