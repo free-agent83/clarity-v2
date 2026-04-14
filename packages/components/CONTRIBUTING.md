@@ -2,7 +2,7 @@
 
 Conventions for building, testing, documenting, and shipping web components in Clarity V2. This document is the single reference for anyone — human or AI agent — contributing to the component library.
 
-This is a living document. Conventions will evolve as Phase B progresses and real use reveals what works and what doesn't. The existing Button component (`src/components/atoms/button/`) is a living reference for most patterns described here.
+This is a living document. Conventions will evolve as Phase B progresses and real use reveals what works and what doesn't.
 
 ---
 
@@ -48,8 +48,8 @@ Table derived from the TypeScript interface:
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `"contained" \| "outlined" \| ...` | `"contained"` | Visual style of the button |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Button size |
+| `variant` | `"contained" \| "outlined" \| ...` | `"contained"` | Visual style |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Component size |
 | `asChild` | `boolean` | `false` | Render as child element via Radix Slot |
 
 #### 3. Usage guidelines
@@ -81,10 +81,11 @@ Filled-in checklist for this specific component:
 
 ```md
 - [x] Accessibility: passes axe-core, keyboard navigable, screen reader tested
-- [x] Figma parity: matches DSW-Web-Components Figma source
 - [ ] Responsive: works at all breakpoints
 - [x] Tokens only: no hardcoded visual values
 ```
+
+**On Figma parity:** components are not currently gated on Figma parity. The process for populating Figma with Clarity V2 components — whether they are authored in Figma first, generated from code, or hand-maintained in parallel — is an open question to be resolved later in the programme. Until that decision is made, the component library is the source of truth, not Figma, and `COMPONENT.md` quality checklists do not include a Figma parity item.
 
 ---
 
@@ -131,7 +132,7 @@ src/components/atoms/button/
 When a component has visual variants, define them with `cva()` from `class-variance-authority`:
 
 ```tsx
-const buttonVariants = cva(
+const componentVariants = cva(
   "base classes applied to all variants",
   {
     variants: {
@@ -171,9 +172,9 @@ Always use `cn()` from `@/lib/utils` to merge class names. Never concatenate str
 - Export the Props interface.
 
 ```tsx
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+export interface ComponentProps
+  extends React.ComponentProps<"div">,
+    VariantProps<typeof componentVariants> {
   asChild?: boolean;
 }
 ```
@@ -183,17 +184,17 @@ export interface ButtonProps
 Every component uses named exports — no default exports. Each component file exports three things: the component itself, the variants object (when using CVA), and the Props interface as a type-only export.
 
 ```tsx
-// button.tsx
-export { Button, buttonVariants };
-export type { ButtonProps };
+// component.tsx
+export { Component, componentVariants };
+export type { ComponentProps };
 ```
 
 Every stable component must then be re-exported from `src/index.ts` using the same three-export pattern. The package barrel is the single import point for consumers — they should never reach into a component folder directly.
 
 ```tsx
 // src/index.ts
-export { Button, buttonVariants } from "./components/atoms/button/button";
-export type { ButtonProps } from "./components/atoms/button/button";
+export { Component, componentVariants } from "./components/atoms/component/component";
+export type { ComponentProps } from "./components/atoms/component/component";
 ```
 
 ### Comments
@@ -206,14 +207,15 @@ When a component uses `cva`, prefix the definition with a JSDoc block naming eac
 
 ```tsx
 /**
- * Button variants mapped to Nivoda DS Foundation.
+ * Component variants.
  *
  * Variant axis = visual style (contained, outlined, text, link)
  * Intent axis  = semantic colour (primary, success, error)
  * Size axis    = sm, md, lg
  *
+ * (Illustrative only — not a binding taxonomy for any real component.)
  */
-const buttonVariants = cva( ... );
+const componentVariants = cva( ... );
 ```
 
 One line per axis, ordered as they appear in the `variants` object. Enum the options inline rather than listing them underneath — keep the block scannable.
@@ -224,31 +226,26 @@ Every named export gets a JSDoc block: the component itself, the variants object
 
 ```tsx
 /**
- * Primary interactive element for triggering actions.
+ * One-line description of what the component does and when to use it.
  *
- * Wraps a native `<button>` by default. Pass `asChild` to render as a
- * different element (e.g. an anchor styled as a button) while keeping
- * the same variant styling.
+ * Any non-obvious constraints, the role of `asChild` if applicable, and
+ * anything else a consumer needs to know go here.
  *
- * @see {@link buttonVariants} for the full variant/intent/size matrix.
+ * @see {@link componentVariants} for the full variant/size matrix.
  */
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(...);
+function Component(...) { ... }
 
-export { Button, buttonVariants };
-export type { ButtonProps };
+export { Component, componentVariants };
+export type { ComponentProps };
 ```
 
 Internal helpers, locals, and non-exported values stay uncommented. Documentation noise belongs only on the public API surface and the variant axes above.
 
 ### Other patterns
 
-The following patterns are encouraged where appropriate but not mandated for every component:
+- **Radix `Slot` / `asChild`** — use when the component wraps a single element and consumers may need to swap the underlying element (e.g. rendering a Button as a link).
 
-- **`React.forwardRef`** — use when consumers need ref access (most components).
-- **`displayName`** — set it when using `forwardRef` for better DevTools and Storybook labels.
-- **Radix `Slot` / `asChild`** — use when the component wraps a single element and consumers may need to swap the underlying element (e.g., rendering a Button as a link).
-
-See the Button implementation for a reference that uses all of these.
+We currently follow shadcn's React-19 defaults — plain function components, no `React.forwardRef`, no `displayName`. This may be revisited if and when a consumer needs ref access that plain function components can't provide.
 
 ---
 
@@ -353,11 +350,11 @@ PascalCase, variant-first:
 
 ### Minimum story set
 
-Every component must have stories covering:
-- One story per variant value
-- One story per size (if the component has a size axis)
-- Key states: disabled, loading, error (where applicable)
-- Compound variants where intent or state changes the visual appearance
+Write a story only when a usage pattern isn't discoverable from the `argTypes` controls. Variant values, sizes, and boolean states (disabled, loading) are controllable via the Storybook controls panel — no dedicated story is needed for those.
+
+Stories exist to surface patterns that *aren't* expressible as prop permutations: icon children, slot-based composition (`asChild`), wrapper-dependent behaviour (full-width inside a constrained container), compound behaviours, and anything else a reader wouldn't discover by clicking through the argTypes.
+
+Every component still needs at least one story — the default render — so the argTypes playground has an anchor.
 
 ### Play functions for interactive components
 
@@ -423,7 +420,7 @@ A component is considered done when all of the following are true:
 
 - [ ] Implementation follows conventions (CVA, cn(), TypeScript, named exports)
 - [ ] All visual values come from tokens via Tailwind — no hardcoded values
-- [ ] Stories cover all variants, sizes, states, and compound variants
+- [ ] Stories cover non-obvious usage patterns (see Minimum story set)
 - [ ] `tags: ["autodocs"]` present on story meta
 - [ ] Interactive components have play functions testing core interactions
 - [ ] Accessibility addon shows no violations
@@ -444,27 +441,3 @@ No `components.json` exists in this repo yet. During Phase B, both approaches wi
 2. **Manual build** — reference shadcn/Radix source, build from scratch following our conventions
 
 Decision will be made after trying both on a few components. Check with the design lead before committing to an approach.
-
----
-
-## Setup: testing infrastructure
-
-The following setup is required before the testing strategy described above is fully operational:
-
-**Install devDependencies** in `packages/components/`:
-- `@storybook/addon-a11y`
-- `@storybook/addon-vitest`
-- `@storybook/test`
-- `vitest`
-
-**Update `.storybook/main.ts`** — add `@storybook/addon-a11y` and `@storybook/addon-vitest` to the addons array.
-
-**Create `vitest.config.ts`** — configure the Storybook vitest project.
-
-**Add scripts to `package.json`**:
-```json
-{
-  "test": "vitest",
-  "test:storybook": "vitest --project=storybook"
-}
-```
