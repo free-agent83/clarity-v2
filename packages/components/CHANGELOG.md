@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Hover state polish on interactive atoms (2026-04-14)
+
+Small post-Phase-B polish surfaced during a Storybook smoke pass on the newly published components. Three tightly scoped fixes plus a new theme token to back them.
+
+- **`Button.secondary` foreground bug fix.** The `secondary` variant was rendering text in `text-primary-foreground` instead of `text-secondary-foreground` — a stale colour pairing inherited from the shadcn import. Visible in the dark-mode preview as a near-invisible label. Fixed.
+- **Consistent `hover:text-primary-hover` across interactive atoms.** `Button.outline`, `Button.link`, and `Toggle` all now shift to `text-primary-hover` on hover, matching `Button.ghost`'s existing behaviour. The previous mix of `hover:text-foreground` / no hover text colour was inconsistent and dulled the hover affordance.
+- **`Button.secondary` gains `hover:text-secondary-hover`.** Same idea for the secondary scale, backed by a new token (see below).
+- **`Toggle` base classes get `background` in the transition list.** `transition-[color,box-shadow]` → `transition-[color,background,box-shadow]` so the `hover:bg-muted` change is animated instead of snapped on/off. Brings Toggle in line with Button's hover feel.
+
+#### Theme token addition
+
+- **New `--secondary-hover` token** (light + dark) plus its `--color-secondary-hover` Tailwind theme alias in [`packages/components/src/styles/globals.css`](src/styles/globals.css). Light mode reuses `oklch(0.4679 0.2562 283.19)` (the same primary-hover violet); dark mode reuses `oklch(0.97 0.001 106.424)` (the muted near-white). The token exists so `Button.secondary`'s new hover text colour resolves through the theme layer rather than via an arbitrary value, per CONTRIBUTING Rule 1.
+
+This is a Rule 3 theme change (adding a new semantic token mapping) made by the design lead directly. No agent ratification needed.
+
 ### Phase B conformance pass (2026-04-14)
 
 Promoted 14 components to `stable` after a mechanical conformance pass against `packages/components/CONTRIBUTING.md`. Amended CONTRIBUTING's Rule 1 and Definition of Done to reflect the revised token-consumption policy, and retrofitted Button against the new rule.
