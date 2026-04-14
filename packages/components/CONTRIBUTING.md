@@ -364,6 +364,32 @@ Stories exist to surface patterns that *aren't* expressible as prop permutations
 
 Every component still needs at least one story — the default render — so the argTypes playground has an anchor.
 
+### Compose stories from system components only
+
+When a story renders a component **alongside** other elements (a Label next to an input, a Button inside a Popover, a form inside a Sheet), every one of those elements must come from the Clarity V2 component library. Never inline a bespoke `<input>`, `<button>`, `<select>`, `<textarea>`, or any other element that has a system equivalent. Never apply ad-hoc Tailwind classes to fake the look of a system component.
+
+The library is the design. A story that bypasses it teaches readers — human and AI agent — that bypassing is acceptable, and the visual reference drifts the moment the system component changes. Every story is a small worked example of how the design system composes; that example is only honest if it uses real components throughout.
+
+```tsx
+// Do
+<div className="flex flex-col gap-2">
+  <Label htmlFor="email">Email address</Label>
+  <Input id="email" type="email" placeholder="you@example.com" />
+</div>
+
+// Don't
+<div className="flex flex-col gap-2">
+  <Label htmlFor="email">Email address</Label>
+  <input
+    id="email"
+    type="email"
+    className="rounded-md border border-border bg-background px-3 py-2 text-sm"
+  />
+</div>
+```
+
+The only acceptable raw HTML in a story is structural layout (`<div>`, `<span>`, headings) where no system equivalent exists yet. If the missing equivalent ever lands as a component, replace the inline usage in the same commit.
+
 ### Play functions for interactive components
 
 Interactive components (form inputs, dialogs, tooltips, tabs, etc.) must include `play` functions that test core interactions:

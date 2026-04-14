@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Label } from "./label";
+import { Input } from "../input/input";
 
 const meta: Meta<typeof Label> = {
   title: "Forms/Label",
@@ -15,11 +16,7 @@ export const Default: Story = {
   render: (args) => (
     <div className="flex flex-col gap-2">
       <Label {...args} />
-      <input
-        id="email"
-        type="email"
-        className="rounded-md border border-border bg-background px-3 py-2 text-sm"
-      />
+      <Input id="email" type="email" placeholder="you@example.com" />
     </div>
   ),
 };
