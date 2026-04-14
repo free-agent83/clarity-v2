@@ -3,10 +3,17 @@ import { Label as LabelPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
-function Label({
-  className,
-  ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+interface LabelProps
+  extends React.ComponentProps<typeof LabelPrimitive.Root> {}
+
+/**
+ * Accessible text label for form controls.
+ *
+ * Wraps Radix `Label.Root`. Use the `htmlFor` prop to associate the
+ * label with a form control via its `id`. Clicking the label focuses
+ * the associated control.
+ */
+function Label({ className, ...props }: LabelProps) {
   return (
     <LabelPrimitive.Root
       data-slot="label"
@@ -19,4 +26,5 @@ function Label({
   )
 }
 
-export { Label }
+export { Label };
+export type { LabelProps };
