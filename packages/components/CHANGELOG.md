@@ -6,6 +6,66 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Phase B conformance pass (2026-04-14)
+
+Promoted 14 components to `stable` after a mechanical conformance pass against `packages/components/CONTRIBUTING.md`. Amended CONTRIBUTING's Rule 1 and Definition of Done to reflect the revised token-consumption policy, and retrofitted Button against the new rule.
+
+#### CONTRIBUTING.md changes
+
+- Reworded Rule 1: raw literals inside Tailwind arbitrary value syntax are forbidden; `var(--token)` inside arbitrary syntax is allowed. Mixed expressions where any literal leaks in are violations (e.g. `rounded-[min(var(--radius-md),10px)]` — the `10px` is the violation).
+- Added a "Handling violations" subsection: flag, don't fix. Inline `// clarity-v2: token-gap` comment in the TSX + Known deviations note in the COMPONENT.md.
+- Updated Definition of Done: components with flagged Rule 1 violations may be published (status `stable`, barrel-exported) but the "Tokens only" DoD item stays unticked until the flag is resolved. This is an explicit Phase B exception, not a permanent carve-out.
+- Sidebar taxonomy: `Breadcrumbs` → `Breadcrumb` (singular).
+
+#### Button retrofit
+
+Flagged three raw pixel literal violations in [`button.tsx`](src/components/atoms/button/button.tsx) under the new violation policy: `rounded-[min(var(--radius-md),10px)]` on the `sm` size, `rounded-[min(var(--radius-md),8px)]` on `icon-xs`, and `rounded-[min(var(--radius-md),10px)]` on `icon-sm`. No code change — inline comments and Known deviations notes added to COMPONENT.md. Quality checklist "Tokens only" box flipped from ticked to unticked. Button remains `stable`.
+
+Also added an **Icon Button pattern** section to Button's `COMPONENT.md` documenting the `<Button size="icon" aria-label="..."><Icon /></Button>` usage. Icon Button (#82) is a Button usage pattern, not a new component.
+
+#### Components promoted to `stable` (14)
+
+For each of Badge, Breadcrumb, Dialog, Dropdown Menu, Input, Label, Popover, Select, Separator, Sheet, Skeleton, Toggle Group, Tooltip:
+
+- Introduced a named `<Component>Props` interface declared with `interface` at the top of the file and re-exported via `export type { }` at the bottom — the established three-export pattern.
+- Compound components (Dialog, Dropdown Menu, Select, Popover, Tooltip, Sheet, Breadcrumb) export named interfaces for subcomponents with custom props (e.g. `DialogContentProps` for `showCloseButton`, `SelectTriggerProps`, `SelectContentProps`); pass-through subcomponents keep their inline types.
+- Added JSDoc blocks on the variants object (where CVA is used) and on every named export, including subcomponents.
+- Meta blocks with `tags: ["autodocs"]` and `argTypes` on every story file.
+- `COMPONENT.md` fully seeded with frontmatter, one-line description, props table or bullet list, usage guidelines, best practices, writing section (where the component renders user-facing text), and quality checklist.
+- Minimal play functions added for interactive components (Input, Toggle Group, Tooltip, Popover, Dropdown Menu, Select, Dialog, Sheet). Dialog and Sheet play functions use `within(document.body)` to account for Radix portal rendering.
+- Rule 1 audit run on each component. Flagged violations:
+  - **Badge** — `ring-[3px]` (focus-ring, no token replacement available)
+  - **Tooltip** — `translate-y-[calc(-50%_-_2px)]` and `rounded-[2px]` on `TooltipPrimitive.Arrow`
+  - **Dropdown Menu** — `min-w-[96px]` on `DropdownMenuSubContent`
+  - **Dialog** — `max-w-[calc(100%-2rem)]` on `DialogContent`
+  - Other components had no violations.
+- Each flagged violation is recorded inline in the TSX and under Known deviations in the COMPONENT.md, with the "Tokens only" quality checklist item left unticked per the publishing-with-flagged-violations exception.
+- Uncommented the corresponding lines in [`src/index.ts`](src/index.ts) as part of the final barrel-exports commit (next).
+
+**User-specified story sets** landed for Dropdown Menu (Default, WithSubmenus 3-deep, WithIcons, WithCheckboxes, Destructive, Complex — shortcuts explicitly skipped), Popover (Default, WithForm), Select (Default, WithGroups, Scrollable), and Toggle Group (Default, Multiple, Spacing, DiamondCutSelector). The Toggle Group `DiamondCutSelector` story uses `@tabler/icons-react` placeholders — `IconCircle`, `IconSquare`, `IconHexagon`, `IconDiamond`, `IconPentagon`, and `IconStar` (substituted for the unavailable `IconRhombus` in Tabler v3.41.1) — standing in for real diamond-cut icons. The story showcases the composition pattern, not the icon set.
+
+#### Scope explicitly excluded from this pass
+
+- Variant / intent / size taxonomy redesign per component. Current taxonomies are shadcn-flat inherited defaults — a review is a separate design-lead-led pass.
+- Fixing flagged Rule 1 violations. Per the new violation policy, each flag is a ticket for later per-component review.
+- Adding standalone vitest tests (Layer 4). None of the batch crosses the "non-trivial logic" threshold. Stories + a11y + minimal play functions cover them.
+- Exhaustive play-function coverage (keyboard navigation, deep focus management, edge cases) — follow-up pass.
+- Icon Button as a standalone component (see Button retrofit above).
+
+#### Draft content flag
+
+All Usage guidelines, Best practices, and Writing sections across the 14 `COMPONENT.md` files are author-drafted from general design-system best practice (Material, Carbon, Radix, shadcn, a11y conventions). They are explicit first drafts pending design-lead review. No Nivoda-specific context was used in drafting — Chris reviews before the PR merges.
+
+#### Verification
+
+Deferred to a final verification step before the PR opens: `tsc --noEmit`, `nx build components`, `vitest run --project=storybook`, and a Storybook dev smoke check — all run once at the end of the pass.
+
+#### Issues addressed
+
+Refs #58, #59, #60, #61, #62, #72, #73, #74, #75, #76, #77, #78, #82, #83. Closed on PR merge via PR description.
+
+See [`docs/superpowers/specs/2026-04-14-phase-b-conformance-design.md`](../../docs/superpowers/specs/2026-04-14-phase-b-conformance-design.md) for the full spec and [`docs/superpowers/plans/2026-04-14-phase-b-conformance.md`](../../docs/superpowers/plans/2026-04-14-phase-b-conformance.md) for the implementation plan.
+
 ### Button conformance pass (2026-04-13)
 
 Promoted Button to `stable 0.1.0` after a conformance pass against `packages/components/CONTRIBUTING.md`, and amended CONTRIBUTING itself where its guidance had drifted from current decisions.
