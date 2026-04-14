@@ -169,7 +169,7 @@ export const Destructive: Story = {
         <DropdownMenuItem>Edit</DropdownMenuItem>
         <DropdownMenuItem>Duplicate</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive focus:text-destructive">
+        <DropdownMenuItem variant="destructive">
           <IconTrash />
           Delete
         </DropdownMenuItem>
@@ -225,7 +225,7 @@ export const Complex: Story = {
           </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive focus:text-destructive">
+        <DropdownMenuItem variant="destructive">
           <IconLogout />
           Log out
         </DropdownMenuItem>
