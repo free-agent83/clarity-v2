@@ -253,21 +253,29 @@ We currently follow shadcn's React-19 defaults — plain function components, no
 
 #### Rule 1 — Components consume tokens only through the CSS theme
 
-Components never import from `packages/tokens/` and never reference raw token CSS variables. They see tokens only through the Tailwind theme, as utility classes.
+Components never import from `packages/tokens/` and never reference raw token CSS variables as Tailwind utility shortcuts to raw literals. They see tokens only through the Tailwind theme, as utility classes — or, when an arbitrary value is truly needed, as a `var(--token)` reference inside arbitrary value syntax.
 
-```tsx
-// Do
-"bg-primary text-foreground border-border"
+**Allowed:**
 
-// Don't
-"bg-[var(--color-semantic-primary-default)]"
-```
+- Semantic utility classes: `bg-primary`, `text-foreground`, `border-border`, `p-4`, `rounded-md`
+- Arbitrary value syntax when the value is a CSS variable: `rounded-[var(--radius-md)]`, `w-[calc(100%-var(--sidebar-width))]`
 
-Corollaries:
+**Forbidden:**
 
-- No hardcoded colors, spacing, border-radius, or shadows anywhere in component code.
-- No Tailwind arbitrary value syntax (`bg-[#hex]`, `p-[14px]`) for values that should be tokens.
-- If the design calls for a value not in the token set, flag it — NEVER invent a token.
+- Raw literals inside arbitrary value syntax: `p-[14px]`, `text-[#232323]`, `m-[4px]`, `bg-[#fff]`
+- Mixed expressions where any literal leaks in: `rounded-[min(var(--radius-md),10px)]` — the `10px` half is the violation even though `var(--radius-md)` is fine
+- Hardcoded hex values anywhere in the file
+
+If the design calls for a value not in the token set, flag it — NEVER invent a token.
+
+**Handling violations**
+
+When a component has a Rule 1 violation that can't be trivially resolved (e.g. an inherited shadcn default whose replacement would be a design judgement call), the violation is **flagged, not fixed**:
+
+1. Add an inline comment directly above or beside the offending line in the `.tsx` file: `// clarity-v2: token-gap — <short description of violation>`
+2. Record the violation in that component's `COMPONENT.md` under a `## Known deviations` section, pointing at the file and the rule.
+
+Flagged violations are revisited per-component in later design-lead-led passes. This policy exists to let conformance work move fast without triggering design judgement calls on shadcn defaults.
 
 #### Rule 2 — The token flow is always top-down
 
@@ -331,7 +339,7 @@ Overlays/       Dialog, Sheet, Popover, Tooltip
 Feedback/       Alert, Toast, Progress, Skeleton
 Display/        Card, Badge, Chip, Avatar, Separator, Carousel
 Data/           Table, Data Grid
-Navigation/     Tabs, Accordion, Breadcrumbs
+Navigation/     Tabs, Accordion, Breadcrumb
 Templates/      [Phase C — PLP, PDP, Dashboard, Auth, Checkout, Settings]
 Docs/           [Phase C — Getting started, Prompt patterns, Migration from MUI]
 ```
@@ -419,7 +427,7 @@ vitest --project=storybook --run
 A component is considered done when all of the following are true:
 
 - [ ] Implementation follows conventions (CVA, cn(), TypeScript, named exports)
-- [ ] All visual values come from tokens via Tailwind — no hardcoded values
+- [ ] Tokens only: no raw literals inside Tailwind arbitrary value syntax, no hardcoded colors, spacing, radius, or shadows. `var(--token)` inside arbitrary syntax is allowed.
 - [ ] Stories cover non-obvious usage patterns (see Minimum story set)
 - [ ] `tags: ["autodocs"]` present on story meta
 - [ ] Interactive components have play functions testing core interactions
@@ -430,3 +438,5 @@ A component is considered done when all of the following are true:
 - [ ] Component and variants exported from `src/index.ts`
 - [ ] Storybook renders all stories without errors
 - [ ] TypeScript compiles with no errors (`tsc --noEmit`)
+
+**Publishing with flagged violations.** A component may be promoted to `stable` and barrel-exported even if it has flagged Rule 1 violations. The "Tokens only" DoD item remains unticked in that component's `COMPONENT.md` with an inline note pointing at the flag. Publishing is allowed; completion is not. This is an explicit exception for Phase B, not a permanent carve-out — each flag is a ticket for a later per-component review.
