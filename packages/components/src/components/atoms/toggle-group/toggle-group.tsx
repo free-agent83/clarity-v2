@@ -7,6 +7,15 @@ import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { toggleVariants } from "@/components/atoms/toggle/toggle"
 
+type ToggleGroupProps = React.ComponentProps<typeof ToggleGroupPrimitive.Root> &
+  VariantProps<typeof toggleVariants> & {
+    spacing?: number
+    orientation?: "horizontal" | "vertical"
+  }
+
+type ToggleGroupItemProps = React.ComponentProps<typeof ToggleGroupPrimitive.Item> &
+  VariantProps<typeof toggleVariants>
+
 const ToggleGroupContext = React.createContext<
   VariantProps<typeof toggleVariants> & {
     spacing?: number
@@ -19,6 +28,13 @@ const ToggleGroupContext = React.createContext<
   orientation: "horizontal",
 })
 
+/**
+ * Group of toggle buttons where one or many can be pressed at a time.
+ *
+ * Wraps Radix `ToggleGroup.Root`. Pass `type="single"` for a radio-
+ * like single-selection group, or `type="multiple"` for independent
+ * multi-select toggles.
+ */
 function ToggleGroup({
   className,
   variant,
@@ -27,11 +43,7 @@ function ToggleGroup({
   orientation = "horizontal",
   children,
   ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Root> &
-  VariantProps<typeof toggleVariants> & {
-    spacing?: number
-    orientation?: "horizontal" | "vertical"
-  }) {
+}: ToggleGroupProps) {
   return (
     <ToggleGroupPrimitive.Root
       data-slot="toggle-group"
@@ -55,14 +67,18 @@ function ToggleGroup({
   )
 }
 
+/**
+ * Individual item inside a ToggleGroup. Must be a direct child of
+ * ToggleGroup. Pass `value` to identify the item in the group's
+ * selection state.
+ */
 function ToggleGroupItem({
   className,
   children,
   variant = "default",
   size = "default",
   ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Item> &
-  VariantProps<typeof toggleVariants>) {
+}: ToggleGroupItemProps) {
   const context = React.useContext(ToggleGroupContext)
 
   return (
@@ -86,4 +102,5 @@ function ToggleGroupItem({
   )
 }
 
-export { ToggleGroup, ToggleGroupItem }
+export { ToggleGroup, ToggleGroupItem };
+export type { ToggleGroupProps, ToggleGroupItemProps };
