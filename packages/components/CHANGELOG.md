@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### AppShell organism and Brand foundation (2026-04-15)
 
-Introduces [`AppShell`](src/components/organisms/app-shell/app-shell.tsx), the top-level page-shell organism for every Nivoda application surface, and [`Brand`](src/components/atoms/brand/brand.tsx), a new Foundations-level atom for the Nivoda wordmark. Both land as `unstable` with commented-out barrel exports.
+Introduces [`AppShell`](src/components/organisms/app-shell/app-shell.tsx), the top-level page-shell organism for every Nivoda application surface, and [`Brand`](src/components/atoms/brand/brand.tsx), a new Foundations-level atom for the Nivoda wordmark. `AppShell` ships as `stable` at `0.0.1` with its barrel exports enabled; `Brand` ships as `unstable 0.0.1` with a commented-out barrel line, ready for its own promotion pass once the design lead has signed off.
 
 #### `AppShell` structure
 

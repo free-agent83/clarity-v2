@@ -1,8 +1,8 @@
 ---
 name: AppShell
 slug: app-shell
-version: 0.0.7
-status: unstable
+version: 0.0.1
+status: stable
 lastUpdated: 2026-04-15
 ---
 

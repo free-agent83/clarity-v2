@@ -86,8 +86,8 @@ export type { SheetProps, SheetContentProps } from "./components/molecules/sheet
 
 // ────────────────────── Organisms (5) ──────────────────────
 
-// export { AppShell, AppShellHeader, AppShellActions, AppShellNavigationSheet, AppShellMain } from "./components/organisms/app-shell/app-shell";
-// export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShellNavigationSheetProps, AppShellNavigationSheetUser, AppShellMainProps } from "./components/organisms/app-shell/app-shell";
+export { AppShell, AppShellHeader, AppShellActions, AppShellNavigationSheet, AppShellMain } from "./components/organisms/app-shell/app-shell";
+export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShellNavigationSheetProps, AppShellNavigationSheetUser, AppShellMainProps } from "./components/organisms/app-shell/app-shell";
 // export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle } from "./components/organisms/chart/chart";
 // export type { ChartConfig } from "./components/organisms/chart/chart";
 // export { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger, NavigationMenuLink, NavigationMenuIndicator, NavigationMenuViewport, navigationMenuTriggerStyle } from "./components/organisms/navigation-menu/navigation-menu";
