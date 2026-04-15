@@ -100,6 +100,7 @@ export type {
   DataTablePaginationConfig,
   DataTableToolbarConfig,
   SortOption,
+  QuickFilter,
   DataTableHeaderProps,
   DataTableCellProps,
 } from "./components/organisms/data-table/data-table-types";

@@ -48,6 +48,7 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 | `search.columnIds` | `string[]` | — | Column IDs to include in global search (required, non-empty) |
 | `search.debounceMs` | `number` | `300` | Debounce delay in milliseconds |
 | `sorting` | `SortOption[]` | — | Preset sort options for the sort dropdown |
+| `quickFilters` | `QuickFilter[]` | — | Quick filter popovers rendered in the toolbar |
 
 ### SortOption
 
@@ -56,6 +57,15 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 | `label` | `string` | — | Human-readable label shown in the dropdown |
 | `columnId` | `string` | — | Column to sort by |
 | `direction` | `"asc" \| "desc"` | — | Sort direction |
+
+### QuickFilter
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | — | Label shown on the filter trigger button |
+| `columnId` | `string` | — | Column to filter (must match a column in `columns`) |
+| `type` | `"checkbox-list" \| "interval-slider"` | — | Filter type |
+| `formatValue` | `(value: number) => string` | `String` | Format function for slider range display (interval-slider only) |
 
 ### DataTableHeader / DataTableCell
 
@@ -75,6 +85,10 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 **Do** use `toolbar.search.columnIds` to explicitly opt columns into global search. Columns not listed are excluded.
 
 **Don't** configure `toolbar.sorting` options that reference columns not in your `columns` array — this is a runtime error.
+
+**Do** use `toolbar.quickFilters` for columns with a small set of discrete values (checkbox-list) or numeric ranges (interval-slider). Each filter renders as a popover with pending state — changes apply on "Apply".
+
+**Don't** configure two quick filters with the same `columnId` — this is a runtime error.
 
 ## Best practices
 
