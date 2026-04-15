@@ -186,3 +186,116 @@ export const CustomPageSizes: Story = {
     },
   },
 }
+
+export const WithSearch: Story = {
+  args: {
+    data: products,
+    config: {
+      columns: baseColumns,
+      toolbar: {
+        search: {
+          placeholder: "Search products...",
+          columnIds: ["name", "category"],
+        },
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Verify toolbar renders with search input
+    const searchInput = canvas.getByPlaceholderText("Search products...")
+    await expect(searchInput).toBeInTheDocument()
+
+    // Type a search term that matches a known category
+    await userEvent.type(searchInput, "Rings")
+
+    // Wait for debounce (300ms default + buffer)
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    // Verify filtering happened — only rows with "Rings" category should show
+    const rows = canvasElement.querySelectorAll("tbody tr")
+    for (const row of rows) {
+      const cells = row.querySelectorAll("td")
+      const rowText = Array.from(cells)
+        .map((c) => c.textContent)
+        .join(" ")
+      await expect(rowText).toMatch(/Rings/)
+    }
+
+    // Clear search via × button
+    const clearButton = canvas.getByRole("button", { name: "Clear search" })
+    await userEvent.click(clearButton)
+
+    // Wait for state to settle
+    await new Promise((resolve) => setTimeout(resolve, 100))
+
+    // Verify rows are restored (default page size = 10)
+    const restoredRows = canvasElement.querySelectorAll("tbody tr")
+    await expect(restoredRows.length).toBe(10)
+  },
+}
+
+export const WithSorting: Story = {
+  args: {
+    data: products,
+    config: {
+      columns: baseColumns,
+      toolbar: {
+        sorting: [
+          { label: "Price, high to low", columnId: "price", direction: "desc" },
+          { label: "Price, low to high", columnId: "price", direction: "asc" },
+          { label: "Name A–Z", columnId: "name", direction: "asc" },
+          { label: "Name Z–A", columnId: "name", direction: "desc" },
+        ],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Verify sort button renders with default label
+    const sortButton = canvas.getByRole("button", { name: /Sort/ })
+    await expect(sortButton).toBeInTheDocument()
+
+    // Open sort dropdown
+    await userEvent.click(sortButton)
+
+    // Select "Price, high to low"
+    const option = canvas.getByRole("menuitemradio", {
+      name: "Price, high to low",
+    })
+    await userEvent.click(option)
+
+    // Verify trigger now shows active sort label
+    const updatedButton = canvas.getByRole("button", {
+      name: /Price, high to low/,
+    })
+    await expect(updatedButton).toBeInTheDocument()
+
+    // Verify first data row has the highest price
+    // Products: price = round((i+1)*37.5 + 50, 2). Product 42 = round(42*37.5+50, 2) = $1,625.00
+    const firstDataRow = canvasElement.querySelectorAll("tbody tr")[0]
+    const priceCell = firstDataRow?.querySelectorAll("td")[3]
+    await expect(priceCell?.textContent).toBe("$1625.00")
+  },
+}
+
+export const WithToolbar: Story = {
+  args: {
+    data: products,
+    config: {
+      columns: baseColumns,
+      toolbar: {
+        search: {
+          placeholder: "Search products...",
+          columnIds: ["name", "category"],
+        },
+        sorting: [
+          { label: "Price, high to low", columnId: "price", direction: "desc" },
+          { label: "Price, low to high", columnId: "price", direction: "asc" },
+        ],
+      },
+    },
+  },
+}
