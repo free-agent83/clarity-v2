@@ -13,6 +13,7 @@ export const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50]
  */
 export interface DataTableConfig<TData> {
   columns: ColumnDef<TData, unknown>[]
+  toolbar?: DataTableToolbarConfig
   pagination?: DataTablePaginationConfig
   enableRowSelection?: boolean
   selectionActions?: (rows: TData[], clearSelection: () => void) => ReactNode
@@ -27,6 +28,32 @@ export interface DataTableConfig<TData> {
  */
 export interface DataTablePaginationConfig {
   pageSizeOptions?: number[]
+}
+
+/**
+ * Sort preset for the toolbar sort dropdown.
+ *
+ * Each option maps a human-readable label to a column + direction pair.
+ */
+export interface SortOption {
+  label: string
+  columnId: string
+  direction: "asc" | "desc"
+}
+
+/**
+ * Toolbar configuration for DataTable.
+ *
+ * Controls the search input and sort dropdown rendered above the table.
+ * Both features are optional — configure only what you need.
+ */
+export interface DataTableToolbarConfig {
+  search?: {
+    placeholder?: string
+    columnIds: string[]
+    debounceMs?: number
+  }
+  sorting?: SortOption[]
 }
 
 /**
