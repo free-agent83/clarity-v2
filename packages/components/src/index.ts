@@ -82,8 +82,10 @@ export { Sheet, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetFooter
 export type { SheetProps, SheetContentProps } from "./components/molecules/sheet/sheet";
 // export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants } from "./components/molecules/tabs/tabs";
 
-// ────────────────────── Organisms (4) ──────────────────────
+// ────────────────────── Organisms (5) ──────────────────────
 
+// export { AppShell, AppShellHeader, AppShellBrand, AppShellActions, AppShellNavTrigger, AppShellNavigationSheet, AppShellMain } from "./components/organisms/app-shell/app-shell";
+// export type { AppShellProps, AppShellHeaderProps, AppShellBrandProps, AppShellActionsProps, AppShellNavigationSheetProps, AppShellNavigationSheetUser, AppShellMainProps } from "./components/organisms/app-shell/app-shell";
 // export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle } from "./components/organisms/chart/chart";
 // export type { ChartConfig } from "./components/organisms/chart/chart";
 // export { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger, NavigationMenuLink, NavigationMenuIndicator, NavigationMenuViewport, navigationMenuTriggerStyle } from "./components/organisms/navigation-menu/navigation-menu";
