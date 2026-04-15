@@ -26,11 +26,9 @@ import {
 import {
   AppShell,
   AppShellActions,
-  AppShellBrand,
   AppShellHeader,
   AppShellMain,
   AppShellNavigationSheet,
-  AppShellNavTrigger,
 } from "./app-shell";
 
 const meta: Meta<typeof AppShell> = {
@@ -62,17 +60,6 @@ const exampleUser = {
   email: "j.appleseed@nivoda.net",
   avatarSrc: "https://i.pravatar.cc/150",
 };
-
-function HeaderBrand() {
-  return (
-    <AppShellBrand>
-      <AppShellNavTrigger />
-      <span className="font-heading text-base font-semibold tracking-tight">
-        Nivoda
-      </span>
-    </AppShellBrand>
-  );
-}
 
 function HeaderActions() {
   return (
@@ -154,9 +141,7 @@ export const Default: Story = {
   args: { full: false },
   render: (args) => (
     <AppShell {...args}>
-      <AppShellHeader onSearch={() => {}}>
-        <HeaderBrand />
-      </AppShellHeader>
+      <AppShellHeader onSearch={() => {}} />
       <AppShellNavigationSheet
         title="Navigation"
         heading={
@@ -202,7 +187,6 @@ export const FullWidth: Story = {
   render: (args) => (
     <AppShell {...args}>
       <AppShellHeader onSearch={() => {}}>
-        <HeaderBrand />
         <HeaderActions />
       </AppShellHeader>
       <AppShellNavigationSheet
@@ -237,7 +221,6 @@ export const NavigationOpen: Story = {
   render: (args) => (
     <AppShell {...args}>
       <AppShellHeader onSearch={() => {}}>
-        <HeaderBrand />
         <HeaderActions />
       </AppShellHeader>
       <AppShellNavigationSheet
@@ -275,8 +258,7 @@ export const SearchDialog: Story = {
         <>
           <AppShell {...args}>
             <AppShellHeader onSearch={() => setOpen(true)}>
-              <HeaderBrand />
-              <HeaderActions />
+                    <HeaderActions />
             </AppShellHeader>
             <AppShellNavigationSheet
               title="Navigation"
@@ -345,8 +327,7 @@ export const TrailingControls: Story = {
     <TooltipProvider>
       <AppShell {...args}>
         <AppShellHeader onSearch={() => {}}>
-          <HeaderBrand />
-          <AppShellActions>
+            <AppShellActions>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Calculator">

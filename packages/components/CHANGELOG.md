@@ -6,6 +6,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### AppShell organism and Brand foundation (2026-04-15)
+
+Introduces [`AppShell`](src/components/organisms/app-shell/app-shell.tsx), the top-level page-shell organism for every Nivoda application surface, and [`Brand`](src/components/atoms/brand/brand.tsx), a new Foundations-level atom for the Nivoda wordmark. Both land as `unstable` with commented-out barrel exports.
+
+#### `AppShell` structure
+
+`AppShell` is a four-region compound: `AppShellHeader` (sticky top bar), `AppShellNavigationSheet` (left-anchored drawer), `AppShellMain` (page content with a constrained inner container), and the root wrapper itself (which also serves as a Radix `Dialog.Root` context provider for the nav sheet). The root rejects `className` at the type level via `Omit<..., "className">` — styling at the shell level is forbidden so downstream apps cannot drift.
+
+#### The header's leading region and search bar are hardcoded
+
+`AppShellHeader` renders a hardcoded brand region (menu trigger + `Brand` at `h-6`) at `order-1`, a hardcoded `AppShellSearchBar` at `order-2 flex-1`, and consumer-composed `AppShellActions` at `order-3`. Neither the brand nor the menu trigger nor the search bar is a slot — they're internal helper functions, not exported, not overridable. Every Nivoda app shell opens its nav with the same button, wears the same brand mark, and presents the same search affordance.
+
+- **`AppShellSearchBar`** is a `<button>` styled to look like an `Input`, with a leading `IconSearch` and fixed placeholder "Search Nivoda…". It fires the `onSearch` callback passed to `AppShellHeader`. The component is deliberately not an actual input: search handling (Dialog, command palette, route change) is app-specific, and the shell doesn't take a position on it.
+- **`AppShellNavTrigger`** (internal) is a ghost `Button` with `IconMenu2` and the label "Menu" at the default size. Wires itself to the nav sheet via the `Sheet` provider `AppShell` wraps its children in — no state management required.
+
+The rule is documented with explicit Don'ts in the component's `COMPONENT.md`: no `Combobox`, no `Input[type=search]`, no bespoke button dressed up as a search icon, no alternative menu button. Surface-level secondary searches (e.g. filter-in-table) belong inside the main content area, not the header.
+
+#### `AppShellNavigationSheet` owns its three-region layout
+
+The nav sheet wraps `SheetContent` with `side="left"` locked. Consumers pass only `children` (the navigation body); the header slot is a single `heading` ReactNode prop, and the footer is entirely structural with a fixed Avatar + identity block + "Log out" button composition driven by the required `user` and `onLogout` props. `AppShellNavigationSheetUser` is exported as a named type — `{ name, email?, avatarSrc? }`. The avatar fallback is auto-computed from `user.name` (`"John Appleseed"` → `"JA"`) so consumers never have to pass a fallback string. `title` is a required ReactNode rendered in an `sr-only` `SheetTitle` for Radix a11y, plus a fixed `sr-only` `SheetDescription` to silence Radix's `Missing Description` warning.
+
+#### Main area and `full` escape hatch
+
+`AppShellMain` wraps its children in an inner container (`mx-auto max-w-7xl px-4 py-6 md:px-6 lg:px-8`). Pass `full={true}` on `AppShell` to remove the max-width constraint; the value cascades via a `data-full` attribute and a `group-data-[full=true]/app-shell:` selector on the inner container. `full` is documented as an escape hatch, not a default — data grids, dashboards, and complex views should use the constrained width as a rule, because the design system is tuned around it.
+
+#### Stories
+
+Five stories land under `Navigation/App Shell`:
+
+- **`Default`** — minimal header (no trailing actions), nav closed. Play function exercises menu open → Escape → close.
+- **`FullWidth`** — demonstrates `full={true}`.
+- **`NavigationOpen`** — workbench story with `defaultNavigationOpen={true}` so the nav sheet is visible on mount. Added specifically for iterating on the sheet in isolation.
+- **`SearchDialog`** — wires `onSearch` to local state that opens an empty `Dialog`, illustrating the "shell fires, consumer handles" pattern. Play function exercises search click → dialog → Escape → dismissed.
+- **`TrailingControls`** — showcases a fuller set of trailing controls inside `AppShellActions`: three `size="icon"` buttons (Calculator, Currency, Shortlists) wrapped in `Tooltip`s via a scoped `TooltipProvider`, plus `Cart (2)` and `Help` text buttons with trailing icons.
+
+#### Button size rule for `AppShellActions`
+
+Buttons inside `AppShellActions` must use `size="default"` or `size="icon"` — both are `h-11` and preserve the header's vertical rhythm. `sm`, `lg`, `icon-sm`, and `icon-xs` are all shorter than `h-11` and break alignment with the hardcoded search bar and menu trigger. The rule applies **only** to `AppShellActions`; the main content area and the navigation sheet body are explicitly free to use any button size. An earlier draft of this rule was shell-wide and too strict; the narrower version landed as part of the `TrailingControls` story work.
+
+#### Not for closed modal flows
+
+Explicit "Do not use for" callout in the component's `COMPONENT.md`: checkouts, stone selections, diamond comparison wizards, and any single-task step-by-step flow should not use `AppShell`. The full shell with its branding, search, and navigation creates escape hatches that undermine the flow's completion metric. Those flows should render in a `Dialog`, a `Sheet`, or a bespoke minimal layout instead.
+
+#### Known deviations
+
+- **`AppShellSearchBar` surface fill uses direct Tailwind palette references.** The search bar's resting and hover fills are `bg-stone-50` and `hover:bg-stone-100` — direct Tailwind stone-palette utilities, not DS semantic tokens. This is a Rule 1 violation, flagged not fixed: resolving it requires either a new semantic token for the search bar surface or repurposing `muted` / `muted/50`, both design-lead rulings. Inline `clarity-v2: token-gap` flag in [`app-shell.tsx`](src/components/organisms/app-shell/app-shell.tsx) and a Known deviations entry in the component's `COMPONENT.md`. "Tokens only" DoD item stays unticked.
+
+#### `Brand` foundation component
+
+New atom at [`src/components/atoms/brand/brand.tsx`](src/components/atoms/brand/brand.tsx) with stories and `COMPONENT.md`. Renders the Nivoda wordmark as an inline SVG (the two paths — triangle + circle — from the design lead's source file) with `fill="currentColor"` so the mark inherits the ambient text colour and renders correctly on both light and dark surfaces without a variant prop.
+
+Resizable via standard Tailwind height utilities on `className`: `<Brand className="h-10" />`. Default `h-6 w-auto`; the SVG `viewBox` handles aspect ratio. Deliberately no `size` prop — one override axis keeps the API surface zero and lets consumers size the mark against the same spacing scale they use for everything else in the shell. Default `role="img" aria-label="Nivoda"`; consumers can pass `aria-hidden` when the brand sits next to a visible wordmark and is decorative.
+
+Storybook sidebar title is `Foundations/Brand`. Four stories: `Default`, `Sizes` (five heights), `OnDark` (demonstrates `currentColor` auto-flip on an inverted surface), `Recoloured` (three tinted variants). `COMPONENT.md` documents the design ruling that consumers must import `Brand` rather than reproducing the wordmark with inline SVG elsewhere in the codebase.
+
+#### Verification
+
+`tsc --noEmit` clean. `vitest --project=storybook run app-shell brand` — 9 tests pass (5 app-shell + 4 brand), no a11y violations, no Radix warnings.
+
 ### Breadcrumb separator is fixed by the design system (2026-04-14)
 
 Hardened a Breadcrumb usage rule that the original shadcn import had left as an open door.

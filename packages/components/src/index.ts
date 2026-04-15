@@ -15,13 +15,15 @@ export { cn } from "./lib/utils";
 // See packages/components/CONTRIBUTING.md §Exports.
 // ---------------------------------------------------------------------------
 
-// ────────────────────── Atoms (32) ──────────────────────
+// ────────────────────── Atoms (33) ──────────────────────
 
 // export { Alert, AlertTitle, AlertDescription, AlertAction } from "./components/atoms/alert/alert";
 // export { AspectRatio } from "./components/atoms/aspect-ratio/aspect-ratio";
 // export { Avatar, AvatarImage, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarBadge } from "./components/atoms/avatar/avatar";
 export { Badge, badgeVariants } from "./components/atoms/badge/badge";
 export type { BadgeProps } from "./components/atoms/badge/badge";
+// export { Brand } from "./components/atoms/brand/brand";
+// export type { BrandProps } from "./components/atoms/brand/brand";
 export { Button, buttonVariants } from "./components/atoms/button/button";
 export type { ButtonProps } from "./components/atoms/button/button";
 // export { ButtonGroup, ButtonGroupSeparator, ButtonGroupText, buttonGroupVariants } from "./components/atoms/button-group/button-group";
@@ -84,8 +86,8 @@ export type { SheetProps, SheetContentProps } from "./components/molecules/sheet
 
 // ────────────────────── Organisms (5) ──────────────────────
 
-// export { AppShell, AppShellHeader, AppShellBrand, AppShellActions, AppShellNavTrigger, AppShellNavigationSheet, AppShellMain } from "./components/organisms/app-shell/app-shell";
-// export type { AppShellProps, AppShellHeaderProps, AppShellBrandProps, AppShellActionsProps, AppShellNavigationSheetProps, AppShellNavigationSheetUser, AppShellMainProps } from "./components/organisms/app-shell/app-shell";
+// export { AppShell, AppShellHeader, AppShellActions, AppShellNavigationSheet, AppShellMain } from "./components/organisms/app-shell/app-shell";
+// export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShellNavigationSheetProps, AppShellNavigationSheetUser, AppShellMainProps } from "./components/organisms/app-shell/app-shell";
 // export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle } from "./components/organisms/chart/chart";
 // export type { ChartConfig } from "./components/organisms/chart/chart";
 // export { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger, NavigationMenuLink, NavigationMenuIndicator, NavigationMenuViewport, navigationMenuTriggerStyle } from "./components/organisms/navigation-menu/navigation-menu";

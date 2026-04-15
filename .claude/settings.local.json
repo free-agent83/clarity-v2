@@ -65,7 +65,9 @@
       "Bash(npx storybook *)",
       "Bash(lsof -i :6006 -sTCP:LISTEN)",
       "Bash(ps -p 68823 -o command=)",
-      "Bash(echo \"tsc_exit=$?\")"
+      "Bash(echo \"tsc_exit=$?\")",
+      "Bash(git commit -m ' *)",
+      "Bash(git -C ../.. status)"
     ]
   }
 }

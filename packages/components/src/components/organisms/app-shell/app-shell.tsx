@@ -7,6 +7,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/atoms/avatar/avatar"
+import { Brand } from "@/components/atoms/brand/brand"
 import { Button } from "@/components/atoms/button/button"
 import {
   Sheet,
@@ -44,14 +45,13 @@ interface AppShellProps extends Omit<React.ComponentProps<"div">, "className"> {
  * surfaces, leave it undefined so the sheet starts closed.
  *
  * Internally wraps its children in a `Sheet` (Radix `Dialog.Root`) so
- * that an `AppShellNavTrigger` in the header and an
- * `AppShellNavigationSheet` elsewhere in the tree share open/close
- * state without any consumer wiring. The wrapper emits no DOM — it
- * is purely a context provider — so shells without navigation pay
- * nothing for it.
+ * that the hardcoded menu trigger in `AppShellHeader` and the
+ * `AppShellNavigationSheet` share open/close state without any
+ * consumer wiring. The wrapper emits no DOM — it is purely a context
+ * provider — so shells without navigation pay nothing for it.
  *
- * Compose with `AppShellHeader` (containing `AppShellBrand` and
- * `AppShellActions`; the search bar is hardcoded),
+ * Compose with `AppShellHeader` (hardcoded brand, menu trigger, and
+ * search bar — only trailing `AppShellActions` are consumer-owned),
  * `AppShellNavigationSheet`, and `AppShellMain`. Children passed to
  * `AppShellMain` are automatically wrapped in an inner container
  * that enforces the max-width and page padding.
@@ -86,19 +86,23 @@ interface AppShellHeaderProps
  *
  * Renders a `<header>` fixed to the top of the viewport at a
  * standard height, with a bottom border and the app background.
- * Accepts `AppShellBrand` and `AppShellActions` as children and
- * lays them out around a hardcoded `AppShellSearchBar` in the
- * middle — the search bar is not a slot and cannot be replaced.
+ *
+ * The leading region (menu trigger + `Brand` logo) and the middle
+ * region (`AppShellSearchBar`) are both hardcoded — neither is a
+ * slot, neither can be replaced, and every Nivoda app shell renders
+ * them identically. The only composition point on the header is
+ * the trailing region, which accepts an optional `AppShellActions`
+ * child for per-surface controls.
  *
  * `onSearch` is required: it fires when the user clicks the search
  * bar. How the callback handles the search (opening a Dialog, a
  * command palette, navigating to a search page, etc.) is
  * app-specific.
  *
- * The header is a flex container; the search bar uses `order-2`
- * and `flex-1` so `AppShellBrand` (`order-1`) and `AppShellActions`
- * (`order-3`) can be composed in any DOM order and still land on
- * the correct side of the bar.
+ * The header is a flex container; the hardcoded brand region sits
+ * at `order-1`, the search bar at `order-2 flex-1`, and
+ * `AppShellActions` at `order-3` — so trailing children always land
+ * on the right regardless of DOM position.
  */
 function AppShellHeader({
   className,
@@ -115,29 +119,16 @@ function AppShellHeader({
       )}
       {...props}
     >
-      {children}
+      <div
+        data-slot="app-shell-brand"
+        className="order-1 flex shrink-0 items-center gap-3"
+      >
+        <AppShellNavTrigger />
+        <Brand className="h-6 mr-2" />
+      </div>
       <AppShellSearchBar onClick={onSearch} />
+      {children}
     </header>
-  )
-}
-
-interface AppShellBrandProps extends React.ComponentProps<"div"> {}
-
-/**
- * Leading region of the header for the menu trigger and the app logo.
- *
- * Provides consistent spacing and alignment; consumers pass their own
- * menu button and brand mark as children. Uses `order-1` so it
- * always renders to the left of the hardcoded search bar regardless
- * of DOM position inside `AppShellHeader`.
- */
-function AppShellBrand({ className, ...props }: AppShellBrandProps) {
-  return (
-    <div
-      data-slot="app-shell-brand"
-      className={cn("order-1 flex shrink-0 items-center gap-3", className)}
-      {...props}
-    />
   )
 }
 
@@ -164,6 +155,7 @@ function AppShellSearchBar({
       type="button"
       data-slot="app-shell-search-bar"
       onClick={onClick}
+      // clarity-v2: token-gap — bg-stone-50 / hover:bg-stone-100 are direct Tailwind palette references, not DS semantic tokens; pending a semantic token for the search bar surface fill
       className="order-2 flex h-11 flex-1 items-center gap-2 rounded-md bg-stone-50 px-2.5 py-1 text-left text-base text-muted-foreground transition-[color,background] outline-none hover:bg-stone-100 hover:cursor-pointer focus-visible:border-accent-foreground focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
     >
       <IconSearch className="size-4 shrink-0 opacity-50" />
@@ -193,17 +185,16 @@ function AppShellActions({ className, ...props }: AppShellActionsProps) {
 }
 
 /**
- * Button that opens the app shell's `AppShellNavigationSheet`.
+ * Hardcoded menu trigger rendered at the start of `AppShellHeader`.
  *
- * Renders a fixed ghost `Button` at the default size with an
- * `IconMenu2` and the label "Menu". Place it inside `AppShellBrand`
- * — it wires itself to the nav sheet via the `Sheet` provider that
- * `AppShell` wraps its children in, so no state management is
- * required.
+ * A fixed ghost `Button` at the default size with an `IconMenu2`
+ * and the label "Menu". Wires itself to the nav sheet via the
+ * `Sheet` provider that `AppShell` wraps its children in, so no
+ * state management is required.
  *
- * Takes no props. The visual and the label are a design ruling and
- * are not configurable: every Nivoda app shell opens its navigation
- * with the same menu button, so consumers downstream cannot drift.
+ * Not exported. The header owns it; consumers cannot replace it,
+ * reposition it, or add a second one. Every Nivoda app shell opens
+ * its navigation with this exact button.
  */
 function AppShellNavTrigger() {
   return (
@@ -377,7 +368,7 @@ function AppShellMain({ className, children, ...props }: AppShellMainProps) {
     >
       <div
         data-slot="app-shell-main-container"
-        className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 lg:px-8 group-data-[full=true]/app-shell:max-w-none"
+        className="mx-auto w-full max-w-384 px-6 py-6 group-data-[full=true]/app-shell:max-w-none"
       >
         {children}
       </div>
@@ -388,16 +379,13 @@ function AppShellMain({ className, children, ...props }: AppShellMainProps) {
 export {
   AppShell,
   AppShellHeader,
-  AppShellBrand,
   AppShellActions,
-  AppShellNavTrigger,
   AppShellNavigationSheet,
   AppShellMain,
 }
 export type {
   AppShellProps,
   AppShellHeaderProps,
-  AppShellBrandProps,
   AppShellActionsProps,
   AppShellNavigationSheetProps,
   AppShellNavigationSheetUser,

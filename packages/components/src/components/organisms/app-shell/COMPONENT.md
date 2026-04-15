@@ -1,7 +1,7 @@
 ---
 name: AppShell
 slug: app-shell
-version: 0.0.6
+version: 0.0.7
 status: unstable
 lastUpdated: 2026-04-15
 ---
@@ -29,34 +29,46 @@ root level is not allowed, so downstream apps cannot drift.
 
 ### `AppShellHeader`
 
-Accepts `AppShellBrand` and `AppShellActions` as children. The
-search bar in the middle is hardcoded — not a slot, not
-overridable, and not composed as a child. See "Search bar" below.
+The header's leading region (menu trigger + `Brand` logo) and
+middle region (search bar) are **both hardcoded** — neither is a
+slot, neither can be replaced, and every Nivoda app shell renders
+them identically. The only composition point on the header is the
+trailing region, which accepts an optional `AppShellActions` child
+for per-surface controls.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `onSearch` | `() => void` | *(required)* | Fires when the user clicks the hardcoded search bar. How the callback handles the search (opening a Dialog, a command palette, navigating to a search page, etc.) is app-specific. |
 
-### Search bar
+### Hardcoded leading region
 
-The header renders an internal `AppShellSearchBar` — a `<button>`
-visually styled like an `Input`, with a leading search icon and
-fixed placeholder text "Search Nivoda…". It is not exported,
-cannot be replaced, and is the **only** way to trigger search from
-the header. Clicking it fires `AppShellHeader`'s `onSearch`
-callback.
+The header always renders, in this order:
+
+- **Menu trigger** — a ghost `Button` at the default size with an
+  `IconMenu2` and the label "Menu". Wires itself to the nav sheet
+  via the `Sheet` provider that `AppShell` wraps its children in;
+  no state management required.
+- **Brand** — the `Brand` foundation component at `h-6`, rendered
+  next to the menu trigger.
+
+Neither is exposed as a component or a prop. Every Nivoda app
+shell opens its navigation with the same button and wears the same
+brand mark at the same size — that uniformity is the point of the
+shell.
+
+### Hardcoded search bar
+
+The header also renders an internal `AppShellSearchBar` — a
+`<button>` visually styled like an `Input`, with a leading search
+icon and fixed placeholder text "Search Nivoda…". It is not
+exported, cannot be replaced, and is the **only** way to trigger
+search from the header. Clicking it fires `AppShellHeader`'s
+`onSearch` callback.
 
 The component is a button, not an input, specifically so consuming
 apps can route the search interaction to whatever UI they need —
 a Dialog, a command palette, a search page — without the shell
 taking a position on the behaviour.
-
-### `AppShellNavTrigger`
-
-Takes no props. Always renders a ghost `Button` at the default size
-with an `IconMenu2` and the label "Menu". The visual and the label
-are a design ruling — every Nivoda app shell opens its navigation
-with the same button, and consumers cannot override it.
 
 ### `AppShellNavigationSheet`
 
@@ -90,19 +102,16 @@ Appleseed" → "JA"). Consumers do not pass it.
 
 ### Other subcomponents
 
-`AppShellBrand`, `AppShellActions`, and `AppShellMain` each accept
-their native HTML element props and `className`. They take no other
-props in the initial scaffold.
+`AppShellActions` and `AppShellMain` each accept their native HTML
+element props and `className`. They take no other props in the
+initial scaffold.
 
 ## Anatomy
 
 ```tsx
 <AppShell full={false}>
   <AppShellHeader onSearch={() => { /* open search UI */ }}>
-    <AppShellBrand>
-      <AppShellNavTrigger />
-      {/* logo */}
-    </AppShellBrand>
+    {/* menu trigger, Brand, and search bar are all hardcoded */}
     <AppShellActions>{/* user menu, notifications, ... */}</AppShellActions>
   </AppShellHeader>
   <AppShellNavigationSheet
@@ -126,10 +135,11 @@ props in the initial scaffold.
 ```
 
 `AppShell` internally wraps its children in a `Sheet` (Radix
-`Dialog.Root`) so that `AppShellNavTrigger` and
-`AppShellNavigationSheet` share open/close state via Radix context
-with no consumer wiring. The wrapper emits no DOM; it is purely a
-context provider, so shells without navigation pay nothing for it.
+`Dialog.Root`) so that the hardcoded menu trigger in
+`AppShellHeader` and the `AppShellNavigationSheet` share open/close
+state via Radix context with no consumer wiring. The wrapper emits
+no DOM; it is purely a context provider, so shells without
+navigation pay nothing for it.
 
 `AppShellMain` wraps its children in an inner container that enforces
 the page max-width and padding. Consumers do not need to add their
@@ -168,8 +178,9 @@ bottom action sheet) should use `Sheet` directly, not
 `AppShellNavigationSheet`.
 
 Search and navigation each have exactly one trigger, and both are
-owned by the shell: the hardcoded search bar in the header, and the
-hardcoded `AppShellNavTrigger` menu button in `AppShellBrand`. No
+owned by the shell: the hardcoded search bar in the middle of
+`AppShellHeader`, and the hardcoded menu trigger at the start of
+`AppShellHeader`. Neither is exposed as a component or a prop. No
 other element in the shell — including `AppShellActions` — should
 open search or navigation. See the Best practices section below.
 
@@ -216,9 +227,10 @@ second, scoped search (e.g. filter-by-text inside a table), that
 search belongs inside the main content area, not the header.
 
 **Don't:** Add a second navigation trigger anywhere in the header.
-The built-in `AppShellNavTrigger` is the only way the navigation
-sheet is opened. Nothing else in the header — including
-`AppShellActions` — should toggle the navigation sheet.
+The built-in hardcoded menu trigger at the start of `AppShellHeader`
+is the only way the navigation sheet is opened. Nothing else in the
+header — including `AppShellActions` — should toggle the navigation
+sheet.
 
 **Don't:** Bypass `AppShellMain`'s inner container by wrapping your
 page content in a sibling `<div>` with its own max-width — this
@@ -229,10 +241,21 @@ form. If the form needs a wider layout, redesign the form.
 
 ## Known deviations
 
-_None at time of scaffold._
+- **Search bar surface fill uses direct Tailwind palette
+  references.** The internal `AppShellSearchBar` in
+  [`app-shell.tsx`](./app-shell.tsx) uses `bg-stone-50` +
+  `hover:bg-stone-100` for its resting and hover surface fills.
+  Those are direct Tailwind stone-palette utilities, not DS
+  semantic tokens — they bypass the token layer and break Token
+  Rule 1. Flagged, not fixed: resolving it requires either
+  introducing a new semantic token for the search bar surface
+  (e.g. `--search-bar-surface`, `--search-bar-surface-hover`) or
+  repurposing existing tokens like `muted` / `muted/50`, both of
+  which are design-lead rulings. The violation is marked with an
+  inline `clarity-v2: token-gap` comment in `app-shell.tsx`.
 
 ## Quality checklist
 
 - [ ] Accessibility: passes axe-core, keyboard navigable, screen reader tested
 - [ ] Responsive: works at all breakpoints
-- [x] Tokens only: no hardcoded visual values
+- [ ] Tokens only: no hardcoded visual values — see Known deviations (search bar surface fill uses `bg-stone-50` / `bg-stone-100`)
