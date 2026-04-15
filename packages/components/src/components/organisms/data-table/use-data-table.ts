@@ -13,12 +13,15 @@ import {
   type ColumnFiltersState,
   type PaginationState,
   type RowSelectionState,
+  type ColumnDef,
 } from "@tanstack/react-table"
 import { DEFAULT_PAGE_SIZE_OPTIONS, type DataTableConfig } from "./data-table-types"
 
 interface UseDataTableReturn<TData> {
   table: Table<TData>
   hasActiveFilters: boolean
+  globalFilter: string
+  setGlobalFilter: (value: string) => void
 }
 
 function validateConfig<TData>(config: DataTableConfig<TData>): void {
@@ -40,7 +43,6 @@ function validateConfig<TData>(config: DataTableConfig<TData>): void {
     )
   }
 
-  // Toolbar validation
   const columnIds = config.columns.map((col) =>
     "accessorKey" in col ? String(col.accessorKey) : col.id ?? ""
   )
@@ -85,24 +87,35 @@ function useDataTable<TData>(
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState<string>("")
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: defaultPageSize,
   })
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
+  const columns: ColumnDef<TData, unknown>[] = config.toolbar?.search
+    ? config.columns.map((col) => {
+        const id = "accessorKey" in col ? String(col.accessorKey) : col.id
+        const isSearchable = config.toolbar!.search!.columnIds.includes(id ?? "")
+        return isSearchable ? col : { ...col, enableGlobalFilter: false }
+      })
+    : config.columns
+
   const table = useReactTable({
     data,
-    columns: config.columns,
+    columns,
     state: {
       sorting,
       columnFilters,
+      globalFilter,
       pagination,
       rowSelection,
     },
     enableRowSelection: config.enableRowSelection ?? false,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
@@ -114,9 +127,9 @@ function useDataTable<TData>(
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
   })
 
-  const hasActiveFilters = columnFilters.length > 0
+  const hasActiveFilters = columnFilters.length > 0 || globalFilter !== ""
 
-  return { table, hasActiveFilters }
+  return { table, hasActiveFilters, globalFilter, setGlobalFilter }
 }
 
 export { useDataTable, validateConfig }
