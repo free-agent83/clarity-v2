@@ -98,6 +98,8 @@ export type {
   DataTableProps,
   DataTableConfig,
   DataTablePaginationConfig,
+  DataTableToolbarConfig,
+  SortOption,
   DataTableHeaderProps,
   DataTableCellProps,
 } from "./components/organisms/data-table/data-table-types";
