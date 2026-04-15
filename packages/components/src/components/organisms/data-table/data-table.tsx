@@ -31,7 +31,7 @@ function DataTable<TData>({
   config,
   loading = false,
 }: DataTableProps<TData>) {
-  const { table, globalFilter, setGlobalFilter, hasActiveFilters, resetAllFilters } =
+  const { table, globalFilter, setGlobalFilter, hasActiveFilters, resetAllFilters, isServerSide } =
     useDataTable(data, config)
 
   const selectedRowCount = config.enableRowSelection
@@ -48,6 +48,8 @@ function DataTable<TData>({
           setGlobalFilter={setGlobalFilter}
           hasActiveFilters={hasActiveFilters}
           resetAllFilters={resetAllFilters}
+          loading={loading}
+          isServerSide={isServerSide}
         />
       )}
       <div className="overflow-hidden rounded-lg border">
@@ -153,6 +155,7 @@ function DataTable<TData>({
       <DataTablePagination
         table={table}
         pageSizeOptions={config.pagination?.pageSizeOptions}
+        loading={loading}
       />
       {config.enableRowSelection && selectedRowCount > 0 && (
         <DataTableSelectionBar
