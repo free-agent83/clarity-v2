@@ -54,7 +54,7 @@ function DataTable<TData>({
       )}
       <div className="overflow-hidden rounded-lg border">
         <table className="w-full caption-bottom text-sm">
-          <thead className="bg-muted [&_tr]:border-b">
+          <thead className="bg-muted/50 [&_tr]:border-b">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
                 key={headerGroup.id}
@@ -112,7 +112,7 @@ function DataTable<TData>({
                 <tr
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-accent"
                 >
                   {row.getVisibleCells().map((cell) => {
                     const rendered = flexRender(
