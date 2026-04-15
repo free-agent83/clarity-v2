@@ -220,14 +220,15 @@ function useDataTable<TData>(
 
   // --- Server-side callbacks ---
   const isInitialMount = useRef(true)
+  const isClearing = useRef(false)
 
   useEffect(() => {
-    if (isInitialMount.current) return
+    if (!isServerSide || isInitialMount.current) return
     config.serverSide?.onSortChange?.(sorting)
   }, [sorting]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (isInitialMount.current) return
+    if (!isServerSide || isInitialMount.current) return
     // Fires for ALL active filters on every change — consumers that need to know
     // which specific filter changed should diff against their previous state.
     // When all filters are cleared (length goes to 0), the loop is a no-op;
@@ -238,12 +239,12 @@ function useDataTable<TData>(
   }, [columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (isInitialMount.current) return
+    if (!isServerSide || isInitialMount.current) return
     config.serverSide?.onPageChange?.(pagination)
   }, [pagination]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (isInitialMount.current) return
+    if (!isServerSide || isInitialMount.current || isClearing.current) return
     config.serverSide?.onSearchChange?.(globalFilter)
   }, [globalFilter]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -255,9 +256,12 @@ function useDataTable<TData>(
   const hasActiveFilters = columnFilters.length > 0 || globalFilter !== ""
 
   const resetAllFilters = () => {
+    isClearing.current = true
     table.resetColumnFilters()
     setGlobalFilter("")
     config.serverSide?.onClearAll?.()
+    // Reset on next microtask so the globalFilter useEffect sees isClearing=true
+    queueMicrotask(() => { isClearing.current = false })
   }
 
   return { table, hasActiveFilters, globalFilter, setGlobalFilter, resetAllFilters, isServerSide }
