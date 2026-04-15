@@ -26,6 +26,8 @@ interface DataTableToolbarProps<TData> {
   setGlobalFilter: (value: string) => void
   hasActiveFilters: boolean
   resetAllFilters: () => void
+  loading?: boolean
+  isServerSide?: boolean
 }
 
 /**
@@ -42,6 +44,8 @@ function DataTableToolbar<TData>({
   setGlobalFilter,
   hasActiveFilters,
   resetAllFilters,
+  loading = false,
+  isServerSide = false,
 }: DataTableToolbarProps<TData>) {
   const [localSearch, setLocalSearch] = useState(globalFilter)
   const debouncedSearch = useDebounce(
@@ -49,11 +53,13 @@ function DataTableToolbar<TData>({
     toolbar.search?.debounceMs ?? 300
   )
 
+  // Client-side: debounce-driven global filter sync
   useEffect(() => {
+    if (isServerSide) return
     setGlobalFilter(debouncedSearch)
-  }, [debouncedSearch, setGlobalFilter])
+  }, [debouncedSearch, setGlobalFilter, isServerSide])
 
-  // Sync external globalFilter changes (e.g. Phase 3 "Clear all") back to local state
+  // Sync external globalFilter changes back to local state
   useEffect(() => {
     if (globalFilter !== localSearch) {
       setLocalSearch(globalFilter)
@@ -63,6 +69,14 @@ function DataTableToolbar<TData>({
   const handleClearSearch = () => {
     setLocalSearch("")
     setGlobalFilter("")
+    // In server-side mode, setGlobalFilter("") triggers the hook's useEffect
+    // which fires onSearchChange("") — no extra handling needed here.
+  }
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isServerSide && e.key === "Enter") {
+      setGlobalFilter(localSearch)
+    }
   }
 
   const currentSort = table.getState().sorting[0]
@@ -99,6 +113,8 @@ function DataTableToolbar<TData>({
               placeholder={toolbar.search.placeholder ?? "Search..."}
               value={localSearch}
               onChange={(e) => setLocalSearch(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+              disabled={loading}
             />
             {localSearch && (
               <InputGroupAddon align="inline-end">
@@ -118,10 +134,11 @@ function DataTableToolbar<TData>({
             key={filter.columnId}
             table={table}
             filter={filter}
+            loading={loading}
           />
         ))}
         {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={resetAllFilters}>
+          <Button variant="ghost" size="sm" onClick={resetAllFilters} disabled={loading}>
             Clear all
           </Button>
         )}
@@ -129,7 +146,7 @@ function DataTableToolbar<TData>({
       {toolbar.sorting && toolbar.sorting.length > 0 && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" disabled={loading}>
               {activeSortLabel ?? "Sort"}
               <IconChevronDown className="ml-1 size-4" />
             </Button>
