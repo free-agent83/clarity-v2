@@ -1,6 +1,8 @@
+import React from "react"
 import type { Meta, StoryObj } from "@storybook/react"
 import { userEvent, within, expect, waitFor } from "@storybook/test"
 import { DataTable } from "./data-table"
+import type { DataTableConfig } from "./data-table-types"
 import { getSelectColumn } from "./data-table-helpers"
 import { Badge } from "@/components/atoms/badge/badge"
 import { Button } from "@/components/atoms/button/button"
@@ -48,6 +50,262 @@ const baseColumns: ColumnDef<Product, unknown>[] = [
     cell: ({ row }) => <Badge variant="outline">{row.original.status}</Badge>,
   },
 ]
+
+// --- Fake server helpers ---
+
+interface FetchParams {
+  sorting?: { id: string; desc: boolean }[]
+  filters?: { id: string; value: unknown }[]
+  search?: string
+  pagination: { pageIndex: number; pageSize: number }
+}
+
+interface FetchResult {
+  data: Product[]
+  totalRows: number
+}
+
+function createFakeServerFetcher(allData: Product[]) {
+  return async (params: FetchParams): Promise<FetchResult> => {
+    await new Promise((r) => setTimeout(r, 500))
+    let result = [...allData]
+
+    // Search
+    if (params.search) {
+      const term = params.search.toLowerCase()
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(term) ||
+          p.category.toLowerCase().includes(term)
+      )
+    }
+
+    // Filters
+    if (params.filters) {
+      for (const f of params.filters) {
+        if (Array.isArray(f.value)) {
+          result = result.filter((p) =>
+            (f.value as string[]).includes(
+              String(p[f.id as keyof Product])
+            )
+          )
+        } else if (
+          Array.isArray(f.value) === false &&
+          typeof f.value === "object" &&
+          f.value !== null
+        ) {
+          const [min, max] = f.value as [number, number]
+          result = result.filter((p) => {
+            const val = p[f.id as keyof Product] as number
+            return val >= min && val <= max
+          })
+        }
+      }
+    }
+
+    // Sorting
+    if (params.sorting?.length) {
+      const sort = params.sorting[0]
+      result.sort((a, b) => {
+        const aVal = a[sort.id as keyof Product]
+        const bVal = b[sort.id as keyof Product]
+        if (aVal < bVal) return sort.desc ? 1 : -1
+        if (aVal > bVal) return sort.desc ? -1 : 1
+        return 0
+      })
+    }
+
+    const totalRows = result.length
+    const start = params.pagination.pageIndex * params.pagination.pageSize
+    const paged = result.slice(start, start + params.pagination.pageSize)
+
+    return { data: paged, totalRows }
+  }
+}
+
+const fakeFetch = createFakeServerFetcher(products)
+
+function ServerSideWrapper({
+  config,
+  initialPageSize = 10,
+}: {
+  config: Omit<DataTableConfig<Product>, "columns"> & { columns?: ColumnDef<Product, unknown>[] }
+  initialPageSize?: number
+}) {
+  const [data, setData] = React.useState<Product[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [totalRows, setTotalRows] = React.useState(0)
+  const paramsRef = React.useRef<FetchParams>({
+    pagination: { pageIndex: 0, pageSize: initialPageSize },
+  })
+
+  const doFetch = React.useCallback(async () => {
+    setLoading(true)
+    const result = await fakeFetch(paramsRef.current)
+    setData(result.data)
+    setTotalRows(result.totalRows)
+    setLoading(false)
+  }, [])
+
+  React.useEffect(() => {
+    doFetch()
+  }, [doFetch])
+
+  const serverSide = React.useMemo(
+    () => ({
+      totalRows,
+      onSortChange: (sorting: { id: string; desc: boolean }[]) => {
+        paramsRef.current.sorting = sorting
+        paramsRef.current.pagination.pageIndex = 0
+        doFetch()
+      },
+      onFilterChange: (columnId: string, value: unknown) => {
+        const filters = paramsRef.current.filters ?? []
+        const idx = filters.findIndex((f) => f.id === columnId)
+        if (idx >= 0) {
+          filters[idx] = { id: columnId, value }
+        } else {
+          filters.push({ id: columnId, value })
+        }
+        paramsRef.current.filters = filters
+        paramsRef.current.pagination.pageIndex = 0
+        doFetch()
+      },
+      onSearchChange: (search: string) => {
+        paramsRef.current.search = search
+        paramsRef.current.pagination.pageIndex = 0
+        doFetch()
+      },
+      onPageChange: (pagination: { pageIndex: number; pageSize: number }) => {
+        paramsRef.current.pagination = pagination
+        doFetch()
+      },
+      onClearAll: () => {
+        paramsRef.current = {
+          pagination: { ...paramsRef.current.pagination, pageIndex: 0 },
+        }
+        doFetch()
+      },
+    }),
+    [totalRows, doFetch]
+  )
+
+  return (
+    <DataTable
+      data={data}
+      loading={loading}
+      config={{
+        columns: config.columns ?? baseColumns,
+        ...config,
+        serverSide,
+      }}
+    />
+  )
+}
+
+function LiveAPIWrapper() {
+  const [data, setData] = React.useState<Product[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [totalRows, setTotalRows] = React.useState(0)
+  const paramsRef = React.useRef({
+    pagination: { pageIndex: 0, pageSize: 10 },
+    search: "",
+    sortBy: "",
+    order: "" as "asc" | "desc" | "",
+  })
+
+  const doFetch = React.useCallback(async () => {
+    setLoading(true)
+    const p = paramsRef.current
+    const skip = p.pagination.pageIndex * p.pagination.pageSize
+    const limit = p.pagination.pageSize
+
+    let url = p.search
+      ? `https://dummyjson.com/products/search?q=${encodeURIComponent(p.search)}&limit=${limit}&skip=${skip}`
+      : `https://dummyjson.com/products?limit=${limit}&skip=${skip}`
+
+    if (p.sortBy) {
+      url += `&sortBy=${p.sortBy}&order=${p.order}`
+    }
+
+    try {
+      const res = await fetch(url)
+      const json = await res.json()
+      const mapped: Product[] = json.products.map(
+        (item: { id: number; title: string; category: string; price: number; availabilityStatus: string }) => ({
+          id: `PRD-${String(item.id).padStart(3, "0")}`,
+          name: item.title,
+          category: item.category,
+          price: item.price,
+          status: (item.availabilityStatus === "In Stock" ? "active" : "draft") as Product["status"],
+        })
+      )
+      setData(mapped)
+      setTotalRows(json.total)
+    } catch {
+      setData([])
+      setTotalRows(0)
+    }
+    setLoading(false)
+  }, [])
+
+  React.useEffect(() => {
+    doFetch()
+  }, [doFetch])
+
+  return (
+    <DataTable
+      data={data}
+      loading={loading}
+      config={{
+        columns: baseColumns,
+        toolbar: {
+          search: {
+            placeholder: "Search DummyJSON products (press Enter)...",
+            columnIds: ["name", "category"],
+          },
+          sorting: [
+            { label: "Price, high to low", columnId: "price", direction: "desc" },
+            { label: "Price, low to high", columnId: "price", direction: "asc" },
+            { label: "Name A–Z", columnId: "name", direction: "asc" },
+          ],
+        },
+        serverSide: {
+          totalRows,
+          onSearchChange: (search) => {
+            paramsRef.current.search = search
+            paramsRef.current.pagination.pageIndex = 0
+            doFetch()
+          },
+          onSortChange: (sorting) => {
+            if (sorting.length) {
+              paramsRef.current.sortBy = sorting[0].id
+              paramsRef.current.order = sorting[0].desc ? "desc" : "asc"
+            } else {
+              paramsRef.current.sortBy = ""
+              paramsRef.current.order = ""
+            }
+            paramsRef.current.pagination.pageIndex = 0
+            doFetch()
+          },
+          onPageChange: (pagination) => {
+            paramsRef.current.pagination = pagination
+            doFetch()
+          },
+          onClearAll: () => {
+            paramsRef.current = {
+              pagination: { ...paramsRef.current.pagination, pageIndex: 0 },
+              search: "",
+              sortBy: "",
+              order: "",
+            }
+            doFetch()
+          },
+        },
+      }}
+    />
+  )
+}
 
 // --- Meta ---
 
@@ -347,4 +605,236 @@ export const FullToolbar: Story = {
       expect(rows.length).toBe(10)
     })
   },
+}
+
+// --- Server-side stories ---
+
+export const ServerSide: Story = {
+  render: () => (
+    <ServerSideWrapper
+      config={{
+        columns: baseColumns,
+        toolbar: {
+          search: {
+            placeholder: "Search products (press Enter)...",
+            columnIds: ["name", "category"],
+          },
+          quickFilters: [
+            {
+              name: "Category",
+              columnId: "category",
+              type: "checkbox-list",
+              serverSide: { options: ["Rings", "Necklaces", "Earrings", "Bracelets"] },
+            },
+            {
+              name: "Price",
+              columnId: "price",
+              type: "interval-slider",
+              formatValue: (v: number) => `$${v.toFixed(0)}`,
+              serverSide: { min: 87, max: 1625 },
+            },
+          ],
+          sorting: [
+            { label: "Price, high to low", columnId: "price", direction: "desc" },
+            { label: "Price, low to high", columnId: "price", direction: "asc" },
+            { label: "Name A–Z", columnId: "name", direction: "asc" },
+          ],
+        },
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Wait for initial load to complete (skeletons disappear, rows appear)
+    await waitFor(
+      () => {
+        const rows = canvasElement.querySelectorAll("tbody tr")
+        expect(rows.length).toBe(10)
+        // Verify it's not skeleton rows
+        const firstRowText = rows[0]?.textContent ?? ""
+        expect(firstRowText).toMatch(/PRD-/)
+      },
+      { timeout: 5000 }
+    )
+
+    // Verify pagination shows total
+    const pageInfo = canvas.getByText(/Page 1 of/)
+    await expect(pageInfo).toBeInTheDocument()
+  },
+}
+
+export const ServerSideSearch: Story = {
+  render: () => (
+    <ServerSideWrapper
+      config={{
+        columns: baseColumns,
+        toolbar: {
+          search: {
+            placeholder: "Search products (press Enter)...",
+            columnIds: ["name", "category"],
+          },
+        },
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Wait for initial load
+    await waitFor(
+      () => {
+        const rows = canvasElement.querySelectorAll("tbody tr")
+        expect(rows.length).toBe(10)
+      },
+      { timeout: 5000 }
+    )
+
+    // Type search term
+    const searchInput = canvas.getByPlaceholderText(
+      "Search products (press Enter)..."
+    )
+    await userEvent.type(searchInput, "Necklaces")
+
+    // Rows should NOT change yet (server-side: no debounce, Enter required)
+    const rowsBefore = canvasElement.querySelectorAll("tbody tr")
+    await expect(rowsBefore.length).toBe(10)
+
+    // Press Enter
+    await userEvent.keyboard("{Enter}")
+
+    // Wait for filtered results
+    await waitFor(
+      () => {
+        const rows = canvasElement.querySelectorAll("tbody tr")
+        expect(rows.length).toBeLessThanOrEqual(10)
+        const firstRowText = rows[0]?.textContent ?? ""
+        expect(firstRowText).toMatch(/Necklaces/)
+      },
+      { timeout: 5000 }
+    )
+  },
+}
+
+export const ServerSideSorting: Story = {
+  render: () => (
+    <ServerSideWrapper
+      config={{
+        columns: baseColumns,
+        toolbar: {
+          sorting: [
+            { label: "Price, high to low", columnId: "price", direction: "desc" },
+            { label: "Price, low to high", columnId: "price", direction: "asc" },
+          ],
+        },
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const body = within(document.body)
+
+    // Wait for initial load
+    await waitFor(
+      () => {
+        const rows = canvasElement.querySelectorAll("tbody tr")
+        expect(rows.length).toBe(10)
+      },
+      { timeout: 5000 }
+    )
+
+    // Open sort dropdown and select "Price, high to low"
+    const sortButton = canvas.getByRole("button", { name: /Sort/ })
+    await userEvent.click(sortButton)
+    const option = body.getByRole("menuitemradio", {
+      name: "Price, high to low",
+    })
+    await userEvent.click(option)
+
+    // Wait for re-fetch and verify sort
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByRole("button", { name: /Price, high to low/ })
+        ).toBeInTheDocument()
+        const firstDataRow = canvasElement.querySelectorAll("tbody tr")[0]
+        const priceCell = firstDataRow?.querySelectorAll("td")[3]
+        expect(priceCell?.textContent).toBe("$1625.00")
+      },
+      { timeout: 5000 }
+    )
+  },
+}
+
+export const ServerSideFilters: Story = {
+  render: () => (
+    <ServerSideWrapper
+      config={{
+        columns: baseColumns,
+        toolbar: {
+          quickFilters: [
+            {
+              name: "Category",
+              columnId: "category",
+              type: "checkbox-list",
+              serverSide: { options: ["Rings", "Necklaces", "Earrings", "Bracelets"] },
+            },
+          ],
+        },
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const body = within(document.body)
+
+    // Wait for initial load
+    await waitFor(
+      () => {
+        const rows = canvasElement.querySelectorAll("tbody tr")
+        expect(rows.length).toBe(10)
+      },
+      { timeout: 5000 }
+    )
+
+    // Open Category filter and select "Rings"
+    const categoryTrigger = canvas.getByRole("button", { name: "Category" })
+    await userEvent.click(categoryTrigger)
+    await userEvent.click(body.getByRole("checkbox", { name: "Rings" }))
+    await userEvent.click(body.getByRole("button", { name: "Apply" }))
+
+    // Wait for filtered results
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByRole("button", { name: /Category \(1\)/ })
+        ).toBeInTheDocument()
+        const rows = canvasElement.querySelectorAll("tbody tr")
+        for (const row of rows) {
+          expect(row.textContent ?? "").toMatch(/Rings/)
+        }
+      },
+      { timeout: 5000 }
+    )
+
+    // Click Clear all
+    const clearAllBtn = canvas.getByRole("button", { name: "Clear all" })
+    await userEvent.click(clearAllBtn)
+
+    // Wait for reset
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByRole("button", { name: "Category" })
+        ).toBeInTheDocument()
+        const rows = canvasElement.querySelectorAll("tbody tr")
+        expect(rows.length).toBe(10)
+      },
+      { timeout: 5000 }
+    )
+  },
+}
+
+export const LiveAPI: Story = {
+  render: () => <LiveAPIWrapper />,
 }
