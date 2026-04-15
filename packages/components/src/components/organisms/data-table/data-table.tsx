@@ -100,7 +100,7 @@ function DataTable<TData>({
                   {table.getVisibleLeafColumns().map((column) => (
                     <td
                       key={column.id}
-                      className="px-4 h-10 align-middle whitespace-nowrap"
+                      className="p-4 align-middle whitespace-nowrap"
                     >
                       <Skeleton className="h-4 w-full" />
                     </td>
