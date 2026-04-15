@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
   useReactTable,
   getCoreRowModel,
@@ -16,7 +16,7 @@ import {
   type ColumnDef,
   type FilterFnOption,
 } from "@tanstack/react-table"
-import { DEFAULT_PAGE_SIZE_OPTIONS, type DataTableConfig } from "./data-table-types"
+import { DEFAULT_PAGE_SIZE_OPTIONS, type DataTableConfig, type DataTableServerSideConfig } from "./data-table-types"
 
 interface UseDataTableReturn<TData> {
   table: Table<TData>
@@ -24,6 +24,7 @@ interface UseDataTableReturn<TData> {
   globalFilter: string
   setGlobalFilter: (value: string) => void
   resetAllFilters: () => void
+  isServerSide: boolean
 }
 
 function validateConfig<TData>(config: DataTableConfig<TData>): void {
@@ -180,7 +181,9 @@ function useDataTable<TData>(
         })
       : config.columns
 
-  const table = useReactTable({
+  const isServerSide = !!config.serverSide
+
+  const table = useReactTable<TData>({
     data,
     columns,
     state: {
@@ -197,22 +200,65 @@ function useDataTable<TData>(
     onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    // Client-side only models
+    ...(!isServerSide && {
+      getFilteredRowModel: getFilteredRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getFacetedRowModel: getFacetedRowModel(),
+      getFacetedUniqueValues: getFacetedUniqueValues(),
+      getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    }),
+    // Server-side manual flags
+    ...(isServerSide && {
+      manualSorting: true,
+      manualFiltering: true,
+      manualPagination: true,
+      pageCount: Math.ceil(config.serverSide!.totalRows / pagination.pageSize),
+    }),
   })
+
+  // --- Server-side callbacks ---
+  const isInitialMount = useRef(true)
+
+  useEffect(() => {
+    if (isInitialMount.current) return
+    config.serverSide?.onSortChange?.(sorting)
+  }, [sorting]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isInitialMount.current) return
+    for (const filter of columnFilters) {
+      config.serverSide?.onFilterChange?.(filter.id, filter.value)
+    }
+    // When all filters are cleared (length goes to 0), don't fire individual callbacks —
+    // that's handled by resetAllFilters / onClearAll
+  }, [columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isInitialMount.current) return
+    config.serverSide?.onPageChange?.(pagination)
+  }, [pagination]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (isInitialMount.current) return
+    config.serverSide?.onSearchChange?.(globalFilter)
+  }, [globalFilter]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Mark initial mount complete after first render
+  useEffect(() => {
+    isInitialMount.current = false
+  }, [])
 
   const hasActiveFilters = columnFilters.length > 0 || globalFilter !== ""
 
   const resetAllFilters = () => {
     table.resetColumnFilters()
     setGlobalFilter("")
+    config.serverSide?.onClearAll?.()
   }
 
-  return { table, hasActiveFilters, globalFilter, setGlobalFilter, resetAllFilters }
+  return { table, hasActiveFilters, globalFilter, setGlobalFilter, resetAllFilters, isServerSide }
 }
 
 export { useDataTable, validateConfig }
