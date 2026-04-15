@@ -57,7 +57,17 @@
       "Bash(echo \"Exit code: $?\")",
       "Bash(chmod +x /tmp/check_exports.sh)",
       "Bash(/tmp/check_exports.sh)",
-      "Bash(find /Users/jlfgms/Desktop/Code/clarity-v2/packages/components/src/components -path '*__TRACKED_VAR__/__TRACKED_VAR__.tsx' -exec grep 'export.*Props' '{}' ';')"
+      "Bash(find /Users/jlfgms/Desktop/Code/clarity-v2/packages/components/src/components -path '*__TRACKED_VAR__/__TRACKED_VAR__.tsx' -exec grep 'export.*Props' '{}' ';')",
+      "Bash(git branch:*)",
+      "Bash(grep -v -E '^\\(dev|main\\)$')",
+      "Bash(git remote:*)",
+      "Bash(gh repo:*)",
+      "Bash(npx storybook *)",
+      "Bash(lsof -i :6006 -sTCP:LISTEN)",
+      "Bash(ps -p 68823 -o command=)",
+      "Bash(echo \"tsc_exit=$?\")",
+      "Bash(git commit -m ' *)",
+      "Bash(git -C ../.. status)"
     ]
   }
 }
