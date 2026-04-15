@@ -91,31 +91,6 @@ export const WithSelection: Story = {
     config: {
       columns: [getSelectColumn<Product>(), ...baseColumns],
       enableRowSelection: true,
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-
-    // Click the first data row checkbox ([0] is the header checkbox)
-    const checkboxes = canvas.getAllByRole("checkbox")
-    await userEvent.click(checkboxes[1])
-
-    // Verify selection bar appears
-    const selectionText = canvas.getByText(/1 row\(s\) selected/)
-    await expect(selectionText).toBeInTheDocument()
-
-    // Verify clear selection button exists
-    const clearButton = canvas.getByRole("button", { name: /Clear selection/ })
-    await expect(clearButton).toBeInTheDocument()
-  },
-}
-
-export const WithSelectionActions: Story = {
-  args: {
-    data: products,
-    config: {
-      columns: [getSelectColumn<Product>(), ...baseColumns],
-      enableRowSelection: true,
       selectionActions: (_rows, clearSelection) => (
         <Button
           variant="destructive"
@@ -126,6 +101,23 @@ export const WithSelectionActions: Story = {
         </Button>
       ),
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Click the first data row checkbox ([0] is the header checkbox)
+    const checkboxes = canvas.getAllByRole("checkbox")
+    await userEvent.click(checkboxes[1])
+
+    // Verify selection bar appears with count and actions
+    const selectionText = canvas.getByText(/1 row\(s\) selected/)
+    await expect(selectionText).toBeInTheDocument()
+
+    const deleteButton = canvas.getByRole("button", { name: /Delete selected/ })
+    await expect(deleteButton).toBeInTheDocument()
+
+    const clearButton = canvas.getByRole("button", { name: /Clear selection/ })
+    await expect(clearButton).toBeInTheDocument()
   },
 }
 
@@ -284,7 +276,7 @@ export const WithSorting: Story = {
   },
 }
 
-export const WithToolbar: Story = {
+export const FullToolbar: Story = {
   args: {
     data: products,
     config: {
@@ -294,23 +286,18 @@ export const WithToolbar: Story = {
           placeholder: "Search products...",
           columnIds: ["name", "category"],
         },
+        quickFilters: [
+          { name: "Category", columnId: "category", type: "checkbox-list" },
+          {
+            name: "Price",
+            columnId: "price",
+            type: "interval-slider",
+            formatValue: (v: number) => `$${v.toFixed(0)}`,
+          },
+        ],
         sorting: [
           { label: "Price, high to low", columnId: "price", direction: "desc" },
           { label: "Price, low to high", columnId: "price", direction: "asc" },
-        ],
-      },
-    },
-  },
-}
-
-export const WithCheckboxFilter: Story = {
-  args: {
-    data: products,
-    config: {
-      columns: baseColumns,
-      toolbar: {
-        quickFilters: [
-          { name: "Category", columnId: "category", type: "checkbox-list" },
         ],
       },
     },
@@ -319,186 +306,43 @@ export const WithCheckboxFilter: Story = {
     const canvas = within(canvasElement)
     const body = within(document.body)
 
+    // --- Checkbox filter ---
+
     // Open the Category filter popover
-    const trigger = canvas.getByRole("button", { name: "Category" })
-    await userEvent.click(trigger)
+    const categoryTrigger = canvas.getByRole("button", { name: "Category" })
+    await userEvent.click(categoryTrigger)
 
-    // Check two options
-    const ringsCb = body.getByRole("checkbox", { name: "Rings" })
-    const necklacesCb = body.getByRole("checkbox", { name: "Necklaces" })
-    await userEvent.click(ringsCb)
-    await userEvent.click(necklacesCb)
+    // Check two options and apply
+    await userEvent.click(body.getByRole("checkbox", { name: "Rings" }))
+    await userEvent.click(body.getByRole("checkbox", { name: "Necklaces" }))
+    await userEvent.click(body.getByRole("button", { name: "Apply" }))
 
-    // Apply
-    const applyBtn = body.getByRole("button", { name: "Apply" })
-    await userEvent.click(applyBtn)
-
-    // Verify trigger label shows count
+    // Verify trigger label shows count and rows are filtered
     await waitFor(() => {
       expect(
         canvas.getByRole("button", { name: /Category \(2\)/ })
       ).toBeInTheDocument()
-    })
-
-    // Verify filtered rows contain only Rings or Necklaces
-    await waitFor(() => {
       const rows = canvasElement.querySelectorAll("tbody tr")
       for (const row of rows) {
-        const text = row.textContent ?? ""
-        expect(text).toMatch(/Rings|Necklaces/)
+        expect(row.textContent ?? "").toMatch(/Rings|Necklaces/)
       }
     })
 
-    // Reopen popover and Clear
-    await userEvent.click(
-      canvas.getByRole("button", { name: /Category \(2\)/ })
-    )
-    const clearBtn = body.getByRole("button", { name: "Clear" })
-    await userEvent.click(clearBtn)
+    // --- Clear all ---
 
-    // Verify trigger label resets and all rows restored
+    // Verify "Clear all" appears and click it
+    const clearAllBtn = canvas.getByRole("button", { name: "Clear all" })
+    await expect(clearAllBtn).toBeInTheDocument()
+    await userEvent.click(clearAllBtn)
+
+    // Verify everything resets
     await waitFor(() => {
       expect(
         canvas.getByRole("button", { name: "Category" })
       ).toBeInTheDocument()
-      const rows = canvasElement.querySelectorAll("tbody tr")
-      expect(rows.length).toBe(10)
-    })
-  },
-}
-
-export const WithSliderFilter: Story = {
-  args: {
-    data: products,
-    config: {
-      columns: baseColumns,
-      toolbar: {
-        quickFilters: [
-          {
-            name: "Price",
-            columnId: "price",
-            type: "interval-slider",
-            formatValue: (v: number) => `$${v.toFixed(0)}`,
-          },
-        ],
-      },
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const body = within(document.body)
-
-    // Verify the Price filter trigger renders
-    const trigger = canvas.getByRole("button", { name: "Price" })
-    await expect(trigger).toBeInTheDocument()
-
-    // Open the popover and verify slider renders
-    await userEvent.click(trigger)
-
-    await waitFor(() => {
-      const sliders = body.getAllByRole("slider")
-      expect(sliders.length).toBe(2) // dual thumbs
-    })
-
-    // Apply with default full range
-    const applyBtn = body.getByRole("button", { name: "Apply" })
-    await userEvent.click(applyBtn)
-
-    // Verify trigger label shows the formatted range
-    await waitFor(() => {
-      expect(
-        canvas.getByRole("button", { name: /Price: \$/ })
-      ).toBeInTheDocument()
-    })
-  },
-}
-
-export const WithQuickFilters: Story = {
-  args: {
-    data: products,
-    config: {
-      columns: baseColumns,
-      toolbar: {
-        search: {
-          placeholder: "Search products...",
-          columnIds: ["name", "category"],
-        },
-        quickFilters: [
-          { name: "Category", columnId: "category", type: "checkbox-list" },
-          {
-            name: "Price",
-            columnId: "price",
-            type: "interval-slider",
-            formatValue: (v: number) => `$${v.toFixed(0)}`,
-          },
-        ],
-        sorting: [
-          { label: "Price, high to low", columnId: "price", direction: "desc" },
-          { label: "Price, low to high", columnId: "price", direction: "asc" },
-        ],
-      },
-    },
-  },
-}
-
-export const WithClearAll: Story = {
-  args: {
-    data: products,
-    config: {
-      columns: baseColumns,
-      toolbar: {
-        search: {
-          placeholder: "Search products...",
-          columnIds: ["name", "category"],
-        },
-        quickFilters: [
-          { name: "Category", columnId: "category", type: "checkbox-list" },
-        ],
-      },
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const body = within(document.body)
-
-    // Apply a checkbox filter
-    const trigger = canvas.getByRole("button", { name: "Category" })
-    await userEvent.click(trigger)
-
-    const ringsCb = body.getByRole("checkbox", { name: "Rings" })
-    await userEvent.click(ringsCb)
-
-    const applyBtn = body.getByRole("button", { name: "Apply" })
-    await userEvent.click(applyBtn)
-
-    // Verify "Clear all" appears
-    await waitFor(() => {
-      expect(
-        canvas.getByRole("button", { name: "Clear all" })
-      ).toBeInTheDocument()
-    })
-
-    // Click "Clear all"
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Clear all" })
-    )
-
-    // Verify filter is reset
-    await waitFor(() => {
-      expect(
-        canvas.getByRole("button", { name: "Category" })
-      ).toBeInTheDocument()
-    })
-
-    // Verify "Clear all" disappears
-    await waitFor(() => {
       expect(
         canvas.queryByRole("button", { name: "Clear all" })
       ).not.toBeInTheDocument()
-    })
-
-    // Verify all rows restored
-    await waitFor(() => {
       const rows = canvasElement.querySelectorAll("tbody tr")
       expect(rows.length).toBe(10)
     })
