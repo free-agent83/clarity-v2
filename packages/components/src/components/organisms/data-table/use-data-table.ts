@@ -14,6 +14,7 @@ import {
   type PaginationState,
   type RowSelectionState,
   type ColumnDef,
+  type FilterFnOption,
 } from "@tanstack/react-table"
 import { DEFAULT_PAGE_SIZE_OPTIONS, type DataTableConfig } from "./data-table-types"
 
@@ -22,6 +23,7 @@ interface UseDataTableReturn<TData> {
   hasActiveFilters: boolean
   globalFilter: string
   setGlobalFilter: (value: string) => void
+  resetAllFilters: () => void
 }
 
 function validateConfig<TData>(config: DataTableConfig<TData>): void {
@@ -112,13 +114,32 @@ function useDataTable<TData>(
   })
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
-  const columns: ColumnDef<TData, unknown>[] = config.toolbar?.search
-    ? config.columns.map((col) => {
-        const id = "accessorKey" in col ? String(col.accessorKey) : col.id
-        const isSearchable = config.toolbar!.search!.columnIds.includes(id ?? "")
-        return isSearchable ? col : { ...col, enableGlobalFilter: false }
-      })
-    : config.columns
+  const searchColumnIds = config.toolbar?.search?.columnIds
+  const filterFnMap = config.toolbar?.quickFilters
+    ? new Map<string, FilterFnOption<TData>>(
+        config.toolbar.quickFilters.map((f) => [
+          f.columnId,
+          (f.type === "checkbox-list" ? "arrIncludesSome" : "inNumberRange") as FilterFnOption<TData>,
+        ])
+      )
+    : undefined
+
+  const columns: ColumnDef<TData, unknown>[] =
+    searchColumnIds || filterFnMap
+      ? config.columns.map((col) => {
+          const id = "accessorKey" in col ? String(col.accessorKey) : col.id
+          const needsGlobalFilterOff =
+            searchColumnIds && !searchColumnIds.includes(id ?? "")
+          const filterFn = filterFnMap?.get(id ?? "")
+
+          if (!needsGlobalFilterOff && !filterFn) return col
+          return {
+            ...col,
+            ...(needsGlobalFilterOff && { enableGlobalFilter: false }),
+            ...(filterFn && { filterFn }),
+          }
+        })
+      : config.columns
 
   const table = useReactTable({
     data,
@@ -147,7 +168,12 @@ function useDataTable<TData>(
 
   const hasActiveFilters = columnFilters.length > 0 || globalFilter !== ""
 
-  return { table, hasActiveFilters, globalFilter, setGlobalFilter }
+  const resetAllFilters = () => {
+    table.resetColumnFilters()
+    setGlobalFilter("")
+  }
+
+  return { table, hasActiveFilters, globalFilter, setGlobalFilter, resetAllFilters }
 }
 
 export { useDataTable, validateConfig }
