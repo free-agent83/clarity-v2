@@ -14,6 +14,7 @@ import type { QuickFilter } from "./data-table-types"
 interface DataTableQuickFilterPopoverProps<TData> {
   table: Table<TData>
   filter: QuickFilter
+  loading?: boolean
 }
 
 /**
@@ -28,6 +29,7 @@ interface DataTableQuickFilterPopoverProps<TData> {
 function DataTableQuickFilterPopover<TData>({
   table,
   filter,
+  loading = false,
 }: DataTableQuickFilterPopoverProps<TData>) {
   const [open, setOpen] = useState(false)
   const column = table.getColumn(filter.columnId)
@@ -46,12 +48,14 @@ function DataTableQuickFilterPopover<TData>({
       setPendingCheckbox(new Set(current ?? []))
     } else {
       const current = column.getFilterValue() as [number, number] | undefined
-      const faceted = column.getFacetedMinMaxValues() ?? [0, 0]
+      const [min, max] = filter.serverSide
+        ? [filter.serverSide.min, filter.serverSide.max]
+        : (column.getFacetedMinMaxValues() ?? [0, 0])
       setPendingSlider(
-        current ?? [faceted[0] ?? 0, faceted[1] ?? 0]
+        current ?? [min ?? 0, max ?? 0]
       )
     }
-  }, [open, column, filter.type])
+  }, [open, column, filter])
 
   if (!column) return null
 
@@ -86,16 +90,18 @@ function DataTableQuickFilterPopover<TData>({
     if (filter.type === "checkbox-list") {
       setPendingCheckbox(new Set())
     } else {
-      const faceted = column.getFacetedMinMaxValues() ?? [0, 0]
-      setPendingSlider([faceted[0] ?? 0, faceted[1] ?? 0])
+      const [min, max] = filter.serverSide
+        ? [filter.serverSide.min, filter.serverSide.max]
+        : (column.getFacetedMinMaxValues() ?? [0, 0])
+      setPendingSlider([min ?? 0, max ?? 0])
     }
     setOpen(false)
   }
 
   const renderFilterContent = () => {
     if (filter.type === "checkbox-list") {
-      const facetedValues = column.getFacetedUniqueValues()
-      const options = Array.from(facetedValues.keys()).sort()
+      const options = filter.serverSide?.options
+        ?? Array.from(column.getFacetedUniqueValues().keys()).sort()
       return (
         <DataTableCheckboxFilter
           options={options}
@@ -105,11 +111,13 @@ function DataTableQuickFilterPopover<TData>({
       )
     }
 
-    const faceted = column.getFacetedMinMaxValues() ?? [0, 0]
+    const [min, max] = filter.serverSide
+      ? [filter.serverSide.min, filter.serverSide.max]
+      : (column.getFacetedMinMaxValues() ?? [0, 0])
     return (
       <DataTableSliderFilter
-        min={faceted[0] ?? 0}
-        max={faceted[1] ?? 0}
+        min={min ?? 0}
+        max={max ?? 0}
         value={pendingSlider}
         onChange={setPendingSlider}
         formatValue={filter.formatValue}
@@ -120,7 +128,7 @@ function DataTableQuickFilterPopover<TData>({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" disabled={loading}>
           {triggerLabel}
           <IconChevronDown className="ml-1 size-4" />
         </Button>
