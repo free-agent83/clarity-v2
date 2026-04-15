@@ -16,7 +16,7 @@ import {
   type ColumnDef,
   type FilterFnOption,
 } from "@tanstack/react-table"
-import { DEFAULT_PAGE_SIZE_OPTIONS, type DataTableConfig, type DataTableServerSideConfig } from "./data-table-types"
+import { DEFAULT_PAGE_SIZE_OPTIONS, type DataTableConfig } from "./data-table-types"
 
 interface UseDataTableReturn<TData> {
   table: Table<TData>
@@ -228,11 +228,13 @@ function useDataTable<TData>(
 
   useEffect(() => {
     if (isInitialMount.current) return
+    // Fires for ALL active filters on every change — consumers that need to know
+    // which specific filter changed should diff against their previous state.
+    // When all filters are cleared (length goes to 0), the loop is a no-op;
+    // that case is handled by resetAllFilters / onClearAll instead.
     for (const filter of columnFilters) {
       config.serverSide?.onFilterChange?.(filter.id, filter.value)
     }
-    // When all filters are cleared (length goes to 0), don't fire individual callbacks —
-    // that's handled by resetAllFilters / onClearAll
   }, [columnFilters]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
