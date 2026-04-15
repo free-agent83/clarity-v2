@@ -4,6 +4,7 @@ import { useDataTable } from "./use-data-table"
 import { DataTableHeader, DataTableCell } from "./data-table-cells"
 import { DataTablePagination } from "./data-table-pagination"
 import { DataTableSelectionBar } from "./data-table-selection-bar"
+import { DataTableToolbar } from "./data-table-toolbar"
 import type { DataTableProps } from "./data-table-types"
 
 /**
@@ -30,7 +31,7 @@ function DataTable<TData>({
   config,
   loading = false,
 }: DataTableProps<TData>) {
-  const { table } = useDataTable(data, config)
+  const { table, globalFilter, setGlobalFilter } = useDataTable(data, config)
 
   const selectedRowCount = config.enableRowSelection
     ? table.getFilteredSelectedRowModel().rows.length
@@ -38,6 +39,14 @@ function DataTable<TData>({
 
   return (
     <div data-slot="data-table" className="flex flex-col gap-4">
+      {config.toolbar && (
+        <DataTableToolbar
+          table={table}
+          toolbar={config.toolbar}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+        />
+      )}
       <div className="overflow-hidden rounded-lg border">
         <table className="w-full caption-bottom text-sm">
           <thead className="bg-muted [&_tr]:border-b">
