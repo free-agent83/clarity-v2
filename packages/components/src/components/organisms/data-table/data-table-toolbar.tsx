@@ -25,6 +25,12 @@ interface DataTableToolbarProps<TData> {
   setGlobalFilter: (value: string) => void
 }
 
+/**
+ * Toolbar rendered above the DataTable when `config.toolbar` is defined.
+ *
+ * Provides an optional debounced search input and an optional sort dropdown.
+ * Internal component — never used standalone.
+ */
 function DataTableToolbar<TData>({
   table,
   toolbar,
@@ -40,6 +46,13 @@ function DataTableToolbar<TData>({
   useEffect(() => {
     setGlobalFilter(debouncedSearch)
   }, [debouncedSearch, setGlobalFilter])
+
+  // Sync external globalFilter changes (e.g. Phase 3 "Clear all") back to local state
+  useEffect(() => {
+    if (globalFilter !== localSearch) {
+      setLocalSearch(globalFilter)
+    }
+  }, [globalFilter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleClearSearch = () => {
     setLocalSearch("")

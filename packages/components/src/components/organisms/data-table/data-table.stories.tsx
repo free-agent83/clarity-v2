@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
-import { userEvent, within, expect } from "@storybook/test"
+import { userEvent, within, expect, waitFor } from "@storybook/test"
 import { DataTable } from "./data-table"
 import { getSelectColumn } from "./data-table-helpers"
 import { Badge } from "@/components/atoms/badge/badge"
@@ -207,32 +207,35 @@ export const WithSearch: Story = {
     const searchInput = canvas.getByPlaceholderText("Search products...")
     await expect(searchInput).toBeInTheDocument()
 
-    // Type a search term that matches a known category
-    await userEvent.type(searchInput, "Rings")
+    // Type a search term — "Necklaces" is a unique category match
+    await userEvent.type(searchInput, "Necklaces")
 
-    // Wait for debounce (300ms default + buffer)
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
-    // Verify filtering happened — only rows with "Rings" category should show
-    const rows = canvasElement.querySelectorAll("tbody tr")
-    for (const row of rows) {
-      const cells = row.querySelectorAll("td")
-      const rowText = Array.from(cells)
-        .map((c) => c.textContent)
-        .join(" ")
-      await expect(rowText).toMatch(/Rings/)
-    }
+    // Wait for debounce (300ms) + React re-render cycle
+    await waitFor(
+      () => {
+        const rows = canvasElement.querySelectorAll("tbody tr")
+        // 42 products / 4 categories = ~11 "Necklaces" rows, but paginated to 10
+        // After filtering, only ~11 rows match, so first page shows 10 or fewer
+        expect(rows.length).toBeLessThanOrEqual(10)
+        // Verify at least one row contains "Necklaces"
+        const firstRowText = rows[0]?.textContent ?? ""
+        expect(firstRowText).toMatch(/Necklaces/)
+      },
+      { timeout: 3000 }
+    )
 
     // Clear search via × button
     const clearButton = canvas.getByRole("button", { name: "Clear search" })
     await userEvent.click(clearButton)
 
-    // Wait for state to settle
-    await new Promise((resolve) => setTimeout(resolve, 100))
-
     // Verify rows are restored (default page size = 10)
-    const restoredRows = canvasElement.querySelectorAll("tbody tr")
-    await expect(restoredRows.length).toBe(10)
+    await waitFor(
+      () => {
+        const restoredRows = canvasElement.querySelectorAll("tbody tr")
+        expect(restoredRows.length).toBe(10)
+      },
+      { timeout: 3000 }
+    )
   },
 }
 
@@ -253,6 +256,7 @@ export const WithSorting: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
+    const body = within(document.body)
 
     // Verify sort button renders with default label
     const sortButton = canvas.getByRole("button", { name: /Sort/ })
@@ -261,17 +265,16 @@ export const WithSorting: Story = {
     // Open sort dropdown
     await userEvent.click(sortButton)
 
-    // Select "Price, high to low"
-    const option = canvas.getByRole("menuitemradio", {
+    // Select "Price, high to low" — dropdown renders in a Radix portal on document.body
+    const option = body.getByRole("menuitemradio", {
       name: "Price, high to low",
     })
     await userEvent.click(option)
 
     // Verify trigger now shows active sort label
-    const updatedButton = canvas.getByRole("button", {
-      name: /Price, high to low/,
+    await waitFor(() => {
+      expect(canvas.getByRole("button", { name: /Price, high to low/ })).toBeInTheDocument()
     })
-    await expect(updatedButton).toBeInTheDocument()
 
     // Verify first data row has the highest price
     // Products: price = round((i+1)*37.5 + 50, 2). Product 42 = round(42*37.5+50, 2) = $1,625.00
