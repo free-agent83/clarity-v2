@@ -128,7 +128,7 @@ function DataTableQuickFilterPopover<TData>({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" disabled={loading}>
+        <Button variant="outline" disabled={loading}>
           {triggerLabel}
           <IconChevronDown className="ml-1 size-4" />
         </Button>
@@ -136,10 +136,10 @@ function DataTableQuickFilterPopover<TData>({
       <PopoverContent align="start" className="w-60">
         {renderFilterContent()}
         <div className="flex items-center gap-2">
-          <Button size="sm" onClick={handleApply}>
+          <Button onClick={handleApply}>
             Apply
           </Button>
-          <Button variant="ghost" size="sm" onClick={handleClear}>
+          <Button variant="ghost" onClick={handleClear}>
             Clear
           </Button>
         </div>

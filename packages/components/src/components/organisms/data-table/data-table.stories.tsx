@@ -47,7 +47,7 @@ const baseColumns: ColumnDef<Product, unknown>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <Badge variant="outline">{row.original.status}</Badge>,
+    cell: ({ row }) => <Badge size="sm" variant="outline">{row.original.status}</Badge>,
   },
 ]
 

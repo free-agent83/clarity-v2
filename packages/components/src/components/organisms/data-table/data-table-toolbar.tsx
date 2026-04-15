@@ -138,7 +138,7 @@ function DataTableToolbar<TData>({
           />
         ))}
         {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={resetAllFilters} disabled={loading}>
+          <Button variant="ghost" onClick={resetAllFilters} disabled={loading}>
             Clear all
           </Button>
         )}
@@ -146,12 +146,12 @@ function DataTableToolbar<TData>({
       {toolbar.sorting && toolbar.sorting.length > 0 && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" disabled={loading}>
+            <Button variant="outline" disabled={loading}>
               {activeSortLabel ?? "Sort"}
               <IconChevronDown className="ml-1 size-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuRadioGroup
               value={activeSortValue}
               onValueChange={handleSort}

@@ -79,7 +79,7 @@ function DataTable<TData>({
                     <th
                       key={header.id}
                       colSpan={header.colSpan}
-                      className="h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0"
+                      className="h-12 px-4 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0"
                     >
                       {content}
                     </th>
@@ -100,7 +100,7 @@ function DataTable<TData>({
                   {table.getVisibleLeafColumns().map((column) => (
                     <td
                       key={column.id}
-                      className="p-2 align-middle whitespace-nowrap"
+                      className="px-4 h-10 align-middle whitespace-nowrap"
                     >
                       <Skeleton className="h-4 w-full" />
                     </td>
@@ -131,7 +131,7 @@ function DataTable<TData>({
                     return (
                       <td
                         key={cell.id}
-                        className="p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0"
+                        className="p-4 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0"
                       >
                         {content}
                       </td>
