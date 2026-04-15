@@ -3,7 +3,7 @@ name: Button
 slug: button
 version: 0.1.0
 status: stable
-lastUpdated: 2026-04-13
+lastUpdated: 2026-04-14
 ---
 
 # Button
@@ -55,13 +55,32 @@ Use Button for any action that a user triggers synchronously on the current page
 - Keep labels short — 1-3 words.
 - No ALL CAPS — the component handles text styling.
 
+## Icon Button pattern
+
+Icon-only buttons are a Button usage pattern, not a separate component. Use the `icon`, `icon-sm`, or `icon-xs` sizes and pass exactly one icon as the child. Always provide `aria-label` — without it, the button has no accessible name.
+
+```tsx
+import { IconTrash } from "@tabler/icons-react";
+
+<Button size="icon" variant="ghost" aria-label="Delete item">
+  <IconTrash />
+</Button>
+```
+
+**Do:** Set `aria-label` to a short action verb phrase describing what the button does ("Delete item", "Close dialog", "Open menu").
+
+**Don't:** Render more than one child inside an icon button — the size variants are sized for a single icon.
+
+**Don't:** Use an icon button for an action whose meaning isn't clear from the icon alone. If a user might hesitate, add a Tooltip or use a labelled Button instead.
+
 ## Known deviations
 
-- `buttonVariants` uses `rounded-[min(var(--radius-md),10px)]` for `sm`, `icon-xs`, and `icon-sm` sizes. This is an arbitrary Tailwind value, which is a soft gap under CONTRIBUTING's "no arbitrary value syntax" rule. It resolves to CSS variables, not raw literals, so it does not violate the stronger "tokens only" rule. To be tuned when the token system grows a matching radius step.
-- The `Spinner` atom hardcodes `size-4`. For the `icon-xs` button (which wants `size-3` icons) the spinner renders slightly too large. Minor visual issue; not a blocker.
+**Rule 1 — raw literals in arbitrary value syntax.** [`button.tsx`](./button.tsx) contains `rounded-[min(var(--radius-md),10px)]` (on `sm` and `icon-sm` sizes) and `rounded-[min(var(--radius-md),8px)]` (on `icon-xs`). The pixel values (`10px`, `8px`) are raw literals and violate the revised Rule 1 in CONTRIBUTING.md. These values represent a token gap — the min() function is a CSS runtime fallback when `--radius-md` is not defined. Flagged pending per-component review by the design lead — see the inline comments in the TSX.
+
+The `Spinner` atom hardcodes `size-4`. For the `icon-xs` button (which wants `size-3` icons) the spinner renders slightly too large. Minor visual issue; not a blocker.
 
 ## Quality checklist
 
 - [x] Accessibility: passes axe-core via `@storybook/addon-a11y`, keyboard navigable (native `<button>` + `focus-visible` styling), announces `aria-busy` when loading
 - [x] Responsive: no breakpoint-specific behaviour by design; `block` handles container-fit
-- [x] Tokens only: no hex values, no arbitrary colour/pixel classes; see "Known deviations" for the `rounded-[min(...)]` caveat
+- [ ] Tokens only — flagged: raw pixel literals in `rounded-[min(var(--radius-md),10px)]` and `rounded-[min(var(--radius-md),8px)]`. See Known deviations.

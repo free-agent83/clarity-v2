@@ -5,16 +5,36 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/atoms/button/button"
 import { IconX } from "@tabler/icons-react"
 
-function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
+interface SheetProps extends React.ComponentProps<typeof SheetPrimitive.Root> {}
+
+interface SheetContentProps
+  extends React.ComponentProps<typeof SheetPrimitive.Content> {
+  side?: "top" | "right" | "bottom" | "left"
+  showCloseButton?: boolean
+}
+
+/**
+ * Root of a Sheet. Side-anchored overlay for larger tasks or
+ * persistent panels. Wraps Radix `Dialog.Root` internally (Sheet
+ * is just a styled Dialog).
+ */
+function Sheet({ ...props }: SheetProps) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
 
+/**
+ * Element that opens the sheet when clicked.
+ */
 function SheetTrigger({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
 }
 
+/**
+ * Close-the-sheet element. Use `asChild` to compose onto your own
+ * button.
+ */
 function SheetClose({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Close>) {
@@ -43,16 +63,19 @@ function SheetOverlay({
   )
 }
 
+/**
+ * Sheet content container. Pass `side` to control which edge the
+ * sheet slides in from — defaults to `"right"`.
+ *
+ * @see {@link SheetContentProps} for the side variants.
+ */
 function SheetContent({
   className,
   children,
   side = "right",
   showCloseButton = true,
   ...props
-}: React.ComponentProps<typeof SheetPrimitive.Content> & {
-  side?: "top" | "right" | "bottom" | "left"
-  showCloseButton?: boolean
-}) {
+}: SheetContentProps) {
   return (
     <SheetPortal>
       <SheetOverlay />
@@ -84,6 +107,10 @@ function SheetContent({
   )
 }
 
+/**
+ * Header region of a Sheet. Typically contains a SheetTitle and
+ * an optional SheetDescription.
+ */
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -94,6 +121,9 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Footer region of a Sheet. Typically contains action buttons.
+ */
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -104,6 +134,10 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Accessible title of the sheet. Required by Radix for screen
+ * reader announcements.
+ */
 function SheetTitle({
   className,
   ...props
@@ -117,6 +151,9 @@ function SheetTitle({
   )
 }
 
+/**
+ * Short description of the sheet's purpose.
+ */
 function SheetDescription({
   className,
   ...props
@@ -139,4 +176,5 @@ export {
   SheetFooter,
   SheetTitle,
   SheetDescription,
-}
+};
+export type { SheetProps, SheetContentProps };

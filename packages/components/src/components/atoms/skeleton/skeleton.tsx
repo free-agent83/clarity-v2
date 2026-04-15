@@ -1,6 +1,15 @@
 import { cn } from "@/lib/utils"
 
-function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
+interface SkeletonProps extends React.ComponentProps<"div"> {}
+
+/**
+ * Animated placeholder block used while content is loading.
+ *
+ * Render a Skeleton at the approximate shape and size of the content
+ * that will replace it. Compose multiple Skeletons to mirror more
+ * complex layouts (cards, tables, text blocks).
+ */
+function Skeleton({ className, ...props }: SkeletonProps) {
   return (
     <div
       data-slot="skeleton"
@@ -10,4 +19,5 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { Skeleton }
+export { Skeleton };
+export type { SkeletonProps };

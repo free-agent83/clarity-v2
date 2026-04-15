@@ -1,30 +1,53 @@
 ---
 name: Breadcrumb
 slug: breadcrumb
-version: 0.0.0
-status: unstable
-lastUpdated: 2026-04-13
+version: 0.1.0
+status: stable
+lastUpdated: 2026-04-14
 ---
 
 # Breadcrumb
 
-[WIP]
+Navigation trail showing the user's location inside a hierarchical structure.
 
 ## Props
 
-[WIP]
+Breadcrumb is a compound component. Compose it from the following subcomponents:
+
+- `Breadcrumb` — root `<nav>`
+- `BreadcrumbList` — `<ol>` wrapping the segments
+- `BreadcrumbItem` — `<li>` wrapping each segment
+- `BreadcrumbLink` — clickable segment; pass `asChild` to use a framework link
+- `BreadcrumbPage` — the current page segment, non-interactive, with `aria-current="page"`
+- `BreadcrumbSeparator` — visual divider between segments. Use as-is. **Do not pass children** to override the default chevron — the separator is fixed by the design system (see [Best practices](#best-practices)).
+- `BreadcrumbEllipsis` — collapsed-state indicator for long trails
+
+All subcomponents accept standard HTML attributes for their root element via prop spread.
 
 ## Usage guidelines
 
-[WIP]
+Use Breadcrumb to show the user's position in a hierarchical app structure (category → subcategory → item). Put Breadcrumb at the top of the content area, below the global navigation.
+
+**Don't use Breadcrumb** for flat navigation — if all pages are siblings, Breadcrumb adds noise. **Don't use Breadcrumb** as a replacement for a back button in linear flows.
 
 ## Best practices
 
-[WIP]
+- **Do:** Always end the trail with a `BreadcrumbPage`, not a `BreadcrumbLink`, for the current page.
+- **Do:** Use `BreadcrumbEllipsis` to collapse the middle of long trails — keep the first and last segments visible.
+- **Do:** Keep segment labels concise — match the page title.
+- **Do:** Use `BreadcrumbSeparator` as-is. The default chevron is the design system's chosen separator; consistency across breadcrumb instances is more important than per-instance personality.
+- **Don't:** Customize the separator. Never pass children to `BreadcrumbSeparator` to swap in a slash, dot, arrow, or any other glyph. If a future product surface needs a different separator, the change happens in the component itself, applied uniformly to every Breadcrumb in the system — never per-instance.
+- **Don't:** Link the current page back to itself.
+- **Don't:** Mix breadcrumbs with tabs for the same navigation level — pick one pattern.
+
+## Writing
+
+- Match the page title exactly. If the page title is "Round brilliant cut diamonds", the breadcrumb segment is "Round brilliant cut diamonds" — not "Round" or "Diamonds".
+- Sentence case for all segments.
+- No trailing punctuation.
 
 ## Quality checklist
 
-- [ ] Accessibility: passes axe-core, keyboard navigable, screen reader tested
-- [ ] Figma parity: matches DSW-Web-Components Figma source
-- [ ] Responsive: works at all breakpoints
-- [ ] Tokens only: no hardcoded visual values
+- [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
+- [x] Responsive: wraps to a new line in narrow containers
+- [x] Tokens only: no raw literals inside arbitrary value syntax

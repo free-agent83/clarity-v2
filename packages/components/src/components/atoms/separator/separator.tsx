@@ -3,12 +3,23 @@ import { Separator as SeparatorPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+interface SeparatorProps
+  extends React.ComponentProps<typeof SeparatorPrimitive.Root> {}
+
+/**
+ * Visual divider between groups of content.
+ *
+ * Wraps Radix `Separator.Root`. Defaults to horizontal orientation;
+ * pass `orientation="vertical"` for a vertical divider. Pass
+ * `decorative={false}` when the separator carries semantic meaning
+ * for assistive tech.
+ */
 function Separator({
   className,
   orientation = "horizontal",
   decorative = true,
   ...props
-}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
+}: SeparatorProps) {
   return (
     <SeparatorPrimitive.Root
       data-slot="separator"
@@ -23,4 +34,5 @@ function Separator({
   )
 }
 
-export { Separator }
+export { Separator };
+export type { SeparatorProps };

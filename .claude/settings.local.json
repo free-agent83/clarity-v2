@@ -52,7 +52,12 @@
       "Bash(grep -E \"^\\(export \\\\{|\\\\s+[A-Z][a-zA-Z]+,?|^}\\)\" packages/components/src/components/atoms/input-group/input-group.tsx)",
       "Bash(echo \"exit=$?\")",
       "Bash(ls tsconfig*.json)",
-      "Bash(echo \"---exit: $?---\")"
+      "Bash(echo \"---exit: $?---\")",
+      "Bash(git diff-tree:*)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(chmod +x /tmp/check_exports.sh)",
+      "Bash(/tmp/check_exports.sh)",
+      "Bash(find /Users/jlfgms/Desktop/Code/clarity-v2/packages/components/src/components -path '*__TRACKED_VAR__/__TRACKED_VAR__.tsx' -exec grep 'export.*Props' '{}' ';')"
     ]
   }
 }

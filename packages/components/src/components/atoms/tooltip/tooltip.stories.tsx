@@ -1,10 +1,24 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import { userEvent, within, expect, waitFor } from "@storybook/test";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "./tooltip";
+import { Button } from "../button/button";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Overlays/Tooltip",
   component: Tooltip,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <TooltipProvider>
+        <Story />
+      </TooltipProvider>
+    ),
+  ],
 };
 
 export default meta;
@@ -12,11 +26,22 @@ type Story = StoryObj<typeof Tooltip>;
 
 export const Default: Story = {
   render: () => (
-    <TooltipProvider>
-      <Tooltip defaultOpen>
-        <TooltipTrigger>Trigger</TooltipTrigger>
-        <TooltipContent>Content</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="outline">Hover me</Button>
+      </TooltipTrigger>
+      <TooltipContent>Adds a new item to the list</TooltipContent>
+    </Tooltip>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole("button", { name: "Hover me" });
+    await userEvent.hover(trigger);
+    const body = within(document.body);
+    await waitFor(async () => {
+      await expect(body.getByRole("tooltip")).toHaveTextContent(
+        "Adds a new item to the list"
+      );
+    });
+  },
 };

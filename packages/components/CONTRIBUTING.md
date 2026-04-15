@@ -253,21 +253,29 @@ We currently follow shadcn's React-19 defaults — plain function components, no
 
 #### Rule 1 — Components consume tokens only through the CSS theme
 
-Components never import from `packages/tokens/` and never reference raw token CSS variables. They see tokens only through the Tailwind theme, as utility classes.
+Components never import from `packages/tokens/` and never reference raw token CSS variables as Tailwind utility shortcuts to raw literals. They see tokens only through the Tailwind theme, as utility classes — or, when an arbitrary value is truly needed, as a `var(--token)` reference inside arbitrary value syntax.
 
-```tsx
-// Do
-"bg-primary text-foreground border-border"
+**Allowed:**
 
-// Don't
-"bg-[var(--color-semantic-primary-default)]"
-```
+- Semantic utility classes: `bg-primary`, `text-foreground`, `border-border`, `p-4`, `rounded-md`
+- Arbitrary value syntax when the value is a CSS variable: `rounded-[var(--radius-md)]`, `w-[calc(100%-var(--sidebar-width))]`
 
-Corollaries:
+**Forbidden:**
 
-- No hardcoded colors, spacing, border-radius, or shadows anywhere in component code.
-- No Tailwind arbitrary value syntax (`bg-[#hex]`, `p-[14px]`) for values that should be tokens.
-- If the design calls for a value not in the token set, flag it — NEVER invent a token.
+- Raw literals inside arbitrary value syntax: `p-[14px]`, `text-[#232323]`, `m-[4px]`, `bg-[#fff]`
+- Mixed expressions where any literal leaks in: `rounded-[min(var(--radius-md),10px)]` — the `10px` half is the violation even though `var(--radius-md)` is fine
+- Hardcoded hex values anywhere in the file
+
+If the design calls for a value not in the token set, flag it — NEVER invent a token.
+
+**Handling violations**
+
+When a component has a Rule 1 violation that can't be trivially resolved (e.g. an inherited shadcn default whose replacement would be a design judgement call), the violation is **flagged, not fixed**:
+
+1. Add an inline comment directly above or beside the offending line in the `.tsx` file: `// clarity-v2: token-gap — <short description of violation>`
+2. Record the violation in that component's `COMPONENT.md` under a `## Known deviations` section, pointing at the file and the rule.
+
+Flagged violations are revisited per-component in later design-lead-led passes. This policy exists to let conformance work move fast without triggering design judgement calls on shadcn defaults.
 
 #### Rule 2 — The token flow is always top-down
 
@@ -331,7 +339,7 @@ Overlays/       Dialog, Sheet, Popover, Tooltip
 Feedback/       Alert, Toast, Progress, Skeleton
 Display/        Card, Badge, Chip, Avatar, Separator, Carousel
 Data/           Table, Data Grid
-Navigation/     Tabs, Accordion, Breadcrumbs
+Navigation/     Tabs, Accordion, Breadcrumb
 Templates/      [Phase C — PLP, PDP, Dashboard, Auth, Checkout, Settings]
 Docs/           [Phase C — Getting started, Prompt patterns, Migration from MUI]
 ```
@@ -355,6 +363,32 @@ Write a story only when a usage pattern isn't discoverable from the `argTypes` c
 Stories exist to surface patterns that *aren't* expressible as prop permutations: icon children, slot-based composition (`asChild`), wrapper-dependent behaviour (full-width inside a constrained container), compound behaviours, and anything else a reader wouldn't discover by clicking through the argTypes.
 
 Every component still needs at least one story — the default render — so the argTypes playground has an anchor.
+
+### Compose stories from system components only
+
+When a story renders a component **alongside** other elements (a Label next to an input, a Button inside a Popover, a form inside a Sheet), every one of those elements must come from the Clarity V2 component library. Never inline a bespoke `<input>`, `<button>`, `<select>`, `<textarea>`, or any other element that has a system equivalent. Never apply ad-hoc Tailwind classes to fake the look of a system component.
+
+The library is the design. A story that bypasses it teaches readers — human and AI agent — that bypassing is acceptable, and the visual reference drifts the moment the system component changes. Every story is a small worked example of how the design system composes; that example is only honest if it uses real components throughout.
+
+```tsx
+// Do
+<div className="flex flex-col gap-2">
+  <Label htmlFor="email">Email address</Label>
+  <Input id="email" type="email" placeholder="you@example.com" />
+</div>
+
+// Don't
+<div className="flex flex-col gap-2">
+  <Label htmlFor="email">Email address</Label>
+  <input
+    id="email"
+    type="email"
+    className="rounded-md border border-border bg-background px-3 py-2 text-sm"
+  />
+</div>
+```
+
+The only acceptable raw HTML in a story is structural layout (`<div>`, `<span>`, headings) where no system equivalent exists yet. If the missing equivalent ever lands as a component, replace the inline usage in the same commit.
 
 ### Play functions for interactive components
 
@@ -419,7 +453,7 @@ vitest --project=storybook --run
 A component is considered done when all of the following are true:
 
 - [ ] Implementation follows conventions (CVA, cn(), TypeScript, named exports)
-- [ ] All visual values come from tokens via Tailwind — no hardcoded values
+- [ ] Tokens only: no raw literals inside Tailwind arbitrary value syntax, no hardcoded colors, spacing, radius, or shadows. `var(--token)` inside arbitrary syntax is allowed.
 - [ ] Stories cover non-obvious usage patterns (see Minimum story set)
 - [ ] `tags: ["autodocs"]` present on story meta
 - [ ] Interactive components have play functions testing core interactions
@@ -431,13 +465,4 @@ A component is considered done when all of the following are true:
 - [ ] Storybook renders all stories without errors
 - [ ] TypeScript compiles with no errors (`tsc --noEmit`)
 
----
-
-## shadcn CLI (open question)
-
-No `components.json` exists in this repo yet. During Phase B, both approaches will be tested:
-
-1. **CLI scaffolding** — `npx shadcn add <component>`, then adapt to our conventions (rename, restructure, adjust tokens)
-2. **Manual build** — reference shadcn/Radix source, build from scratch following our conventions
-
-Decision will be made after trying both on a few components. Check with the design lead before committing to an approach.
+**Publishing with flagged violations.** A component may be promoted to `stable` and barrel-exported even if it has flagged Rule 1 violations. The "Tokens only" DoD item remains unticked in that component's `COMPONENT.md` with an inline note pointing at the flag. Publishing is allowed; completion is not. This is an explicit exception for Phase B, not a permanent carve-out — each flag is a ticket for a later per-component review.

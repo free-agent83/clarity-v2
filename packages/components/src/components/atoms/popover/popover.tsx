@@ -3,18 +3,36 @@ import { Popover as PopoverPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+interface PopoverProps
+  extends React.ComponentProps<typeof PopoverPrimitive.Root> {}
+
+interface PopoverContentProps
+  extends React.ComponentProps<typeof PopoverPrimitive.Content> {}
+
+/**
+ * Floating container anchored to a trigger element. Opens on click
+ * and closes on outside click or Escape.
+ */
 function Popover({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
+/**
+ * Element that opens the popover when clicked. Pass `asChild` to
+ * avoid wrapping in an extra element.
+ */
 function PopoverTrigger({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
 }
 
+/**
+ * Floating content of the popover. Accepts `side`, `align`, and
+ * `sideOffset` positioning props.
+ */
 function PopoverContent({
   className,
   align = "center",
@@ -37,12 +55,19 @@ function PopoverContent({
   )
 }
 
+/**
+ * Alternative anchor element that positions the popover without
+ * being the trigger. Use when the trigger and anchor differ.
+ */
 function PopoverAnchor({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />
 }
 
+/**
+ * Optional header region for the popover content.
+ */
 function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -53,6 +78,9 @@ function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Optional title element inside the popover header.
+ */
 function PopoverTitle({ className, ...props }: React.ComponentProps<"h2">) {
   return (
     <div
@@ -63,6 +91,9 @@ function PopoverTitle({ className, ...props }: React.ComponentProps<"h2">) {
   )
 }
 
+/**
+ * Optional description text inside the popover header.
+ */
 function PopoverDescription({
   className,
   ...props
@@ -84,4 +115,5 @@ export {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
-}
+};
+export type { PopoverProps, PopoverContentProps };

@@ -4,7 +4,14 @@ import { Slot } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { IconChevronRight, IconDots } from "@tabler/icons-react"
 
-function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
+interface BreadcrumbProps extends React.ComponentProps<"nav"> {}
+
+/**
+ * Container for a breadcrumb trail. Renders a `<nav>` with an
+ * implicit `aria-label="breadcrumb"`. Wraps a BreadcrumbList and
+ * its items.
+ */
+function Breadcrumb({ className, ...props }: BreadcrumbProps) {
   return (
     <nav
       aria-label="breadcrumb"
@@ -15,6 +22,9 @@ function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
   )
 }
 
+/**
+ * Ordered list of breadcrumb segments. Wraps an `<ol>`.
+ */
 function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   return (
     <ol
@@ -28,6 +38,9 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   )
 }
 
+/**
+ * Single breadcrumb segment. Wraps an `<li>`.
+ */
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
@@ -38,6 +51,11 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   )
 }
 
+/**
+ * Clickable segment inside a BreadcrumbItem. Use for any segment
+ * except the current page. Pass `asChild` to render as a framework
+ * link (e.g. Next.js `<Link>`).
+ */
 function BreadcrumbLink({
   asChild,
   className,
@@ -56,6 +74,9 @@ function BreadcrumbLink({
   )
 }
 
+/**
+ * The current page segment. Non-interactive. Uses `aria-current="page"`.
+ */
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -69,6 +90,10 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
+/**
+ * Visual separator between segments. Defaults to a chevron; pass
+ * children to override (e.g. a slash).
+ */
 function BreadcrumbSeparator({
   children,
   className,
@@ -89,6 +114,10 @@ function BreadcrumbSeparator({
   )
 }
 
+/**
+ * Collapsed-state indicator for long breadcrumb trails. Renders as
+ * an ellipsis with an accessible label.
+ */
 function BreadcrumbEllipsis({
   className,
   ...props
@@ -119,4 +148,5 @@ export {
   BreadcrumbPage,
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
-}
+};
+export type { BreadcrumbProps };

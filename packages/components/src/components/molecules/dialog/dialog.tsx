@@ -7,30 +7,54 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/atoms/button/button"
 import { IconX } from "@tabler/icons-react"
 
-function Dialog({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Root>) {
+interface DialogProps extends React.ComponentProps<typeof DialogPrimitive.Root> {}
+
+interface DialogContentProps
+  extends React.ComponentProps<typeof DialogPrimitive.Content> {
+  showCloseButton?: boolean
+}
+
+interface DialogFooterProps extends React.ComponentProps<"div"> {
+  showCloseButton?: boolean
+}
+
+/**
+ * Root of a Dialog. Holds open state and controls the overlay + content rendering. Wraps Radix `Dialog.Root`.
+ */
+function Dialog({ ...props }: DialogProps) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
+/**
+ * Element that opens the dialog when clicked. Pass `asChild` to avoid wrapping in an extra element.
+ */
 function DialogTrigger({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
 }
 
+/**
+ * Portal target for the dialog's overlay and content. Rendered automatically by DialogContent — use explicitly only when manually composing.
+ */
 function DialogPortal({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
+/**
+ * Close-the-dialog element. Use `asChild` to compose onto your own button inside the dialog content.
+ */
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+/**
+ * Semi-transparent backdrop rendered behind the dialog content. Clicking the overlay closes the dialog unless prevented on DialogContent.
+ */
 function DialogOverlay({
   className,
   ...props
@@ -47,17 +71,21 @@ function DialogOverlay({
   )
 }
 
+/**
+ * Dialog content container with a built-in close button.
+ *
+ * Pass `showCloseButton={false}` to omit the default close button (e.g. for critical confirmations where the user must pick an explicit action).
+ */
 function DialogContent({
   className,
   children,
   showCloseButton = true,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
-  showCloseButton?: boolean
-}) {
+}: DialogContentProps) {
   return (
     <DialogPortal>
       <DialogOverlay />
+      {/* clarity-v2: token-gap — raw 2rem literal inside calc() arbitrary value syntax, pending design review */}
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
@@ -85,6 +113,9 @@ function DialogContent({
   )
 }
 
+/**
+ * Header region of a Dialog. Typically contains a DialogTitle and an optional DialogDescription.
+ */
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -95,14 +126,17 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ * Footer region of a Dialog. Typically contains action buttons.
+ *
+ * Pass `showCloseButton` to render a secondary outline Close button at the end of the footer. Off by default.
+ */
 function DialogFooter({
   className,
   showCloseButton = false,
   children,
   ...props
-}: React.ComponentProps<"div"> & {
-  showCloseButton?: boolean
-}) {
+}: DialogFooterProps) {
   return (
     <div
       data-slot="dialog-footer"
@@ -122,6 +156,9 @@ function DialogFooter({
   )
 }
 
+/**
+ * Accessible title of the dialog. Required by Radix for screen reader announcements.
+ */
 function DialogTitle({
   className,
   ...props
@@ -135,6 +172,9 @@ function DialogTitle({
   )
 }
 
+/**
+ * Short description of the dialog's purpose, announced after the title by screen readers. Recommended for every dialog.
+ */
 function DialogDescription({
   className,
   ...props
@@ -162,4 +202,5 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-}
+};
+export type { DialogProps, DialogContentProps, DialogFooterProps };
