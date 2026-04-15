@@ -2,7 +2,7 @@
 name: Brand
 slug: brand
 version: 0.0.1
-status: unstable
+status: stable
 lastUpdated: 2026-04-15
 ---
 
