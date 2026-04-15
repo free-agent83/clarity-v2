@@ -89,3 +89,15 @@ export type { SheetProps, SheetContentProps } from "./components/molecules/sheet
 // export { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger, NavigationMenuLink, NavigationMenuIndicator, NavigationMenuViewport, navigationMenuTriggerStyle } from "./components/organisms/navigation-menu/navigation-menu";
 // export { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, useSidebar } from "./components/organisms/sidebar/sidebar";
 // export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "./components/organisms/table/table";
+
+// organisms — data-table
+export { DataTable } from "./components/organisms/data-table/data-table";
+export { DataTableHeader, DataTableCell } from "./components/organisms/data-table/data-table-cells";
+export { getSelectColumn } from "./components/organisms/data-table/data-table-helpers";
+export type {
+  DataTableProps,
+  DataTableConfig,
+  DataTablePaginationConfig,
+  DataTableHeaderProps,
+  DataTableCellProps,
+} from "./components/organisms/data-table/data-table-types";
