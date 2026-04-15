@@ -283,7 +283,27 @@ Added to `packages/components/src/index.ts`:
 
 ---
 
-## 10. Future phases (out of scope)
+## 10. Deliverable: update master spec
+
+At the end of Phase 1, update the master DataTable spec (`datatable-spec.md`) to incorporate all decisions made during this phase:
+
+- Phased delivery model (4 phases)
+- Independence from Table organism (own markup and styles)
+- `useDataTable` internal hook (state extraction pattern)
+- No sticky header
+- No custom loading state (Skeleton rows only, not configurable)
+- `emptyState` configurable, `loadingState` removed from config
+- Selection bar fixed to viewport bottom, "Clear selection" rightmost
+- Pagination centered, no selection count (that's SelectionBar's concern)
+- Tabler icons for pagination
+- `useDebounce` as a shared hook in `src/hooks/`
+- Radius token matches library convention
+
+This ensures the spec handed to Phase 2 reflects the actual implementation, not the original draft.
+
+---
+
+## 11. Future phases (out of scope)
 
 Documented here for context. Each phase gets its own spec when active.
 
