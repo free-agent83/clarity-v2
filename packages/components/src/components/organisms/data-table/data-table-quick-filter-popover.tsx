@@ -1,0 +1,144 @@
+import { useState, useEffect } from "react"
+import type { Table } from "@tanstack/react-table"
+import { IconChevronDown } from "@tabler/icons-react"
+import { Button } from "@/components/atoms/button/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/atoms/popover/popover"
+import { DataTableCheckboxFilter } from "./data-table-checkbox-filter"
+import { DataTableSliderFilter } from "./data-table-slider-filter"
+import type { QuickFilter } from "./data-table-types"
+
+interface DataTableQuickFilterPopoverProps<TData> {
+  table: Table<TData>
+  filter: QuickFilter
+}
+
+/**
+ * Shared popover template for a single quick filter.
+ *
+ * Renders the trigger button with an active-state indicator label,
+ * the filter-specific controls (checkbox list or range slider), and
+ * Apply / Clear action buttons. Changes are pending until Apply.
+ *
+ * Internal component — never used standalone.
+ */
+function DataTableQuickFilterPopover<TData>({
+  table,
+  filter,
+}: DataTableQuickFilterPopoverProps<TData>) {
+  const [open, setOpen] = useState(false)
+  const column = table.getColumn(filter.columnId)
+
+  const [pendingCheckbox, setPendingCheckbox] = useState<Set<string>>(
+    new Set()
+  )
+  const [pendingSlider, setPendingSlider] = useState<[number, number]>([0, 0])
+
+  // Initialise pending state from the column's current filter value when popover opens
+  useEffect(() => {
+    if (!open || !column) return
+
+    if (filter.type === "checkbox-list") {
+      const current = column.getFilterValue() as string[] | undefined
+      setPendingCheckbox(new Set(current ?? []))
+    } else {
+      const current = column.getFilterValue() as [number, number] | undefined
+      const faceted = column.getFacetedMinMaxValues() ?? [0, 0]
+      setPendingSlider(
+        current ?? [faceted[0] ?? 0, faceted[1] ?? 0]
+      )
+    }
+  }, [open, column, filter.type])
+
+  if (!column) return null
+
+  // Trigger label with active indicator
+  const triggerLabel = (() => {
+    if (filter.type === "checkbox-list") {
+      const activeCount = (
+        column.getFilterValue() as string[] | undefined
+      )?.length
+      return activeCount ? `${filter.name} (${activeCount})` : filter.name
+    }
+
+    const range = column.getFilterValue() as [number, number] | undefined
+    const fmt = filter.formatValue ?? String
+    return range
+      ? `${filter.name}: ${fmt(range[0])} \u2013 ${fmt(range[1])}`
+      : filter.name
+  })()
+
+  const handleApply = () => {
+    if (filter.type === "checkbox-list") {
+      const arr = Array.from(pendingCheckbox)
+      column.setFilterValue(arr.length > 0 ? arr : undefined)
+    } else {
+      column.setFilterValue(pendingSlider)
+    }
+    setOpen(false)
+  }
+
+  const handleClear = () => {
+    column.setFilterValue(undefined)
+    if (filter.type === "checkbox-list") {
+      setPendingCheckbox(new Set())
+    } else {
+      const faceted = column.getFacetedMinMaxValues() ?? [0, 0]
+      setPendingSlider([faceted[0] ?? 0, faceted[1] ?? 0])
+    }
+    setOpen(false)
+  }
+
+  const renderFilterContent = () => {
+    if (filter.type === "checkbox-list") {
+      const facetedValues = column.getFacetedUniqueValues()
+      const options = Array.from(facetedValues.keys()).sort()
+      return (
+        <DataTableCheckboxFilter
+          options={options}
+          value={pendingCheckbox}
+          onChange={setPendingCheckbox}
+        />
+      )
+    }
+
+    const faceted = column.getFacetedMinMaxValues() ?? [0, 0]
+    return (
+      <DataTableSliderFilter
+        min={faceted[0] ?? 0}
+        max={faceted[1] ?? 0}
+        value={pendingSlider}
+        onChange={setPendingSlider}
+        formatValue={filter.formatValue}
+      />
+    )
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm">
+          {triggerLabel}
+          <IconChevronDown className="ml-1 size-4" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-60">
+        {renderFilterContent()}
+        <div className="flex items-center gap-2">
+          <Button size="sm" onClick={handleApply}>
+            Apply
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleClear}>
+            Clear
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+export { DataTableQuickFilterPopover }
+export type { DataTableQuickFilterPopoverProps }
