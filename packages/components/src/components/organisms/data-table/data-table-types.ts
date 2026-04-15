@@ -42,6 +42,26 @@ export interface SortOption {
 }
 
 /**
+ * Quick filter configuration for the toolbar.
+ *
+ * Each quick filter renders as a popover trigger button in the toolbar.
+ * The popover contains filter-specific controls, an Apply button, and
+ * a Clear button. Changes are pending until Apply is clicked.
+ */
+export type QuickFilter =
+  | {
+      name: string
+      columnId: string
+      type: "checkbox-list"
+    }
+  | {
+      name: string
+      columnId: string
+      type: "interval-slider"
+      formatValue?: (value: number) => string
+    }
+
+/**
  * Toolbar configuration for DataTable.
  *
  * Controls the search input and sort dropdown rendered above the table.
@@ -54,6 +74,7 @@ export interface DataTableToolbarConfig {
     debounceMs?: number
   }
   sorting?: SortOption[]
+  quickFilters?: QuickFilter[]
 }
 
 /**
