@@ -73,6 +73,24 @@ function validateConfig<TData>(config: DataTableConfig<TData>): void {
       }
     }
   }
+
+  if (config.toolbar?.quickFilters) {
+    const filterColumnIds = new Set<string>()
+    for (const filter of config.toolbar.quickFilters) {
+      if (!columnIds.includes(filter.columnId)) {
+        throw new Error(
+          `DataTable: toolbar.quickFilters references unknown column "${filter.columnId}". ` +
+            `Available columns: ${columnIds.filter(Boolean).join(", ")}`
+        )
+      }
+      if (filterColumnIds.has(filter.columnId)) {
+        throw new Error(
+          `DataTable: toolbar.quickFilters has duplicate columnId "${filter.columnId}".`
+        )
+      }
+      filterColumnIds.add(filter.columnId)
+    }
+  }
 }
 
 function useDataTable<TData>(

@@ -93,4 +93,53 @@ describe("validateConfig", () => {
     }
     expect(() => validateConfig(config)).not.toThrow()
   })
+
+  it("throws when quickFilter.columnId references a non-existent column", () => {
+    const config: DataTableConfig<{ name: string }> = {
+      columns: [{ accessorKey: "name", header: "Name" }],
+      toolbar: {
+        quickFilters: [
+          { name: "Category", columnId: "nonexistent", type: "checkbox-list" },
+        ],
+      },
+    }
+    expect(() => validateConfig(config)).toThrow(
+      'toolbar.quickFilters references unknown column "nonexistent"'
+    )
+  })
+
+  it("throws when quickFilters has duplicate columnId values", () => {
+    const config: DataTableConfig<{ name: string; category: string }> = {
+      columns: [
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "category", header: "Category" },
+      ],
+      toolbar: {
+        quickFilters: [
+          { name: "Category", columnId: "category", type: "checkbox-list" },
+          { name: "Category 2", columnId: "category", type: "checkbox-list" },
+        ],
+      },
+    }
+    expect(() => validateConfig(config)).toThrow(
+      'toolbar.quickFilters has duplicate columnId "category"'
+    )
+  })
+
+  it("does not throw for valid quickFilters config", () => {
+    const config: DataTableConfig<{ name: string; category: string; price: number }> = {
+      columns: [
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "category", header: "Category" },
+        { accessorKey: "price", header: "Price" },
+      ],
+      toolbar: {
+        quickFilters: [
+          { name: "Category", columnId: "category", type: "checkbox-list" },
+          { name: "Price", columnId: "price", type: "interval-slider" },
+        ],
+      },
+    }
+    expect(() => validateConfig(config)).not.toThrow()
+  })
 })
