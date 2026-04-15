@@ -4,6 +4,12 @@ All notable progress on Clarity V2 is recorded here. Most recent entries first.
 
 ---
 
+## Future work noted during Phase 3 design (2026-04-15)
+
+- **Slider with editable inputs variant.** The Slider atom should support a variant with flanking number inputs that sync bidirectionally with the slider thumbs. This is a reusable atom concern, not a DataTable concern. Identified during DataTable Phase 3 (interval-slider quick filter) — for now the filter uses the plain Slider. Pick this up as a standalone Slider enhancement.
+
+---
+
 ## 2026-04-10 — Architectural correction: tokens package is surface-agnostic
 
 Removed the shadcn-specific layer from the tokens package. The tokens package now emits only primitives and the surface-agnostic semantic layer; any mapping to a specific surface theme (shadcn, Tailwind `@theme`, etc.) lives in-loco in the consumer.
