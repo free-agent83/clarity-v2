@@ -31,7 +31,8 @@ function DataTable<TData>({
   config,
   loading = false,
 }: DataTableProps<TData>) {
-  const { table, globalFilter, setGlobalFilter } = useDataTable(data, config)
+  const { table, globalFilter, setGlobalFilter, hasActiveFilters, resetAllFilters } =
+    useDataTable(data, config)
 
   const selectedRowCount = config.enableRowSelection
     ? table.getFilteredSelectedRowModel().rows.length
@@ -45,6 +46,8 @@ function DataTable<TData>({
           toolbar={config.toolbar}
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
+          hasActiveFilters={hasActiveFilters}
+          resetAllFilters={resetAllFilters}
         />
       )}
       <div className="overflow-hidden rounded-lg border">

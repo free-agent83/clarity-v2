@@ -17,12 +17,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/dropdown-menu/dropdown-menu"
 import type { DataTableToolbarConfig } from "./data-table-types"
+import { DataTableQuickFilterPopover } from "./data-table-quick-filter-popover"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
   toolbar: DataTableToolbarConfig
   globalFilter: string
   setGlobalFilter: (value: string) => void
+  hasActiveFilters: boolean
+  resetAllFilters: () => void
 }
 
 /**
@@ -36,6 +39,8 @@ function DataTableToolbar<TData>({
   toolbar,
   globalFilter,
   setGlobalFilter,
+  hasActiveFilters,
+  resetAllFilters,
 }: DataTableToolbarProps<TData>) {
   const [localSearch, setLocalSearch] = useState(globalFilter)
   const debouncedSearch = useDebounce(
@@ -106,6 +111,18 @@ function DataTableToolbar<TData>({
               </InputGroupAddon>
             )}
           </InputGroup>
+        )}
+        {toolbar.quickFilters?.map((filter) => (
+          <DataTableQuickFilterPopover
+            key={filter.columnId}
+            table={table}
+            filter={filter}
+          />
+        ))}
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={resetAllFilters}>
+            Clear all
+          </Button>
         )}
       </div>
       {toolbar.sorting && toolbar.sorting.length > 0 && (
