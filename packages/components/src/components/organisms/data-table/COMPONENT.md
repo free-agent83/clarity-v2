@@ -27,6 +27,7 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `columns` | `ColumnDef<TData>[]` | — | TanStack Table column definitions |
+| `toolbar` | `DataTableToolbarConfig` | — | Toolbar configuration (search, sort) |
 | `pagination` | `DataTablePaginationConfig` | — | Pagination options |
 | `enableRowSelection` | `boolean` | `false` | Enable row selection checkboxes |
 | `selectionActions` | `(rows, clearSelection) => ReactNode` | — | Custom actions rendered in the selection bar |
@@ -37,6 +38,24 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `pageSizeOptions` | `number[]` | `[10, 20, 30, 40, 50]` | Available page sizes. First value is the default. |
+
+### DataTableToolbarConfig
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `search` | `{ placeholder?, columnIds, debounceMs? }` | — | Search input configuration |
+| `search.placeholder` | `string` | `"Search..."` | Placeholder text for the search input |
+| `search.columnIds` | `string[]` | — | Column IDs to include in global search (required, non-empty) |
+| `search.debounceMs` | `number` | `300` | Debounce delay in milliseconds |
+| `sorting` | `SortOption[]` | — | Preset sort options for the sort dropdown |
+
+### SortOption
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | — | Human-readable label shown in the dropdown |
+| `columnId` | `string` | — | Column to sort by |
+| `direction` | `"asc" \| "desc"` | — | Sort direction |
 
 ### DataTableHeader / DataTableCell
 
@@ -52,6 +71,10 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 **Don't** use DataTable for simple, small, static tables — use the Table organism directly instead.
 
 **Don't** lift table state to the page level. DataTable owns all state internally. Use `selectionActions` to react to selection, not external state management.
+
+**Do** use `toolbar.search.columnIds` to explicitly opt columns into global search. Columns not listed are excluded.
+
+**Don't** configure `toolbar.sorting` options that reference columns not in your `columns` array — this is a runtime error.
 
 ## Best practices
 
