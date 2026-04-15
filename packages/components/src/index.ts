@@ -99,6 +99,7 @@ export type {
   DataTableConfig,
   DataTablePaginationConfig,
   DataTableToolbarConfig,
+  DataTableServerSideConfig,
   SortOption,
   QuickFilter,
   DataTableHeaderProps,

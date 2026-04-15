@@ -32,6 +32,7 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 | `enableRowSelection` | `boolean` | `false` | Enable row selection checkboxes |
 | `selectionActions` | `(rows, clearSelection) => ReactNode` | — | Custom actions rendered in the selection bar |
 | `emptyState` | `ReactNode` | `"No results."` | Custom empty state content |
+| `serverSide` | `DataTableServerSideConfig` | — | Server-side mode configuration (callbacks + total count) |
 
 ### DataTablePaginationConfig
 
@@ -67,6 +68,32 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 | `type` | `"checkbox-list" \| "interval-slider"` | — | Filter type |
 | `formatValue` | `(value: number) => string` | `String` | Format function for slider range display (interval-slider only) |
 
+### DataTableServerSideConfig
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `totalRows` | `number` | — | Total row count across all pages (required for pagination) |
+| `onSortChange` | `(sorting: SortingState) => void` | — | Fires when the user changes the sort order |
+| `onFilterChange` | `(columnId: string, value: unknown) => void` | — | Fires when a quick filter is applied or cleared |
+| `onSearchChange` | `(search: string) => void` | — | Fires when the user presses Enter in the search input |
+| `onPageChange` | `(pagination: PaginationState) => void` | — | Fires when the user navigates pages or changes page size |
+| `onClearAll` | `() => void` | — | Fires when the user clicks "Clear all" |
+
+### QuickFilter `serverSide` (server-side mode only)
+
+**Checkbox-list:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `options` | `string[]` | All possible filter options (required in server-side mode) |
+
+**Interval-slider:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `min` | `number` | Slider minimum bound (required in server-side mode) |
+| `max` | `number` | Slider maximum bound (required in server-side mode) |
+
 ### DataTableHeader / DataTableCell
 
 | Prop | Type | Default | Description |
@@ -89,6 +116,14 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 **Do** use `toolbar.quickFilters` for columns with a small set of discrete values (checkbox-list) or numeric ranges (interval-slider). Each filter renders as a popover with pending state — changes apply on "Apply".
 
 **Don't** configure two quick filters with the same `columnId` — this is a runtime error.
+
+**Do** use `serverSide` when data is fetched from an API. Provide `totalRows` and at least one callback. The table manages UI state; your callbacks manage data fetching.
+
+**Do** provide `serverSide.options` on checkbox-list filters and `serverSide.min`/`max` on interval-slider filters when using server-side mode — faceted values can't be derived from a single page.
+
+**Don't** mix client-side and server-side patterns. When `serverSide` is set, the table skips all client-side sorting, filtering, and faceting.
+
+**Do** use `loading={true}` during fetches — this disables toolbar controls and pagination, preventing request stacking.
 
 ## Best practices
 
