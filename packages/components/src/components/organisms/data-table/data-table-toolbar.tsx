@@ -31,7 +31,8 @@ interface DataTableToolbarProps<TData> {
 /**
  * Toolbar rendered above the DataTable when `config.toolbar` is defined.
  *
- * Provides an optional debounced search input and an optional sort dropdown.
+ * Provides an optional debounced search input, quick filter popovers,
+ * a "Clear all" button, and an optional sort dropdown.
  * Internal component — never used standalone.
  */
 function DataTableToolbar<TData>({

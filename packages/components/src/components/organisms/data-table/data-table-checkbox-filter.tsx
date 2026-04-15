@@ -1,3 +1,4 @@
+import { useId } from "react"
 import { Checkbox } from "@/components/atoms/checkbox/checkbox"
 import { Label } from "@/components/atoms/label/label"
 
@@ -20,6 +21,8 @@ function DataTableCheckboxFilter({
   value,
   onChange,
 }: DataTableCheckboxFilterProps) {
+  const instanceId = useId()
+
   const handleToggle = (option: string, checked: boolean) => {
     const next = new Set(value)
     if (checked) {
@@ -38,13 +41,13 @@ function DataTableCheckboxFilter({
       {options.map((option) => (
         <div key={option} className="flex items-center gap-2">
           <Checkbox
-            id={`filter-${option}`}
+            id={`${instanceId}-${option}`}
             checked={value.has(option)}
             onCheckedChange={(checked) =>
               handleToggle(option, checked === true)
             }
           />
-          <Label htmlFor={`filter-${option}`}>{option}</Label>
+          <Label htmlFor={`${instanceId}-${option}`}>{option}</Label>
         </div>
       ))}
     </div>
