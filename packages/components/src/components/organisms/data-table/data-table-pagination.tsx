@@ -20,6 +20,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "./data-table-types"
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
   pageSizeOptions?: number[]
+  loading?: boolean
 }
 
 /**
@@ -32,6 +33,7 @@ interface DataTablePaginationProps<TData> {
 function DataTablePagination<TData>({
   table,
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
+  loading = false,
 }: DataTablePaginationProps<TData>) {
   const rowsPerPageId = useId()
 
@@ -50,7 +52,7 @@ function DataTablePagination<TData>({
             table.setPageSize(Number(value))
           }}
         >
-          <SelectTrigger size="sm" className="w-20" id={rowsPerPageId}>
+          <SelectTrigger size="sm" className="w-20" id={rowsPerPageId} disabled={loading}>
             <SelectValue
               placeholder={table.getState().pagination.pageSize}
             />
@@ -74,7 +76,7 @@ function DataTablePagination<TData>({
           size="icon-sm"
           className="hidden lg:flex"
           onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
+          disabled={!table.getCanPreviousPage() || loading}
         >
           <span className="sr-only">Go to first page</span>
           <IconChevronsLeft />
@@ -83,7 +85,7 @@ function DataTablePagination<TData>({
           variant="outline"
           size="icon-sm"
           onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          disabled={!table.getCanPreviousPage() || loading}
         >
           <span className="sr-only">Go to previous page</span>
           <IconChevronLeft />
@@ -92,7 +94,7 @@ function DataTablePagination<TData>({
           variant="outline"
           size="icon-sm"
           onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          disabled={!table.getCanNextPage() || loading}
         >
           <span className="sr-only">Go to next page</span>
           <IconChevronRight />
@@ -102,7 +104,7 @@ function DataTablePagination<TData>({
           size="icon-sm"
           className="hidden lg:flex"
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
+          disabled={!table.getCanNextPage() || loading}
         >
           <span className="sr-only">Go to last page</span>
           <IconChevronsRight />
