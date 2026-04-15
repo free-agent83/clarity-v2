@@ -93,6 +93,45 @@ function validateConfig<TData>(config: DataTableConfig<TData>): void {
       filterColumnIds.add(filter.columnId)
     }
   }
+
+  if (config.serverSide) {
+    if (config.serverSide.totalRows < 0) {
+      throw new Error(
+        "DataTable: serverSide.totalRows must be a non-negative number."
+      )
+    }
+
+    const hasCallback =
+      config.serverSide.onSortChange ||
+      config.serverSide.onFilterChange ||
+      config.serverSide.onSearchChange ||
+      config.serverSide.onPageChange ||
+      config.serverSide.onClearAll
+    if (!hasCallback) {
+      throw new Error(
+        "DataTable: serverSide is set but no callbacks are provided. " +
+          "Add at least one of: onSortChange, onFilterChange, onSearchChange, onPageChange, onClearAll."
+      )
+    }
+
+    if (config.toolbar?.quickFilters) {
+      for (const filter of config.toolbar.quickFilters) {
+        if (filter.type === "checkbox-list" && !filter.serverSide?.options) {
+          throw new Error(
+            `DataTable: Quick filter "${filter.name}" (checkbox-list) requires serverSide.options when serverSide mode is enabled.`
+          )
+        }
+        if (
+          filter.type === "interval-slider" &&
+          (!filter.serverSide || filter.serverSide.min === undefined || filter.serverSide.max === undefined)
+        ) {
+          throw new Error(
+            `DataTable: Quick filter "${filter.name}" (interval-slider) requires serverSide.min and serverSide.max when serverSide mode is enabled.`
+          )
+        }
+      }
+    }
+  }
 }
 
 function useDataTable<TData>(
