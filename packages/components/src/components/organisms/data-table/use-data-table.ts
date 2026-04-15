@@ -39,6 +39,38 @@ function validateConfig<TData>(config: DataTableConfig<TData>): void {
         "Set enableRowSelection: true in your config."
     )
   }
+
+  // Toolbar validation
+  const columnIds = config.columns.map((col) =>
+    "accessorKey" in col ? String(col.accessorKey) : col.id ?? ""
+  )
+
+  if (config.toolbar?.search) {
+    if (!config.toolbar.search.columnIds.length) {
+      throw new Error(
+        "DataTable: toolbar.search.columnIds must be a non-empty array."
+      )
+    }
+    for (const id of config.toolbar.search.columnIds) {
+      if (!columnIds.includes(id)) {
+        throw new Error(
+          `DataTable: toolbar.search.columnIds references unknown column "${id}". ` +
+            `Available columns: ${columnIds.filter(Boolean).join(", ")}`
+        )
+      }
+    }
+  }
+
+  if (config.toolbar?.sorting) {
+    for (const option of config.toolbar.sorting) {
+      if (!columnIds.includes(option.columnId)) {
+        throw new Error(
+          `DataTable: toolbar.sorting references unknown column "${option.columnId}". ` +
+            `Available columns: ${columnIds.filter(Boolean).join(", ")}`
+        )
+      }
+    }
+  }
 }
 
 function useDataTable<TData>(
