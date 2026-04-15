@@ -1,4 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table"
+import type { ColumnDef, SortingState, PaginationState } from "@tanstack/react-table"
 import type { ReactNode } from "react"
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50]
@@ -18,6 +18,7 @@ export interface DataTableConfig<TData> {
   enableRowSelection?: boolean
   selectionActions?: (rows: TData[], clearSelection: () => void) => ReactNode
   emptyState?: ReactNode
+  serverSide?: DataTableServerSideConfig
 }
 
 /**
@@ -28,6 +29,28 @@ export interface DataTableConfig<TData> {
  */
 export interface DataTablePaginationConfig {
   pageSizeOptions?: number[]
+}
+
+/**
+ * Server-side configuration for DataTable.
+ *
+ * When provided, the table delegates sorting, filtering, pagination, and
+ * search to the server via callbacks. The consumer manages data fetching;
+ * the table manages UI state and fires callbacks on user interaction.
+ */
+export interface DataTableServerSideConfig {
+  /** Total row count across all pages — required for pagination page count. */
+  totalRows: number
+  /** Fires when the user changes the sort order. */
+  onSortChange?: (sorting: SortingState) => void
+  /** Fires when a quick filter is applied or cleared. */
+  onFilterChange?: (columnId: string, value: unknown) => void
+  /** Fires when the user presses Enter in the search input. */
+  onSearchChange?: (search: string) => void
+  /** Fires when the user navigates pages or changes page size. */
+  onPageChange?: (pagination: PaginationState) => void
+  /** Fires when the user clicks "Clear all" — consumer re-fetches unfiltered data. */
+  onClearAll?: () => void
 }
 
 /**
@@ -53,12 +76,22 @@ export type QuickFilter =
       name: string
       columnId: string
       type: "checkbox-list"
+      serverSide?: {
+        /** All possible filter options — required because faceted values can't be derived from one page. */
+        options: string[]
+      }
     }
   | {
       name: string
       columnId: string
       type: "interval-slider"
       formatValue?: (value: number) => string
+      serverSide?: {
+        /** Slider minimum bound. */
+        min: number
+        /** Slider maximum bound. */
+        max: number
+      }
     }
 
 /**
