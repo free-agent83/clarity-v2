@@ -24,7 +24,7 @@ function DataTableSelectionBar<TData>({
   return (
     <div
       data-slot="data-table-selection-bar"
-      className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-between border-t bg-background px-6 py-3"
+      className="fixed border border-border inset-x-4 bottom-4 rounded-2xl z-50 flex items-center justify-between border-t bg-background px-6 py-5"
     >
       <div className="text-sm text-muted-foreground">
         {selectedRows.length} row(s) selected
@@ -34,7 +34,7 @@ function DataTableSelectionBar<TData>({
           selectedRows.map((row) => row.original),
           clearSelection
         )}
-        <Button variant="outline" size="sm" onClick={clearSelection}>
+        <Button variant="outline" onClick={clearSelection}>
           Clear selection
         </Button>
       </div>

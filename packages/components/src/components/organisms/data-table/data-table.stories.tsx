@@ -352,7 +352,6 @@ export const WithSelection: Story = {
       selectionActions: (_rows, clearSelection) => (
         <Button
           variant="destructive"
-          size="sm"
           onClick={() => clearSelection()}
         >
           Delete selected
