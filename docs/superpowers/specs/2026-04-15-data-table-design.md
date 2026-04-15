@@ -33,14 +33,13 @@ Each phase extends `DataTableConfig` with new optional fields — all additions 
 
 ### 2.1 State hook: `useDataTable`
 
-All table state lives in an internal `useDataTable(data, config, loading)` hook. DataTable is a pure render component that consumes the hook's return value.
+All table state lives in an internal `useDataTable(data, config)` hook. DataTable is a pure render component that consumes the hook's return value. The `loading` flag is a render concern handled by DataTable directly, not by the hook.
 
 **Signature:**
 ```ts
 function useDataTable<TData>(
   data: TData[],
   config: DataTableConfig<TData>,
-  loading?: boolean
 ): UseDataTableReturn<TData>
 ```
 

@@ -1,5 +1,4 @@
 import { flexRender } from "@tanstack/react-table"
-import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/atoms/skeleton/skeleton"
 import { useDataTable } from "./use-data-table"
 import { DataTableHeader, DataTableCell } from "./data-table-cells"

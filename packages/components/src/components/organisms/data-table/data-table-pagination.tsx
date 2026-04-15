@@ -1,3 +1,4 @@
+import { useId } from "react"
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -32,13 +33,15 @@ function DataTablePagination<TData>({
   table,
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
 }: DataTablePaginationProps<TData>) {
+  const rowsPerPageId = useId()
+
   return (
     <div
       data-slot="data-table-pagination"
       className="flex items-center justify-center gap-8 px-4"
     >
       <div className="hidden items-center gap-2 lg:flex">
-        <Label htmlFor="rows-per-page" className="text-sm font-medium">
+        <Label htmlFor={rowsPerPageId} className="text-sm font-medium">
           Rows per page
         </Label>
         <Select
@@ -47,7 +50,7 @@ function DataTablePagination<TData>({
             table.setPageSize(Number(value))
           }}
         >
-          <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+          <SelectTrigger size="sm" className="w-20" id={rowsPerPageId}>
             <SelectValue
               placeholder={table.getState().pagination.pageSize}
             />
