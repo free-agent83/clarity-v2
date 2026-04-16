@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import type {
   FilterDefinition,
   FilterControlProps,
@@ -11,9 +11,10 @@ import { SingleSelectChipsFilter } from "./presets/single-select-chips";
 import { MultiSelectChipsFilter } from "./presets/multi-select-chips";
 import { SingleSelectDropdownFilter } from "./presets/single-select-dropdown";
 
-type FilterRenderer =
+/** A component or function that renders a filter control. */
+export type FilterRenderer =
   | ComponentType<FilterControlProps>
-  | ((props: FilterControlProps) => React.ReactNode);
+  | ((props: FilterControlProps) => ReactNode);
 
 const PRESET_MAP: Record<string, FilterRenderer> = {
   "boolean-chip": BooleanChipFilter,
