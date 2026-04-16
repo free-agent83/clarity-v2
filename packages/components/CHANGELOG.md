@@ -2,12 +2,12 @@
 
 ---
 
-### DataTable: custom cells story, labelMap for filters, active filter styling
+### DataTable: custom cells story, labelMap, active filter styling ([#119](https://github.com/free-agent83/clarity-v2/pull/119))
 
-- Custom cells story showcasing rich cell composition — product thumbnails, inline actions, status badges, strikethrough pricing, and dropdown menus
-- `labelMap` on checkbox-list quick filters maps raw enum values to human-readable labels at the config level, keeping server data untouched
-- Quick filter trigger buttons now show `bg-accent` styling when active, giving visual feedback that a filter is applied
-- CONTRIBUTING.md: added COMPONENT.md check to PR submission guidelines
+- Custom cells story showcasing rich cell composition — product thumbnails, inline actions, status badges, strikethrough pricing, and dropdown menus (`899c0c2`)
+- `labelMap` on checkbox-list quick filters maps raw enum values to human-readable labels at the config level, keeping server data untouched (`899c0c2`)
+- Quick filter trigger buttons now show `bg-accent` styling when active, giving visual feedback that a filter is applied (`899c0c2`)
+- CONTRIBUTING.md: added COMPONENT.md check to PR submission guidelines (`899c0c2`)
 
 ---
 
