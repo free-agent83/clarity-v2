@@ -475,6 +475,10 @@ A component is considered done when all of the following are true:
 
 All PRs must target the `dev` branch, never `main`. PRs opened against `main` will be rejected.
 
+### COMPONENT.md check
+
+Before opening a PR, verify that every `COMPONENT.md` for every component touched by the PR is up-to-date with the current state of the code. If the PR adds, removes, or changes props, variants, behaviour, or usage patterns, the corresponding `COMPONENT.md` must be updated in the same PR. A stale `COMPONENT.md` is a broken one — treat it as a blocker, not a follow-up.
+
 ### CHANGELOG update
 
 Every PR must update `CHANGELOG.md` in this package before submission. The CHANGELOG entry is written as part of the PR, not after.
