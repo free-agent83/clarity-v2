@@ -2,6 +2,22 @@
 
 ---
 
+### PLP Template — Phase 1 (unstable 0.1.0)
+
+Introduces the `Templates/` tier and ships the first page-level template: `PlpTemplate`. Full grid view with filter system, sorting, pagination, and responsive behaviour. Stateless — consumer owns filter state, sort, pagination, and data fetching. Rendered inside `AppShell`.
+
+- Formalised `templates/` tier in CONTRIBUTING.md; added classification guidance and updated Storybook sidebar taxonomy to remove the "Phase C" qualifier on Templates (`870ad89`)
+- PLP type system + filter registry with preset resolver (`resolveFilterControl`, `formatFilterChipValue`) and test coverage (`870ad89`, `b12acf0`)
+- Four filter presets: boolean chip, single-select chips, multi-select chips, single-select dropdown — with `renderOption` escape hatch on `FilterOption` for rich per-option layouts (card-shaped cut selectors etc.) (`0ba88f5`)
+- Grid item with 10 fixed sections, optional `lead` / `categorySlotTop` / `categorySlotBottom` slots, platform thumbnail actions (favorite/share/viewMedia), category-specific actions, and auto-rendered pricing variants (discount, per-carat, tariffs, legacy, multi-currency) driven by user context (`8a49307`)
+- Toolbar (search + All Filters + quick filters + sort), All Filters drawer with result-count-aware footer, active filters strip with sticky behaviour and inline chip editing (`1f748b1`, `270d23e`, `622f23d`)
+- Grid container (2/3/4 column responsive), skeleton loading, empty/error states, heading with breadcrumbs (`9b62fc6`, `0700cc7`, `a8a67fd`)
+- `PlpTemplate` orchestrator wiring all sub-components, with pagination via the existing `Pagination` molecule (`186d9eb`, `1ddb192`)
+- Storybook: isolated grid item variant playground (12 stories) under `Templates/PLP Grid Item` and full template stories (8 stories) inside `AppShell` under `Templates/PLP` (`2db11ae`, `910e7a2`)
+- COMPONENT.md with full prop table, usage guidelines, and best practices (`e1aa4eb`)
+
+---
+
 ### AppShell organism and Brand foundation
 
 Introduces `AppShell` (page-shell organism) and `Brand` (Nivoda wordmark atom), both shipped as `stable 0.0.1`.
