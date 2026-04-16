@@ -52,7 +52,7 @@ function PlatformActions({
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                size="icon-xs"
+                size="icon"
                 aria-label={action.label}
                 onClick={(e) => {
                   e.preventDefault();
@@ -125,7 +125,7 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
             {data.enableSelection && (
               <Button
                 variant="ghost"
-                size="icon-xs"
+                size="icon"
                 aria-label="Select item"
               >
                 <IconSquare className="h-4 w-4" />
@@ -147,7 +147,7 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
-                      size="icon-xs"
+                      size="icon"
                       aria-label={action.label}
                       onClick={(e) => {
                         e.preventDefault();
@@ -237,7 +237,6 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
       >
         <Button
           className="w-full"
-          size="sm"
           onClick={(e) => {
             e.stopPropagation();
             data.onAddToCart();

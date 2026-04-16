@@ -66,7 +66,6 @@ export function PlpQuickFilter({
       <PopoverTrigger asChild>
         <Button
           variant={isActive ? "default" : "outline"}
-          size="sm"
           className={cn("shrink-0", isActive && "bg-primary text-primary-foreground")}
         >
           {definition.label}
@@ -95,10 +94,10 @@ export function PlpQuickFilter({
             options={controlOptions}
           />
           <div className="flex items-center justify-between gap-2">
-            <Button variant="ghost" size="sm" onClick={handleClear}>
+            <Button variant="ghost" onClick={handleClear}>
               Clear
             </Button>
-            <Button size="sm" onClick={handleApply}>
+            <Button onClick={handleApply}>
               Apply
             </Button>
           </div>

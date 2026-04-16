@@ -63,7 +63,7 @@ const meta: Meta<GridItemStoryArgs> = {
       };
       return (
         <PlpUserProvider value={userContext}>
-          <div className="w-[280px]">
+          <div style={{ width: 320 }}>
             <Story />
           </div>
         </PlpUserProvider>

@@ -79,7 +79,7 @@ export function PlpToolbar({
       {/* Filter bar + sort */}
       <div className="flex items-center gap-2">
         {/* All Filters button */}
-        <Button variant="outline" size="sm" onClick={onOpenDrawer} className="shrink-0">
+        <Button variant="outline" onClick={onOpenDrawer} className="shrink-0">
           <IconAdjustmentsHorizontal className="mr-1.5 h-4 w-4" />
           All filters
           {activeFilterCount > 0 && (
@@ -107,7 +107,7 @@ export function PlpToolbar({
         {/* Sort */}
         <div className="shrink-0">
           <Select value={sortValue} onValueChange={onSortChange}>
-            <SelectTrigger size="sm" className="w-auto min-w-[140px]">
+            <SelectTrigger className="w-auto min-w-[140px]">
               <span className="mr-1 text-muted-foreground">Sort by</span>
               <SelectValue />
             </SelectTrigger>

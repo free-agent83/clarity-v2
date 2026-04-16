@@ -97,7 +97,8 @@ Components are organised using atomic design taxonomy:
 src/components/
 ├── atoms/        Single-purpose primitives (Button, Input, Badge, Label, Separator)
 ├── molecules/    Composed from atoms (Card, Dialog, Tooltip, Tabs)
-└── organisms/    Complex compositions (DataTable, AppShell)
+├── organisms/    Complex compositions (DataTable, AppShell)
+└── templates/    Page-level systems with internal sub-components (PLP, PDP, Dashboard)
 ```
 
 ### Classification guidance
@@ -105,6 +106,7 @@ src/components/
 - **Atoms** render a single interactive or display element. They don't compose other components from this library.
 - **Molecules** combine two or more atoms into a reusable unit with its own behaviour.
 - **Organisms** are complex, page-level compositions. Rare in a design system — most components are atoms or molecules.
+- **Templates** are full page-level systems that orchestrate organisms, molecules, and atoms into a complete user experience. A template owns its own internal sub-components (e.g., a PLP template owns its grid item, filter drawer, and toolbar) which are scoped to the template and not exported individually. Templates are composed from design system primitives — they don't build from scratch. If an internal sub-component proves useful to a second template, that's a signal to extract it into the library as a standalone atom, molecule, or organism.
 
 When in doubt, start as an atom. Promote to molecule when composition becomes the component's defining characteristic.
 
@@ -340,13 +342,13 @@ Feedback/       Alert, Toast, Progress, Skeleton
 Display/        Card, Badge, Chip, Avatar, Separator, Carousel
 Data/           Table, Data Grid
 Navigation/     Tabs, Accordion, Breadcrumb
-Templates/      [Phase C — PLP, PDP, Dashboard, Auth, Checkout, Settings]
+Templates/      PLP, PDP, Dashboard, Auth, Checkout, Settings
 Docs/           [Phase C — Getting started, Prompt patterns, Migration from MUI]
 ```
 
 `Data/` is a top-level category separate from `Display/`. Table and Data Grid are heavy, stateful, dataset-oriented components — they don't sit naturally alongside decorative primitives like Badge or Avatar. Matches MUI's Data Display vs Data Grid split and leaves the section room to grow (charts, pivot tables, metrics in future phases).
 
-**Folder structure stays atomic.** `src/components/atoms/button/button.tsx` is unchanged. The story `title:` field only sets the sidebar location — two independent concerns.
+**Folder structure stays atomic (plus templates).** `src/components/atoms/button/button.tsx` is unchanged; templates live under `src/components/templates/`. The story `title:` field only sets the sidebar location — two independent concerns.
 
 ### Story naming
 

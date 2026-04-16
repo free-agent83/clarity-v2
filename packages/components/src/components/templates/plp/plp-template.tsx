@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../../atoms/button/button";
 import {
   Select,
   SelectContent,
@@ -9,6 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../molecules/select/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "../../molecules/pagination/pagination";
 import { PlpHeading } from "./heading/plp-heading";
 import { PlpToolbar } from "./toolbar/plp-toolbar";
 import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
@@ -210,7 +216,10 @@ export function PlpTemplate<TItem>({
 }
 
 /**
- * PLP pagination footer -- results per page selector + previous/next navigation.
+ * PLP pagination footer — results per page selector + previous/next navigation.
+ *
+ * Uses the design system Pagination molecule for Previous/Next and the
+ * Select molecule for the page size dropdown.
  */
 function PlpPagination({
   page,
@@ -228,14 +237,11 @@ function PlpPagination({
   onPageSizeChange: (size: number) => void;
 }) {
   return (
-    <nav
-      className="flex items-center justify-center gap-4 py-4"
-      aria-label="Pagination"
-    >
+    <div className="flex items-center justify-center gap-4 py-4">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <span>Results per page</span>
         <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange(Number(v))}>
-          <SelectTrigger size="sm" className="w-auto">
+          <SelectTrigger className="w-auto">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -248,27 +254,37 @@ function PlpPagination({
         </Select>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page <= 1}
-          onClick={() => onPageChange(page - 1)}
-        >
-          Previous
-        </Button>
-        <span className="text-sm text-muted-foreground">
-          Page {page} of {totalPages}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page >= totalPages}
-          onClick={() => onPageChange(page + 1)}
-        >
-          Next
-        </Button>
-      </div>
-    </nav>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (page > 1) onPageChange(page - 1);
+              }}
+              aria-disabled={page <= 1}
+              className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+          <PaginationItem>
+            <span className="px-2 text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (page < totalPages) onPageChange(page + 1);
+              }}
+              aria-disabled={page >= totalPages}
+              className={page >= totalPages ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
   );
 }

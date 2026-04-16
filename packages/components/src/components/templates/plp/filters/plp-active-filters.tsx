@@ -96,7 +96,6 @@ export function PlpActiveFilters({
 
       <Button
         variant="ghost"
-        size="sm"
         className="shrink-0 text-muted-foreground"
         onClick={onClearAll}
       >
@@ -187,7 +186,6 @@ function ActiveFilterChip({
           <div className="flex items-center justify-between gap-2">
             <Button
               variant="ghost"
-              size="sm"
               onClick={() => {
                 onFilterChange(definition.id, undefined);
                 setOpen(false);
@@ -195,7 +193,7 @@ function ActiveFilterChip({
             >
               Clear
             </Button>
-            <Button size="sm" onClick={handleApply}>
+            <Button onClick={handleApply}>
               Apply
             </Button>
           </div>
