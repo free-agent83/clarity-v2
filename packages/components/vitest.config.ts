@@ -10,6 +10,11 @@ export default defineConfig({
     projects: [
       // Node-based unit tests for pure logic (registries, utils, helpers).
       {
+        resolve: {
+          alias: {
+            "@": resolve(dir, "src"),
+          },
+        },
         test: {
           name: "unit",
           include: ["src/**/*.test.ts"],
