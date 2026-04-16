@@ -466,3 +466,53 @@ A component is considered done when all of the following are true:
 - [ ] TypeScript compiles with no errors (`tsc --noEmit`)
 
 **Publishing with flagged violations.** A component may be promoted to `stable` and barrel-exported even if it has flagged Rule 1 violations. The "Tokens only" DoD item remains unticked in that component's `COMPONENT.md` with an inline note pointing at the flag. Publishing is allowed; completion is not. This is an explicit exception for Phase B, not a permanent carve-out — each flag is a ticket for a later per-component review.
+
+---
+
+## Submitting a pull request
+
+### Target branch
+
+All PRs must target the `dev` branch, never `main`. PRs opened against `main` will be rejected.
+
+### CHANGELOG update
+
+Every PR must update `CHANGELOG.md` in this package before submission. The CHANGELOG entry is written as part of the PR, not after.
+
+### CHANGELOG format
+
+The CHANGELOG format is flat-by-PR. Each entry is one PR:
+
+```markdown
+### PR title ([#NNN](https://github.com/free-agent83/clarity-v2/pull/NNN))
+Optional 1-sentence summary if the title alone isn't enough.
+
+- Bullet describing a logical change group (`commit1`, `commit2`)
+- Another bullet (`commit3`)
+```
+
+Rules:
+
+- Each entry heading is the PR title, linked to the PR.
+- Below the heading, an optional 1-sentence summary only if the title isn't self-explanatory.
+- Bullet list where each bullet describes a logical change — group commits when they serve the same purpose.
+- Each bullet references at least one commit hash (short hash, in backticks).
+- Do NOT do one bullet per commit — group related commits into one bullet.
+- Max 2-3 sentences per bullet; no paragraphs, no nested bullets.
+- Keep it scannable — these are indexes for human reviewers.
+
+### PR body format
+
+```markdown
+## Summary
+- [1-3 bullets describing what changed and why — mirrors the CHANGELOG entry]
+
+## References
+Closes #XX, #YY
+```
+
+Rules:
+
+- The Summary bullets should mirror the CHANGELOG entry for this PR.
+- Keep it short — reviewers scan these, they don't read essays.
+- Always include References if the PR addresses any GitHub issues.
