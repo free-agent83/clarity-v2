@@ -59,7 +59,11 @@ function DataTableQuickFilterPopover<TData>({
 
   if (!column) return null
 
-  // Trigger label with active indicator
+  // Trigger label and active state
+  const isActive = filter.type === "checkbox-list"
+    ? ((column.getFilterValue() as string[] | undefined)?.length ?? 0) > 0
+    : column.getFilterValue() != null
+
   const triggerLabel = (() => {
     if (filter.type === "checkbox-list") {
       const activeCount = (
@@ -105,6 +109,7 @@ function DataTableQuickFilterPopover<TData>({
       return (
         <DataTableCheckboxFilter
           options={options}
+          labelMap={filter.labelMap}
           value={pendingCheckbox}
           onChange={setPendingCheckbox}
         />
@@ -128,7 +133,11 @@ function DataTableQuickFilterPopover<TData>({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" disabled={loading}>
+        <Button
+          variant="outline"
+          disabled={loading}
+          className={isActive ? "bg-accent text-accent-foreground" : undefined}
+        >
           {triggerLabel}
           <IconChevronDown className="ml-1 size-4" />
         </Button>

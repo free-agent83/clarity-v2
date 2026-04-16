@@ -3,7 +3,7 @@ name: DataTable
 slug: data-table
 version: 0.1.0
 status: unstable
-lastUpdated: 2026-04-15
+lastUpdated: 2026-04-16
 ---
 
 # DataTable
@@ -66,6 +66,7 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 | `name` | `string` | — | Label shown on the filter trigger button |
 | `columnId` | `string` | — | Column to filter (must match a column in `columns`) |
 | `type` | `"checkbox-list" \| "interval-slider"` | — | Filter type |
+| `labelMap` | `Record<string, string>` | — | Maps raw filter values to human-readable labels (checkbox-list only). Raw value shown when a key is missing. |
 | `formatValue` | `(value: number) => string` | `String` | Format function for slider range display (interval-slider only) |
 
 ### DataTableServerSideConfig
@@ -116,6 +117,8 @@ Designed for data-heavy views: dashboards, list pages, admin panels.
 **Do** use `toolbar.quickFilters` for columns with a small set of discrete values (checkbox-list) or numeric ranges (interval-slider). Each filter renders as a popover with pending state — changes apply on "Apply".
 
 **Don't** configure two quick filters with the same `columnId` — this is a runtime error.
+
+**Do** use `labelMap` on checkbox-list quick filters when column values are machine-readable enums (e.g. `sold_out`). The mapping is a presentation concern — keep server data untouched and let the table config translate at render time.
 
 **Do** use `serverSide` when data is fetched from an API. Provide `totalRows` and at least one callback. The table manages UI state; your callbacks manage data fetching.
 

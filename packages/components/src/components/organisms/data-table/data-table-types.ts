@@ -76,6 +76,8 @@ export type QuickFilter =
       name: string
       columnId: string
       type: "checkbox-list"
+      /** Maps raw filter values to human-readable labels (e.g. `{ sold_out: "Sold out" }`). Raw value is shown when a key is missing. */
+      labelMap?: Record<string, string>
       serverSide?: {
         /** All possible filter options — required because faceted values can't be derived from one page. */
         options: string[]

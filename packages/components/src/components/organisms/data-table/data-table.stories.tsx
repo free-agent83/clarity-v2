@@ -6,6 +6,14 @@ import type { DataTableConfig } from "./data-table-types"
 import { getSelectColumn } from "./data-table-helpers"
 import { Badge } from "@/components/atoms/badge/badge"
 import { Button } from "@/components/atoms/button/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/molecules/dropdown-menu/dropdown-menu"
+import { IconDotsVertical } from "@tabler/icons-react"
 import type { ColumnDef } from "@tanstack/react-table"
 
 // --- Mock data ---
@@ -48,6 +56,265 @@ const baseColumns: ColumnDef<Product, unknown>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => <Badge size="sm" variant="outline">{row.original.status}</Badge>,
+  },
+]
+
+// --- Custom cells mock data ---
+
+type OrderStatus =
+  | "requested"
+  | "confirmed"
+  | "shipped"
+  | "delivered"
+  | "returned"
+  | "cancelled"
+  | "delayed"
+  | "sold_out"
+
+interface OrderItem {
+  id: string
+  name: string
+  type: "Diamond" | "Gemstone" | "Wedding Ring" | "Melee"
+  subtitle: string
+  actions?: ("track" | "pay_invoice")[]
+  invoice: string
+  orderDate: string
+  status: OrderStatus
+  statusNote?: string
+  finalPrice: number
+  originalPrice?: number
+}
+
+const statusVariantMap: Record<
+  OrderStatus,
+  {
+    label: string
+    variant:
+      | "outline"
+      | "success"
+      | "info"
+      | "secondary"
+      | "warning"
+      | "destructive"
+  }
+> = {
+  requested: { label: "Requested", variant: "outline" },
+  confirmed: { label: "Confirmed", variant: "success" },
+  shipped: { label: "Shipped", variant: "info" },
+  delivered: { label: "Delivered", variant: "success" },
+  returned: { label: "Returned", variant: "secondary" },
+  cancelled: { label: "Cancelled", variant: "outline" },
+  delayed: { label: "Delayed", variant: "warning" },
+  sold_out: { label: "Sold out", variant: "destructive" },
+}
+
+const orders: OrderItem[] = [
+  {
+    id: "ORD-001",
+    name: "Cushion brilliant 1.02ct VS1 VG EX EX EX None",
+    type: "Diamond",
+    subtitle: "GIA #271365918 · Mr & Mrs Appleseed Engagement Ring",
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "requested",
+    finalPrice: 4250,
+  },
+  {
+    id: "ORD-002",
+    name: "Emerald green emerald 1.07ct",
+    type: "Gemstone",
+    subtitle: "Non-cert · Mr & Mrs Appleseed Engagement Ring",
+    actions: ["track", "pay_invoice"],
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "confirmed",
+    statusNote: "Expected Mar 30",
+    finalPrice: 1875,
+  },
+  {
+    id: "ORD-003",
+    name: "Mr & Mrs Jones Engagement Ring",
+    type: "Wedding Ring",
+    subtitle: "Includes 2 stones ($8,450.00 value)",
+    actions: ["track"],
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "shipped",
+    finalPrice: 6320,
+    originalPrice: 7100,
+  },
+  {
+    id: "ORD-004",
+    name: "Cushion brilliant 1.02ct VS1 VG EX EX EX None",
+    type: "Diamond",
+    subtitle: "GIA #271365918 · Mr & Mrs Appleseed Engagement Ring",
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "delivered",
+    statusNote: "Returnable for 30 days",
+    finalPrice: 4250,
+  },
+  {
+    id: "ORD-005",
+    name: "F SI2 Tapered Baguette VG 3.5mm – 1.5mm",
+    type: "Melee",
+    subtitle: "0.41ct (rng.) · ~65pcs · Mr & Mrs Appleseed Engagement Ring",
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "returned",
+    finalPrice: 980,
+  },
+  {
+    id: "ORD-006",
+    name: "Mr & Mrs Appleseed Engagement Ring",
+    type: "Wedding Ring",
+    subtitle: "Includes 2 stones ($8,450.00 value)",
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "delivered",
+    finalPrice: 5600,
+  },
+  {
+    id: "ORD-007",
+    name: "Cushion brilliant 1.02ct VS1 VG EX EX EX None",
+    type: "Diamond",
+    subtitle: "GIA #271365918 · Mr & Mrs Appleseed Engagement Ring",
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "cancelled",
+    finalPrice: 4250,
+  },
+  {
+    id: "ORD-008",
+    name: "Emerald green emerald 1.07ct",
+    type: "Gemstone",
+    subtitle: "Non-cert · Mr & Mrs Appleseed Engagement Ring",
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "delayed",
+    statusNote: "Now expected Mar 30",
+    finalPrice: 1875,
+  },
+  {
+    id: "ORD-009",
+    name: "Emerald green emerald 1.07ct",
+    type: "Gemstone",
+    subtitle: "Non-cert · Mr & Mrs Appleseed Engagement Ring",
+    invoice: "US-00000-1",
+    orderDate: "Mar 24, 2025",
+    status: "sold_out",
+    finalPrice: 1875,
+    originalPrice: 2100,
+  },
+]
+
+const orderColumns: ColumnDef<OrderItem, unknown>[] = [
+  {
+    accessorKey: "name",
+    header: "Ordered item",
+    cell: ({ row }) => {
+      const order = row.original
+      return (
+        <div className="flex items-start gap-3 whitespace-normal">
+          <div className="size-10 shrink-0 rounded-lg bg-muted" />
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-sm font-medium">{order.name}</span>
+              <span className="text-xs text-muted-foreground">
+                · {order.type}
+              </span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {order.subtitle}
+            </span>
+            {order.actions && (
+              <div className="mt-1 flex items-center gap-2">
+                {order.actions.includes("track") && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-0 text-xs"
+                  >
+                    Track item
+                  </Button>
+                )}
+                {order.actions.includes("pay_invoice") && (
+                  <Button variant="outline" size="sm" className="text-xs">
+                    Pay Invoice
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "invoice",
+    header: "Invoice",
+  },
+  {
+    accessorKey: "orderDate",
+    header: "Order date",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const { status, statusNote } = row.original
+      const sv = statusVariantMap[status]
+      return (
+        <div className="flex flex-col gap-1 whitespace-normal">
+          <Badge size="sm" variant={sv.variant}>
+            {sv.label}
+          </Badge>
+          {statusNote && (
+            <span className="text-xs text-muted-foreground">{statusNote}</span>
+          )}
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: "finalPrice",
+    header: "Final price",
+    cell: ({ row }) => {
+      const { finalPrice, originalPrice } = row.original
+      const fmt = (v: number) =>
+        v.toLocaleString("en-US", { style: "currency", currency: "USD" })
+      return (
+        <div className="flex flex-col items-end gap-0.5 text-sm">
+          {originalPrice && (
+            <span className="text-xs text-muted-foreground line-through">
+              {fmt(originalPrice)}
+            </span>
+          )}
+          <span className="font-medium">{fmt(finalPrice)}</span>
+        </div>
+      )
+    },
+  },
+  {
+    id: "actions",
+    header: "",
+    cell: () => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon-sm">
+            <IconDotsVertical className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>View details</DropdownMenuItem>
+          <DropdownMenuItem>Download invoice</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive">
+            Cancel order
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
   },
 ]
 
@@ -603,6 +870,55 @@ export const FullToolbar: Story = {
       const rows = canvasElement.querySelectorAll("tbody tr")
       expect(rows.length).toBe(10)
     })
+  },
+}
+
+// --- Custom cells story ---
+
+type OrderStory = StoryObj<typeof DataTable<OrderItem>>
+
+export const CustomCells: OrderStory = {
+  args: {
+    data: orders,
+    config: {
+      columns: orderColumns,
+      pagination: { pageSizeOptions: [10] },
+      toolbar: {
+        search: {
+          placeholder: "Search orders...",
+          columnIds: ["name", "invoice"],
+        },
+        sorting: [
+          { label: "Price, high to low", columnId: "finalPrice", direction: "desc" },
+          { label: "Price, low to high", columnId: "finalPrice", direction: "asc" },
+          { label: "Order date, newest", columnId: "orderDate", direction: "desc" },
+          { label: "Order date, oldest", columnId: "orderDate", direction: "asc" },
+        ],
+        quickFilters: [
+          {
+            name: "Status",
+            columnId: "status",
+            type: "checkbox-list",
+            labelMap: {
+              requested: "Requested",
+              confirmed: "Confirmed",
+              shipped: "Shipped",
+              delivered: "Delivered",
+              returned: "Returned",
+              cancelled: "Cancelled",
+              delayed: "Delayed",
+              sold_out: "Sold out",
+            },
+          },
+          {
+            name: "Final price",
+            columnId: "finalPrice",
+            type: "interval-slider",
+            formatValue: (v: number) => `$${v.toLocaleString()}`,
+          },
+        ],
+      },
+    },
   },
 }
 

@@ -67,7 +67,10 @@
       "Bash(ps -p 68823 -o command=)",
       "Bash(echo \"tsc_exit=$?\")",
       "Bash(git commit -m ' *)",
-      "Bash(git -C ../.. status)"
+      "Bash(git -C ../.. status)",
+      "Bash(awk '{print $NF}')",
+      "Bash(git merge *)",
+      "Bash(git stash *)"
     ]
   }
 }

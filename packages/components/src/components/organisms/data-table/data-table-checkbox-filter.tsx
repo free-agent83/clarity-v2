@@ -4,6 +4,7 @@ import { Label } from "@/components/atoms/label/label"
 
 interface DataTableCheckboxFilterProps {
   options: string[]
+  labelMap?: Record<string, string>
   value: Set<string>
   onChange: (value: Set<string>) => void
 }
@@ -18,6 +19,7 @@ interface DataTableCheckboxFilterProps {
  */
 function DataTableCheckboxFilter({
   options,
+  labelMap,
   value,
   onChange,
 }: DataTableCheckboxFilterProps) {
@@ -47,7 +49,7 @@ function DataTableCheckboxFilter({
               handleToggle(option, checked === true)
             }
           />
-          <Label htmlFor={`${instanceId}-${option}`}>{option}</Label>
+          <Label htmlFor={`${instanceId}-${option}`}>{labelMap?.[option] ?? option}</Label>
         </div>
       ))}
     </div>

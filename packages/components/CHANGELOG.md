@@ -2,6 +2,15 @@
 
 ---
 
+### DataTable: custom cells story, labelMap for filters, active filter styling
+
+- Custom cells story showcasing rich cell composition — product thumbnails, inline actions, status badges, strikethrough pricing, and dropdown menus
+- `labelMap` on checkbox-list quick filters maps raw enum values to human-readable labels at the config level, keeping server data untouched
+- Quick filter trigger buttons now show `bg-accent` styling when active, giving visual feedback that a filter is applied
+- CONTRIBUTING.md: added COMPONENT.md check to PR submission guidelines
+
+---
+
 ### AppShell organism and Brand foundation
 
 Introduces `AppShell` (page-shell organism) and `Brand` (Nivoda wordmark atom), both shipped as `stable 0.0.1`.
