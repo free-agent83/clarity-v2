@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { IconCheck } from "@tabler/icons-react";
 import type { FilterControlProps } from "../../plp-types";
 
 /**
@@ -32,20 +33,7 @@ export function BooleanChipFilter({ value, onChange, options }: FilterControlPro
       onClick={() => onChange(isActive ? undefined : true)}
     >
       {isActive && (
-        <svg
-          className="mr-1.5 h-3.5 w-3.5"
-          viewBox="0 0 14 14"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <IconCheck className="mr-1.5 h-3.5 w-3.5" />
       )}
       {label}
     </button>

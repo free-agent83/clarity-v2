@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { IconX } from "@tabler/icons-react";
 import { Button } from "../../../atoms/button/button";
 import {
   Popover,
@@ -172,9 +173,7 @@ function ActiveFilterChip({
             aria-label={`Remove filter: ${definition.label}`}
             onClick={handleDismiss}
           >
-            <svg className="h-3 w-3" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-              <path d="M11 3L3 11M3 3l8 8" />
-            </svg>
+            <IconX className="h-3 w-3" />
           </button>
         </span>
       </PopoverTrigger>

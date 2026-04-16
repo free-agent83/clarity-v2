@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { IconHeart, IconShare, IconPhoto, IconSquare } from "@tabler/icons-react";
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
 import {
@@ -31,14 +32,14 @@ function PlatformActions({
     {
       id: "favorite",
       label: "Add to shortlist",
-      icon: HeartIcon,
+      icon: IconHeart,
       handler: onFavorite,
     },
-    { id: "share", label: "Share", icon: ShareIcon, handler: onShare },
+    { id: "share", label: "Share", icon: IconShare, handler: onShare },
     {
       id: "viewMedia",
       label: "View media",
-      icon: MediaIcon,
+      icon: IconPhoto,
       handler: onViewMedia,
     },
   ];
@@ -49,9 +50,9 @@ function PlatformActions({
         <TooltipProvider key={action.id} delayDuration={300}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="rounded-md p-1 text-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
+              <Button
+                variant="ghost"
+                size="icon-xs"
                 aria-label={action.label}
                 onClick={(e) => {
                   e.preventDefault();
@@ -60,86 +61,13 @@ function PlatformActions({
                 }}
               >
                 <action.icon className="h-4 w-4" />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">{action.label}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       ))}
     </>
-  );
-}
-
-/** Placeholder icon components — replace with Tabler icons during implementation. */
-function HeartIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-    </svg>
-  );
-}
-
-function ShareIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-      <polyline points="16 6 12 2 8 6" />
-      <line x1="12" x2="12" y1="2" y2="15" />
-    </svg>
-  );
-}
-
-function MediaIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-      <polyline points="10 17 15 12 10 7" />
-      <line x1="15" x2="3" y1="12" y2="12" />
-    </svg>
-  );
-}
-
-function CheckboxIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect width="18" height="18" x="3" y="3" rx="2" />
-    </svg>
   );
 }
 
@@ -195,13 +123,13 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
           {/* Left: selection checkbox */}
           <div>
             {data.enableSelection && (
-              <button
-                type="button"
-                className="rounded-md p-1 text-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
+              <Button
+                variant="ghost"
+                size="icon-xs"
                 aria-label="Select item"
               >
-                <CheckboxIcon className="h-4 w-4" />
-              </button>
+                <IconSquare className="h-4 w-4" />
+              </Button>
             )}
           </div>
 
@@ -217,9 +145,9 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
               <TooltipProvider key={action.id} delayDuration={300}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      className="rounded-md p-1 text-foreground/70 transition-colors hover:bg-muted hover:text-foreground"
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
                       aria-label={action.label}
                       onClick={(e) => {
                         e.preventDefault();
@@ -228,7 +156,7 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
                       }}
                     >
                       {action.icon}
-                    </button>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">{action.label}</TooltipContent>
                 </Tooltip>

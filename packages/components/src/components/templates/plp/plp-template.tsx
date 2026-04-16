@@ -1,6 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "../../atoms/button/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../molecules/select/select";
 import { PlpHeading } from "./heading/plp-heading";
 import { PlpToolbar } from "./toolbar/plp-toolbar";
 import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
@@ -226,39 +234,40 @@ function PlpPagination({
     >
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <span>Results per page</span>
-        <select
-          className="rounded-md border border-border bg-background px-2 py-1 text-sm"
-          value={pageSize}
-          onChange={(e) => onPageSizeChange(Number(e.target.value))}
-        >
-          {pageSizeOptions.map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
+        <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange(Number(v))}>
+          <SelectTrigger size="sm" className="w-auto">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {pageSizeOptions.map((size) => (
+              <SelectItem key={size} value={String(size)}>
+                {size}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className="rounded-md border border-border px-3 py-1 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50 disabled:pointer-events-none"
+        <Button
+          variant="outline"
+          size="sm"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
         >
           Previous
-        </button>
+        </Button>
         <span className="text-sm text-muted-foreground">
           Page {page} of {totalPages}
         </span>
-        <button
-          type="button"
-          className="rounded-md border border-border px-3 py-1 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50 disabled:pointer-events-none"
+        <Button
+          variant="outline"
+          size="sm"
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
         >
           Next
-        </button>
+        </Button>
       </div>
     </nav>
   );
