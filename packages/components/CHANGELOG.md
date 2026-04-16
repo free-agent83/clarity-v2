@@ -2,11 +2,19 @@
 
 ---
 
-### DataTable: custom cells story, labelMap, active filter styling ([#119](https://github.com/free-agent83/clarity-v2/pull/119))
+### DataTable organism ([#119](https://github.com/free-agent83/clarity-v2/pull/119))
+Configuration-driven data table built on TanStack Table. Owns all state internally — sorting, filtering, pagination, row selection, search, and server-side delegation.
 
-- Custom cells story showcasing rich cell composition — product thumbnails, inline actions, status badges, strikethrough pricing, and dropdown menus (`899c0c2`)
-- `labelMap` on checkbox-list quick filters maps raw enum values to human-readable labels at the config level, keeping server data untouched (`899c0c2`)
-- Quick filter trigger buttons now show `bg-accent` styling when active, giving visual feedback that a filter is applied (`899c0c2`)
+- Core component: `DataTable`, `useDataTable` hook, `DataTableHeader`/`DataTableCell` containers, `getSelectColumn` helper, `DataTablePagination`, `DataTableSelectionBar` (`bd61146`, `2a94ba4`, `4d476bc`, `2ee3302`, `16395fb`, `5d62259`, `7453e21`)
+- Runtime config validation with tests — catches mismatched selection props, duplicate filters, missing column refs (`d31a67e`, `7bf16a5`, `219aaf5`, `1ed85c7`)
+- Toolbar: debounced search with column restriction, preset sort dropdown, quick filters (checkbox-list and interval-slider) with pending-state popovers and Clear all (`e780048`, `88fd87d`, `9fdf631`, `ea45789`, `5788592`, `dcd5e20`, `154f554`, `4f99ae9`, `dded28c`, `76820fb`)
+- Server-side mode: delegates sorting, filtering, pagination, and search to consumer callbacks; loading state disables all controls and renders skeleton rows (`2e7f08b`, `7f8e01d`, `4b0d96d`, `bc06bb5`, `f056cac`, `d95aa48`, `d024cd8`)
+- `labelMap` on checkbox-list quick filters maps raw enum values to human-readable labels at the config level (`899c0c2`)
+- Active filter visual feedback: trigger buttons styled with `bg-accent` when a filter is applied (`899c0c2`)
+- Styling pass across all sub-components — table chrome, selection bar, loading skeletons (`034f84b`, `8f02bc2`, `6835c52`, `2d3256f`)
+- Stories: Default, WithSelection, Loading, Empty, CustomEmptyState, CustomPageSizes, WithSearch, WithSorting, FullToolbar, CustomCells, ServerSide variants, and LiveAPI (`7df6a49`, `792b104`, `6bc7380`, `0c78845`, `69142bc`, `899c0c2`)
+- `useDebounce` utility hook added for toolbar search (`873b22e`)
+- Barrel exports from `src/index.ts` (`d6f4784`, `b59b836`, `27866f6`)
 - CONTRIBUTING.md: added COMPONENT.md check to PR submission guidelines (`899c0c2`)
 
 ---
