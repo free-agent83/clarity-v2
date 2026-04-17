@@ -2,6 +2,16 @@
 
 ---
 
+### Add FilterButton atom (unstable 0.1.0)
+
+Introduces `FilterButton` — a two-state control for applied filters. In the inactive state it renders a single outline button with just the filter label; in the active state it splits into a main clickable region showing `label: value` (opens a popover for editing) and an inline dismiss X (clears the filter). Styling is modelled on Button's `outline` variant with a filled `bg-muted` tint for the active state.
+
+- New atom under `atoms/filter-button/` with `.tsx`, `.stories.tsx` (under `Actions/Filter Button`), and `COMPONENT.md`
+- Barrel export added as commented `unstable` line — promote when stable
+- `PlpQuickFilter` refactored to compose `FilterButton` instead of raw `Button + Popover`; removes the duplicated popover/active-state logic and inherits the inline dismiss behaviour that the active filters strip previously provided
+
+---
+
 ### PLP Template — Phase 3c (analytics hooks) deferred
 
 The planned Phase 3c analytics surface on the PLP template is deferred indefinitely. Consumers wire analytics at their own state-setters and handlers rather than through a template-provided callback. Captured as ADR-001 in this package's [`ADRS.md`](./ADRS.md); the PLP architectural spec §8 has been annotated with a status note pointing at the ADR. No code changes shipped.

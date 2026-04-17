@@ -1,22 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "../../../atoms/button/button";
+import { FilterButton } from "../../../atoms/filter-button/filter-button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../../atoms/popover/popover";
-import { resolveFilterControl } from "../filters/plp-filter-registry";
+  resolveFilterControl,
+  formatFilterChipValue,
+} from "../filters/plp-filter-registry";
 import type { FilterDefinition, FilterState, FilterValue } from "../plp-types";
 
 /**
- * Quick filter -- a toolbar button that opens a popover containing
- * the registry-resolved filter control.
+ * Toolbar-row filter control.
  *
- * The popover includes Apply and Clear buttons. The button shows an
- * active visual state when the filter has a value.
+ * Renders a `FilterButton` whose active/inactive state is driven by the
+ * current `filterState[definition.id]` value:
+ *
+ * - Empty value → inactive `FilterButton` showing just the label.
+ * - Any value → active `FilterButton` showing `label: valueSummary` with
+ *   an inline dismiss X that clears the filter.
+ *
+ * The popover wraps the registry-resolved filter control with Apply /
+ * Clear actions. Edits happen against local `localValue` state and are
+ * committed to the consumer via `onFilterChange` only when Apply is
+ * clicked — same commit-on-apply pattern as the drawer.
+ *
+ * This component is used for both pinned "quick filters" (always present
+ * in the toolbar, even when empty) and engaged non-quick filters (shown
+ * only when they have a value). The component itself doesn't care —
+ * that branching happens at the toolbar level.
  */
 export function PlpQuickFilter({
   definition,
@@ -32,10 +43,15 @@ export function PlpQuickFilter({
     filterState[definition.id]
   );
 
-  const isActive = filterState[definition.id] !== undefined;
+  const value = filterState[definition.id];
+  const isActive = value !== undefined;
   const FilterControl = resolveFilterControl(definition);
 
-  function handleOpen(nextOpen: boolean) {
+  const valueSummary = isActive
+    ? formatFilterChipValue(definition, value)
+    : undefined;
+
+  function handleOpenChange(nextOpen: boolean) {
     if (nextOpen) {
       setLocalValue(filterState[definition.id]);
     }
@@ -53,40 +69,32 @@ export function PlpQuickFilter({
     setOpen(false);
   }
 
-  // Build options for the control -- boolean-chip gets chipLabel as a single option
+  function handleDismiss() {
+    onFilterChange(definition.id, undefined);
+  }
+
+  // Build options for the control — boolean-chip gets chipLabel as a single option
   const controlOptions =
     definition.preset === "boolean-chip"
-      ? [{ value: "true", label: (definition as any).chipLabel || definition.label }]
+      ? [
+          {
+            value: "true",
+            label: (definition as any).chipLabel || definition.label,
+          },
+        ]
       : "options" in definition
         ? definition.options
         : undefined;
 
   return (
-    <Popover open={open} onOpenChange={handleOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant={isActive ? "default" : "outline"}
-          className={cn("shrink-0", isActive && "bg-primary text-primary-foreground")}
-        >
-          {definition.label}
-          {isActive && (
-            <span className="ml-1 text-xs opacity-70">
-              &#x2022;
-            </span>
-          )}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        className="p-4"
-        style={
-          definition.popoverWidth
-            ? { width: typeof definition.popoverWidth === "number"
-                ? `${definition.popoverWidth}px`
-                : definition.popoverWidth }
-            : undefined
-        }
-        aria-label={`Filter: ${definition.label}`}
-      >
+    <FilterButton
+      label={definition.label}
+      valueSummary={valueSummary}
+      popoverWidth={definition.popoverWidth}
+      open={open}
+      onOpenChange={handleOpenChange}
+      onDismiss={isActive ? handleDismiss : undefined}
+      popoverContent={
         <div className="space-y-4">
           <FilterControl
             value={localValue}
@@ -98,12 +106,10 @@ export function PlpQuickFilter({
             <Button variant="ghost" onClick={handleClear}>
               Clear
             </Button>
-            <Button onClick={handleApply}>
-              Apply
-            </Button>
+            <Button onClick={handleApply}>Apply</Button>
           </div>
         </div>
-      </PopoverContent>
-    </Popover>
+      }
+    />
   );
 }

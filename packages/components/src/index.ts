@@ -32,6 +32,8 @@ export type { ButtonProps } from "./components/atoms/button/button";
 // export { DirectionProvider, useDirection } from "./components/atoms/direction/direction";
 // export { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMedia } from "./components/atoms/empty/empty";
 // export { Field, FieldLabel, FieldDescription, FieldError, FieldGroup, FieldLegend, FieldSeparator, FieldSet, FieldContent, FieldTitle } from "./components/atoms/field/field";
+// export { FilterButton, filterButtonVariants } from "./components/atoms/filter-button/filter-button";
+// export type { FilterButtonProps } from "./components/atoms/filter-button/filter-button";
 // export { HoverCard, HoverCardTrigger, HoverCardContent } from "./components/atoms/hover-card/hover-card";
 export { Input } from "./components/atoms/input/input";
 export type { InputProps } from "./components/atoms/input/input";
