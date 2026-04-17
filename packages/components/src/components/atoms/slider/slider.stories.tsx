@@ -1,4 +1,3 @@
-import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { userEvent, within, expect } from "@storybook/test";
 import { Slider } from "./slider";
@@ -40,24 +39,8 @@ export const Range: Story = {
 };
 
 export const Snapping: Story = {
-  render: () => {
-    const [value, setValue] = React.useState([50]);
-    return (
-      <div className="flex w-64 flex-col gap-3">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm text-muted-foreground">Quantity</span>
-          <span className="text-sm font-medium tabular-nums">{value[0]}</span>
-        </div>
-        <Slider
-          value={value}
-          onValueChange={setValue}
-          min={0}
-          max={100}
-          step={25}
-        />
-      </div>
-    );
-  },
+  args: { defaultValue: [50], min: 0, max: 100, step: 25 },
+  render: (args) => <Slider {...args} className="w-64" />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const thumb = canvas.getByRole("slider");
