@@ -252,16 +252,16 @@ export function PlpTemplate<TItem>({
         />
       </div>
 
-      {/* Sticky filter bar — appears when the main toolbar is out of view
-          and at least one filter is engaged. Hidden otherwise. */}
-      {showStickyFilterBar && hasEngagedFilters && (
-        <PlpStickyFilterBar
-          filters={filters}
-          filterState={filterState}
-          onFilterChange={onFilterChange}
-          onOpenDrawer={() => setDrawerOpen(true)}
-        />
-      )}
+      {/* Sticky filter bar — always mounted so it can animate in and out;
+          `visible` is true only when the main toolbar is out of view and
+          at least one filter is engaged. */}
+      <PlpStickyFilterBar
+        visible={showStickyFilterBar && hasEngagedFilters}
+        filters={filters}
+        filterState={filterState}
+        onFilterChange={onFilterChange}
+        onOpenDrawer={() => setDrawerOpen(true)}
+      />
 
       {/* Content area */}
       {status === "loading" &&

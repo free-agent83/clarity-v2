@@ -1,6 +1,7 @@
 "use client";
 
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
 import { PlpQuickFilter } from "./plp-quick-filter";
@@ -25,11 +26,18 @@ import type { FilterDefinition, FilterState, FilterValue } from "../plp-types";
  * to duplicate the full toolbar.
  */
 export function PlpStickyFilterBar({
+  visible,
   filters,
   filterState,
   onFilterChange,
   onOpenDrawer,
 }: {
+  /**
+   * Whether the sticky bar should be visible. The component remains
+   * mounted when `false` so it can animate out; CSS transitions on
+   * `opacity` and `transform` handle the enter/exit.
+   */
+  visible: boolean;
   filters: FilterDefinition[];
   filterState: FilterState;
   onFilterChange: (filterId: string, value: FilterValue) => void;
@@ -43,7 +51,13 @@ export function PlpStickyFilterBar({
   return (
     <div
       data-slot="plp-sticky-filter-bar"
-      className="fixed inset-x-0 top-18 z-30 border-b border-border bg-background shadow-sm animate-in fade-in-0 slide-in-from-top-4 duration-200 ease-out"
+      data-state={visible ? "visible" : "hidden"}
+      aria-hidden={!visible}
+      className={cn(
+        "fixed inset-x-0 top-18 z-30 border-b border-border bg-background shadow-sm",
+        "transition-[opacity,transform] duration-200 ease-out",
+        "data-[state=hidden]:pointer-events-none data-[state=hidden]:-translate-y-2 data-[state=hidden]:opacity-0"
+      )}
     >
       <div className="mx-auto w-full max-w-384 px-6 py-3 group-data-[full=true]/app-shell:max-w-none">
         <div className="relative">
