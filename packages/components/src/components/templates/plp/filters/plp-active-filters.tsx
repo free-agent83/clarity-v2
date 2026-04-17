@@ -37,8 +37,23 @@ export function PlpActiveFilters({
   const stripRef = useRef<HTMLDivElement>(null);
   const [isSticky, setIsSticky] = useState(false);
 
-  // Intersection observer for sticky behaviour
+  const activeFilters = filters.filter(
+    (f) => filterState[f.id] !== undefined
+  );
+  const hasActiveFilters = activeFilters.length > 0;
+
+  // Intersection observer for sticky behaviour. Re-runs when the strip
+  // mounts/unmounts (driven by `hasActiveFilters`) so the observer
+  // attaches whenever the strip is actually in the DOM. A simple `[]`-dep
+  // effect would run only once on mount — at that point the strip may
+  // not be rendered yet because the parent has no active filters — and
+  // would never reattach once the user engages a filter.
   useEffect(() => {
+    if (!hasActiveFilters) {
+      setIsSticky(false);
+      return;
+    }
+
     const el = stripRef.current;
     if (!el) return;
 
@@ -59,13 +74,9 @@ export function PlpActiveFilters({
       observer.disconnect();
       sentinel.remove();
     };
-  }, []);
+  }, [hasActiveFilters]);
 
-  const activeFilters = filters.filter(
-    (f) => filterState[f.id] !== undefined
-  );
-
-  if (activeFilters.length === 0) return null;
+  if (!hasActiveFilters) return null;
 
   return (
     <div
