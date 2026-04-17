@@ -178,18 +178,21 @@ export function PlpFilterDrawer({
           })}
         </div>
 
-        {/* Sticky footer */}
-        <SheetFooter className="flex-row gap-2 border-t px-6 py-4">
-          <Button variant="outline" className="flex-1" onClick={handleClearDraft}>
-            Clear filters
-          </Button>
+        {/* Sticky footer — primary action stacked on top, clear as a small
+            ghost beneath. Keeps the primary action's width stable between
+            idle and loading states so the spinner swap doesn't cause a
+            horizontal layout shift. */}
+        <SheetFooter className="flex-col gap-1 border-t px-6 py-4">
           <Button
-            className="flex-1"
+            block
             onClick={handleApply}
             loading={isCountLoading}
             disabled={isCountLoading}
           >
             {formattedCount ? `Show ${formattedCount} results` : "Show results"}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleClearDraft}>
+            Clear filters
           </Button>
         </SheetFooter>
       </SheetContent>
