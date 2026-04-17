@@ -2,6 +2,19 @@
 
 ---
 
+### PLP Template — Phase 2 (unstable 0.2.0)
+
+Adds list view to the PLP template, alongside the existing grid view. Stateless controlled `viewMode` with viewport-based fallback to grid below 1024px. Opt-in per category via the new `listColumns` prop.
+
+- Added `ListColumn<TItem>` and `PlpViewMode` types and a `useIsTabletUp` hook mirroring `useIsMobile` at the 1024px breakpoint (`110c3a8`, `d89d694`)
+- List view container with sticky header and conditional Price/ct column, row renderer reading fixed core fields from `GridItemData` and category fields from the raw `TItem` via each column's `cell` function, hover-gated actions cell with Add to cart + More menu (platform + category actions), and skeleton loading rows that preserve column headers (`922cced`, `920b448`, `7793527`, `7447f12`)
+- Grid/list view toggle using the `ToggleGroup` atom, wired into the toolbar behind a `hidden lg:flex` responsive gate (`a479799`, `1062f44`)
+- `PlpTemplate` gained `listColumns`, `viewMode`, `onViewModeChange`, and `onItemClick` props; resolves effective view mode from consumer intent + availability + viewport without mutating consumer state on fallback (`4422048`)
+- Storybook: `DiamondListView` with 6 list columns (carat, shape, color, clarity, origin, certificate) and `GemstoneListView` with 3 list columns, both starting in list view (`98accc3`)
+- `PlpTemplate` COMPONENT.md bumped to `0.2.0` with the new props documented (`7931302`)
+
+---
+
 ### PLP Template — Phase 1 (unstable 0.1.0)
 
 Introduces the `Templates/` tier and ships the first page-level template: `PlpTemplate`. Full grid view with filter system, sorting, pagination, and responsive behaviour. Stateless — consumer owns filter state, sort, pagination, and data fetching. Rendered inside `AppShell`.
