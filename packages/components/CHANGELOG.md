@@ -2,6 +2,21 @@
 
 ---
 
+### PLP Template — Phase 3a (unstable 0.3.0)
+
+Adds three advanced filter presets and chip truncation for multi-select values.
+
+- `range-slider` preset: two-thumb Slider with commit-on-blur numeric inputs, optional distribution histogram that highlights the selected sub-range, unit shown as prefix for currencies and suffix otherwise (`3c98403`)
+- `multi-axis-range` preset: one slider + numeric input pair per named axis, human-readable axis labels in UI and chip text (`3a7d693`)
+- `async-combobox` preset: multi-select Combobox with lazy initial load on open, debounced search, selected-option label caching so chips survive query changes (`997952b`)
+- `FilterPresetName`, `PresetFilterDefinition`, and `FilterValue` extended to cover the new presets and the multi-axis value shape (`2390c54`)
+- Chip truncation for multi-select (`multi-select-chips` and `async-combobox`): first two values shown, `+N more` for the rest (`e62569d`)
+- Registry threads `definition` through to all preset surfaces (drawer, quick filter popover, active chip edit popover); range and multi-axis chip formatters added (`b2d4218`)
+- Storybook: every existing PLP story now exercises all filter presets (`40cba5a`)
+- `PlpTemplate` COMPONENT.md bumped to 0.3.0 with the new preset names documented (`9a4a48f`)
+
+---
+
 ### PLP Template — Phase 2 (unstable 0.2.0)
 
 Adds list view to the PLP template, alongside the existing grid view. Stateless controlled `viewMode` with viewport-based fallback to grid below 1024px. Opt-in per category via the new `listColumns` prop.
