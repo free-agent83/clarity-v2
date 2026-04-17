@@ -54,6 +54,13 @@ export interface PlpTemplateProps<TItem> {
   onFilterChange: (filterId: string, value: FilterValue) => void;
   filteredResultsCount?: number;
   /**
+   * When `true`, the drawer's "Show X results" button shows a loading
+   * state (spinner, disabled). Consumers set this while a preview-count
+   * request is in flight so the button reflects that the displayed
+   * count is about to update.
+   */
+  isCountLoading?: boolean;
+  /**
    * Fires whenever the draft filter state inside the All Filters drawer
    * changes, plus once on open with the initial state (= applied
    * `filterState`).
@@ -147,6 +154,7 @@ export function PlpTemplate<TItem>({
   filterState,
   onFilterChange,
   filteredResultsCount,
+  isCountLoading,
   onDraftFilterStateChange,
   sortOptions,
   sortValue,
@@ -288,6 +296,7 @@ export function PlpTemplate<TItem>({
         filterState={filterState}
         onFilterChange={onFilterChange}
         filteredResultsCount={filteredResultsCount}
+        isCountLoading={isCountLoading}
         onDraftFilterStateChange={onDraftFilterStateChange}
       />
     </main>

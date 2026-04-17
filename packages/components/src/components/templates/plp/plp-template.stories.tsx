@@ -453,6 +453,8 @@ function PlpTemplateInteractive<TItem>({
   | "onViewModeChange"
   | "filteredResultsCount"
   | "onDraftFilterStateChange"
+  | "isCountLoading"
+  | "status"
 > & {
   initialFilterState?: FilterState;
   initialViewMode?: PlpViewMode;
@@ -461,7 +463,11 @@ function PlpTemplateInteractive<TItem>({
   pageSize: number;
   /** Initial preview count shown on the drawer's primary button. */
   filteredResultsCount?: number;
+  /** Baseline status — the wrapper flips this to "loading" during simulated commits. */
+  status?: PlpTemplateProps<TItem>["status"];
 }) {
+  const baselineStatus = props.status ?? "success";
+
   const [filterState, setFilterState] = useState<FilterState>(initialFilterState);
   const [sortValue, setSortValue] = useState(props.sortValue);
   const [page, setPage] = useState(props.page);
@@ -470,23 +476,46 @@ function PlpTemplateInteractive<TItem>({
   const [previewCount, setPreviewCount] = useState<number | undefined>(
     props.filteredResultsCount
   );
+  const [isCountLoading, setIsCountLoading] = useState(false);
+  const [effectiveStatus, setEffectiveStatus] =
+    useState<PlpTemplateProps<TItem>["status"]>(baselineStatus);
 
   // Debounced preview-count fetcher — consumer-side concern in real apps;
-  // here we keep it inline so stories are self-contained.
+  // here we keep it inline so stories are self-contained. Sets
+  // `isCountLoading` while a fetch is in flight so the drawer's primary
+  // action shows a spinner.
   const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   function schedulePreviewCount(draft: FilterState) {
+    setIsCountLoading(true);
     if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
     fetchTimerRef.current = setTimeout(async () => {
       const count = await mockPreviewCount(draft);
       setPreviewCount(count);
+      setIsCountLoading(false);
     }, 200);
+  }
+
+  // Simulate a backend roundtrip after any applied filter change
+  // (quick filter, active chip edit, drawer apply). Flips `status` to
+  // "loading" for ~600ms so the grid/list shows its skeleton, then
+  // restores the baseline status. Only active when baseline is
+  // "success" — other states (empty, error) are left alone.
+  const statusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function simulateBackendCommit() {
+    if (baselineStatus !== "success") return;
+    setEffectiveStatus("loading");
+    if (statusTimerRef.current) clearTimeout(statusTimerRef.current);
+    statusTimerRef.current = setTimeout(() => {
+      setEffectiveStatus(baselineStatus);
+    }, 600);
   }
 
   return (
     <PlpTemplate
       {...props}
+      status={effectiveStatus}
       filterState={filterState}
-      onFilterChange={(id, value) =>
+      onFilterChange={(id, value) => {
         setFilterState((prev) => {
           const next = { ...prev };
           if (value === undefined) {
@@ -496,9 +525,11 @@ function PlpTemplateInteractive<TItem>({
           }
           schedulePreviewCount(next);
           return next;
-        })
-      }
+        });
+        simulateBackendCommit();
+      }}
       filteredResultsCount={previewCount}
+      isCountLoading={isCountLoading}
       onDraftFilterStateChange={schedulePreviewCount}
       sortValue={sortValue}
       onSortChange={setSortValue}

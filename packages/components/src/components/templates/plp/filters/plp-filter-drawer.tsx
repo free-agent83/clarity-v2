@@ -37,6 +37,7 @@ export function PlpFilterDrawer({
   filterState,
   onFilterChange,
   filteredResultsCount,
+  isCountLoading = false,
   onDraftFilterStateChange,
 }: {
   open: boolean;
@@ -45,6 +46,13 @@ export function PlpFilterDrawer({
   filterState: FilterState;
   onFilterChange: (filterId: string, value: FilterValue) => void;
   filteredResultsCount?: number;
+  /**
+   * When `true`, the "Show X results" button shows a loading state
+   * (spinner, disabled). Consumers set this while a preview-count
+   * request is in flight so the button reflects that the displayed
+   * count is about to update.
+   */
+  isCountLoading?: boolean;
   /**
    * Fires whenever the draft filter state inside the drawer changes, plus
    * once on open with the initial state (= applied `filterState`).
@@ -175,7 +183,12 @@ export function PlpFilterDrawer({
           <Button variant="outline" className="flex-1" onClick={handleClearDraft}>
             Clear filters
           </Button>
-          <Button className="flex-1" onClick={handleApply}>
+          <Button
+            className="flex-1"
+            onClick={handleApply}
+            loading={isCountLoading}
+            disabled={isCountLoading}
+          >
             {formattedCount ? `Show ${formattedCount} results` : "Show results"}
           </Button>
         </SheetFooter>
