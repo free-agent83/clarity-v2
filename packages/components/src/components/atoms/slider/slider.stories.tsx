@@ -55,13 +55,6 @@ export const Snapping: Story = {
           max={100}
           step={25}
         />
-        <div className="flex justify-between text-xs text-muted-foreground tabular-nums">
-          <span>0</span>
-          <span>25</span>
-          <span>50</span>
-          <span>75</span>
-          <span>100</span>
-        </div>
       </div>
     );
   },
