@@ -10,7 +10,14 @@ import {
   AppShellMain,
 } from "../../organisms/app-shell/app-shell";
 import { Badge } from "../../atoms/badge/badge";
-import type { FilterDefinition, FilterState, GridItemData, SortOption } from "./plp-types";
+import type {
+  FilterDefinition,
+  FilterState,
+  GridItemData,
+  ListColumn,
+  PlpViewMode,
+  SortOption,
+} from "./plp-types";
 
 // ── Shared mock data ──────────────────────────────────────
 
@@ -134,13 +141,170 @@ function gemstoneRenderGridItem(item: ReturnType<typeof generateGemstoneItems>[n
   };
 }
 
+// -- Diamond mock data (list view) -----------------------------------------
+
+interface DiamondItem {
+  id: string;
+  name: string;
+  image: string;
+  stockId: string;
+  carat: number;
+  color: string;
+  clarity: string;
+  shape: string;
+  origin: string;
+  certLab: string;
+  certNumber: string;
+  price: number;
+  pricePerCarat: number;
+  isExpress: boolean;
+  isReturnable: boolean;
+}
+
+function generateDiamondItems(count: number): DiamondItem[] {
+  const shapes = ["Round", "Oval", "Cushion", "Princess", "Pear", "Emerald"];
+  const colors = ["D", "E", "F", "G", "H", "I"];
+  const clarities = ["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1"];
+  const origins = ["Botswana", "Russia", "Canada", "Australia", "South Africa"];
+  const labs = ["GIA", "IGI", "AGS"];
+
+  return Array.from({ length: count }, (_, i) => ({
+    id: `diamond-${i}`,
+    name: `${(0.5 + i * 0.1).toFixed(2)}ct ${shapes[i % shapes.length]} Diamond`,
+    image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Diamond+${i + 1}`,
+    stockId: `DM-${10000 + i}`,
+    carat: Number((0.5 + i * 0.1).toFixed(2)),
+    color: colors[i % colors.length],
+    clarity: clarities[i % clarities.length],
+    shape: shapes[i % shapes.length],
+    origin: origins[i % origins.length],
+    certLab: labs[i % labs.length],
+    certNumber: `${287329000 + i}`,
+    price: 2500 + i * 350,
+    pricePerCarat: 5000 + i * 100,
+    isExpress: i % 5 === 0,
+    isReturnable: i % 3 !== 0,
+  }));
+}
+
+function diamondRenderGridItem(item: DiamondItem): GridItemData {
+  return {
+    id: item.id,
+    name: item.name,
+    thumbnailSrc: item.image,
+    thumbnailAlt: item.name,
+    lead: <span>{item.stockId}</span>,
+    badges: [],
+    delivery: {
+      estimatedDate: "Nov 18 – 23",
+      shipsFrom: item.origin,
+      isExpress: item.isExpress,
+    },
+    returns: { isReturnable: item.isReturnable },
+    pricing: {
+      amount: item.price,
+      currency: "USD",
+      perCarat: { amount: item.pricePerCarat, currency: "USD" },
+    },
+    onAddToCart: fn(),
+    onFavorite: fn(),
+    onShare: fn(),
+    onViewMedia: fn(),
+  };
+}
+
+const DIAMOND_FILTERS: FilterDefinition[] = [
+  {
+    id: "shape",
+    label: "Shape",
+    preset: "multi-select-chips",
+    isQuickFilter: true,
+    options: [
+      { value: "round", label: "Round" },
+      { value: "oval", label: "Oval" },
+      { value: "cushion", label: "Cushion" },
+      { value: "princess", label: "Princess" },
+    ],
+  },
+  {
+    id: "color",
+    label: "Color",
+    preset: "multi-select-chips",
+    isQuickFilter: true,
+    options: ["D", "E", "F", "G", "H", "I"].map((c) => ({ value: c, label: c })),
+  },
+  {
+    id: "clarity",
+    label: "Clarity",
+    preset: "multi-select-chips",
+    options: ["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1"].map((c) => ({
+      value: c,
+      label: c,
+    })),
+  },
+];
+
+const DIAMOND_LIST_COLUMNS: ListColumn<DiamondItem>[] = [
+  {
+    id: "carat",
+    header: "Carat",
+    cell: (item) => item.carat.toFixed(2),
+    align: "right",
+  },
+  {
+    id: "shape",
+    header: "Shape",
+    cell: (item) => item.shape,
+  },
+  {
+    id: "color",
+    header: "Color",
+    cell: (item) => item.color,
+    align: "center",
+  },
+  {
+    id: "clarity",
+    header: "Clarity",
+    cell: (item) => item.clarity,
+    align: "center",
+  },
+  {
+    id: "origin",
+    header: "Origin",
+    cell: (item) => item.origin,
+  },
+  {
+    id: "cert",
+    header: "Certificate",
+    cell: (item) => (
+      <span className="font-mono text-xs">
+        {item.certLab} {item.certNumber}
+      </span>
+    ),
+  },
+];
+
 // ── Stateful wrapper for interactive stories ──────────────
 
 function PlpTemplateInteractive<TItem>({
   initialFilterState = {},
+  initialViewMode = "grid",
   ...props
-}: Omit<PlpTemplateProps<TItem>, "filterState" | "onFilterChange" | "sortValue" | "onSortChange" | "page" | "onPageChange" | "pageSize" | "onPageSizeChange"> & {
+}: Omit<
+  PlpTemplateProps<TItem>,
+  | "filterState"
+  | "onFilterChange"
+  | "sortValue"
+  | "onSortChange"
+  | "page"
+  | "onPageChange"
+  | "pageSize"
+  | "onPageSizeChange"
+  | "viewMode"
+  | "onViewModeChange"
+> & {
   initialFilterState?: FilterState;
+  initialViewMode?: PlpViewMode;
   sortValue: string;
   page: number;
   pageSize: number;
@@ -149,6 +313,7 @@ function PlpTemplateInteractive<TItem>({
   const [sortValue, setSortValue] = useState(props.sortValue);
   const [page, setPage] = useState(props.page);
   const [pageSize, setPageSize] = useState(props.pageSize);
+  const [viewMode, setViewMode] = useState<PlpViewMode>(initialViewMode);
 
   return (
     <PlpTemplate
@@ -171,6 +336,8 @@ function PlpTemplateInteractive<TItem>({
       onPageChange={setPage}
       pageSize={pageSize}
       onPageSizeChange={setPageSize}
+      viewMode={viewMode}
+      onViewModeChange={setViewMode}
     />
   );
 }
@@ -447,4 +614,62 @@ export const Error: StoryObj = {
       onRetry={fn()}
     />
   ),
+};
+
+export const DiamondListView: StoryObj = {
+  render: () => (
+    <PlpTemplateInteractive
+      breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
+      title="Natural Diamonds"
+      resultsCount={48291}
+      filters={DIAMOND_FILTERS}
+      filteredResultsCount={48291}
+      sortOptions={SORT_OPTIONS}
+      sortValue="price-asc"
+      items={generateDiamondItems(20)}
+      renderGridItem={diamondRenderGridItem}
+      listColumns={DIAMOND_LIST_COLUMNS}
+      initialViewMode="list"
+      onItemClick={fn()}
+      page={1}
+      pageSize={20}
+      totalItems={48291}
+      status="success"
+      onRetry={fn()}
+    />
+  ),
+};
+
+export const GemstoneListView: StoryObj = {
+  render: () => {
+    const gemstoneListColumns: ListColumn<ReturnType<typeof generateGemstoneItems>[number]>[] = [
+      { id: "stockId", header: "Stock ID", cell: (item) => <span className="font-mono text-xs">{item.stockId}</span> },
+      { id: "origin", header: "Origin", cell: (item) => item.origin },
+      { id: "cert", header: "Certificate", cell: (item) => (
+        <span className="font-mono text-xs">{item.certLab} {item.certNumber}</span>
+      ) },
+    ];
+
+    return (
+      <PlpTemplateInteractive
+        breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
+        title="Sapphire"
+        resultsCount={1234567}
+        filters={GEMSTONE_FILTERS}
+        filteredResultsCount={10234}
+        sortOptions={SORT_OPTIONS}
+        sortValue="price-asc"
+        items={generateGemstoneItems(20)}
+        renderGridItem={gemstoneRenderGridItem}
+        listColumns={gemstoneListColumns}
+        initialViewMode="list"
+        onItemClick={fn()}
+        page={1}
+        pageSize={20}
+        totalItems={1234567}
+        status="success"
+        onRetry={fn()}
+      />
+    );
+  },
 };
