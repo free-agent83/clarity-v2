@@ -1,7 +1,7 @@
 ---
 name: PlpTemplate
 slug: plp-template
-version: 0.2.0
+version: 0.3.0
 status: unstable
 lastUpdated: 2026-04-16
 ---
@@ -62,6 +62,16 @@ List view is a density-oriented alternative to grid view for categories that ben
 **Don't:** Try to inject custom rendering for template-driven sections (delivery, returns, pricing). Supply the data; the template handles the rendering.
 
 **Don't:** Use custom filters when a preset fits. Custom filters drift visually over time.
+
+### Phase 3a presets
+
+Three advanced presets added in Phase 3a (unstable 0.3.0):
+
+- `range-slider` — Numeric min/max with a two-thumb Slider and commit-on-blur inputs. Reads `min`, `max`, `step`, `unit`, `histogram`. Unit is shown as a prefix for currencies and suffix otherwise. Histogram is optional — when supplied it renders a distribution bar chart that highlights the selected sub-range.
+- `multi-axis-range` — Multiple named ranges under one filter, each axis rendered as one slider + numeric input pair. Reads `axes[]`. Human-readable axis labels appear in both the filter UI and active chip text. No histogram support.
+- `async-combobox` — Multi-select Combobox with lazy-loaded options. Reads `searchFn`, `searchDebounceMs`, `searchPlaceholder`. Options load on first open; subsequent queries are debounced. Selected-option labels are cached so chips survive query changes.
+
+All three presets participate in chip truncation: for `multi-select-chips` and `async-combobox`, the first two selected values are shown inline and any additional values are collapsed to `+N more`.
 
 ## Quality checklist
 
