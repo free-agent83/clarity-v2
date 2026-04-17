@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { IconX } from "@tabler/icons-react";
+import { IconChevronDown, IconX } from "@tabler/icons-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/atoms/button/button";
@@ -92,7 +92,8 @@ interface FilterButtonProps extends VariantProps<typeof filterButtonVariants> {
  * FilterButton — a two-state control for applied filters.
  *
  * **Inactive state** (no `valueSummary`): renders a single outline button
- * showing the filter label. Clicking opens a popover.
+ * showing the filter label with a trailing chevron-down icon indicating
+ * that the button opens a popover. Clicking opens the popover.
  *
  * **Active state** (with `valueSummary`): renders a split control with a
  * main clickable area showing `label: valueSummary` (opens the popover
@@ -193,11 +194,12 @@ function FilterButton({
             data-state="inactive"
             className={cn(
               filterButtonVariants({ active: false }),
-              "items-center gap-1.5 px-3 outline-none",
+              "items-center gap-1.5 pl-3 pr-2 outline-none",
               className
             )}
           >
             {label}
+            <IconChevronDown className="h-4 w-4 opacity-60" aria-hidden="true" />
           </button>
         </PopoverTrigger>
       )}

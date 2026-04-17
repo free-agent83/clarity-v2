@@ -47,8 +47,8 @@ FilterButton is the standard surface for any filter whose value can be applied f
 
 | State | Visual | Interaction |
 |-------|--------|-------------|
-| Inactive (`valueSummary` omitted) | Outline button with just the label, matching `Button variant="outline"`. | Click opens the popover. No dismiss affordance. |
-| Active (`valueSummary` provided) | Filled muted background. Split into two regions: `label: value` on the left (click to edit) and an X on the right (click to dismiss). | Clicking the left region opens the popover; clicking the X calls `onDismiss`. Both share a unified focus ring. |
+| Inactive (`valueSummary` omitted) | Outline button with the label followed by a trailing chevron-down icon, matching `Button variant="outline"`. The chevron signals that the button opens a popover. | Click opens the popover. No dismiss affordance. |
+| Active (`valueSummary` provided) | Filled muted background. Split into two regions: `label: value` on the left (click to edit) and an X on the right (click to dismiss). No chevron — the dismiss X is the trailing affordance. | Clicking the left region opens the popover; clicking the X calls `onDismiss`. Both share a unified focus ring. |
 
 ## Quality checklist
 
