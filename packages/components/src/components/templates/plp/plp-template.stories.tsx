@@ -21,6 +21,44 @@ import type {
 
 // ── Shared mock data ──────────────────────────────────────
 
+// -- Shared mock helpers for advanced filter presets ----------------------
+
+function buildMockHistogram(
+  min: number,
+  max: number,
+  bucketCount: number,
+  peakAt: number
+): { buckets: number[]; min: number; max: number } {
+  const buckets = Array.from({ length: bucketCount }, (_, i) => {
+    const bucketCenter = min + ((i + 0.5) * (max - min)) / bucketCount;
+    const distanceFromPeak = Math.abs(bucketCenter - peakAt);
+    const peakWidth = (max - min) / 4;
+    const normalized = Math.max(0, 1 - distanceFromPeak / peakWidth);
+    return Math.round(normalized * 40 + Math.random() * 10);
+  });
+  return { buckets, min, max };
+}
+
+const MOCK_SUPPLIERS: { value: string; label: string }[] = [
+  { value: "sup-acme", label: "Acme Gem Traders" },
+  { value: "sup-globex", label: "Globex Mining Co." },
+  { value: "sup-initech", label: "Initech Stones" },
+  { value: "sup-umbrella", label: "Umbrella Gemstones Ltd." },
+  { value: "sup-hooli", label: "Hooli Premium" },
+  { value: "sup-pied", label: "Pied Piper Rough" },
+  { value: "sup-stark", label: "Stark Industries Jewellery" },
+  { value: "sup-wayne", label: "Wayne Enterprises Minerals" },
+  { value: "sup-cyberdyne", label: "Cyberdyne Gems" },
+  { value: "sup-tyrell", label: "Tyrell Heritage Stones" },
+];
+
+async function mockSupplierSearch(query: string) {
+  // Simulate network latency
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  const q = query.toLowerCase();
+  return MOCK_SUPPLIERS.filter((s) => s.label.toLowerCase().includes(q));
+}
+
 const GEMSTONE_FILTERS: FilterDefinition[] = [
   {
     id: "nivoda-curated",
@@ -75,7 +113,53 @@ const GEMSTONE_FILTERS: FilterDefinition[] = [
       { value: "asia", label: "Asia" },
     ],
   },
+  {
+    id: "price",
+    label: "Price",
+    preset: "range-slider",
+    isQuickFilter: true,
+    min: 0,
+    max: 10000,
+    step: 10,
+    unit: "$",
+    histogram: buildMockHistogram(0, 10000, 40, 2500),
+  },
+  {
+    id: "carat",
+    label: "Carat",
+    preset: "range-slider",
+    min: 0,
+    max: 10,
+    step: 0.1,
+    unit: "ct",
+    histogram: buildMockHistogram(0, 10, 40, 2),
+  },
+  {
+    id: "size",
+    label: "Size (mm)",
+    preset: "multi-axis-range",
+    axes: [
+      { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
+      { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
+      { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
+    ],
+  },
+  {
+    id: "supplier",
+    label: "Supplier",
+    preset: "async-combobox",
+    searchFn: mockSupplierSearch,
+    searchPlaceholder: "Search suppliers...",
+  },
 ];
+
+// Pre-seed supplier options for stories that start with a value set
+const _gemstoneSupplier = GEMSTONE_FILTERS.find((f) => f.id === "supplier");
+if (_gemstoneSupplier && _gemstoneSupplier.preset === "async-combobox") {
+  _gemstoneSupplier.options = MOCK_SUPPLIERS.filter((s) =>
+    ["sup-acme", "sup-globex", "sup-initech"].includes(s.value)
+  );
+}
 
 const SORT_OPTIONS: SortOption[] = [
   { value: "price-asc", label: "Price, low to high" },
@@ -241,6 +325,44 @@ const DIAMOND_FILTERS: FilterDefinition[] = [
       value: c,
       label: c,
     })),
+  },
+  {
+    id: "price",
+    label: "Price",
+    preset: "range-slider",
+    isQuickFilter: true,
+    min: 0,
+    max: 10000,
+    step: 10,
+    unit: "$",
+    histogram: buildMockHistogram(0, 10000, 40, 2500),
+  },
+  {
+    id: "carat",
+    label: "Carat",
+    preset: "range-slider",
+    min: 0,
+    max: 10,
+    step: 0.1,
+    unit: "ct",
+    histogram: buildMockHistogram(0, 10, 40, 2),
+  },
+  {
+    id: "size",
+    label: "Size (mm)",
+    preset: "multi-axis-range",
+    axes: [
+      { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
+      { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
+      { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
+    ],
+  },
+  {
+    id: "supplier",
+    label: "Supplier",
+    preset: "async-combobox",
+    searchFn: mockSupplierSearch,
+    searchPlaceholder: "Search suppliers...",
   },
 ];
 
@@ -458,7 +580,12 @@ export const WithActiveFilters: StoryObj = {
       title="Sapphire"
       resultsCount={342}
       filters={GEMSTONE_FILTERS}
-      initialFilterState={{ color: ["blue", "green"], treatment: "heated" }}
+      initialFilterState={{
+        color: ["blue", "green"],
+        treatment: "heated",
+        price: { min: 1000, max: 5000 },
+        supplier: ["sup-acme", "sup-globex", "sup-initech"],
+      }}
       filteredResultsCount={342}
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
