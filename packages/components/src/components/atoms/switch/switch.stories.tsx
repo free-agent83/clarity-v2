@@ -14,7 +14,7 @@ type Story = StoryObj<typeof Switch>;
 export const Default: Story = {
   render: () => (
     <div className="flex items-center gap-2">
-      <Switch id="default" />
+      <Switch id="default" size="default" />
       <Label htmlFor="default">Label</Label>
     </div>
   ),
