@@ -114,7 +114,7 @@ export function PlpListRow<TItem>({
     <TableRow
       className={cn(
         "group/plp-row",
-        clickable && "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        clickable && "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       )}
       role={clickable ? "link" : undefined}
       tabIndex={clickable ? 0 : undefined}

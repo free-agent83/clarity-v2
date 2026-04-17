@@ -27,12 +27,9 @@ import {
 const filterButtonVariants = cva(
   [
     // Layout
-    "group/filter-button inline-flex h-11 shrink-0 items-stretch overflow-hidden rounded-md border text-sm font-medium whitespace-nowrap transition-[color,background,box-shadow]",
+    "group/filter-button inline-flex h-11 shrink-0 items-stretch rounded-md border text-sm font-medium whitespace-nowrap transition-[color,background]",
     // Disabled
     "has-disabled:pointer-events-none has-disabled:opacity-50",
-    // Keyboard focus — bubble individual button's :focus-visible up to the
-    // container so the ring wraps the whole unit cleanly.
-    "has-[:focus-visible]:border-ring has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50",
   ],
   {
     variants: {
@@ -168,7 +165,7 @@ function FilterButton({
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="flex items-center gap-1.5 px-3 outline-none hover:bg-accent/40 focus-visible:bg-accent/40 transition-colors"
+              className="relative flex items-center gap-1.5 rounded-l-[calc(var(--radius-md)-1px)] px-3 outline-none transition-colors hover:bg-accent/40 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               <span className="text-muted-foreground">{label}:</span>
               <span>{valueSummary}</span>
@@ -181,7 +178,7 @@ function FilterButton({
               onDismiss?.();
             }}
             aria-label={`Remove filter: ${label}`}
-            className="flex items-center border-l border-border px-2 outline-none hover:bg-accent/40 focus-visible:bg-accent/40 transition-colors"
+            className="relative flex items-center rounded-r-[calc(var(--radius-md)-1px)] border-l border-border px-2 outline-none transition-colors hover:bg-accent/40 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <IconX className="h-3.5 w-3.5 opacity-60" />
           </button>
@@ -194,7 +191,7 @@ function FilterButton({
             data-state="inactive"
             className={cn(
               filterButtonVariants({ active: false }),
-              "items-center gap-1.5 pl-3 pr-2 outline-none",
+              "items-center gap-1.5 pl-3 pr-2 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
               className
             )}
           >
