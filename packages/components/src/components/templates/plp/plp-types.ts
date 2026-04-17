@@ -160,3 +160,25 @@ export type PlpStatus =
   | "empty-filtered"
   | "empty-no-items"
   | "error";
+
+// -- List view --------------------------------------------------------------
+
+/**
+ * A category-configured column for list view.
+ *
+ * The `cell` function receives the raw item (not `GridItemData`) so the
+ * category has full access to original item data — including fields that
+ * don't live on `GridItemData` (e.g., certificate number, carat, clarity).
+ */
+export interface ListColumn<TItem> {
+  id: string;
+  header: string;
+  cell: (item: TItem) => ReactNode;
+  /** Optional fixed width (CSS value or number of pixels). */
+  width?: number | string;
+  /** Text alignment for cell and header. Defaults to "left". */
+  align?: "left" | "center" | "right";
+}
+
+/** View mode — grid or list. */
+export type PlpViewMode = "grid" | "list";
