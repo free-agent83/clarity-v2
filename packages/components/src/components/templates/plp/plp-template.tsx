@@ -267,7 +267,6 @@ export function PlpTemplate<TItem>({
         filterState={filterState}
         onFilterChange={onFilterChange}
         filteredResultsCount={filteredResultsCount}
-        onClearAll={handleClearAllFilters}
       />
     </main>
   );
