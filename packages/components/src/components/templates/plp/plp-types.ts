@@ -29,6 +29,7 @@ export type FilterValue =
   | string
   | string[]
   | { min: number; max: number }
+  | Record<string, { min: number; max: number }>
   | boolean
   | undefined;
 
@@ -40,7 +41,10 @@ export type FilterPresetName =
   | "boolean-chip"
   | "single-select-chips"
   | "multi-select-chips"
-  | "single-select-dropdown";
+  | "single-select-dropdown"
+  | "range-slider"
+  | "multi-axis-range"
+  | "async-combobox";
 
 /** A filter definition that references a built-in preset. */
 export interface PresetFilterDefinition {
@@ -52,6 +56,58 @@ export interface PresetFilterDefinition {
   options?: FilterOption[];
   /** Display label for boolean-chip preset (e.g. "Only Nivoda Curated items"). */
   chipLabel?: string;
+
+  // -- range-slider preset ---------------------------------------------------
+
+  /** Lower bound of the slider's selectable range. */
+  min?: number;
+  /** Upper bound of the slider's selectable range. */
+  max?: number;
+  /** Increment between slider stops. Defaults to 1 if omitted. */
+  step?: number;
+  /**
+   * Unit for display in the slider's numeric inputs and active filter chip.
+   * Currency symbols ("$", "€", "£") render as prefix; everything else as suffix.
+   */
+  unit?: string;
+  /**
+   * Optional distribution histogram drawn behind the slider track.
+   * `buckets` are equal-width bar counts across the `[min, max]` domain.
+   */
+  histogram?: {
+    buckets: number[];
+    min: number;
+    max: number;
+  };
+
+  // -- multi-axis-range preset -----------------------------------------------
+
+  /**
+   * Axes for multi-axis-range preset. Each axis is an independent range
+   * with its own bounds and unit.
+   * - `id` is machine-readable, used as a key in the filter value.
+   * - `label` is human-readable, shown in the UI and in chip text.
+   */
+  axes?: {
+    id: string;
+    label: string;
+    min: number;
+    max: number;
+    step?: number;
+    unit?: string;
+  }[];
+
+  // -- async-combobox preset -------------------------------------------------
+
+  /**
+   * Called by the preset to load options. Invoked once when the popover
+   * opens (with an empty query) and on each debounced query change.
+   */
+  searchFn?: (query: string) => Promise<FilterOption[]>;
+  /** Debounce delay for `searchFn` invocations on input. Defaults to 250ms. */
+  searchDebounceMs?: number;
+  /** Placeholder text for the combobox input. */
+  searchPlaceholder?: string;
 }
 
 /** A filter definition that supplies its own render function. */
