@@ -1,17 +1,19 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { Toggle } from "../../../../atoms/toggle/toggle";
 import type { FilterControlProps } from "../../plp-types";
 
 /**
  * Multi-select chip group with optional adornments.
  *
- * Any number of options can be active simultaneously. Renders as outline
- * toggle buttons by default.
+ * Renders each option as an individual outline `Toggle`. Any number of
+ * options can be pressed simultaneously. Clicking toggles the option's
+ * presence in the selected array.
  *
- * Options can customize their content via `renderOption` (e.g., icon on top
- * + label below for card-shaped toggles like cut shape selectors) or use
- * the default layout (optional adornment + label in a horizontal row).
+ * Each toggle is independent (not wrapped in a `ToggleGroup`) so options
+ * can use `renderOption` for richer layouts like card-shaped cut-shape
+ * selectors with an icon on top and a label below.
  */
 export function MultiSelectChipsFilter({
   value,
@@ -28,36 +30,29 @@ export function MultiSelectChipsFilter({
   }
 
   return (
-    <div className="flex flex-wrap gap-2" role="group">
+    <div className="flex flex-wrap gap-2">
       {options?.map((option) => {
         const isSelected = selected.includes(option.value);
         return (
-          <button
+          <Toggle
             key={option.value}
-            type="button"
-            aria-pressed={isSelected}
+            variant="outline"
+            pressed={isSelected}
+            onPressedChange={() => toggle(option.value)}
             aria-label={option.label}
             className={cn(
-              "inline-flex items-center justify-center border text-sm font-medium transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-              option.renderOption
-                ? "rounded-lg p-2"
-                : "rounded-full px-3 py-1.5 gap-1.5",
-              isSelected
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-background text-foreground hover:bg-muted"
+              option.renderOption ? "h-auto min-w-0 p-2" : undefined
             )}
-            onClick={() => toggle(option.value)}
           >
-            {option.renderOption
-              ? option.renderOption({ selected: isSelected })
-              : (
-                <>
-                  {option.adornment}
-                  {option.label}
-                </>
-              )}
-          </button>
+            {option.renderOption ? (
+              option.renderOption({ selected: isSelected })
+            ) : (
+              <>
+                {option.adornment}
+                {option.label}
+              </>
+            )}
+          </Toggle>
         );
       })}
     </div>

@@ -150,13 +150,6 @@ export function PlpToolbar({
           </div>
         </div>
 
-        {/* View toggle -- only at tablet+ when list view is available */}
-        {renderViewToggle && (
-          <div className={cn("hidden shrink-0 lg:flex")}>
-            <PlpViewToggle value={viewMode!} onValueChange={onViewModeChange!} />
-          </div>
-        )}
-
         {/* Sort */}
         <div className="shrink-0">
           <Select value={sortValue} onValueChange={onSortChange}>
@@ -173,6 +166,14 @@ export function PlpToolbar({
             </SelectContent>
           </Select>
         </div>
+
+        {/* View toggle -- only at tablet+ when list view is available.
+            Sits to the right of Sort. */}
+        {renderViewToggle && (
+          <div className={cn("hidden shrink-0 lg:flex")}>
+            <PlpViewToggle value={viewMode!} onValueChange={onViewModeChange!} />
+          </div>
+        )}
       </div>
     </div>
   );

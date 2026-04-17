@@ -37,7 +37,7 @@ const filterButtonVariants = cva(
   {
     variants: {
       active: {
-        true: "border-border bg-muted text-foreground dark:border-input dark:bg-input/50",
+        true: "border-border bg-accent text-accent-foreground dark:border-input",
         false:
           "border-border bg-background hover:bg-muted hover:text-primary-hover dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
       },

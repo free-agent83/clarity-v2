@@ -1,17 +1,19 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { Toggle } from "../../../../atoms/toggle/toggle";
 import type { FilterControlProps } from "../../plp-types";
 
 /**
  * Single-select chip group — mutually exclusive options.
  *
- * Renders each option as an outline toggle button. Only one can be active
- * at a time. Clicking an active option deselects it (clears the filter).
+ * Renders each option as an individual outline `Toggle`. Only one can be
+ * pressed at a time. Clicking an already-pressed option clears the
+ * filter. Clicking a different option replaces the selected value.
  *
- * Options can customize their content via `renderOption` (e.g., icon on top
- * + label below for card-shaped toggles) or use the default layout
- * (optional adornment + label in a horizontal row).
+ * Each toggle is independent (not wrapped in a `ToggleGroup`) so options
+ * can use `renderOption` for richer layouts like card-shaped selectors
+ * with an icon on top and a label below.
  */
 export function SingleSelectChipsFilter({
   value,
@@ -19,37 +21,31 @@ export function SingleSelectChipsFilter({
   options,
 }: FilterControlProps) {
   return (
-    <div className="flex flex-wrap gap-2" role="radiogroup">
+    <div className="flex flex-wrap gap-2">
       {options?.map((option) => {
         const isSelected = value === option.value;
         return (
-          <button
+          <Toggle
             key={option.value}
-            type="button"
-            role="radio"
-            aria-checked={isSelected}
+            variant="outline"
+            pressed={isSelected}
+            onPressedChange={(pressed) =>
+              onChange(pressed ? option.value : undefined)
+            }
             aria-label={option.label}
             className={cn(
-              "inline-flex items-center justify-center border text-sm font-medium transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-              option.renderOption
-                ? "rounded-lg p-2"
-                : "rounded-full px-3 py-1.5 gap-1.5",
-              isSelected
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-background text-foreground hover:bg-muted"
+              option.renderOption ? "h-auto min-w-0 p-2" : undefined
             )}
-            onClick={() => onChange(isSelected ? undefined : option.value)}
           >
-            {option.renderOption
-              ? option.renderOption({ selected: isSelected })
-              : (
-                <>
-                  {option.adornment}
-                  {option.label}
-                </>
-              )}
-          </button>
+            {option.renderOption ? (
+              option.renderOption({ selected: isSelected })
+            ) : (
+              <>
+                {option.adornment}
+                {option.label}
+              </>
+            )}
+          </Toggle>
         );
       })}
     </div>
