@@ -4,7 +4,7 @@
 
 ### PLP Template — Phase 3c (analytics hooks) deferred
 
-The planned Phase 3c analytics surface on the PLP template is deferred indefinitely. Consumers wire analytics at their own state-setters and handlers rather than through a template-provided callback. Captured as ADR-005 in `docs/architecture/architecture.md`; the PLP architectural spec §8 has been annotated with a status note pointing at the ADR. No code changes to `@nivoda/components`.
+The planned Phase 3c analytics surface on the PLP template is deferred indefinitely. Consumers wire analytics at their own state-setters and handlers rather than through a template-provided callback. Captured as ADR-001 in this package's [`ADRS.md`](./ADRS.md); the PLP architectural spec §8 has been annotated with a status note pointing at the ADR. No code changes shipped.
 
 ---
 

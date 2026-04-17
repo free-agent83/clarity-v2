@@ -397,7 +397,7 @@ The consuming page passes a loading/error status and a retry handler to the temp
 
 ## 8. Analytics
 
-> **Status update (ADR-005, April 2026):** The analytics surface described below was deferred indefinitely during Phase 3. The PLP template does not expose analytics callbacks. Consumers wire analytics at the point where they own state changes (their own filter-state setters, sort setters, pagination setters, add-to-cart handlers, and route handlers). See `docs/architecture/architecture.md` § ADR-005 for the full rationale and the criteria for revisiting.
+> **Status update (`@nivoda/components` ADR-001, April 2026):** The analytics surface described below was deferred indefinitely during Phase 3. The PLP template does not expose analytics callbacks. Consumers wire analytics at the point where they own state changes (their own filter-state setters, sort setters, pagination setters, add-to-cart handlers, and route handlers). See `packages/components/ADRS.md` § ADR-001 for the full rationale and the criteria for revisiting.
 >
 > The remaining content of §8 records the original design and is kept for reference.
 
