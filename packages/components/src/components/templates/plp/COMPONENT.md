@@ -1,7 +1,7 @@
 ---
 name: PlpTemplate
 slug: plp-template
-version: 0.3.0
+version: 0.4.0
 status: unstable
 lastUpdated: 2026-04-16
 ---
@@ -43,6 +43,31 @@ Product Listing Page template — a page-level component that orchestrates a com
 | `emptyFilterSuggestions` | `string[]` | — | Filter names to suggest removing in empty-filtered state |
 | `emptyMessage` | `string` | — | Custom message for empty-no-items state |
 
+## GridItemData fields
+
+The `renderGridItem` mapper must return a `GridItemData` object. Key fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `string` | Unique item identifier |
+| `name` | `string` | Item display name |
+| `thumbnailSrc` | `string` | Static thumbnail image URL |
+| `thumbnailAlt` | `string` | Accessible alt text for the thumbnail |
+| `lead` | `ReactNode \| undefined` | Category-owned slot above badges |
+| `badges` | `ReactNode[] \| undefined` | Optional badge nodes |
+| `categorySlotTop` | `ReactNode \| undefined` | Optional category slot between badges and delivery |
+| `categorySlotBottom` | `ReactNode \| undefined` | Optional category slot below pricing |
+| `delivery` | `{ estimatedDate, shipsFrom, isExpress? }` | Delivery info |
+| `returns` | `{ isReturnable }` | Returns policy |
+| `pricing` | `PricingData` | Pricing data (see type for variants) |
+| `onAddToCart` | `() => void` | Add to cart callback |
+| `enableSelection` | `boolean \| undefined` | When true, selection checkbox appears |
+| `categoryActions` | `CategoryThumbnailAction[] \| undefined` | Category-specific thumbnail actions |
+| `onFavorite` | `(itemId: string) => void \| undefined` | Platform favorite action |
+| `onShare` | `(itemId: string) => void \| undefined` | Platform share action |
+| `onViewMedia` | `(itemId: string) => void \| undefined` | Platform view media action |
+| `media360` | `{ videoUrl: string } \| undefined` | Optional 360 rotation video. When present and the viewport supports hover, the thumbnail crossfades into the video on hover and horizontal cursor position scrubs it. Omit to skip 360 on a per-item basis. |
+
 ## Usage guidelines
 
 **When to use:** Any product listing page that shows a grid of items with filtering, sorting, and pagination. Must be rendered inside an AppShell.
@@ -62,6 +87,14 @@ List view is a density-oriented alternative to grid view for categories that ben
 **Don't:** Try to inject custom rendering for template-driven sections (delivery, returns, pricing). Supply the data; the template handles the rendering.
 
 **Don't:** Use custom filters when a preset fits. Custom filters drift visually over time.
+
+### 360 media (Phase 3b)
+
+Grid items with 360 rotation video opt in via the `media360.videoUrl` field on `GridItemData`. On pointer devices, hovering the thumbnail crossfades the static image into the video and horizontal cursor movement scrubs through the rotation. Videos are lazy-loaded via intersection observer, so off-screen items don't consume bandwidth until they scroll into view.
+
+Touch devices skip the 360 code path entirely — no video element is mounted, no network requests are issued. Touch users access 360 content through the `viewMedia` platform action, which is expected to open a Lightbox (separate spec).
+
+Encode source videos with dense keyframes (e.g. a keyframe every 2–3 frames) for smooth seek-based scrubbing. Sparse-keyframe videos will stutter when the cursor moves quickly.
 
 ### Phase 3a presets
 
