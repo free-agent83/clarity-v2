@@ -1,75 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { IconHeart, IconShare, IconPhoto, IconSquare } from "@tabler/icons-react";
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../../../atoms/tooltip/tooltip";
 import { usePlpUserContext } from "../context/plp-user-context";
 import type { GridItemData } from "../plp-types";
-
-/**
- * Platform thumbnail actions — always present, template-owned.
- * Renders favorite, share, and viewMedia buttons.
- */
-function PlatformActions({
-  itemId,
-  onFavorite,
-  onShare,
-  onViewMedia,
-}: {
-  itemId: string;
-  onFavorite?: (id: string) => void;
-  onShare?: (id: string) => void;
-  onViewMedia?: (id: string) => void;
-}) {
-  const actions = [
-    {
-      id: "favorite",
-      label: "Add to shortlist",
-      icon: IconHeart,
-      handler: onFavorite,
-    },
-    { id: "share", label: "Share", icon: IconShare, handler: onShare },
-    {
-      id: "viewMedia",
-      label: "View media",
-      icon: IconPhoto,
-      handler: onViewMedia,
-    },
-  ];
-
-  return (
-    <>
-      {actions.map((action) => (
-        <TooltipProvider key={action.id} delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={action.label}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  action.handler?.(itemId);
-                }}
-              >
-                <action.icon className="h-4 w-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">{action.label}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ))}
-    </>
-  );
-}
+import { PlpGridThumbnail } from "./plp-grid-thumbnail";
 
 /**
  * Formats a number as a currency string.
@@ -87,9 +23,10 @@ function formatCurrency(amount: number, currency: string): string {
 /**
  * Individual PLP grid item card.
  *
- * Renders all 10 fixed sections in spec order. Handles hover behaviour
- * (thumbnail action toolbar + add-to-cart reveal) and pricing variant
- * rendering based on item data and user context.
+ * Renders all 10 fixed sections in spec order. Handles pricing variant
+ * rendering based on item data and user context. The thumbnail block
+ * (including hover action toolbar, optional 360 media, and selection
+ * checkbox) is delegated to `PlpGridThumbnail`.
  *
  * This component is internal to the PLP template — not exported from
  * the package barrel.
@@ -103,68 +40,7 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
       data-slot="plp-grid-item"
     >
       {/* 1. Thumbnail */}
-      <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
-        <img
-          src={data.thumbnailSrc}
-          alt={data.thumbnailAlt}
-          className="h-full w-full object-contain"
-          loading="lazy"
-        />
-
-        {/* Hover action toolbar — visible on hover/focus-within */}
-        <div
-          className={cn(
-            "absolute inset-x-0 top-0 flex items-center justify-between p-2",
-            "opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100",
-            // Always visible on touch devices
-            "touch-action-none [@media(hover:none)]:opacity-100"
-          )}
-        >
-          {/* Left: selection checkbox */}
-          <div>
-            {data.enableSelection && (
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Select item"
-              >
-                <IconSquare className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-
-          {/* Right: platform actions + category actions */}
-          <div className="flex items-center gap-0.5">
-            <PlatformActions
-              itemId={data.id}
-              onFavorite={data.onFavorite}
-              onShare={data.onShare}
-              onViewMedia={data.onViewMedia}
-            />
-            {data.categoryActions?.map((action) => (
-              <TooltipProvider key={action.id} delayDuration={300}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={action.label}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        action.onAction(data.id);
-                      }}
-                    >
-                      {action.icon}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">{action.label}</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ))}
-          </div>
-        </div>
-      </div>
+      <PlpGridThumbnail data={data} />
 
       {/* 2. Name */}
       <h3 className="mt-2 text-sm font-semibold text-foreground line-clamp-2">
