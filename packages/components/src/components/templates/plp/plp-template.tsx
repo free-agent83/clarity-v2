@@ -18,7 +18,6 @@ import {
 import { PlpHeading } from "./heading/plp-heading";
 import { PlpToolbar } from "./toolbar/plp-toolbar";
 import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
-import { PlpActiveFilters } from "./filters/plp-active-filters";
 import { PlpGrid } from "./grid/plp-grid";
 import { PlpGridItem } from "./grid/plp-grid-item";
 import { PlpGridSkeleton } from "./grid/plp-grid-skeleton";
@@ -215,6 +214,7 @@ export function PlpTemplate<TItem>({
         filters={filters}
         filterState={filterState}
         onFilterChange={onFilterChange}
+        onClearAll={handleClearAllFilters}
         onOpenDrawer={() => setDrawerOpen(true)}
         sortOptions={sortOptions}
         sortValue={sortValue}
@@ -224,14 +224,6 @@ export function PlpTemplate<TItem>({
         viewMode={viewMode}
         onViewModeChange={onViewModeChange}
         showViewToggle={showViewToggle}
-      />
-
-      {/* Active filters strip */}
-      <PlpActiveFilters
-        filters={filters}
-        filterState={filterState}
-        onFilterChange={onFilterChange}
-        onClearAll={handleClearAllFilters}
       />
 
       {/* Content area */}

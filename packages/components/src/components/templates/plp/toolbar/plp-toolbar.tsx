@@ -24,21 +24,33 @@ import type {
 } from "../plp-types";
 
 /**
- * PLP toolbar — search, All Filters button, quick filters, view toggle, and sort.
+ * PLP toolbar — search, All Filters button, inline filter buttons, view
+ * toggle, and sort.
  *
- * On mobile (< 640px): shows only All Filters + Sort.
- * On desktop: full toolbar with search, quick filters, and sort.
+ * **Filter model:** quick filters and engaged non-quick filters render as
+ * a single row of buttons in the toolbar. Quick filters are "pinned" —
+ * always present, showing either an active or empty state depending on
+ * whether they have a value. Non-quick filters appear only when engaged
+ * and disappear when cleared. Both share the same `PlpQuickFilter`
+ * component; they look and behave identically (click to edit, Clear
+ * inside the popover to dismiss).
  *
- * The grid/list view toggle renders to the left of Sort when all of the
- * following are true:
- *   - `showViewToggle` is true (category has list view available)
- *   - `viewMode` and `onViewModeChange` are both provided
- *   - Viewport is ≥ 1024px (enforced here via `hidden lg:flex` wrapper)
+ * The filter row wraps to multiple lines when it overflows. The Sort
+ * dropdown stays top-aligned on the right so it doesn't drift down the
+ * column as filters wrap.
+ *
+ * "Clear all" appears at the end of the filter row whenever any filter
+ * (quick or non-quick) has a value.
+ *
+ * On mobile (< 640px): only the All Filters button and Sort are shown;
+ * the inline filter row is hidden. Users see engaged filter count via
+ * the All Filters button's badge.
  */
 export function PlpToolbar({
   filters,
   filterState,
   onFilterChange,
+  onClearAll,
   onOpenDrawer,
   sortOptions,
   sortValue,
@@ -52,6 +64,7 @@ export function PlpToolbar({
   filters: FilterDefinition[];
   filterState: FilterState;
   onFilterChange: (filterId: string, value: FilterValue) => void;
+  onClearAll: () => void;
   onOpenDrawer: () => void;
   sortOptions: SortOption[];
   sortValue: string;
@@ -64,10 +77,15 @@ export function PlpToolbar({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const quickFilters = filters.filter((f) => f.isQuickFilter);
+  const pinnedFilters = filters.filter((f) => f.isQuickFilter);
+  const engagedNonQuickFilters = filters.filter(
+    (f) => !f.isQuickFilter && filterState[f.id] !== undefined
+  );
+  const inlineFilters = [...pinnedFilters, ...engagedNonQuickFilters];
   const activeFilterCount = Object.keys(filterState).filter(
     (id) => filterState[id] !== undefined
   ).length;
+  const hasActiveFilters = activeFilterCount > 0;
 
   function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && onSearchSubmit) {
@@ -93,37 +111,48 @@ export function PlpToolbar({
         </div>
       )}
 
-      {/* Filter bar + toggle + sort */}
-      <div className="flex items-center gap-2">
-        {/* All Filters button */}
-        <Button variant="outline" onClick={onOpenDrawer} className="shrink-0">
-          <IconAdjustmentsHorizontal className="mr-1.5 h-4 w-4" />
-          All filters
-          {activeFilterCount > 0 && (
-            <Badge variant="default" size="sm" className="ml-1.5">
-              {activeFilterCount}
-            </Badge>
-          )}
-        </Button>
+      {/* Filter row (wraps) + view toggle + sort (top-aligned right) */}
+      <div className="flex items-start gap-2">
+        {/* Wrapping filter container */}
+        <div className="flex flex-1 flex-wrap items-start gap-2">
+          {/* All Filters button */}
+          <Button variant="outline" onClick={onOpenDrawer} className="shrink-0">
+            <IconAdjustmentsHorizontal className="mr-1.5 h-4 w-4" />
+            All filters
+            {activeFilterCount > 0 && (
+              <Badge variant="default" size="sm" className="ml-1.5">
+                {activeFilterCount}
+              </Badge>
+            )}
+          </Button>
 
-        {/* Quick filters -- hidden on mobile */}
-        <div className="hidden items-center gap-2 sm:flex">
-          {quickFilters.map((def) => (
-            <PlpQuickFilter
-              key={def.id}
-              definition={def}
-              filterState={filterState}
-              onFilterChange={onFilterChange}
-            />
-          ))}
+          {/* Pinned quick filters + engaged non-quick filters -- hidden on mobile */}
+          <div className="hidden flex-wrap items-start gap-2 sm:contents">
+            {inlineFilters.map((def) => (
+              <PlpQuickFilter
+                key={def.id}
+                definition={def}
+                filterState={filterState}
+                onFilterChange={onFilterChange}
+              />
+            ))}
+
+            {/* Clear all — appears at the end whenever any filter is engaged */}
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                onClick={onClearAll}
+                className="shrink-0 text-muted-foreground"
+              >
+                Clear all
+              </Button>
+            )}
+          </div>
         </div>
-
-        {/* Spacer */}
-        <div className="flex-1" />
 
         {/* View toggle -- only at tablet+ when list view is available */}
         {renderViewToggle && (
-          <div className={cn("hidden lg:flex")}>
+          <div className={cn("hidden shrink-0 lg:flex")}>
             <PlpViewToggle value={viewMode!} onValueChange={onViewModeChange!} />
           </div>
         )}
