@@ -40,3 +40,21 @@ export const WithLabel: Story = {
     </div>
   ),
 };
+
+export const Invalid: Story = {
+  render: () => (
+    <div className="flex w-64 flex-col gap-2">
+      <Label htmlFor="invalid-email">Email address</Label>
+      <Input
+        id="invalid-email"
+        type="email"
+        defaultValue="not-an-email"
+        aria-invalid
+        aria-describedby="invalid-email-error"
+      />
+      <span id="invalid-email-error" className="text-sm text-destructive">
+        Enter a valid email address.
+      </span>
+    </div>
+  ),
+};
