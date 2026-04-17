@@ -52,6 +52,11 @@ const MOCK_SUPPLIERS: { value: string; label: string }[] = [
   { value: "sup-tyrell", label: "Tyrell Heritage Stones" },
 ];
 
+// Sample 360 rotation video — used for ~1/3 of mock items in PLP stories.
+// If this URL becomes unavailable, swap for another small public MP4.
+const SAMPLE_360_VIDEO_URL =
+  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+
 async function mockSupplierSearch(query: string) {
   // Simulate network latency
   await new Promise((resolve) => setTimeout(resolve, 300));
@@ -218,6 +223,10 @@ function gemstoneRenderGridItem(item: ReturnType<typeof generateGemstoneItems>[n
         : undefined,
       includeTariffs: item.includeTariffs,
     },
+    media360:
+      Number.parseInt(item.id.replace(/\D/g, ""), 10) % 3 === 0
+        ? { videoUrl: SAMPLE_360_VIDEO_URL }
+        : undefined,
     onAddToCart: fn(),
     onFavorite: fn(),
     onShare: fn(),
@@ -290,6 +299,10 @@ function diamondRenderGridItem(item: DiamondItem): GridItemData {
       currency: "USD",
       perCarat: { amount: item.pricePerCarat, currency: "USD" },
     },
+    media360:
+      Number.parseInt(item.id.replace(/\D/g, ""), 10) % 3 === 0
+        ? { videoUrl: SAMPLE_360_VIDEO_URL }
+        : undefined,
     onAddToCart: fn(),
     onFavorite: fn(),
     onShare: fn(),
