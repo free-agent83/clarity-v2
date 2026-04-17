@@ -62,11 +62,15 @@ export function PlpActiveFilters({
     sentinel.style.marginTop = "-1px";
     el.parentElement?.insertBefore(sentinel, el);
 
+    // `rootMargin` top is negative by the AppShellHeader's height (h-18
+    // = 72px) so the sticky transition fires at the moment the sentinel
+    // reaches the bottom edge of the header — not when it scrolls
+    // underneath the header and out of view.
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsSticky(!entry.isIntersecting);
       },
-      { threshold: 0 }
+      { threshold: 0, rootMargin: "-72px 0px 0px 0px" }
     );
 
     observer.observe(sentinel);
@@ -83,8 +87,11 @@ export function PlpActiveFilters({
       ref={stripRef}
       className={cn(
         "flex items-center gap-2 overflow-x-auto py-2",
+        // When sticky, sit directly below the AppShellHeader (which is
+        // `sticky top-0 h-18`). Using `top-18` parks the strip right
+        // under the header rather than scrolling underneath it.
         isSticky &&
-          "sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+          "sticky top-18 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
       )}
       data-slot="plp-active-filters"
     >
