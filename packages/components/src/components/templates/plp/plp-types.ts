@@ -185,6 +185,23 @@ export interface GridItemData {
   onFavorite?: (itemId: string) => void;
   onShare?: (itemId: string) => void;
   onViewMedia?: (itemId: string) => void;
+  /**
+   * Optional 360 rotation video. When present and the viewport supports
+   * hover (pointer devices), the grid item's thumbnail crossfades from
+   * the static image into this video on hover, and horizontal cursor
+   * movement scrubs the video's currentTime.
+   *
+   * Touch devices ignore this field entirely — no video element is mounted.
+   * The Lightbox (separate spec) is the touch-side experience for 360 media.
+   *
+   * Encode the source video with dense keyframes (short GOP, e.g. every
+   * 2–3 frames) so seek-based scrubbing is smooth. Sparse-keyframe videos
+   * will stutter when the cursor moves across the thumbnail.
+   */
+  media360?: {
+    /** URL to an MP4 or WebM containing the full rotation sequence. */
+    videoUrl: string;
+  };
 }
 
 // -- Sort -------------------------------------------------------------------
