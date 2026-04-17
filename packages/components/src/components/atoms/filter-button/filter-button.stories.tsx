@@ -12,6 +12,8 @@ const meta: Meta<typeof FilterButton> = {
   },
   args: {
     onDismiss: fn(),
+    onApply: fn(),
+    onClear: fn(),
     onOpenChange: fn(),
   },
   argTypes: {
@@ -24,14 +26,17 @@ const meta: Meta<typeof FilterButton> = {
 export default meta;
 type Story = StoryObj<typeof FilterButton>;
 
+const SampleControl = () => (
+  <div className="text-sm text-muted-foreground">
+    (The consumer's filter control renders here — chips, sliders, combobox,
+    etc. FilterButton renders Apply and Clear below automatically.)
+  </div>
+);
+
 export const Inactive: Story = {
   args: {
     label: "Color",
-    popoverContent: (
-      <div className="text-sm text-muted-foreground">
-        (Filter control renders here — chips, sliders, combobox, etc.)
-      </div>
-    ),
+    children: <SampleControl />,
   },
 };
 
@@ -39,11 +44,7 @@ export const Active: Story = {
   args: {
     label: "Color",
     valueSummary: "Blue, Green +3 more",
-    popoverContent: (
-      <div className="text-sm text-muted-foreground">
-        (Filter control renders here, pre-populated with the current value.)
-      </div>
-    ),
+    children: <SampleControl />,
   },
 };
 
@@ -51,11 +52,7 @@ export const ActiveSingleValue: Story = {
   args: {
     label: "Location",
     valueSummary: "Europe",
-    popoverContent: (
-      <div className="text-sm text-muted-foreground">
-        (Filter control renders here.)
-      </div>
-    ),
+    children: <SampleControl />,
   },
 };
 
@@ -63,11 +60,7 @@ export const ActiveLongValue: Story = {
   args: {
     label: "Supplier",
     valueSummary: "Acme Gem Traders, Globex Mining Co. +8 more",
-    popoverContent: (
-      <div className="text-sm text-muted-foreground">
-        (Filter control renders here.)
-      </div>
-    ),
+    children: <SampleControl />,
   },
 };
 
@@ -76,10 +69,10 @@ export const WithWidePopover: Story = {
     label: "Carat",
     valueSummary: "1.00–3.50ct",
     popoverWidth: 360,
-    popoverContent: (
+    children: (
       <div className="text-sm text-muted-foreground">
         (A wider popover, useful for range sliders or rich controls that
-        need more horizontal room.)
+        need more horizontal room. Apply / Clear still sit below.)
       </div>
     ),
   },

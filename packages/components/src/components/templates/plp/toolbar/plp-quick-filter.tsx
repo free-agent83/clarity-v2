@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../../../atoms/button/button";
 import { FilterButton } from "../../../atoms/filter-button/filter-button";
 import {
   resolveFilterControl,
@@ -19,15 +18,15 @@ import type { FilterDefinition, FilterState, FilterValue } from "../plp-types";
  * - Any value → active `FilterButton` showing `label: valueSummary` with
  *   an inline dismiss X that clears the filter.
  *
- * The popover wraps the registry-resolved filter control with Apply /
- * Clear actions. Edits happen against local `localValue` state and are
- * committed to the consumer via `onFilterChange` only when Apply is
- * clicked — same commit-on-apply pattern as the drawer.
+ * The popover's Apply / Clear buttons are provided by `FilterButton`
+ * itself. This component manages the local draft value and wires
+ * `onApply` / `onClear` / `onOpenChange` to commit-on-apply semantics
+ * matching the drawer.
  *
- * This component is used for both pinned "quick filters" (always present
- * in the toolbar, even when empty) and engaged non-quick filters (shown
- * only when they have a value). The component itself doesn't care —
- * that branching happens at the toolbar level.
+ * Used for both pinned "quick filters" (always present in the toolbar,
+ * even when empty) and engaged non-quick filters (shown only when they
+ * have a value). The branching between those two cases happens at the
+ * toolbar level.
  */
 export function PlpQuickFilter({
   definition,
@@ -38,12 +37,9 @@ export function PlpQuickFilter({
   filterState: FilterState;
   onFilterChange: (filterId: string, value: FilterValue) => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const [localValue, setLocalValue] = useState<FilterValue>(
-    filterState[definition.id]
-  );
-
   const value = filterState[definition.id];
+  const [localValue, setLocalValue] = useState<FilterValue>(value);
+
   const isActive = value !== undefined;
   const FilterControl = resolveFilterControl(definition);
 
@@ -51,22 +47,20 @@ export function PlpQuickFilter({
     ? formatFilterChipValue(definition, value)
     : undefined;
 
-  function handleOpenChange(nextOpen: boolean) {
-    if (nextOpen) {
+  function handleOpenChange(open: boolean) {
+    if (open) {
+      // Reset draft to the currently applied value each time the popover opens
       setLocalValue(filterState[definition.id]);
     }
-    setOpen(nextOpen);
   }
 
   function handleApply() {
     onFilterChange(definition.id, localValue);
-    setOpen(false);
   }
 
   function handleClear() {
     onFilterChange(definition.id, undefined);
     setLocalValue(undefined);
-    setOpen(false);
   }
 
   function handleDismiss() {
@@ -91,25 +85,17 @@ export function PlpQuickFilter({
       label={definition.label}
       valueSummary={valueSummary}
       popoverWidth={definition.popoverWidth}
-      open={open}
       onOpenChange={handleOpenChange}
+      onApply={handleApply}
+      onClear={handleClear}
       onDismiss={isActive ? handleDismiss : undefined}
-      popoverContent={
-        <div className="space-y-4">
-          <FilterControl
-            value={localValue}
-            onChange={setLocalValue}
-            options={controlOptions}
-            definition={definition}
-          />
-          <div className="flex items-center justify-between gap-2">
-            <Button variant="ghost" onClick={handleClear}>
-              Clear
-            </Button>
-            <Button onClick={handleApply}>Apply</Button>
-          </div>
-        </div>
-      }
-    />
+    >
+      <FilterControl
+        value={localValue}
+        onChange={setLocalValue}
+        options={controlOptions}
+        definition={definition}
+      />
+    </FilterButton>
   );
 }

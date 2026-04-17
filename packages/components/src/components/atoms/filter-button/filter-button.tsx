@@ -1,10 +1,12 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { IconX } from "@tabler/icons-react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/atoms/button/button";
 import {
   Popover,
   PopoverContent,
@@ -46,9 +48,7 @@ const filterButtonVariants = cva(
   }
 );
 
-interface FilterButtonProps
-  extends Omit<React.ComponentProps<"div">, "onChange">,
-    VariantProps<typeof filterButtonVariants> {
+interface FilterButtonProps extends VariantProps<typeof filterButtonVariants> {
   /** Filter label, always shown (e.g. "Color"). */
   label: string;
   /**
@@ -58,8 +58,6 @@ interface FilterButtonProps
    * / inactive state showing just `label`.
    */
   valueSummary?: string;
-  /** Content rendered inside the popover when the button is clicked. */
-  popoverContent: React.ReactNode;
   /** Optional fixed width for the popover (CSS value or pixel number). */
   popoverWidth?: number | string;
   /**
@@ -67,18 +65,34 @@ interface FilterButtonProps
    * button. Required in the active state; ignored in the inactive state.
    */
   onDismiss?: () => void;
+  /**
+   * Called when the user clicks Apply inside the popover. The popover
+   * closes automatically after this fires.
+   */
+  onApply: () => void;
+  /**
+   * Called when the user clicks Clear inside the popover. The popover
+   * closes automatically after this fires.
+   */
+  onClear: () => void;
   /** Controlled popover open state. */
   open?: boolean;
-  /** Called when the popover open state changes. */
+  /**
+   * Called when the popover open state changes. Useful for resetting
+   * a draft value when the popover opens (fires with `true`).
+   */
   onOpenChange?: (open: boolean) => void;
+  /** Filter control rendered inside the popover body, above Apply/Clear. */
+  children: React.ReactNode;
+  /** Extra classes on the outer control element. */
+  className?: string;
 }
 
 /**
  * FilterButton — a two-state control for applied filters.
  *
  * **Inactive state** (no `valueSummary`): renders a single outline button
- * showing the filter label. Clicking opens a popover with the filter's
- * control.
+ * showing the filter label. Clicking opens a popover.
  *
  * **Active state** (with `valueSummary`): renders a split control with a
  * main clickable area showing `label: valueSummary` (opens the popover
@@ -86,6 +100,12 @@ interface FilterButtonProps
  * `onDismiss`). The two regions share a single rounded outline and a
  * unified focus ring, so the control reads as one unit while exposing
  * two distinct keyboard / click targets.
+ *
+ * The popover always includes Apply / Clear actions below the consumer's
+ * filter control (passed as `children`). Both close the popover
+ * automatically after calling their respective callbacks. Consumers own
+ * draft state externally — typically reset it on the `onOpenChange(true)`
+ * callback.
  *
  * Styling is modelled on Button's `outline` variant; the active state
  * uses a filled `bg-muted` tint to indicate engagement.
@@ -95,14 +115,34 @@ interface FilterButtonProps
 function FilterButton({
   label,
   valueSummary,
-  popoverContent,
   popoverWidth,
   onDismiss,
-  open,
+  onApply,
+  onClear,
+  open: openProp,
   onOpenChange,
+  children,
   className,
-  ...props
 }: FilterButtonProps) {
+  const [openInternal, setOpenInternal] = useState(false);
+  const isControlled = openProp !== undefined;
+  const open = isControlled ? openProp : openInternal;
+
+  function setOpen(next: boolean) {
+    if (!isControlled) setOpenInternal(next);
+    onOpenChange?.(next);
+  }
+
+  function handleApply() {
+    onApply();
+    setOpen(false);
+  }
+
+  function handleClear() {
+    onClear();
+    setOpen(false);
+  }
+
   const isActive = valueSummary !== undefined;
   const popoverStyle: React.CSSProperties | undefined = popoverWidth
     ? {
@@ -114,7 +154,7 @@ function FilterButton({
     : undefined;
 
   return (
-    <Popover open={open} onOpenChange={onOpenChange}>
+    <Popover open={open} onOpenChange={setOpen}>
       {isActive ? (
         <div
           data-slot="filter-button"
@@ -123,7 +163,6 @@ function FilterButton({
             filterButtonVariants({ active: true }),
             className
           )}
-          {...props}
         >
           <PopoverTrigger asChild>
             <button
@@ -155,7 +194,7 @@ function FilterButton({
             className={cn(
               filterButtonVariants({ active: false }),
               "items-center gap-1.5 px-3 outline-none",
-              className as string | undefined
+              className
             )}
           >
             {label}
@@ -168,7 +207,15 @@ function FilterButton({
         style={popoverStyle}
         aria-label={`Filter: ${label}`}
       >
-        {popoverContent}
+        <div className="space-y-4">
+          {children}
+          <div className="flex items-center justify-between gap-2">
+            <Button variant="ghost" onClick={handleClear}>
+              Clear
+            </Button>
+            <Button onClick={handleApply}>Apply</Button>
+          </div>
+        </div>
       </PopoverContent>
     </Popover>
   );

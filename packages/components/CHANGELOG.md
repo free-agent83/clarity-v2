@@ -2,6 +2,15 @@
 
 ---
 
+### FilterButton bakes in Apply/Clear; PLP gains a sticky filter bar
+
+- `FilterButton` now renders Apply and Clear buttons in its popover footer automatically. Consumers supply the filter control as `children` and wire `onApply` / `onClear` callbacks — the popover auto-closes after either fires. The previous `popoverContent` prop is replaced by `children`.
+- `PlpQuickFilter` simplified to compose the new FilterButton API; manual Apply/Clear rendering removed.
+- New internal `PlpStickyFilterBar` component — a fixed-position bar below the AppShellHeader that appears when the main toolbar scrolls out of view. Shows the "All Filters" button and any engaged filter buttons (quick or non-quick) as a single-row horizontal list with a right-side gradient fade to signify horizontal scrollability. No visible scrollbar. Hides when the main toolbar scrolls back into view or when no filter is engaged.
+- `PlpTemplate` wires the sticky bar via an `IntersectionObserver` on the main toolbar, with `rootMargin: "-72px"` to account for the AppShellHeader height.
+
+---
+
 ### Add FilterButton atom (unstable 0.1.0)
 
 Introduces `FilterButton` — a two-state control for applied filters. In the inactive state it renders a single outline button with just the filter label; in the active state it splits into a main clickable region showing `label: value` (opens a popover for editing) and an inline dismiss X (clears the filter). Styling is modelled on Button's `outline` variant with a filled `bg-muted` tint for the active state.

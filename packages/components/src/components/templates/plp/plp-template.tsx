@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -16,6 +16,7 @@ import {
   PaginationPrevious,
 } from "../../molecules/pagination/pagination";
 import { PlpHeading } from "./heading/plp-heading";
+import { PlpStickyFilterBar } from "./toolbar/plp-sticky-filter-bar";
 import { PlpToolbar } from "./toolbar/plp-toolbar";
 import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
 import { PlpGrid } from "./grid/plp-grid";
@@ -180,6 +181,29 @@ export function PlpTemplate<TItem>({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isTabletUp = useIsTabletUp();
 
+  // Show a fixed filter bar once the main toolbar scrolls under the
+  // AppShellHeader. We observe the toolbar's visibility with a viewport
+  // top margin equal to the AppShellHeader's height (h-18 = 72px) so the
+  // sticky bar appears right when the main toolbar disappears behind
+  // the header.
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [showStickyFilterBar, setShowStickyFilterBar] = useState(false);
+
+  useEffect(() => {
+    const el = toolbarRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyFilterBar(!entry.isIntersecting),
+      { rootMargin: "-72px 0px 0px 0px", threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const hasEngagedFilters = Object.values(filterState).some(
+    (v) => v !== undefined
+  );
+
   function handleClearAllFilters() {
     for (const filter of filters) {
       if (filterState[filter.id] !== undefined) {
@@ -210,21 +234,34 @@ export function PlpTemplate<TItem>({
       />
 
       {/* Toolbar */}
-      <PlpToolbar
-        filters={filters}
-        filterState={filterState}
-        onFilterChange={onFilterChange}
-        onClearAll={handleClearAllFilters}
-        onOpenDrawer={() => setDrawerOpen(true)}
-        sortOptions={sortOptions}
-        sortValue={sortValue}
-        onSortChange={onSortChange}
-        searchPlaceholder={searchPlaceholder}
-        onSearchSubmit={onSearchSubmit}
-        viewMode={viewMode}
-        onViewModeChange={onViewModeChange}
-        showViewToggle={showViewToggle}
-      />
+      <div ref={toolbarRef}>
+        <PlpToolbar
+          filters={filters}
+          filterState={filterState}
+          onFilterChange={onFilterChange}
+          onClearAll={handleClearAllFilters}
+          onOpenDrawer={() => setDrawerOpen(true)}
+          sortOptions={sortOptions}
+          sortValue={sortValue}
+          onSortChange={onSortChange}
+          searchPlaceholder={searchPlaceholder}
+          onSearchSubmit={onSearchSubmit}
+          viewMode={viewMode}
+          onViewModeChange={onViewModeChange}
+          showViewToggle={showViewToggle}
+        />
+      </div>
+
+      {/* Sticky filter bar — appears when the main toolbar is out of view
+          and at least one filter is engaged. Hidden otherwise. */}
+      {showStickyFilterBar && hasEngagedFilters && (
+        <PlpStickyFilterBar
+          filters={filters}
+          filterState={filterState}
+          onFilterChange={onFilterChange}
+          onOpenDrawer={() => setDrawerOpen(true)}
+        />
+      )}
 
       {/* Content area */}
       {status === "loading" &&
