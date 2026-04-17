@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
-import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
 import { Input } from "../../../atoms/input/input";
 import {
@@ -13,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../molecules/select/select";
+import { PlpAllFiltersButton } from "./plp-all-filters-button";
 import { PlpQuickFilter } from "./plp-quick-filter";
 import { PlpViewToggle } from "./plp-view-toggle";
 import type {
@@ -116,15 +115,10 @@ export function PlpToolbar({
         {/* Wrapping filter container */}
         <div className="flex flex-1 flex-wrap items-start gap-2">
           {/* All Filters button */}
-          <Button variant="outline" onClick={onOpenDrawer} className="shrink-0">
-            <IconAdjustmentsHorizontal className="mr-1.5 h-4 w-4" />
-            All filters
-            {activeFilterCount > 0 && (
-              <Badge variant="default" size="sm" className="ml-1.5">
-                {activeFilterCount}
-              </Badge>
-            )}
-          </Button>
+          <PlpAllFiltersButton
+            activeFilterCount={activeFilterCount}
+            onClick={onOpenDrawer}
+          />
 
           {/* Pinned quick filters + engaged non-quick filters -- hidden on mobile */}
           <div className="hidden flex-wrap items-start gap-2 sm:contents">

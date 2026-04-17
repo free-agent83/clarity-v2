@@ -1,9 +1,7 @@
 "use client";
 
-import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "../../../atoms/badge/badge";
-import { Button } from "../../../atoms/button/button";
+import { PlpAllFiltersButton } from "./plp-all-filters-button";
 import { PlpQuickFilter } from "./plp-quick-filter";
 import type { FilterDefinition, FilterState, FilterValue } from "../plp-types";
 
@@ -67,19 +65,10 @@ export function PlpStickyFilterBar({
           <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div className="w-4 shrink-0" aria-hidden="true" />
 
-            <Button
-              variant="outline"
+            <PlpAllFiltersButton
+              activeFilterCount={activeFilterCount}
               onClick={onOpenDrawer}
-              className="shrink-0"
-            >
-              <IconAdjustmentsHorizontal className="mr-1.5 h-4 w-4" />
-              All filters
-              {activeFilterCount > 0 && (
-                <Badge variant="default" size="sm" className="ml-1.5">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </Button>
+            />
 
             {engagedFilters.map((def) => (
               <PlpQuickFilter
