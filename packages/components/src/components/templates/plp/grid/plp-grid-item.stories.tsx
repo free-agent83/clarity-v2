@@ -244,3 +244,17 @@ export const HoverState: Story = {
     await userEvent.hover(article);
   },
 };
+
+export const With360Media: Story = {
+  args: {
+    data: buildGridItemData({
+      media360: {
+        // Short public sample — hover over the thumbnail to see the crossfade
+        // and scrub behaviour. If this URL becomes unavailable, swap it for
+        // another small MP4 from a stable public bucket.
+        videoUrl:
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      },
+    }),
+  },
+};
