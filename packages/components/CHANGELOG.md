@@ -2,6 +2,19 @@
 
 ---
 
+### PLP Template — Phase 3b (unstable 0.4.0)
+
+Adds 360 rotatable media on hover to the PLP grid thumbnail. On pointer devices, items with a `media360.videoUrl` crossfade from their static image into a rotating video; horizontal cursor movement scrubs through the rotation. Touch devices skip the 360 code path entirely.
+
+- New optional `media360: { videoUrl: string }` field on `GridItemData` — category opt-in per item (`4d9ef9a`)
+- New `useHasHover` hook gating the entire 360 path on pointer-device detection — no video element mounts on touch (`aad08b3`)
+- Extracted `PlpGridThumbnail` sub-component owning the static image, optional 360 video with lazy intersection-observer loading and mousemove scrubbing, hover action toolbar, and selection checkbox (`a2110e9`)
+- `PlpGridItem` simplified to delegate thumbnail rendering to `PlpGridThumbnail` (`e532cba`)
+- Storybook: new `With360Media` grid item story; ~1/3 of mock items in PLP stories now include `media360` (`6463c28`, `178bdb3`)
+- COMPONENT.md bumped to 0.4.0 with `media360` field and encoding guidance documented (`b05f849`)
+
+---
+
 ### PLP Template — Phase 3a (unstable 0.3.0)
 
 Adds three advanced filter presets and chip truncation for multi-select values.
