@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PlpTemplate, type PlpTemplateProps } from "./plp-template";
 import { PlpUserProvider } from "./context/plp-user-context";
 import {
@@ -421,6 +421,20 @@ const DIAMOND_LIST_COLUMNS: ListColumn<DiamondItem>[] = [
 
 // ── Stateful wrapper for interactive stories ──────────────
 
+/**
+ * Mock preview-count fetcher for stories. Simulates a backend call that
+ * returns a count derived from the current filter state. Debounced by
+ * the caller via `setTimeout`-based delay.
+ */
+async function mockPreviewCount(draftState: FilterState): Promise<number> {
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  // Arbitrary formula: start from a big number and divide by (active filter count + 1).
+  const activeCount = Object.values(draftState).filter(
+    (v) => v !== undefined
+  ).length;
+  return Math.max(1, Math.round(1_234_567 / (activeCount * 3 + 1)));
+}
+
 function PlpTemplateInteractive<TItem>({
   initialFilterState = {},
   initialViewMode = "grid",
@@ -437,18 +451,36 @@ function PlpTemplateInteractive<TItem>({
   | "onPageSizeChange"
   | "viewMode"
   | "onViewModeChange"
+  | "filteredResultsCount"
+  | "onDraftFilterStateChange"
 > & {
   initialFilterState?: FilterState;
   initialViewMode?: PlpViewMode;
   sortValue: string;
   page: number;
   pageSize: number;
+  /** Initial preview count shown on the drawer's primary button. */
+  filteredResultsCount?: number;
 }) {
   const [filterState, setFilterState] = useState<FilterState>(initialFilterState);
   const [sortValue, setSortValue] = useState(props.sortValue);
   const [page, setPage] = useState(props.page);
   const [pageSize, setPageSize] = useState(props.pageSize);
   const [viewMode, setViewMode] = useState<PlpViewMode>(initialViewMode);
+  const [previewCount, setPreviewCount] = useState<number | undefined>(
+    props.filteredResultsCount
+  );
+
+  // Debounced preview-count fetcher — consumer-side concern in real apps;
+  // here we keep it inline so stories are self-contained.
+  const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function schedulePreviewCount(draft: FilterState) {
+    if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
+    fetchTimerRef.current = setTimeout(async () => {
+      const count = await mockPreviewCount(draft);
+      setPreviewCount(count);
+    }, 200);
+  }
 
   return (
     <PlpTemplate
@@ -462,9 +494,12 @@ function PlpTemplateInteractive<TItem>({
           } else {
             next[id] = value;
           }
+          schedulePreviewCount(next);
           return next;
         })
       }
+      filteredResultsCount={previewCount}
+      onDraftFilterStateChange={schedulePreviewCount}
       sortValue={sortValue}
       onSortChange={setSortValue}
       page={page}

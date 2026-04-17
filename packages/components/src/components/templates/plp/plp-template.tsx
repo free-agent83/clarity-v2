@@ -53,6 +53,21 @@ export interface PlpTemplateProps<TItem> {
   filterState: FilterState;
   onFilterChange: (filterId: string, value: FilterValue) => void;
   filteredResultsCount?: number;
+  /**
+   * Fires whenever the draft filter state inside the All Filters drawer
+   * changes, plus once on open with the initial state (= applied
+   * `filterState`).
+   *
+   * Consumers use this to fetch a preview result count from their backend
+   * and drive `filteredResultsCount` in real time while the user edits,
+   * so the "Show X results" button reflects what the draft would yield.
+   * Debouncing is the consumer's responsibility.
+   *
+   * Not called on drawer close without apply — the applied state is
+   * unchanged, so the consumer's existing count remains correct. On the
+   * next open, this fires again with the applied state.
+   */
+  onDraftFilterStateChange?: (draftState: FilterState) => void;
 
   // Sort
   sortOptions: SortOption[];
@@ -127,6 +142,7 @@ export function PlpTemplate<TItem>({
   filterState,
   onFilterChange,
   filteredResultsCount,
+  onDraftFilterStateChange,
   sortOptions,
   sortValue,
   onSortChange,
@@ -267,6 +283,7 @@ export function PlpTemplate<TItem>({
         filterState={filterState}
         onFilterChange={onFilterChange}
         filteredResultsCount={filteredResultsCount}
+        onDraftFilterStateChange={onDraftFilterStateChange}
       />
     </main>
   );

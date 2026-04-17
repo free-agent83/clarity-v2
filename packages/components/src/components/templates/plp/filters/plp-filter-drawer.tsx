@@ -37,6 +37,7 @@ export function PlpFilterDrawer({
   filterState,
   onFilterChange,
   filteredResultsCount,
+  onDraftFilterStateChange,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -44,6 +45,21 @@ export function PlpFilterDrawer({
   filterState: FilterState;
   onFilterChange: (filterId: string, value: FilterValue) => void;
   filteredResultsCount?: number;
+  /**
+   * Fires whenever the draft filter state inside the drawer changes, plus
+   * once on open with the initial state (= applied `filterState`).
+   *
+   * Consumers use this to fetch a preview result count from their backend
+   * and drive `filteredResultsCount` in real time while the user edits,
+   * so the "Show X results" button reflects what the draft would yield.
+   * Debouncing is the consumer's responsibility.
+   *
+   * Not called when the drawer closes without applying — the applied
+   * `filterState` is unchanged, so the consumer's existing count remains
+   * correct. On the next open, this fires again with the applied state
+   * so any stale draft-based count is superseded.
+   */
+  onDraftFilterStateChange?: (draftState: FilterState) => void;
 }) {
   // Draft state scoped to the current open session. Initialised from the
   // consumer's applied `filterState` when the drawer opens; mutations
@@ -53,6 +69,7 @@ export function PlpFilterDrawer({
   useEffect(() => {
     if (open) {
       setDraftState(filterState);
+      onDraftFilterStateChange?.(filterState);
     }
     // Intentionally not reacting to filterState changes while open — external
     // changes during a draft session would clobber the user's in-progress edits.
@@ -67,12 +84,15 @@ export function PlpFilterDrawer({
       } else {
         next[filterId] = value;
       }
+      onDraftFilterStateChange?.(next);
       return next;
     });
   }
 
   function handleClearDraft() {
-    setDraftState({});
+    const next: FilterState = {};
+    setDraftState(next);
+    onDraftFilterStateChange?.(next);
   }
 
   function handleApply() {
