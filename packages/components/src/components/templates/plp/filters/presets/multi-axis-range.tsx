@@ -9,13 +9,6 @@ import type {
   PresetFilterDefinition,
 } from "../../plp-types";
 
-/**
- * Props for the multi-axis-range preset.
- */
-export interface MultiAxisRangeFilterProps extends FilterControlProps {
-  definition: PresetFilterDefinition;
-}
-
 type AxisValues = Record<string, { min: number; max: number }>;
 
 function toAxisValues(value: FilterValue): AxisValues {
@@ -42,7 +35,10 @@ export function MultiAxisRangeFilter({
   value,
   onChange,
   definition,
-}: MultiAxisRangeFilterProps) {
+}: FilterControlProps) {
+  if (!definition || definition.preset !== "multi-axis-range") {
+    return null;
+  }
   const axes = definition.axes ?? [];
   const axisValues = toAxisValues(value);
 

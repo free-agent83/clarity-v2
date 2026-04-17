@@ -148,4 +148,65 @@ describe("formatFilterChipValue", () => {
     expect(formatFilterChipValue(def, ["blue"])).toBe("Blue");
     expect(formatFilterChipValue(def, ["blue", "green"])).toBe("Blue, Green");
   });
+
+  it("formats range-slider with currency unit as prefix", () => {
+    const def: PresetFilterDefinition = {
+      id: "price",
+      label: "Price",
+      preset: "range-slider",
+      min: 0,
+      max: 10000,
+      unit: "$",
+    };
+    expect(formatFilterChipValue(def, { min: 100, max: 500 })).toBe("$100\u2013$500");
+  });
+
+  it("formats range-slider with non-currency unit as suffix", () => {
+    const def: PresetFilterDefinition = {
+      id: "carat",
+      label: "Carat",
+      preset: "range-slider",
+      min: 0,
+      max: 10,
+      unit: "ct",
+    };
+    expect(formatFilterChipValue(def, { min: 1, max: 3.5 })).toBe("1ct\u20133.5ct");
+  });
+
+  it("formats multi-axis-range with single active axis", () => {
+    const def: PresetFilterDefinition = {
+      id: "size",
+      label: "Size",
+      preset: "multi-axis-range",
+      axes: [
+        { id: "length", label: "Length", min: 0, max: 20, unit: "mm" },
+        { id: "width", label: "Width", min: 0, max: 20, unit: "mm" },
+        { id: "depth", label: "Depth", min: 0, max: 10, unit: "mm" },
+      ],
+    };
+    expect(formatFilterChipValue(def, { length: { min: 5, max: 10 } })).toBe(
+      "L 5mm\u201310mm"
+    );
+  });
+
+  it("formats multi-axis-range with three active axes (no truncation)", () => {
+    const def: PresetFilterDefinition = {
+      id: "size",
+      label: "Size",
+      preset: "multi-axis-range",
+      axes: [
+        { id: "length", label: "Length", min: 0, max: 20, unit: "mm" },
+        { id: "width", label: "Width", min: 0, max: 20, unit: "mm" },
+        { id: "depth", label: "Depth", min: 0, max: 10, unit: "mm" },
+      ],
+    };
+    const value = {
+      length: { min: 5, max: 10 },
+      width: { min: 5, max: 10 },
+      depth: { min: 2, max: 4 },
+    };
+    expect(formatFilterChipValue(def, value)).toBe(
+      "L 5mm\u201310mm, W 5mm\u201310mm +1 more"
+    );
+  });
 });

@@ -18,13 +18,6 @@ import type {
 } from "../../plp-types";
 
 /**
- * Props for the async-combobox preset.
- */
-export interface AsyncComboboxFilterProps extends FilterControlProps {
-  definition: PresetFilterDefinition;
-}
-
-/**
  * Async multi-select combobox filter preset.
  *
  * Loads options lazily via `definition.searchFn`:
@@ -42,8 +35,12 @@ export interface AsyncComboboxFilterProps extends FilterControlProps {
 export function AsyncComboboxFilter({
   value,
   onChange,
-  definition,
-}: AsyncComboboxFilterProps) {
+  definition: rawDefinition,
+}: FilterControlProps) {
+  if (!rawDefinition || rawDefinition.preset !== "async-combobox") {
+    return null;
+  }
+  const definition: PresetFilterDefinition = rawDefinition;
   const selectedValues = Array.isArray(value) ? value : [];
   const debounceMs = definition.searchDebounceMs ?? 250;
 

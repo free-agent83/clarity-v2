@@ -4,21 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "../../../../atoms/input/input";
 import { Slider } from "../../../../atoms/slider/slider";
-import type {
-  FilterControlProps,
-  PresetFilterDefinition,
-} from "../../plp-types";
-
-/**
- * Props for the range-slider preset.
- *
- * Accepts the full `PresetFilterDefinition` so the preset can read its own
- * config (`min`, `max`, `step`, `unit`, `histogram`) without the registry
- * having to dissect the definition into loose props.
- */
-export interface RangeSliderFilterProps extends FilterControlProps {
-  definition: PresetFilterDefinition;
-}
+import type { FilterControlProps } from "../../plp-types";
 
 /**
  * Range slider filter preset.
@@ -31,7 +17,10 @@ export function RangeSliderFilter({
   value,
   onChange,
   definition,
-}: RangeSliderFilterProps) {
+}: FilterControlProps) {
+  if (!definition || definition.preset !== "range-slider") {
+    return null;
+  }
   const rangeMin = definition.min ?? 0;
   const rangeMax = definition.max ?? 100;
   const step = definition.step ?? 1;

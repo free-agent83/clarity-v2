@@ -80,6 +80,7 @@ export function PlpFilterDrawer({
                     value={filterState[definition.id]}
                     onChange={(value) => onFilterChange(definition.id, value)}
                     options={controlOptions}
+                    definition={definition}
                   />
                 </div>
               </div>

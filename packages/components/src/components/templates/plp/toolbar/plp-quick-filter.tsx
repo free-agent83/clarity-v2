@@ -92,6 +92,7 @@ export function PlpQuickFilter({
             value={localValue}
             onChange={setLocalValue}
             options={controlOptions}
+            definition={definition}
           />
           <div className="flex items-center justify-between gap-2">
             <Button variant="ghost" onClick={handleClear}>

@@ -22,6 +22,12 @@ export interface FilterControlProps {
   value: FilterValue;
   onChange: (value: FilterValue) => void;
   options?: FilterOption[];
+  /**
+   * Full filter definition — optional for backward compatibility with
+   * presets that don't need it. Presets that read config fields like
+   * `min`, `max`, `axes`, or `searchFn` require this.
+   */
+  definition?: FilterDefinition;
 }
 
 /** Union of all possible filter value shapes. */
