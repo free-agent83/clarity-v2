@@ -84,6 +84,18 @@ Introduces the `Templates/` tier and ships the first page-level template: `PlpTe
 
 ---
 
+### Atoms round 2: styling refresh, docs, stories, --ring retuned ([#120](https://github.com/free-agent83/clarity-v2/pull/120))
+
+Refresh of six form/feedback atoms: upstream styling applied, docs and stories populated, `--ring` theme token retuned to the violet brand hue.
+
+- Alert, Checkbox, RadioGroup, Slider, Switch, Textarea: upstream styling (size, colour, shadow, cursor) refreshed; `globals.css` `--ring` shifted from stone-neutral to violet brand hue (`1b6e84f`)
+- Six atoms: argTypes, non-discoverable composition stories (icon/action Alert, horizontal RadioGroup, range/vertical Slider, settings-row Switch), play functions on every interactive component, full COMPONENT.md (props, usage, best practices, writing, quality checklist) (`d90fb27`, `530e9f8`, `ea51323`, `128f358`, `15972cd`, `fda69c3`)
+- Checkbox and Switch: Rule 1 token-gap flags recorded — `rounded-[4px]` on Checkbox; `h-[14px]`, `w-[24px]`, `size-[18px]`, two `translate-x-[calc(…)]` on Switch. Canonical spacing-token equivalents identified for three of the Switch literals; fix deferred per flag-don't-fix policy (`530e9f8`, `15972cd`)
+- Slider: `Snapping` story added showcasing step-based detents; iterated down to slider-only after UX review (`f536dad`, `611f721`, `b19a39b`)
+- Input: `Invalid` story added with `aria-invalid` + associated `aria-describedby` error (`6a2e5ec`)
+
+---
+
 ### AppShell organism and Brand foundation
 
 Introduces `AppShell` (page-shell organism) and `Brand` (Nivoda wordmark atom), both shipped as `stable 0.0.1`.

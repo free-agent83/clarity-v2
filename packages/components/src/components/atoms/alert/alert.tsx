@@ -3,6 +3,11 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Alert variants.
+ *
+ * Variant axis = visual style (default, destructive, warning, info, success)
+ */
 const alertVariants = cva(
   "group/alert relative grid w-full gap-0.5 rounded-lg border px-4 py-3 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2.5 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
   {
@@ -10,7 +15,13 @@ const alertVariants = cva(
       variant: {
         default: "bg-card text-card-foreground",
         destructive:
-          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
+          "border-transparent bg-destructive/5 text-destructive *:data-[slot=alert-description]:text-destructive/90 dark:bg-destructive/10",
+        warning:
+          "border-transparent bg-warning/5 text-card-foreground dark:bg-warning/10",
+        info:
+          "border-transparent bg-info/5 text-info *:data-[slot=alert-description]:text-info/90 dark:bg-info/10",
+        success:
+          "border-transparent bg-success/5 text-success *:data-[slot=alert-description]:text-success/90 dark:bg-success/10",
       },
     },
     defaultVariants: {
