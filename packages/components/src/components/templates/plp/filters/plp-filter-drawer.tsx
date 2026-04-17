@@ -127,6 +127,10 @@ export function PlpFilterDrawer({
       ? new Intl.NumberFormat("en-US").format(filteredResultsCount)
       : null;
 
+  const hasActiveDraft = Object.values(draftState).some(
+    (v) => v !== undefined
+  );
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
@@ -134,8 +138,13 @@ export function PlpFilterDrawer({
         className="flex w-full max-w-sm flex-col"
         aria-label="All filters"
       >
-        <SheetHeader>
+        <SheetHeader className="flex-row items-center justify-between pr-10">
           <SheetTitle>Filters</SheetTitle>
+          {hasActiveDraft && (
+            <Button variant="link" size="sm" onClick={handleClearDraft}>
+              Clear
+            </Button>
+          )}
         </SheetHeader>
 
         {/* Scrollable filter list */}
@@ -178,11 +187,9 @@ export function PlpFilterDrawer({
           })}
         </div>
 
-        {/* Sticky footer — primary action stacked on top, clear as a small
-            ghost beneath. Keeps the primary action's width stable between
-            idle and loading states so the spinner swap doesn't cause a
-            horizontal layout shift. */}
-        <SheetFooter className="flex-col gap-1 border-t px-6 py-4">
+        {/* Sticky footer — single primary action. "Clear" lives in the
+            header next to the close button when any filter is active. */}
+        <SheetFooter className="border-t px-6 py-4">
           <Button
             block
             onClick={handleApply}
@@ -190,9 +197,6 @@ export function PlpFilterDrawer({
             disabled={isCountLoading}
           >
             {formattedCount ? `Show ${formattedCount} results` : "Show results"}
-          </Button>
-          <Button variant="ghost" size="sm" onClick={handleClearDraft}>
-            Clear filters
           </Button>
         </SheetFooter>
       </SheetContent>
