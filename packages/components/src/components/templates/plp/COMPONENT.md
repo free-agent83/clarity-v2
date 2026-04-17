@@ -1,7 +1,7 @@
 ---
 name: PlpTemplate
 slug: plp-template
-version: 0.1.0
+version: 0.2.0
 status: unstable
 lastUpdated: 2026-04-16
 ---
@@ -28,6 +28,10 @@ Product Listing Page template — a page-level component that orchestrates a com
 | `onSearchSubmit` | `(query: string) => void` | — | Called on search submit (Enter key) |
 | `items` | `TItem[]` | — | Raw items from the consumer |
 | `renderGridItem` | `(item: TItem) => GridItemData` | — | Maps raw items to the grid item data shape |
+| `listColumns` | `ListColumn<TItem>[]` | — | Category-configured columns for list view. Presence of a non-empty array enables the grid/list toggle. Omit for grid-only. |
+| `viewMode` | `"grid" \| "list"` | `"grid"` | Current view mode. Template silently falls back to grid at viewports < 1024px. |
+| `onViewModeChange` | `(mode: "grid" \| "list") => void` | — | Called when the user toggles view mode. |
+| `onItemClick` | `(item: TItem) => void` | — | Called when a list view row is clicked. No effect in grid view. |
 | `page` | `number` | — | Current page number |
 | `pageSize` | `number` | — | Items per page |
 | `totalItems` | `number` | — | Total items for pagination |
@@ -44,6 +48,10 @@ Product Listing Page template — a page-level component that orchestrates a com
 **When to use:** Any product listing page that shows a grid of items with filtering, sorting, and pagination. Must be rendered inside an AppShell.
 
 **When NOT to use:** Pages that aren't product listings (dashboards, settings, auth flows). Pages that need a completely custom layout not matching the PLP structure.
+
+### List view (Phase 2)
+
+List view is a density-oriented alternative to grid view for categories that benefit from parameter-by-parameter comparison (diamonds is the canonical case). Opt in by passing a non-empty `listColumns` array. The grid/list toggle appears in the toolbar automatically when list view is available and the viewport is ≥ 1024px. Below the tablet breakpoint, the template silently falls back to grid view — the consumer's `viewMode` state is preserved and honored when the viewport grows.
 
 ## Best practices
 
