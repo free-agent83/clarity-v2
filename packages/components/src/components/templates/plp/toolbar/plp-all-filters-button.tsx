@@ -23,9 +23,7 @@ export function PlpAllFiltersButton({
       <IconAdjustmentsHorizontal className="mr-1.5 h-4 w-4" />
       All filters
       {activeFilterCount > 0 && (
-        <Badge size="sm" className="ml-1.5">
-          {activeFilterCount}
-        </Badge>
+        <span className="bg-accent text-accent-foreground px-1.5 rounded-full text-xs">{activeFilterCount}</span>
       )}
     </Button>
   );

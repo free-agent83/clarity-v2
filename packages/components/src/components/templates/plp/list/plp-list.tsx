@@ -43,6 +43,7 @@ export function PlpList<TItem>({
   );
 
   return (
+    <div className="overflow-hidden rounded-lg border border-border">
     <Table data-slot="plp-list">
       <TableHeader className="sticky top-0 z-10 bg-background">
         <TableRow>
@@ -86,5 +87,6 @@ export function PlpList<TItem>({
         ))}
       </TableBody>
     </Table>
+    </div>
   );
 }
