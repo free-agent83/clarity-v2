@@ -11,6 +11,22 @@ import { SingleSelectChipsFilter } from "./presets/single-select-chips";
 import { MultiSelectChipsFilter } from "./presets/multi-select-chips";
 import { SingleSelectDropdownFilter } from "./presets/single-select-dropdown";
 
+/**
+ * Formats an array of labels for display in an active filter chip.
+ *
+ * - 0 labels → empty string (not expected; caller should gate on value).
+ * - 1 label  → the label itself.
+ * - 2 labels → `"Label1, Label2"`.
+ * - 3+ labels → `"Label1, Label2 +N more"` (N = labels.length - 2).
+ */
+function formatMultiSelectChip(labels: string[]): string {
+  if (labels.length === 0) return "";
+  if (labels.length === 1) return labels[0];
+  if (labels.length === 2) return `${labels[0]}, ${labels[1]}`;
+  const remaining = labels.length - 2;
+  return `${labels[0]}, ${labels[1]} +${remaining} more`;
+}
+
 /** A component or function that renders a filter control. */
 export type FilterRenderer =
   | ComponentType<FilterControlProps>
@@ -74,14 +90,14 @@ export function formatFilterChipValue(
       return option?.label ?? String(value);
     }
 
-    case "multi-select-chips": {
+    case "multi-select-chips":
+    case "async-combobox": {
       if (!Array.isArray(value)) return String(value);
-      return value
-        .map((v) => {
-          const option = preset.options?.find((o) => o.value === v);
-          return option?.label ?? v;
-        })
-        .join(", ");
+      const labels = value.map((v) => {
+        const option = preset.options?.find((o) => o.value === v);
+        return option?.label ?? v;
+      });
+      return formatMultiSelectChip(labels);
     }
 
     default:

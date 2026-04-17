@@ -113,4 +113,39 @@ describe("formatFilterChipValue", () => {
     };
     expect(formatFilterChipValue(def, undefined)).toBe("");
   });
+
+  it("formats multi-select with 3+ selections as first-two-plus-more", () => {
+    const def: PresetFilterDefinition = {
+      id: "color",
+      label: "Color",
+      preset: "multi-select-chips",
+      options: [
+        { value: "blue", label: "Blue" },
+        { value: "green", label: "Green" },
+        { value: "red", label: "Red" },
+        { value: "teal", label: "Teal" },
+        { value: "pink", label: "Pink" },
+      ],
+    };
+    expect(formatFilterChipValue(def, ["blue", "green", "red"])).toBe(
+      "Blue, Green +1 more"
+    );
+    expect(formatFilterChipValue(def, ["blue", "green", "red", "teal", "pink"])).toBe(
+      "Blue, Green +3 more"
+    );
+  });
+
+  it("still formats multi-select with 1 or 2 selections without truncation", () => {
+    const def: PresetFilterDefinition = {
+      id: "color",
+      label: "Color",
+      preset: "multi-select-chips",
+      options: [
+        { value: "blue", label: "Blue" },
+        { value: "green", label: "Green" },
+      ],
+    };
+    expect(formatFilterChipValue(def, ["blue"])).toBe("Blue");
+    expect(formatFilterChipValue(def, ["blue", "green"])).toBe("Blue, Green");
+  });
 });
