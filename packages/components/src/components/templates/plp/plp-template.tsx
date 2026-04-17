@@ -22,15 +22,20 @@ import { PlpActiveFilters } from "./filters/plp-active-filters";
 import { PlpGrid } from "./grid/plp-grid";
 import { PlpGridItem } from "./grid/plp-grid-item";
 import { PlpGridSkeleton } from "./grid/plp-grid-skeleton";
+import { PlpList } from "./list/plp-list";
+import { PlpListSkeleton } from "./list/plp-list-skeleton";
 import { PlpEmpty } from "./states/plp-empty";
 import { PlpError } from "./states/plp-error";
+import { useIsTabletUp } from "./hooks/use-is-tablet-up";
 import type {
   BreadcrumbSegment,
   FilterDefinition,
   FilterState,
   FilterValue,
   GridItemData,
+  ListColumn,
   PlpStatus,
+  PlpViewMode,
   SortOption,
 } from "./plp-types";
 
@@ -58,9 +63,29 @@ export interface PlpTemplateProps<TItem> {
   searchPlaceholder?: string;
   onSearchSubmit?: (query: string) => void;
 
-  // Grid items
+  // Items
   items: TItem[];
   renderGridItem: (item: TItem) => GridItemData;
+
+  // List view (Phase 2) — optional
+  /**
+   * Category-configured columns for list view. Presence of a non-empty
+   * array enables list view availability (the toggle appears and the
+   * consumer can switch modes). Omit or pass empty to keep grid-only.
+   */
+  listColumns?: ListColumn<TItem>[];
+  /**
+   * Current view mode. Defaults to "grid" when undefined.
+   * The template silently falls back to grid at viewports < 1024px,
+   * without calling `onViewModeChange`.
+   */
+  viewMode?: PlpViewMode;
+  onViewModeChange?: (mode: PlpViewMode) => void;
+  /**
+   * Called when the user clicks a list view row.
+   * List view only; no effect in grid view.
+   */
+  onItemClick?: (item: TItem) => void;
 
   // Pagination
   page: number;
@@ -81,8 +106,9 @@ export interface PlpTemplateProps<TItem> {
  * Product Listing Page template.
  *
  * A page-level component that orchestrates a complete product listing
- * experience: heading, toolbar with filtering and sorting, responsive
- * product grid, pagination, and loading/empty/error states.
+ * experience: heading, toolbar with filtering/sorting/view toggle,
+ * responsive product grid or list, pagination, and loading/empty/error
+ * states.
  *
  * The template is stateless with respect to data fetching, routing, and
  * persistence. It receives state and emits change events. Consumers own
@@ -91,6 +117,7 @@ export interface PlpTemplateProps<TItem> {
  * Must be rendered inside an AppShell.
  *
  * @see docs/plans/specs/2026-04-16-plp-template-phase1-design.md
+ * @see docs/plans/specs/2026-04-16-plp-template-phase2-design.md
  */
 export function PlpTemplate<TItem>({
   breadcrumbs,
@@ -107,6 +134,10 @@ export function PlpTemplate<TItem>({
   onSearchSubmit,
   items,
   renderGridItem,
+  listColumns,
+  viewMode = "grid",
+  onViewModeChange,
+  onItemClick,
   page,
   pageSize,
   totalItems,
@@ -119,6 +150,7 @@ export function PlpTemplate<TItem>({
   emptyMessage,
 }: PlpTemplateProps<TItem>) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const isTabletUp = useIsTabletUp();
 
   function handleClearAllFilters() {
     for (const filter of filters) {
@@ -129,6 +161,16 @@ export function PlpTemplate<TItem>({
   }
 
   const totalPages = Math.ceil(totalItems / pageSize);
+
+  // Resolve the effective view mode:
+  // - Grid if list view is not available (no columns or empty)
+  // - Grid if viewport is below tablet (silent fallback, consumer intent preserved)
+  // - Otherwise, whatever the consumer asked for
+  const listViewAvailable = !!listColumns && listColumns.length > 0;
+  const effectiveViewMode: PlpViewMode =
+    listViewAvailable && isTabletUp && viewMode === "list" ? "list" : "grid";
+
+  const showViewToggle = listViewAvailable;
 
   return (
     <main className="space-y-4" data-slot="plp-template">
@@ -150,6 +192,9 @@ export function PlpTemplate<TItem>({
         onSortChange={onSortChange}
         searchPlaceholder={searchPlaceholder}
         onSearchSubmit={onSearchSubmit}
+        viewMode={viewMode}
+        onViewModeChange={onViewModeChange}
+        showViewToggle={showViewToggle}
       />
 
       {/* Active filters strip */}
@@ -161,20 +206,33 @@ export function PlpTemplate<TItem>({
       />
 
       {/* Content area */}
-      {status === "loading" && <PlpGridSkeleton count={pageSize} />}
+      {status === "loading" &&
+        (effectiveViewMode === "list" && listColumns ? (
+          <PlpListSkeleton listColumns={listColumns} count={pageSize} />
+        ) : (
+          <PlpGridSkeleton count={pageSize} />
+        ))}
 
-      {status === "success" && (
-        <PlpGrid>
-          {items.map((item) => {
-            const data = renderGridItem(item);
-            return (
-              <div key={data.id} role="listitem">
-                <PlpGridItem data={data} />
-              </div>
-            );
-          })}
-        </PlpGrid>
-      )}
+      {status === "success" &&
+        (effectiveViewMode === "list" && listColumns ? (
+          <PlpList
+            items={items}
+            renderGridItem={renderGridItem}
+            listColumns={listColumns}
+            onItemClick={onItemClick}
+          />
+        ) : (
+          <PlpGrid>
+            {items.map((item) => {
+              const data = renderGridItem(item);
+              return (
+                <div key={data.id} role="listitem">
+                  <PlpGridItem data={data} />
+                </div>
+              );
+            })}
+          </PlpGrid>
+        ))}
 
       {(status === "empty-filtered" || status === "empty-no-items") && (
         <PlpEmpty
@@ -189,7 +247,7 @@ export function PlpTemplate<TItem>({
 
       {status === "error" && <PlpError onRetry={onRetry} />}
 
-      {/* Pagination — only shown when there are items */}
+      {/* Pagination -- only shown when there are items */}
       {status === "success" && totalItems > 0 && (
         <PlpPagination
           page={page}
