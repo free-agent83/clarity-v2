@@ -58,16 +58,21 @@ export interface PlpTemplateProps<TItem> {
    * changes, plus once on open with the initial state (= applied
    * `filterState`).
    *
+   * Required: the drawer is designed around a live preview-count pattern.
    * Consumers use this to fetch a preview result count from their backend
    * and drive `filteredResultsCount` in real time while the user edits,
    * so the "Show X results" button reflects what the draft would yield.
    * Debouncing is the consumer's responsibility.
    *
+   * If a consumer genuinely doesn't want a live preview count, pass a
+   * no-op — but the expected pattern is to wire this to a debounced API
+   * call and update `filteredResultsCount` accordingly.
+   *
    * Not called on drawer close without apply — the applied state is
    * unchanged, so the consumer's existing count remains correct. On the
    * next open, this fires again with the applied state.
    */
-  onDraftFilterStateChange?: (draftState: FilterState) => void;
+  onDraftFilterStateChange: (draftState: FilterState) => void;
 
   // Sort
   sortOptions: SortOption[];

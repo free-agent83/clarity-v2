@@ -49,17 +49,22 @@ export function PlpFilterDrawer({
    * Fires whenever the draft filter state inside the drawer changes, plus
    * once on open with the initial state (= applied `filterState`).
    *
+   * Required: the drawer is designed around a live preview-count pattern.
    * Consumers use this to fetch a preview result count from their backend
    * and drive `filteredResultsCount` in real time while the user edits,
    * so the "Show X results" button reflects what the draft would yield.
    * Debouncing is the consumer's responsibility.
+   *
+   * If a consumer genuinely doesn't want a live preview count, pass a
+   * no-op — but the expected pattern is to wire this to a debounced API
+   * call and update `filteredResultsCount` accordingly.
    *
    * Not called when the drawer closes without applying — the applied
    * `filterState` is unchanged, so the consumer's existing count remains
    * correct. On the next open, this fires again with the applied state
    * so any stale draft-based count is superseded.
    */
-  onDraftFilterStateChange?: (draftState: FilterState) => void;
+  onDraftFilterStateChange: (draftState: FilterState) => void;
 }) {
   // Draft state scoped to the current open session. Initialised from the
   // consumer's applied `filterState` when the drawer opens; mutations
@@ -69,7 +74,7 @@ export function PlpFilterDrawer({
   useEffect(() => {
     if (open) {
       setDraftState(filterState);
-      onDraftFilterStateChange?.(filterState);
+      onDraftFilterStateChange(filterState);
     }
     // Intentionally not reacting to filterState changes while open — external
     // changes during a draft session would clobber the user's in-progress edits.
@@ -84,7 +89,7 @@ export function PlpFilterDrawer({
       } else {
         next[filterId] = value;
       }
-      onDraftFilterStateChange?.(next);
+      onDraftFilterStateChange(next);
       return next;
     });
   }
@@ -92,7 +97,7 @@ export function PlpFilterDrawer({
   function handleClearDraft() {
     const next: FilterState = {};
     setDraftState(next);
-    onDraftFilterStateChange?.(next);
+    onDraftFilterStateChange(next);
   }
 
   function handleApply() {
