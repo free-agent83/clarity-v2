@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import { Badge } from "../../../atoms/badge/badge";
@@ -13,19 +14,26 @@ import {
   SelectValue,
 } from "../../../molecules/select/select";
 import { PlpQuickFilter } from "./plp-quick-filter";
+import { PlpViewToggle } from "./plp-view-toggle";
 import type {
   FilterDefinition,
   FilterState,
   FilterValue,
+  PlpViewMode,
   SortOption,
 } from "../plp-types";
-import { useState } from "react";
 
 /**
- * PLP toolbar -- search, All Filters button, quick filters, and sort.
+ * PLP toolbar — search, All Filters button, quick filters, view toggle, and sort.
  *
  * On mobile (< 640px): shows only All Filters + Sort.
  * On desktop: full toolbar with search, quick filters, and sort.
+ *
+ * The grid/list view toggle renders to the left of Sort when all of the
+ * following are true:
+ *   - `showViewToggle` is true (category has list view available)
+ *   - `viewMode` and `onViewModeChange` are both provided
+ *   - Viewport is ≥ 1024px (enforced here via `hidden lg:flex` wrapper)
  */
 export function PlpToolbar({
   filters,
@@ -37,6 +45,9 @@ export function PlpToolbar({
   onSortChange,
   searchPlaceholder,
   onSearchSubmit,
+  viewMode,
+  onViewModeChange,
+  showViewToggle = false,
 }: {
   filters: FilterDefinition[];
   filterState: FilterState;
@@ -47,6 +58,9 @@ export function PlpToolbar({
   onSortChange: (value: string) => void;
   searchPlaceholder?: string;
   onSearchSubmit?: (query: string) => void;
+  viewMode?: PlpViewMode;
+  onViewModeChange?: (mode: PlpViewMode) => void;
+  showViewToggle?: boolean;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -60,6 +74,9 @@ export function PlpToolbar({
       onSearchSubmit(searchQuery);
     }
   }
+
+  const renderViewToggle =
+    showViewToggle && viewMode !== undefined && !!onViewModeChange;
 
   return (
     <div className="space-y-3" data-slot="plp-toolbar">
@@ -76,7 +93,7 @@ export function PlpToolbar({
         </div>
       )}
 
-      {/* Filter bar + sort */}
+      {/* Filter bar + toggle + sort */}
       <div className="flex items-center gap-2">
         {/* All Filters button */}
         <Button variant="outline" onClick={onOpenDrawer} className="shrink-0">
@@ -103,6 +120,13 @@ export function PlpToolbar({
 
         {/* Spacer */}
         <div className="flex-1" />
+
+        {/* View toggle -- only at tablet+ when list view is available */}
+        {renderViewToggle && (
+          <div className={cn("hidden lg:flex")}>
+            <PlpViewToggle value={viewMode!} onValueChange={onViewModeChange!} />
+          </div>
+        )}
 
         {/* Sort */}
         <div className="shrink-0">
