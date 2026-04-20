@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Input } from "../../../../atoms/input/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "../../../../atoms/input-group/input-group";
 import { Slider } from "../../../../atoms/slider/slider";
 import type {
   FilterControlProps,
@@ -129,10 +134,11 @@ function AxisRow({
         max={axis.max}
         step={step}
         onValueChange={(values) => onCommit(values[0], values[1])}
+        className="my-3"
       />
       <div className="flex items-center gap-2">
-        <div className="flex flex-1 items-center gap-1">
-          <Input
+        <InputGroup className="flex-1">
+          <InputGroupInput
             type="number"
             inputMode="decimal"
             value={minInput}
@@ -140,15 +146,16 @@ function AxisRow({
             onBlur={commitInputs}
             onKeyDown={handleKeyDown}
             aria-label={`${axis.label} min`}
-            className="flex-1"
           />
           {axis.unit && (
-            <span className="text-sm text-muted-foreground">{axis.unit}</span>
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>{axis.unit}</InputGroupText>
+            </InputGroupAddon>
           )}
-        </div>
+        </InputGroup>
         <span className="text-muted-foreground">–</span>
-        <div className="flex flex-1 items-center gap-1">
-          <Input
+        <InputGroup className="flex-1">
+          <InputGroupInput
             type="number"
             inputMode="decimal"
             value={maxInput}
@@ -156,12 +163,13 @@ function AxisRow({
             onBlur={commitInputs}
             onKeyDown={handleKeyDown}
             aria-label={`${axis.label} max`}
-            className="flex-1"
           />
           {axis.unit && (
-            <span className="text-sm text-muted-foreground">{axis.unit}</span>
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>{axis.unit}</InputGroupText>
+            </InputGroupAddon>
           )}
-        </div>
+        </InputGroup>
       </div>
     </div>
   );

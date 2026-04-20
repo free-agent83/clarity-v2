@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Input } from "../../../../atoms/input/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "../../../../atoms/input-group/input-group";
 import { Slider } from "../../../../atoms/slider/slider";
 import type { FilterControlProps } from "../../plp-types";
 
@@ -106,6 +111,7 @@ export function RangeSliderFilter({
         max={rangeMax}
         step={step}
         onValueChange={handleSliderChange}
+        className="my-2"
       />
 
       <div className="flex items-center gap-2">
@@ -113,11 +119,13 @@ export function RangeSliderFilter({
           <label className="text-xs text-muted-foreground" htmlFor={`${definition.id}-min`}>
             Min
           </label>
-          <div className="flex items-center gap-1">
+          <InputGroup>
             {isCurrencyUnit && definition.unit && (
-              <span className="text-sm text-muted-foreground">{definition.unit}</span>
+              <InputGroupAddon align="inline-start">
+                <InputGroupText>{definition.unit}</InputGroupText>
+              </InputGroupAddon>
             )}
-            <Input
+            <InputGroupInput
               id={`${definition.id}-min`}
               type="number"
               inputMode="decimal"
@@ -125,22 +133,25 @@ export function RangeSliderFilter({
               onChange={(e) => setMinInput(e.target.value)}
               onBlur={commitInputs}
               onKeyDown={handleKeyDown}
-              className="flex-1"
             />
             {!isCurrencyUnit && definition.unit && (
-              <span className="text-sm text-muted-foreground">{definition.unit}</span>
+              <InputGroupAddon align="inline-end">
+                <InputGroupText>{definition.unit}</InputGroupText>
+              </InputGroupAddon>
             )}
-          </div>
+          </InputGroup>
         </div>
         <div className="flex flex-1 flex-col gap-1">
           <label className="text-xs text-muted-foreground" htmlFor={`${definition.id}-max`}>
             Max
           </label>
-          <div className="flex items-center gap-1">
+          <InputGroup>
             {isCurrencyUnit && definition.unit && (
-              <span className="text-sm text-muted-foreground">{definition.unit}</span>
+              <InputGroupAddon align="inline-start">
+                <InputGroupText>{definition.unit}</InputGroupText>
+              </InputGroupAddon>
             )}
-            <Input
+            <InputGroupInput
               id={`${definition.id}-max`}
               type="number"
               inputMode="decimal"
@@ -148,12 +159,13 @@ export function RangeSliderFilter({
               onChange={(e) => setMaxInput(e.target.value)}
               onBlur={commitInputs}
               onKeyDown={handleKeyDown}
-              className="flex-1"
             />
             {!isCurrencyUnit && definition.unit && (
-              <span className="text-sm text-muted-foreground">{definition.unit}</span>
+              <InputGroupAddon align="inline-end">
+                <InputGroupText>{definition.unit}</InputGroupText>
+              </InputGroupAddon>
             )}
-          </div>
+          </InputGroup>
         </div>
       </div>
     </div>
