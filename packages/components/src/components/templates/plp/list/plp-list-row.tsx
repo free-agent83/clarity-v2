@@ -113,7 +113,7 @@ export function PlpListRow<TItem>({
   return (
     <TableRow
       className={cn(
-        "group/plp-row",
+        "group/plp-row [&>td]:py-4 [&>td:first-child]:pl-4 [&>td:last-child]:pr-4",
         clickable && "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       )}
       role={clickable ? "link" : undefined}
