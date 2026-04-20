@@ -15,6 +15,10 @@ build-storybook.log
 .nx/cache
 .nx/workspace-data
 
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
 # Environment
 .env
 .env.local
@@ -65,3 +69,6 @@ Thumbs.db
 
 # User's local settings for Claude
 .claude/settings.local.json
+
+# Claude Code worktree checkouts (local-only)
+.claude/worktrees/
