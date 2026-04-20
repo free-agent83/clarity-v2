@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../organisms/table/table";
-import type { GridItemData, ListColumn } from "../plp-types";
+import type { AppUserContextValue, GridItemData, ListColumn } from "../plp-types";
 import { PlpListRow } from "./plp-list-row";
 
 /**
@@ -26,11 +26,13 @@ export function PlpList<TItem>({
   renderGridItem,
   listColumns,
   onItemClick,
+  userContext,
 }: {
   items: TItem[];
   renderGridItem: (item: TItem) => GridItemData;
   listColumns: ListColumn<TItem>[];
   onItemClick?: (item: TItem) => void;
+  userContext: AppUserContextValue;
 }) {
   const rows = useMemo(
     () => items.map((item) => ({ item, data: renderGridItem(item) })),
@@ -83,6 +85,7 @@ export function PlpList<TItem>({
             listColumns={listColumns}
             showPricePerCarat={showPricePerCarat}
             onItemClick={onItemClick}
+            userContext={userContext}
           />
         ))}
       </TableBody>

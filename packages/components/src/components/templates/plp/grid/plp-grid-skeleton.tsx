@@ -1,5 +1,4 @@
 import { Skeleton } from "../../../atoms/skeleton/skeleton";
-import { PlpGrid } from "./plp-grid";
 
 /**
  * Skeleton loading state for the PLP grid.
@@ -12,7 +11,11 @@ import { PlpGrid } from "./plp-grid";
  */
 export function PlpGridSkeleton({ count = 20 }: { count?: number }) {
   return (
-    <PlpGrid>
+    <div
+      className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6"
+      role="list"
+      data-slot="plp-grid"
+    >
       {Array.from({ length: count }, (_, i) => (
         <div key={i} className="flex flex-col" role="listitem">
           <Skeleton className="aspect-square w-full rounded-lg" />
@@ -29,6 +32,6 @@ export function PlpGridSkeleton({ count = 20 }: { count?: number }) {
           <Skeleton className="mt-1 h-3 w-1/4" />
         </div>
       ))}
-    </PlpGrid>
+    </div>
   );
 }

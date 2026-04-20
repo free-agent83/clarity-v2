@@ -1,11 +1,23 @@
 "use client";
 
+import {
+  IconArrowBackUp,
+  IconBan,
+  IconMapPin,
+  IconTruckDelivery,
+} from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
-import { usePlpUserContext } from "../context/plp-user-context";
-import type { GridItemData } from "../plp-types";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../../../atoms/hover-card/hover-card";
+import { Typography } from "../../../atoms/typography/typography";
+import type { AppUserContextValue, GridItemData } from "../plp-types";
 import { PlpGridThumbnail } from "./plp-grid-thumbnail";
+import { BrandExpress } from "@/components/atoms/brand-express/brand-express";
 
 /**
  * Formats a number as a currency string.
@@ -31,9 +43,13 @@ function formatCurrency(amount: number, currency: string): string {
  * This component is internal to the PLP template — not exported from
  * the package barrel.
  */
-export function PlpGridItem({ data }: { data: GridItemData }) {
-  const userContext = usePlpUserContext();
-
+export function PlpGridItem({
+  data,
+  userContext,
+}: {
+  data: GridItemData;
+  userContext: AppUserContextValue;
+}) {
   return (
     <article
       className="group relative flex flex-col"
@@ -43,13 +59,15 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
       <PlpGridThumbnail data={data} />
 
       {/* 2. Name */}
-      <h3 className="mt-2 text-sm font-semibold text-foreground line-clamp-2">
+      <Typography variant="subtitle-1" className="mt-2 line-clamp-2">
         {data.name}
-      </h3>
+      </Typography>
 
       {/* 3. Lead (optional slot) */}
       {data.lead && (
-        <div className="mt-0.5 text-xs text-muted-foreground">{data.lead}</div>
+        <Typography variant="caption" className="text-muted-foreground">
+          {data.lead}
+        </Typography>
       )}
 
       {/* 4. Badges (optional) */}
@@ -63,38 +81,10 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
       )}
 
       {/* 6. Delivery */}
-      <div className="mt-2 text-xs text-muted-foreground">
-        <div className="flex items-center gap-1">
-          {data.delivery.isExpress && (
-            <Badge variant="success" size="sm">
-              Express
-            </Badge>
-          )}
-          <span>
-            Get it{" "}
-            <span className="font-medium text-foreground">
-              {data.delivery.estimatedDate}
-            </span>
-          </span>
-        </div>
-        <div>
-          Ships from{" "}
-          <span className="font-medium text-foreground">
-            {data.delivery.shipsFrom}
-          </span>
-        </div>
-      </div>
+      <PlpGridItemDelivery delivery={data.delivery} />
 
       {/* 7. Returns */}
-      <div className="mt-1 text-xs text-muted-foreground">
-        {data.returns.isReturnable ? (
-          <span className="text-success">
-            Returnable — Fair use policy applies
-          </span>
-        ) : (
-          <span className="text-destructive">Non-returnable</span>
-        )}
-      </div>
+      <PlpGridItemReturns returns={data.returns} />
 
       {/* 8. Pricing */}
       <PlpGridItemPricing pricing={data.pricing} userContext={userContext} />
@@ -105,22 +95,7 @@ export function PlpGridItem({ data }: { data: GridItemData }) {
       )}
 
       {/* 10. Primary action — hover-revealed on desktop, always visible on touch */}
-      <div
-        className={cn(
-          "mt-3 invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100",
-          "[@media(hover:none)]:visible [@media(hover:none)]:opacity-100"
-        )}
-      >
-        <Button
-          className="w-full"
-          onClick={(e) => {
-            e.stopPropagation();
-            data.onAddToCart();
-          }}
-        >
-          Add to cart
-        </Button>
-      </div>
+      <PlpGridItemAddToCart onAddToCart={data.onAddToCart} />
     </article>
   );
 }
@@ -136,7 +111,7 @@ function PlpGridItemPricing({
   userContext,
 }: {
   pricing: GridItemData["pricing"];
-  userContext: { currency: string; location: string; pricingModel: string };
+  userContext: AppUserContextValue;
 }) {
   const showTariffs = pricing.includeTariffs && userContext.location === "US";
   const showLegacy =
@@ -144,58 +119,177 @@ function PlpGridItemPricing({
   const showMultiCurrency = userContext.currency !== pricing.currency;
 
   return (
-    <div className="mt-2 space-y-0.5">
+    <div className="mt-1">
       {/* Tariff label */}
       {showTariffs && (
-        <div className="text-xs text-muted-foreground">
+        <Typography variant="caption" className="text-muted-foreground">
           Stone price{" "}
-          <span className="underline decoration-dotted">
-            including US tariffs
-          </span>
-        </div>
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <span
+                tabIndex={0}
+                className="cursor-help rounded-sm underline decoration-dotted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                incl. tariffs
+              </span>
+            </HoverCardTrigger>
+            <HoverCardContent className="max-w-xs">
+              <Typography variant="subtitle-1" className="text-foreground">
+                🇺🇸 About US Tariffs
+              </Typography>
+              <Typography variant="caption" className="text-muted-foreground">
+                All Nivoda prices already include US tariffs. No additional
+                charges will be applied at checkout.
+              </Typography>
+            </HoverCardContent>
+          </HoverCard>
+        </Typography>
       )}
 
       {/* Discount line */}
       {pricing.discount && (
-        <div className="flex items-center gap-2 text-xs">
-          <span className="font-medium text-success">
-            {pricing.discount.percentage}% below
-          </span>
-          <span className="text-muted-foreground line-through">
+        <div className="flex items-center gap-2">
+          <Typography as="span" variant="caption" className="text-muted-foreground line-through">
             {formatCurrency(pricing.discount.originalAmount, pricing.currency)}
-          </span>
+          </Typography>
+          <Typography as="span" variant="caption" emphasis className="text-info">
+            -{pricing.discount.percentage}%
+          </Typography>
         </div>
       )}
 
       {/* Main price */}
-      <div className="text-base font-bold text-foreground">
+      <Typography variant="body-1" emphasis>
         {formatCurrency(pricing.amount, pricing.currency)}
-      </div>
+      </Typography>
 
       {/* Per-carat secondary line */}
       {pricing.perCarat && (
-        <div className="text-xs text-muted-foreground">
+        <Typography variant="caption" className="text-muted-foreground">
           {formatCurrency(pricing.perCarat.amount, pricing.perCarat.currency)}/ct
-        </div>
+        </Typography>
       )}
 
       {/* Legacy delivered price */}
       {showLegacy && pricing.legacyDeliveredPrice && (
-        <div className="text-xs text-muted-foreground">
+        <Typography variant="caption" className="text-muted-foreground">
           Delivered:{" "}
           {formatCurrency(
             pricing.legacyDeliveredPrice.amount,
             pricing.legacyDeliveredPrice.currency
           )}
-        </div>
+        </Typography>
       )}
 
       {/* Multi-currency display */}
       {showMultiCurrency && (
-        <div className="text-xs text-muted-foreground">
+        <Typography variant="caption" className="text-muted-foreground">
           ~{formatCurrency(pricing.amount, userContext.currency)}
-        </div>
+        </Typography>
       )}
+    </div>
+  );
+}
+
+/**
+ * Renders the delivery block: optional Express badge, estimated delivery
+ * date, and origin warehouse.
+ */
+function PlpGridItemDelivery({
+  delivery,
+}: {
+  delivery: GridItemData["delivery"];
+}) {
+  return (
+    <div className="mt-2 text-muted-foreground">
+      <div className="flex items-center gap-1.5">
+        {delivery.isExpress ? (
+          <BrandExpress className="h-2.5" aria-label="Express delivery" />
+        ) : (
+          <IconTruckDelivery className="size-3.5 shrink-0" aria-hidden="true" />
+        )}
+        <Typography
+          as="span"
+          variant="caption"
+          className={delivery.isExpress ? "text-express" : undefined}
+        >
+          Get it{" "}
+          <Typography
+            as="span"
+            variant="caption"
+            emphasis
+            className={delivery.isExpress ? undefined : "text-foreground"}
+          >
+            {delivery.estimatedDate}
+          </Typography>
+        </Typography>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <IconMapPin className="size-3.5 shrink-0" aria-hidden="true" />
+        <Typography as="span" variant="caption">
+          Ships from{" "}
+          <Typography as="span" variant="caption" className="text-foreground">
+            {delivery.shipsFrom}
+          </Typography>
+        </Typography>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Renders the returns line: returnable items get a success-coloured line
+ * with the fair-use hint, non-returnable items get a destructive-coloured
+ * single word.
+ */
+function PlpGridItemReturns({
+  returns,
+}: {
+  returns: GridItemData["returns"];
+}) {
+  return returns.isReturnable ? (
+    <div className="flex items-center gap-1.5 text-success">
+      <IconArrowBackUp className="size-3.5 shrink-0" aria-hidden="true" />
+      <Typography as="span" variant="caption">
+        Returnable <span className="text-muted-foreground">Fair use policy applies</span>
+      </Typography>
+    </div>
+  ) : (
+    <div className="flex items-center gap-1.5 text-muted-foreground">
+      <IconBan className="size-3.5 shrink-0" aria-hidden="true" />
+      <Typography as="span" variant="caption">
+        Non-returnable
+      </Typography>
+    </div>
+  );
+}
+
+/**
+ * Renders the primary action — hover-revealed on pointer devices,
+ * always visible on touch. Stops propagation so row-level click handlers
+ * don't fire when the card itself is clickable.
+ */
+function PlpGridItemAddToCart({
+  onAddToCart,
+}: {
+  onAddToCart: () => void;
+}) {
+  return (
+    <div
+      className={cn(
+        "mt-3 invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100",
+        "[@media(hover:none)]:visible [@media(hover:none)]:opacity-100"
+      )}
+    >
+      <Button
+        className="w-full"
+        onClick={(e) => {
+          e.stopPropagation();
+          onAddToCart();
+        }}
+      >
+        Add to cart
+      </Button>
     </div>
   );
 }

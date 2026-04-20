@@ -1,6 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { Typography } from "../../atoms/typography/typography";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../../molecules/breadcrumb/breadcrumb";
 import {
   Select,
   SelectContent,
@@ -15,19 +24,18 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../molecules/pagination/pagination";
-import { PlpHeading } from "./heading/plp-heading";
 import { PlpStickyFilterBar } from "./toolbar/plp-sticky-filter-bar";
 import { PlpToolbar } from "./toolbar/plp-toolbar";
 import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
-import { PlpGrid } from "./grid/plp-grid";
 import { PlpGridItem } from "./grid/plp-grid-item";
 import { PlpGridSkeleton } from "./grid/plp-grid-skeleton";
 import { PlpList } from "./list/plp-list";
 import { PlpListSkeleton } from "./list/plp-list-skeleton";
 import { PlpEmpty } from "./states/plp-empty";
 import { PlpError } from "./states/plp-error";
-import { useIsTabletUp } from "./hooks/use-is-tablet-up";
+import { useIsTabletUp } from "../../../hooks/use-is-tablet-up";
 import type {
+  AppUserContextValue,
   BreadcrumbSegment,
   FilterDefinition,
   FilterState,
@@ -43,6 +51,14 @@ import type {
  * Props for the PLP template.
  */
 export interface PlpTemplateProps<TItem> {
+  /**
+   * Ambient user context (currency, location, pricing model, feature flags)
+   * used by the template for variant rendering. The consuming app supplies
+   * whatever its user session resolves to; Storybook emulates it via
+   * `.storybook/preview.tsx`.
+   */
+  userContext: AppUserContextValue;
+
   // Heading
   breadcrumbs: BreadcrumbSegment[];
   title: string;
@@ -147,6 +163,7 @@ export interface PlpTemplateProps<TItem> {
  * @see docs/plans/specs/2026-04-16-plp-template-phase2-design.md
  */
 export function PlpTemplate<TItem>({
+  userContext,
   breadcrumbs,
   title,
   resultsCount,
@@ -278,18 +295,23 @@ export function PlpTemplate<TItem>({
             renderGridItem={renderGridItem}
             listColumns={listColumns}
             onItemClick={onItemClick}
+            userContext={userContext}
           />
         ) : (
-          <PlpGrid>
+          <div
+            className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6"
+            role="list"
+            data-slot="plp-grid"
+          >
             {items.map((item) => {
               const data = renderGridItem(item);
               return (
                 <div key={data.id} role="listitem">
-                  <PlpGridItem data={data} />
+                  <PlpGridItem data={data} userContext={userContext} />
                 </div>
               );
             })}
-          </PlpGrid>
+          </div>
         ))}
 
       {(status === "empty-filtered" || status === "empty-no-items") && (
@@ -333,6 +355,66 @@ export function PlpTemplate<TItem>({
 }
 
 /**
+ * PLP heading area — breadcrumbs, category title, and results count.
+ *
+ * Breadcrumbs support arbitrary nesting. The last segment is rendered
+ * as the current page (not a link). Results count announces via
+ * `aria-live="polite"` when it changes.
+ */
+function PlpHeading({
+  breadcrumbs,
+  title,
+  resultsCount,
+}: {
+  breadcrumbs: BreadcrumbSegment[];
+  title: string;
+  resultsCount: number;
+}) {
+  const formattedCount = new Intl.NumberFormat("en-US").format(resultsCount);
+
+  return (
+    <div data-slot="plp-heading">
+      {breadcrumbs.length > 0 && (
+        <Breadcrumb>
+          <BreadcrumbList>
+            {breadcrumbs.map((segment, index) => {
+              const isLast = index === breadcrumbs.length - 1;
+              return (
+                <Fragment key={segment.label}>
+                  <BreadcrumbItem>
+                    {isLast ? (
+                      <BreadcrumbPage>{segment.label}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink href={segment.href || "#"}>
+                        {segment.label}
+                      </BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                  {!isLast && <BreadcrumbSeparator />}
+                </Fragment>
+              );
+            })}
+          </BreadcrumbList>
+        </Breadcrumb>
+      )}
+
+      <Typography as="h1" variant="h3" className="mt-2">
+        {title}
+      </Typography>
+
+      <Typography
+        variant="body-2"
+        className="mt-1 text-muted-foreground"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {formattedCount} results
+      </Typography>
+    </div>
+  );
+}
+
+/**
  * PLP pagination footer — results per page selector + previous/next navigation.
  *
  * Uses the design system Pagination molecule for Previous/Next and the
@@ -355,8 +437,8 @@ function PlpPagination({
 }) {
   return (
     <div className="flex items-center justify-center gap-4 py-4">
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <span>Results per page</span>
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Typography as="span" variant="body-2">Results per page</Typography>
         <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange(Number(v))}>
           <SelectTrigger className="w-auto">
             <SelectValue />
@@ -385,9 +467,9 @@ function PlpPagination({
             />
           </PaginationItem>
           <PaginationItem>
-            <span className="px-2 text-sm text-muted-foreground">
+            <Typography as="span" variant="body-2" className="px-2 text-muted-foreground">
               Page {page} of {totalPages}
-            </span>
+            </Typography>
           </PaginationItem>
           <PaginationItem>
             <PaginationNext

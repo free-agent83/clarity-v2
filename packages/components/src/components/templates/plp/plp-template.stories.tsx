@@ -2,438 +2,35 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { useRef, useState } from "react";
 import { PlpTemplate, type PlpTemplateProps } from "./plp-template";
-import { PlpUserProvider } from "./context/plp-user-context";
+import { useStorybookAppUser } from "../../../../.storybook/app-user-context";
 import {
   AppShell,
   AppShellHeader,
   AppShellActions,
   AppShellMain,
 } from "../../organisms/app-shell/app-shell";
-import { Badge } from "../../atoms/badge/badge";
 import type {
   FilterDefinition,
   FilterState,
   GridItemData,
-  ListColumn,
   PlpViewMode,
-  SortOption,
 } from "./plp-types";
-
-// ── Shared mock data ──────────────────────────────────────
-
-// -- Shared mock helpers for advanced filter presets ----------------------
-
-function buildMockHistogram(
-  min: number,
-  max: number,
-  bucketCount: number,
-  peakAt: number
-): { buckets: number[]; min: number; max: number } {
-  const buckets = Array.from({ length: bucketCount }, (_, i) => {
-    const bucketCenter = min + ((i + 0.5) * (max - min)) / bucketCount;
-    const distanceFromPeak = Math.abs(bucketCenter - peakAt);
-    const peakWidth = (max - min) / 4;
-    const normalized = Math.max(0, 1 - distanceFromPeak / peakWidth);
-    return Math.round(normalized * 40 + Math.random() * 10);
-  });
-  return { buckets, min, max };
-}
-
-const MOCK_SUPPLIERS: { value: string; label: string }[] = [
-  { value: "sup-acme", label: "Acme Gem Traders" },
-  { value: "sup-globex", label: "Globex Mining Co." },
-  { value: "sup-initech", label: "Initech Stones" },
-  { value: "sup-umbrella", label: "Umbrella Gemstones Ltd." },
-  { value: "sup-hooli", label: "Hooli Premium" },
-  { value: "sup-pied", label: "Pied Piper Rough" },
-  { value: "sup-stark", label: "Stark Industries Jewellery" },
-  { value: "sup-wayne", label: "Wayne Enterprises Minerals" },
-  { value: "sup-cyberdyne", label: "Cyberdyne Gems" },
-  { value: "sup-tyrell", label: "Tyrell Heritage Stones" },
-];
-
-// Sample 360 rotation video — used for ~1/3 of mock items in PLP stories.
-// If this URL becomes unavailable, swap for another small public MP4.
-const SAMPLE_360_VIDEO_URL =
-  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-
-async function mockSupplierSearch(query: string) {
-  // Simulate network latency
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  const q = query.toLowerCase();
-  return MOCK_SUPPLIERS.filter((s) => s.label.toLowerCase().includes(q));
-}
-
-const GEMSTONE_FILTERS: FilterDefinition[] = [
-  {
-    id: "nivoda-curated",
-    label: "Nivoda Curated",
-    preset: "boolean-chip",
-    chipLabel: "Only Nivoda Curated items",
-    isQuickFilter: true,
-  },
-  {
-    id: "color",
-    label: "Color",
-    preset: "multi-select-chips",
-    isQuickFilter: true,
-    popoverWidth: 320,
-    options: [
-      { value: "blue", label: "Blue" },
-      { value: "green", label: "Green" },
-      { value: "red", label: "Red" },
-      { value: "teal", label: "Teal" },
-      { value: "pink", label: "Pink" },
-      { value: "yellow", label: "Yellow" },
-    ],
-  },
-  {
-    id: "clarity",
-    label: "Clarity",
-    preset: "multi-select-chips",
-    options: [
-      { value: "eye-clean", label: "Eye clean" },
-      { value: "slightly-included", label: "Slightly included" },
-      { value: "moderately-included", label: "Moderately included" },
-      { value: "visibly-included", label: "Visibly included" },
-    ],
-  },
-  {
-    id: "treatment",
-    label: "Treatment",
-    preset: "single-select-chips",
-    options: [
-      { value: "none", label: "None" },
-      { value: "heated", label: "Heated" },
-      { value: "oiled", label: "Oiled" },
-    ],
-  },
-  {
-    id: "location",
-    label: "Location",
-    preset: "single-select-dropdown",
-    options: [
-      { value: "us", label: "United States" },
-      { value: "eu", label: "Europe" },
-      { value: "asia", label: "Asia" },
-    ],
-  },
-  {
-    id: "price",
-    label: "Price",
-    preset: "range-slider",
-    isQuickFilter: true,
-    min: 0,
-    max: 10000,
-    step: 10,
-    unit: "$",
-    histogram: buildMockHistogram(0, 10000, 40, 2500),
-  },
-  {
-    id: "carat",
-    label: "Carat",
-    preset: "range-slider",
-    min: 0,
-    max: 10,
-    step: 0.1,
-    unit: "ct",
-    histogram: buildMockHistogram(0, 10, 40, 2),
-  },
-  {
-    id: "size",
-    label: "Size (mm)",
-    preset: "multi-axis-range",
-    axes: [
-      { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
-      { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
-      { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
-    ],
-  },
-  {
-    id: "supplier",
-    label: "Supplier",
-    preset: "async-combobox",
-    searchFn: mockSupplierSearch,
-    searchPlaceholder: "Search suppliers...",
-  },
-];
-
-// Pre-seed supplier options for stories that start with a value set
-const _gemstoneSupplier = GEMSTONE_FILTERS.find((f) => f.id === "supplier");
-if (_gemstoneSupplier && _gemstoneSupplier.preset === "async-combobox") {
-  _gemstoneSupplier.options = MOCK_SUPPLIERS.filter((s) =>
-    ["sup-acme", "sup-globex", "sup-initech"].includes(s.value)
-  );
-}
-
-const SORT_OPTIONS: SortOption[] = [
-  { value: "price-asc", label: "Price, low to high" },
-  { value: "price-desc", label: "Price, high to low" },
-  { value: "newest", label: "Newest" },
-  { value: "featured", label: "Featured" },
-];
-
-function generateGemstoneItems(count: number) {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `gem-${i}`,
-    name: `Emerald Green Radiant ${(1 + i * 0.1).toFixed(1)}ct`,
-    image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Gem+${i + 1}`,
-    stockId: `GR-${10000 + i}`,
-    origin: "Brazil",
-    certLab: "IGI",
-    certNumber: `287329${300 + i}`,
-    price: 1910 + i * 100,
-    pricePerCarat: 1910.7,
-    isExpress: i % 4 === 0,
-    isReturnable: i % 3 !== 0,
-    discount: i % 5 === 0 ? 25 : undefined,
-    originalPrice: i % 5 === 0 ? 2548 : undefined,
-    includeTariffs: true,
-  }));
-}
-
-function gemstoneRenderGridItem(item: ReturnType<typeof generateGemstoneItems>[number]): GridItemData {
-  return {
-    id: item.id,
-    name: item.name,
-    thumbnailSrc: item.image,
-    thumbnailAlt: item.name,
-    lead: <span>{item.stockId}</span>,
-    badges: [
-      <Badge key="origin" variant="outline" size="sm">{item.origin}</Badge>,
-      <Badge key="curated" variant="secondary" size="sm">Nivoda Curated</Badge>,
-    ],
-    categorySlotTop: (
-      <div className="text-xs text-muted-foreground">
-        Watermelon · Light color · 5.95 × 5.89 × 2.76mm
-      </div>
-    ),
-    delivery: {
-      estimatedDate: "Nov 18 – 23",
-      shipsFrom: "United States",
-      isExpress: item.isExpress,
-    },
-    returns: { isReturnable: item.isReturnable },
-    pricing: {
-      amount: item.price,
-      currency: "USD",
-      perCarat: { amount: item.pricePerCarat, currency: "USD" },
-      discount: item.discount
-        ? { percentage: item.discount, originalAmount: item.originalPrice! }
-        : undefined,
-      includeTariffs: item.includeTariffs,
-    },
-    media360:
-      Number.parseInt(item.id.replace(/\D/g, ""), 10) % 3 === 0
-        ? { videoUrl: SAMPLE_360_VIDEO_URL }
-        : undefined,
-    onAddToCart: fn(),
-    onFavorite: fn(),
-    onShare: fn(),
-    onViewMedia: fn(),
-  };
-}
-
-// -- Diamond mock data (list view) -----------------------------------------
-
-interface DiamondItem {
-  id: string;
-  name: string;
-  image: string;
-  stockId: string;
-  carat: number;
-  color: string;
-  clarity: string;
-  shape: string;
-  origin: string;
-  certLab: string;
-  certNumber: string;
-  price: number;
-  pricePerCarat: number;
-  isExpress: boolean;
-  isReturnable: boolean;
-}
-
-function generateDiamondItems(count: number): DiamondItem[] {
-  const shapes = ["Round", "Oval", "Cushion", "Princess", "Pear", "Emerald"];
-  const colors = ["D", "E", "F", "G", "H", "I"];
-  const clarities = ["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1"];
-  const origins = ["Botswana", "Russia", "Canada", "Australia", "South Africa"];
-  const labs = ["GIA", "IGI", "AGS"];
-
-  return Array.from({ length: count }, (_, i) => ({
-    id: `diamond-${i}`,
-    name: `${(0.5 + i * 0.1).toFixed(2)}ct ${shapes[i % shapes.length]} Diamond`,
-    image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Diamond+${i + 1}`,
-    stockId: `DM-${10000 + i}`,
-    carat: Number((0.5 + i * 0.1).toFixed(2)),
-    color: colors[i % colors.length],
-    clarity: clarities[i % clarities.length],
-    shape: shapes[i % shapes.length],
-    origin: origins[i % origins.length],
-    certLab: labs[i % labs.length],
-    certNumber: `${287329000 + i}`,
-    price: 2500 + i * 350,
-    pricePerCarat: 5000 + i * 100,
-    isExpress: i % 5 === 0,
-    isReturnable: i % 3 !== 0,
-  }));
-}
-
-function diamondRenderGridItem(item: DiamondItem): GridItemData {
-  return {
-    id: item.id,
-    name: item.name,
-    thumbnailSrc: item.image,
-    thumbnailAlt: item.name,
-    lead: <span>{item.stockId}</span>,
-    badges: [],
-    delivery: {
-      estimatedDate: "Nov 18 – 23",
-      shipsFrom: item.origin,
-      isExpress: item.isExpress,
-    },
-    returns: { isReturnable: item.isReturnable },
-    pricing: {
-      amount: item.price,
-      currency: "USD",
-      perCarat: { amount: item.pricePerCarat, currency: "USD" },
-    },
-    media360:
-      Number.parseInt(item.id.replace(/\D/g, ""), 10) % 3 === 0
-        ? { videoUrl: SAMPLE_360_VIDEO_URL }
-        : undefined,
-    onAddToCart: fn(),
-    onFavorite: fn(),
-    onShare: fn(),
-    onViewMedia: fn(),
-  };
-}
-
-const DIAMOND_FILTERS: FilterDefinition[] = [
-  {
-    id: "shape",
-    label: "Shape",
-    preset: "multi-select-chips",
-    isQuickFilter: true,
-    options: [
-      { value: "round", label: "Round" },
-      { value: "oval", label: "Oval" },
-      { value: "cushion", label: "Cushion" },
-      { value: "princess", label: "Princess" },
-    ],
-  },
-  {
-    id: "color",
-    label: "Color",
-    preset: "multi-select-chips",
-    isQuickFilter: true,
-    options: ["D", "E", "F", "G", "H", "I"].map((c) => ({ value: c, label: c })),
-  },
-  {
-    id: "clarity",
-    label: "Clarity",
-    preset: "multi-select-chips",
-    options: ["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1"].map((c) => ({
-      value: c,
-      label: c,
-    })),
-  },
-  {
-    id: "price",
-    label: "Price",
-    preset: "range-slider",
-    isQuickFilter: true,
-    min: 0,
-    max: 10000,
-    step: 10,
-    unit: "$",
-    histogram: buildMockHistogram(0, 10000, 40, 2500),
-  },
-  {
-    id: "carat",
-    label: "Carat",
-    preset: "range-slider",
-    min: 0,
-    max: 10,
-    step: 0.1,
-    unit: "ct",
-    histogram: buildMockHistogram(0, 10, 40, 2),
-  },
-  {
-    id: "size",
-    label: "Size (mm)",
-    preset: "multi-axis-range",
-    axes: [
-      { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
-      { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
-      { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
-    ],
-  },
-  {
-    id: "supplier",
-    label: "Supplier",
-    preset: "async-combobox",
-    searchFn: mockSupplierSearch,
-    searchPlaceholder: "Search suppliers...",
-  },
-];
-
-const DIAMOND_LIST_COLUMNS: ListColumn<DiamondItem>[] = [
-  {
-    id: "carat",
-    header: "Carat",
-    cell: (item) => item.carat.toFixed(2),
-    align: "right",
-  },
-  {
-    id: "shape",
-    header: "Shape",
-    cell: (item) => item.shape,
-  },
-  {
-    id: "color",
-    header: "Color",
-    cell: (item) => item.color,
-    align: "center",
-  },
-  {
-    id: "clarity",
-    header: "Clarity",
-    cell: (item) => item.clarity,
-    align: "center",
-  },
-  {
-    id: "origin",
-    header: "Origin",
-    cell: (item) => item.origin,
-  },
-  {
-    id: "cert",
-    header: "Certificate",
-    cell: (item) => (
-      <span className="font-mono text-xs">
-        {item.certLab} {item.certNumber}
-      </span>
-    ),
-  },
-];
+import { SORT_OPTIONS, mockPreviewCount } from "./mocks/common";
+import { MOCK_LATENCY } from "./mocks/simulate-api-call";
+import {
+  GEMSTONE_FILTERS,
+  GEMSTONE_LIST_COLUMNS,
+  generateGemstoneItems,
+  gemstoneRenderGridItem,
+} from "./mocks/gemstone";
+import {
+  DIAMOND_FILTERS,
+  DIAMOND_LIST_COLUMNS,
+  diamondRenderGridItem,
+  generateDiamondItems,
+} from "./mocks/diamond";
 
 // ── Stateful wrapper for interactive stories ──────────────
-
-/**
- * Mock preview-count fetcher for stories. Simulates a backend call that
- * returns a count derived from the current filter state. Debounced by
- * the caller via `setTimeout`-based delay.
- */
-async function mockPreviewCount(draftState: FilterState): Promise<number> {
-  await new Promise((resolve) => setTimeout(resolve, 250));
-  // Arbitrary formula: start from a big number and divide by (active filter count + 1).
-  const activeCount = Object.values(draftState).filter(
-    (v) => v !== undefined
-  ).length;
-  return Math.max(1, Math.round(1_234_567 / (activeCount * 3 + 1)));
-}
 
 function PlpTemplateInteractive<TItem>({
   initialFilterState = {},
@@ -441,6 +38,7 @@ function PlpTemplateInteractive<TItem>({
   ...props
 }: Omit<
   PlpTemplateProps<TItem>,
+  | "userContext"
   | "filterState"
   | "onFilterChange"
   | "sortValue"
@@ -466,6 +64,7 @@ function PlpTemplateInteractive<TItem>({
   /** Baseline status — the wrapper flips this to "loading" during simulated commits. */
   status?: PlpTemplateProps<TItem>["status"];
 }) {
+  const userContext = useStorybookAppUser();
   const baselineStatus = props.status ?? "success";
 
   const [filterState, setFilterState] = useState<FilterState>(initialFilterState);
@@ -507,12 +106,13 @@ function PlpTemplateInteractive<TItem>({
     if (statusTimerRef.current) clearTimeout(statusTimerRef.current);
     statusTimerRef.current = setTimeout(() => {
       setEffectiveStatus(baselineStatus);
-    }, 600);
+    }, MOCK_LATENCY.commit);
   }
 
   return (
     <PlpTemplate
       {...props}
+      userContext={userContext}
       status={effectiveStatus}
       filterState={filterState}
       onFilterChange={(id, value) => {
@@ -550,14 +150,12 @@ const meta: Meta = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <PlpUserProvider>
-        <AppShell>
-          <AppShellHeader onSearch={fn()} />
-          <AppShellMain>
-            <Story />
-          </AppShellMain>
-        </AppShell>
-      </PlpUserProvider>
+      <AppShell>
+        <AppShellHeader onSearch={fn()} />
+        <AppShellMain>
+          <Story />
+        </AppShellMain>
+      </AppShell>
     ),
   ],
 };
@@ -583,6 +181,31 @@ export const GemstoneCategory: StoryObj = {
       page={1}
       pageSize={20}
       totalItems={1234567}
+      status="success"
+      onRetry={fn()}
+    />
+  ),
+};
+
+export const DiamondsCategory: StoryObj = {
+  render: () => (
+    <PlpTemplateInteractive
+      breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
+      title="Natural Diamonds"
+      resultsCount={48291}
+      filters={DIAMOND_FILTERS}
+      filteredResultsCount={48291}
+      sortOptions={SORT_OPTIONS}
+      sortValue="price-asc"
+      searchPlaceholder="Search by certificate number or stock ID..."
+      onSearchSubmit={fn()}
+      items={generateDiamondItems(20)}
+      renderGridItem={diamondRenderGridItem}
+      listColumns={DIAMOND_LIST_COLUMNS}
+      onItemClick={fn()}
+      page={1}
+      pageSize={20}
+      totalItems={48291}
       status="success"
       onRetry={fn()}
     />
@@ -730,6 +353,7 @@ export const WithCustomFilter: StoryObj = {
 export const Loading: StoryObj = {
   render: () => (
     <PlpTemplate
+      userContext={useStorybookAppUser()}
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
       title="Sapphire"
       resultsCount={0}
@@ -776,6 +400,7 @@ export const EmptyFiltered: StoryObj = {
 export const EmptyNoItems: StoryObj = {
   render: () => (
     <PlpTemplate
+      userContext={useStorybookAppUser()}
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Alexandrite" }]}
       title="Alexandrite"
       resultsCount={0}
@@ -802,6 +427,7 @@ export const EmptyNoItems: StoryObj = {
 export const Error: StoryObj = {
   render: () => (
     <PlpTemplate
+      userContext={useStorybookAppUser()}
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
       title="Sapphire"
       resultsCount={0}
@@ -850,35 +476,25 @@ export const DiamondListView: StoryObj = {
 };
 
 export const GemstoneListView: StoryObj = {
-  render: () => {
-    const gemstoneListColumns: ListColumn<ReturnType<typeof generateGemstoneItems>[number]>[] = [
-      { id: "stockId", header: "Stock ID", cell: (item) => <span className="font-mono text-xs">{item.stockId}</span> },
-      { id: "origin", header: "Origin", cell: (item) => item.origin },
-      { id: "cert", header: "Certificate", cell: (item) => (
-        <span className="font-mono text-xs">{item.certLab} {item.certNumber}</span>
-      ) },
-    ];
-
-    return (
-      <PlpTemplateInteractive
-        breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-        title="Sapphire"
-        resultsCount={1234567}
-        filters={GEMSTONE_FILTERS}
-        filteredResultsCount={10234}
-        sortOptions={SORT_OPTIONS}
-        sortValue="price-asc"
-        items={generateGemstoneItems(20)}
-        renderGridItem={gemstoneRenderGridItem}
-        listColumns={gemstoneListColumns}
-        initialViewMode="list"
-        onItemClick={fn()}
-        page={1}
-        pageSize={20}
-        totalItems={1234567}
-        status="success"
-        onRetry={fn()}
-      />
-    );
-  },
+  render: () => (
+    <PlpTemplateInteractive
+      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
+      title="Sapphire"
+      resultsCount={1234567}
+      filters={GEMSTONE_FILTERS}
+      filteredResultsCount={10234}
+      sortOptions={SORT_OPTIONS}
+      sortValue="price-asc"
+      items={generateGemstoneItems(20)}
+      renderGridItem={gemstoneRenderGridItem}
+      listColumns={GEMSTONE_LIST_COLUMNS}
+      initialViewMode="list"
+      onItemClick={fn()}
+      page={1}
+      pageSize={20}
+      totalItems={1234567}
+      status="success"
+      onRetry={fn()}
+    />
+  ),
 };

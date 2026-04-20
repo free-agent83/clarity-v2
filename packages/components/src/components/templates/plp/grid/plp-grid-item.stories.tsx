@@ -3,19 +3,11 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { userEvent, within } from "@storybook/test";
 import { PlpGridItem } from "./plp-grid-item";
-import { PlpUserProvider } from "../context/plp-user-context";
+import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
 import { Badge } from "../../../atoms/badge/badge";
-import type { GridItemData, PlpUserContextValue } from "../plp-types";
+import type { GridItemData } from "../plp-types";
 
-/** Extra argTypes injected by the decorator for user context controls. */
-type UserContextArgs = {
-  _currency?: string;
-  _location?: string;
-  _pricingModel?: "standard" | "legacy";
-};
-
-/** Combined args type: component props + decorator-injected user context controls. */
-type GridItemStoryArgs = React.ComponentProps<typeof PlpGridItem> & UserContextArgs;
+type GridItemStoryArgs = React.ComponentProps<typeof PlpGridItem>;
 
 // ── Mock data builder ─────────────────────────────────────
 
@@ -28,7 +20,7 @@ function buildGridItemData(overrides: Partial<GridItemData> = {}): GridItemData 
     lead: <span className="text-xs text-muted-foreground">GR · Stock ID</span>,
     badges: [
       <Badge key="origin" variant="outline" size="sm">Brazil</Badge>,
-      <Badge key="curated" variant="secondary" size="sm">Nivoda Curated</Badge>,
+      <Badge key="curated" variant="info" size="sm">Nivoda Curated</Badge>,
     ],
     delivery: {
       estimatedDate: "Nov 18 – 23",
@@ -55,40 +47,15 @@ const meta: Meta<GridItemStoryArgs> = {
   component: PlpGridItem,
   tags: ["autodocs"],
   decorators: [
-    (Story, context) => {
-      const userContext: Partial<PlpUserContextValue> = {
-        currency: context.args._currency ?? "USD",
-        location: context.args._location ?? "US",
-        pricingModel: context.args._pricingModel ?? "standard",
-      };
-      return (
-        <PlpUserProvider value={userContext}>
-          <div style={{ width: 320 }}>
-            <Story />
-          </div>
-        </PlpUserProvider>
-      );
-    },
+    (Story) => (
+      <div style={{ width: 320 }}>
+        <Story />
+      </div>
+    ),
   ],
-  argTypes: {
-    _currency: {
-      control: "select",
-      options: ["USD", "EUR", "GBP"],
-      name: "User currency",
-      table: { category: "User context" },
-    },
-    _location: {
-      control: "select",
-      options: ["US", "UK", "EU"],
-      name: "User location",
-      table: { category: "User context" },
-    },
-    _pricingModel: {
-      control: "select",
-      options: ["standard", "legacy"],
-      name: "Pricing model",
-      table: { category: "User context" },
-    },
+  render: (args) => {
+    const userContext = useStorybookAppUser();
+    return <PlpGridItem {...args} userContext={userContext} />;
   },
 };
 
@@ -152,8 +119,8 @@ export const WithTariffs: Story = {
         includeTariffs: true,
       },
     }),
-    _location: "US",
   },
+  parameters: { appUser: { location: "US" } },
 };
 
 export const LegacyPricing: Story = {
@@ -165,8 +132,8 @@ export const LegacyPricing: Story = {
         legacyDeliveredPrice: { amount: 10499.0, currency: "USD" },
       },
     }),
-    _pricingModel: "legacy",
   },
+  parameters: { appUser: { pricingModel: "legacy" } },
 };
 
 export const WithCategoryActions: Story = {
@@ -229,9 +196,8 @@ export const AllVariantsActive: Story = {
         <div className="text-xs text-muted-foreground">5.95 × 5.89 × 2.76mm</div>
       ),
     }),
-    _pricingModel: "legacy",
-    _location: "US",
   },
+  parameters: { appUser: { pricingModel: "legacy", location: "US" } },
 };
 
 export const HoverState: Story = {

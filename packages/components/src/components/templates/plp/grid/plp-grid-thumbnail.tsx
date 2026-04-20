@@ -15,7 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../../../atoms/tooltip/tooltip";
-import { useHasHover } from "../hooks/use-has-hover";
+import { useHasHover } from "../../../../hooks/use-has-hover";
 import type { GridItemData } from "../plp-types";
 
 /**

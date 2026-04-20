@@ -2,9 +2,13 @@
 
 import { cn } from "@/lib/utils";
 import { Badge } from "../../../atoms/badge/badge";
+import { Typography } from "../../../atoms/typography/typography";
 import { TableCell, TableRow } from "../../../organisms/table/table";
-import { usePlpUserContext } from "../context/plp-user-context";
-import type { GridItemData, ListColumn, PlpUserContextValue } from "../plp-types";
+import type {
+  AppUserContextValue,
+  GridItemData,
+  ListColumn,
+} from "../plp-types";
 import { PlpListActionsCell } from "./plp-list-actions-cell";
 
 /**
@@ -27,7 +31,7 @@ function PriceCell({
   userContext,
 }: {
   pricing: GridItemData["pricing"];
-  userContext: PlpUserContextValue;
+  userContext: AppUserContextValue;
 }) {
   const showTariffs =
     pricing.includeTariffs && userContext.location === "US";
@@ -38,34 +42,36 @@ function PriceCell({
   return (
     <div className="flex flex-col gap-0.5">
       {pricing.discount && (
-        <div className="flex items-center gap-1.5 text-xs">
-          <span className="font-medium text-success">
+        <div className="flex items-center gap-1.5">
+          <Typography as="span" variant="caption" emphasis className="text-success">
             {pricing.discount.percentage}% below
-          </span>
-          <span className="text-muted-foreground line-through">
+          </Typography>
+          <Typography as="span" variant="caption" className="text-muted-foreground line-through">
             {formatCurrency(pricing.discount.originalAmount, pricing.currency)}
-          </span>
+          </Typography>
         </div>
       )}
-      <div className="text-sm font-semibold text-foreground">
+      <Typography as="div" variant="body-2" emphasis>
         {formatCurrency(pricing.amount, pricing.currency)}
-      </div>
+      </Typography>
       {showTariffs && (
-        <div className="text-xs text-muted-foreground">Incl. US tariffs</div>
+        <Typography as="div" variant="caption" className="text-muted-foreground">
+          Incl. US tariffs
+        </Typography>
       )}
       {showLegacy && pricing.legacyDeliveredPrice && (
-        <div className="text-xs text-muted-foreground">
+        <Typography as="div" variant="caption" className="text-muted-foreground">
           Delivered:{" "}
           {formatCurrency(
             pricing.legacyDeliveredPrice.amount,
             pricing.legacyDeliveredPrice.currency
           )}
-        </div>
+        </Typography>
       )}
       {showMultiCurrency && (
-        <div className="text-xs text-muted-foreground">
+        <Typography as="div" variant="caption" className="text-muted-foreground">
           ~{formatCurrency(pricing.amount, userContext.currency)}
-        </div>
+        </Typography>
       )}
     </div>
   );
@@ -87,15 +93,15 @@ export function PlpListRow<TItem>({
   listColumns,
   showPricePerCarat,
   onItemClick,
+  userContext,
 }: {
   item: TItem;
   data: GridItemData;
   listColumns: ListColumn<TItem>[];
   showPricePerCarat: boolean;
   onItemClick?: (item: TItem) => void;
+  userContext: AppUserContextValue;
 }) {
-  const userContext = usePlpUserContext();
-
   const clickable = !!onItemClick;
 
   function handleRowClick() {
@@ -136,9 +142,11 @@ export function PlpListRow<TItem>({
       {/* Name + lead */}
       <TableCell>
         <div className="flex flex-col gap-0.5">
-          <div className="text-sm font-medium text-foreground">{data.name}</div>
+          <Typography as="div" variant="body-2" emphasis>{data.name}</Typography>
           {data.lead && (
-            <div className="text-xs text-muted-foreground">{data.lead}</div>
+            <Typography as="div" variant="caption" className="text-muted-foreground">
+              {data.lead}
+            </Typography>
           )}
         </div>
       </TableCell>
@@ -161,27 +169,33 @@ export function PlpListRow<TItem>({
 
       {/* Delivery */}
       <TableCell>
-        <div className="flex flex-col gap-0.5 text-xs">
+        <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-1">
             {data.delivery.isExpress && (
               <Badge variant="success" size="sm">
                 Express
               </Badge>
             )}
-            <span className="text-foreground">{data.delivery.estimatedDate}</span>
+            <Typography as="span" variant="caption">
+              {data.delivery.estimatedDate}
+            </Typography>
           </div>
-          <div className="text-muted-foreground">
+          <Typography as="div" variant="caption" className="text-muted-foreground">
             from {data.delivery.shipsFrom}
-          </div>
+          </Typography>
         </div>
       </TableCell>
 
       {/* Returns */}
       <TableCell>
         {data.returns.isReturnable ? (
-          <span className="text-xs text-success">Returnable</span>
+          <Typography as="span" variant="caption" className="text-success">
+            Returnable
+          </Typography>
         ) : (
-          <span className="text-xs text-destructive">Non-returnable</span>
+          <Typography as="span" variant="caption" className="text-destructive">
+            Non-returnable
+          </Typography>
         )}
       </TableCell>
 
@@ -194,15 +208,17 @@ export function PlpListRow<TItem>({
       {showPricePerCarat && (
         <TableCell>
           {data.pricing.perCarat ? (
-            <span className="text-xs text-foreground">
+            <Typography as="span" variant="caption">
               {formatCurrency(
                 data.pricing.perCarat.amount,
                 data.pricing.perCarat.currency
               )}
               /ct
-            </span>
+            </Typography>
           ) : (
-            <span className="text-xs text-muted-foreground">—</span>
+            <Typography as="span" variant="caption" className="text-muted-foreground">
+              —
+            </Typography>
           )}
         </TableCell>
       )}

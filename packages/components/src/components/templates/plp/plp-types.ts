@@ -220,10 +220,16 @@ export interface BreadcrumbSegment {
   href?: string;
 }
 
-// -- User context (for Storybook/testing) -----------------------------------
+// -- App user context -------------------------------------------------------
 
-/** User context shape consumed by the template for variant rendering. */
-export interface PlpUserContextValue {
+/**
+ * Shape of app-level user context passed into the template. Drives variant
+ * rendering (currency display, tariff disclosure, legacy pricing, feature
+ * flags). The type is a contract — the library does not ship a Context
+ * object or Provider. Consuming apps populate and pass this prop however
+ * they want; Storybook emulates it via `.storybook/preview.tsx`.
+ */
+export interface AppUserContextValue {
   currency: string;
   location: string;
   pricingModel: "standard" | "legacy";

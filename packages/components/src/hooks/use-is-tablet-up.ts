@@ -5,9 +5,7 @@ const TABLET_BREAKPOINT = 1024;
 /**
  * Returns `true` when the viewport is ≥ 1024px (tablet and above).
  *
- * Follows the same pattern as `useIsMobile` but inverted and tuned to the
- * tablet breakpoint. Used by the PLP template to decide whether list view
- * is available at the current viewport width.
+ * Counterpart to `useIsMobile`, tuned to the tablet breakpoint.
  *
  * Returns `false` during SSR and the first client render, then updates to
  * the actual value after the `matchMedia` listener attaches.

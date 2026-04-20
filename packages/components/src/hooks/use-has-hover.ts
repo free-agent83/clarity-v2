@@ -5,9 +5,8 @@ import * as React from "react";
  * devices) via the `(hover: hover)` media query.
  *
  * Returns `false` during SSR and the first client render, then updates
- * to the actual value after the `matchMedia` listener attaches. This
- * means 360 video elements never render during SSR — they only appear
- * after a client-side effect confirms hover support.
+ * to the actual value after the `matchMedia` listener attaches — so
+ * hover-only UI never renders during SSR.
  */
 export function useHasHover(): boolean {
   const [hasHover, setHasHover] = React.useState<boolean | undefined>(
