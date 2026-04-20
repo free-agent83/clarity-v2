@@ -2,6 +2,17 @@
 
 ---
 
+### Typography atom ([#121](https://github.com/free-agent83/clarity-v2/pull/121))
+
+New `Typography` atom covering the DSW Web Components typography styles (H1–H6, Body 1/2 Regular+Emphasis, Caption Regular+Emphasis). Link and Dashed Link treatments deferred to a future Link atom.
+
+- `Typography` component with a single `variant` axis (12 presets), `as` prop for element override, and `asChild` via Radix Slot; defaults to `body2` to err on compactness; no color/margin/truncation props by design
+- 12 `--text-typography-*` role presets added to `globals.css` `@theme inline` using Tailwind v4's `--text-*` modifier convention — each emits one utility applying font-size, line-height, font-weight and letter-spacing together; values sourced directly from Figma node `18422:14`
+- Stories: `Default`, `Specimen` (type specimen mirroring the Figma "Theme Styles" frame), `AsOverride`, `AsChildWithLink`, `Article` (lorem-ipsum blog article showing real composition); `COMPONENT.md` with full props table, usage, and best practices
+- Design spec: `docs/plans/specs/2026-04-20-typography-component-design.md`
+
+---
+
 ### Atoms round 2: styling refresh, docs, stories, --ring retuned ([#120](https://github.com/free-agent83/clarity-v2/pull/120))
 
 Refresh of six form/feedback atoms: upstream styling applied, docs and stories populated, `--ring` theme token retuned to the violet brand hue.

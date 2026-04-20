@@ -60,6 +60,8 @@ export { ToggleGroup, ToggleGroupItem } from "./components/atoms/toggle-group/to
 export type { ToggleGroupProps, ToggleGroupItemProps } from "./components/atoms/toggle-group/toggle-group";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./components/atoms/tooltip/tooltip";
 export type { TooltipProps, TooltipContentProps } from "./components/atoms/tooltip/tooltip";
+export { Typography, typographyVariants } from "./components/atoms/typography/typography";
+export type { TypographyProps } from "./components/atoms/typography/typography";
 
 // ────────────────────── Molecules (14) ──────────────────────
 
