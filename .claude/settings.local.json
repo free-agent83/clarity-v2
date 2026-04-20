@@ -67,7 +67,14 @@
       "Bash(ps -p 68823 -o command=)",
       "Bash(echo \"tsc_exit=$?\")",
       "Bash(git commit -m ' *)",
-      "Bash(git -C ../.. status)"
+      "Bash(git -C ../.. status)",
+      "Bash(git cherry-pick *)",
+      "Bash(git merge *)",
+      "mcp__685a6fb2-46e7-433b-b8fa-e0ea2fa8b66e__get_design_context",
+      "mcp__685a6fb2-46e7-433b-b8fa-e0ea2fa8b66e__get_variable_defs",
+      "mcp__685a6fb2-46e7-433b-b8fa-e0ea2fa8b66e__get_metadata",
+      "mcp__685a6fb2-46e7-433b-b8fa-e0ea2fa8b66e__search_design_system",
+      "Bash(git cherry *)"
     ]
   }
 }
