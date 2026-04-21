@@ -1,5 +1,4 @@
 import { createContext, useContext, type ReactNode } from "react";
-import type { AppUserContextValue } from "../src/components/templates/plp/plp-types";
 
 /**
  * Storybook-only emulation of an app-level user context. Lives inside
@@ -8,6 +7,20 @@ import type { AppUserContextValue } from "../src/components/templates/plp/plp-ty
  * This file lets stories emulate an ambient app provider so toolbar
  * globals flow into every story without per-story wiring.
  */
+
+/**
+ * Shape of app-level user context that consuming apps pass into library
+ * components. Drives variant rendering (currency display, tariff
+ * disclosure, legacy pricing, feature flags). The type is a contract —
+ * the library does not ship a Context object or Provider. Consuming apps
+ * populate and pass this however they want; Storybook emulates it here.
+ */
+export interface AppUserContextValue {
+  currency: string;
+  location: string;
+  pricingModel: "standard" | "legacy";
+  featureFlags?: Record<string, boolean>;
+}
 
 const DEFAULT: AppUserContextValue = {
   currency: "USD",

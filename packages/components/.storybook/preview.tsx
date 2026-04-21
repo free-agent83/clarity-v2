@@ -1,7 +1,6 @@
 import type { Preview } from "@storybook/react";
 import "../src/styles/globals.css";
-import { AppUserProvider } from "./app-user-context";
-import type { AppUserContextValue } from "../src/components/templates/plp/plp-types";
+import { AppUserProvider, type AppUserContextValue } from "./app-user-context";
 
 const preview: Preview = {
   decorators: [
