@@ -40,12 +40,9 @@ import {
   PlpListRowReturnable,
 } from "../list/plp-list-row";
 import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
-import type { AsyncComboboxOption } from "../filters/presets/async-combobox";
-import type { MultiSelectChipOption } from "../filters/presets/multi-select-chips";
-import type { SingleSelectChipOption } from "../filters/presets/single-select-chips";
-import type { SingleSelectDropdownOption } from "../filters/presets/single-select-dropdown";
-import type { MultiAxisRangeAxis } from "../filters/presets/multi-axis-range";
-import type { RangeSliderHistogram } from "../filters/presets/range-slider";
+import type { AsyncComboboxOption } from "../../../molecules/async-combobox-filter/async-combobox-filter";
+import type { ChipSelectOption } from "../../../molecules/chip-select-filter/chip-select-filter";
+import type { RangeAxis } from "../../../molecules/range-filter/range-filter";
 import {
   MOCK_SUPPLIERS,
   SAMPLE_360_VIDEO_URL,
@@ -86,15 +83,15 @@ export interface GemstoneFilterState {
   clarity?: string[];
   treatment?: string;
   location?: string;
-  price?: { min: number; max: number };
-  carat?: { min: number; max: number };
+  price?: Record<string, { min: number; max: number }>;
+  carat?: Record<string, { min: number; max: number }>;
   size?: Record<string, { min: number; max: number }>;
   supplier?: AsyncComboboxOption[];
 }
 
 // -- Filter configuration ---------------------------------------------------
 
-export const GEMSTONE_COLOR_OPTIONS: MultiSelectChipOption[] = [
+export const GEMSTONE_COLOR_OPTIONS: ChipSelectOption[] = [
   { value: "blue", label: "Blue" },
   { value: "green", label: "Green" },
   { value: "red", label: "Red" },
@@ -103,32 +100,27 @@ export const GEMSTONE_COLOR_OPTIONS: MultiSelectChipOption[] = [
   { value: "yellow", label: "Yellow" },
 ];
 
-export const GEMSTONE_CLARITY_OPTIONS: MultiSelectChipOption[] = [
+export const GEMSTONE_CLARITY_OPTIONS: ChipSelectOption[] = [
   { value: "eye-clean", label: "Eye clean" },
   { value: "slightly-included", label: "Slightly included" },
   { value: "moderately-included", label: "Moderately included" },
   { value: "visibly-included", label: "Visibly included" },
 ];
 
-export const GEMSTONE_TREATMENT_OPTIONS: SingleSelectChipOption[] = [
+export const GEMSTONE_TREATMENT_OPTIONS: ChipSelectOption[] = [
   { value: "none", label: "None" },
   { value: "heated", label: "Heated" },
   { value: "oiled", label: "Oiled" },
 ];
 
-export const GEMSTONE_LOCATION_OPTIONS: SingleSelectDropdownOption[] = [
+export const GEMSTONE_LOCATION_OPTIONS: { value: string; label: string }[] = [
   { value: "us", label: "United States" },
   { value: "eu", label: "Europe" },
   { value: "asia", label: "Asia" },
 ];
 
-export const GEMSTONE_PRICE_CONFIG: {
-  min: number;
-  max: number;
-  step: number;
-  unit: string;
-  histogram: RangeSliderHistogram;
-} = {
+export const GEMSTONE_PRICE_CONFIG: RangeAxis = {
+  id: "price",
   min: 0,
   max: 10000,
   step: 10,
@@ -136,13 +128,8 @@ export const GEMSTONE_PRICE_CONFIG: {
   histogram: buildMockHistogram(0, 10000, 40, 2500),
 };
 
-export const GEMSTONE_CARAT_CONFIG: {
-  min: number;
-  max: number;
-  step: number;
-  unit: string;
-  histogram: RangeSliderHistogram;
-} = {
+export const GEMSTONE_CARAT_CONFIG: RangeAxis = {
+  id: "carat",
   min: 0,
   max: 10,
   step: 0.1,
@@ -150,7 +137,7 @@ export const GEMSTONE_CARAT_CONFIG: {
   histogram: buildMockHistogram(0, 10, 40, 2),
 };
 
-export const GEMSTONE_SIZE_AXES: MultiAxisRangeAxis[] = [
+export const GEMSTONE_SIZE_AXES: RangeAxis[] = [
   { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
   { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
   { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },

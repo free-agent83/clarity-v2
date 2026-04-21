@@ -7,7 +7,44 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { PlpTemplate, type PlpTemplateProps } from "./plp-template";
+import {
+  IconLayoutGrid,
+  IconList,
+} from "@tabler/icons-react";
+import { FilterButton } from "../../atoms/filter-button/filter-button";
+import { Label } from "../../atoms/label/label";
+import { Switch } from "../../atoms/switch/switch";
+import { ToggleGroup, ToggleGroupItem } from "../../atoms/toggle-group/toggle-group";
+import { Typography } from "../../atoms/typography/typography";
+import {
+  AppShell,
+  AppShellHeader,
+  AppShellMain,
+} from "../../organisms/app-shell/app-shell";
+import { AsyncComboboxFilter } from "../../molecules/async-combobox-filter/async-combobox-filter";
+import type { AsyncComboboxOption } from "../../molecules/async-combobox-filter/async-combobox-filter";
+import { ChipSelectFilter } from "../../molecules/chip-select-filter/chip-select-filter";
+import { FilterDrawer } from "../../molecules/filter-drawer/filter-drawer";
+import { FilterSection } from "../../molecules/filter-section/filter-section";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "../../molecules/pagination/pagination";
+import { RangeFilter } from "../../molecules/range-filter/range-filter";
+import type { RangeAxis } from "../../molecules/range-filter/range-filter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../molecules/select/select";
+import { FilterToolbar } from "../../organisms/filter-toolbar/filter-toolbar";
+import type { FilterToolbarSortOption } from "../../organisms/filter-toolbar/filter-toolbar";
+import { useIsTabletUp } from "../../../hooks/use-is-tablet-up";
 import {
   PlpGridItem,
   PlpGridItemDelivery,
@@ -16,25 +53,12 @@ import {
   PlpGridItemPrice,
   PlpGridItemReturnable,
 } from "./grid/plp-grid-item";
-import {
-  AppShell,
-  AppShellHeader,
-  AppShellMain,
-} from "../../organisms/app-shell/app-shell";
-import { Typography } from "../../atoms/typography/typography";
-import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
-import { PlpFilterSection } from "./filters/plp-filter-section";
-import { FilterButton } from "../../atoms/filter-button/filter-button";
-import { BooleanChipFilter } from "./filters/presets/boolean-chip";
-import { SingleSelectChipsFilter } from "./filters/presets/single-select-chips";
-import { MultiSelectChipsFilter } from "./filters/presets/multi-select-chips";
-import { SingleSelectDropdownFilter } from "./filters/presets/single-select-dropdown";
-import { RangeSliderFilter } from "./filters/presets/range-slider";
-import { MultiAxisRangeFilter } from "./filters/presets/multi-axis-range";
-import { AsyncComboboxFilter } from "./filters/presets/async-combobox";
-import type { AsyncComboboxOption } from "./filters/presets/async-combobox";
-import type { MultiSelectChipOption } from "./filters/presets/multi-select-chips";
-import type { MultiAxisRangeAxis } from "./filters/presets/multi-axis-range";
+import { PlpGridContainer } from "./plp-grid-container";
+import { PlpHeading } from "./plp-heading";
+import { PlpListContainer } from "./plp-list-container";
+import { PlpEmpty } from "./states/plp-empty";
+import { PlpError } from "./states/plp-error";
+import type { BreadcrumbSegment, PlpStatus, PlpViewMode } from "./plp-types";
 import { SORT_OPTIONS, mockPreviewCount } from "./mocks/common";
 import { MOCK_LATENCY } from "./mocks/simulate-api-call";
 import {
@@ -67,13 +91,11 @@ import {
   generateDiamondItems,
   type DiamondFilterState,
 } from "./mocks/diamond";
-import type { PlpStatus, PlpViewMode } from "./plp-types";
-import type { FilterButtonProps } from "../../atoms/filter-button/filter-button";
 
 // ── Reference wiring: useFilterController ─────────────────────────────
 //
 // This hook is the canonical pattern for wiring filter state into the
-// PLP template. It is deliberately defined inside this story file (not
+// PLP assembly. It is deliberately defined inside this story file (not
 // exported from the library) — the refactor's goal is to show consumers
 // how to own filter state themselves rather than hide it behind a
 // library hook. Copy, adapt to your own state shape, or replace it
@@ -160,7 +182,7 @@ function usePreviewCount(draft: object) {
 
 // ── Simulated backend-commit latency ──────────────────────────────────
 //
-// Flips the template's `status` to "loading" for ~commit ms whenever the
+// Flips the effective `status` to "loading" for ~commit ms whenever the
 // applied state changes so the grid/list briefly shows skeletons.
 
 function useSimulatedCommitStatus(applied: object, baseline: PlpStatus) {
@@ -190,7 +212,7 @@ function useSimulatedCommitStatus(applied: object, baseline: PlpStatus) {
 
 // ── Chip-summary formatters ───────────────────────────────────────────
 //
-// Each preset has its own chip-summary shape; format helpers live here
+// Each filter has its own chip-summary shape; format helpers live here
 // in the consumer. The library no longer ships a chip formatter.
 
 function formatMultiSelectChip(labels: string[]): string {
@@ -209,23 +231,27 @@ function formatUnitValue(n: number, unit?: string): string {
 }
 
 function formatRangeChip(
-  value: { min: number; max: number } | undefined,
+  value: Record<string, { min: number; max: number }> | undefined,
+  axisId: string,
   unit?: string
 ): string {
-  if (!value) return "";
-  return `${formatUnitValue(value.min, unit)}\u2013${formatUnitValue(value.max, unit)}`;
+  const v = value?.[axisId];
+  if (!v) return "";
+  return `${formatUnitValue(v.min, unit)}\u2013${formatUnitValue(v.max, unit)}`;
 }
 
 function formatMultiAxisChip(
   value: Record<string, { min: number; max: number }> | undefined,
-  axes: MultiAxisRangeAxis[]
+  axes: RangeAxis[]
 ): string {
   if (!value) return "";
   const segments: string[] = [];
   for (const axis of axes) {
     const v = value[axis.id];
     if (!v) continue;
-    const abbrev = axis.label.charAt(0).toUpperCase();
+    const abbrev = axis.label
+      ? axis.label.charAt(0).toUpperCase()
+      : axis.id.charAt(0).toUpperCase();
     segments.push(
       `${abbrev} ${formatUnitValue(v.min, axis.unit)}\u2013${formatUnitValue(v.max, axis.unit)}`
     );
@@ -246,28 +272,32 @@ function useGemstoneFilterButtons(
 ): Record<string, ReactNode> {
   const { applied, setAppliedFor } = ctrl;
 
-  // Keyed builders so each filter button is a discrete ReactNode the
-  // story can route into the right slot. Each button uses FilterButton
-  // with a render-prop child choosing its preset component.
   return useMemo<Record<string, ReactNode>>(
     () => ({
       "nivoda-curated": (
         <FilterButton<true>
           key="nivoda-curated"
           label="Nivoda Curated"
-          chipSummary="Only Nivoda Curated items"
+          chipSummary={
+            applied["nivoda-curated"] ? "Only Nivoda Curated items" : undefined
+          }
           isActive={applied["nivoda-curated"] === true}
           initialValue={applied["nivoda-curated"]}
           onApply={(v) => setAppliedFor("nivoda-curated", v)}
           onClear={() => setAppliedFor("nivoda-curated", undefined)}
           onDismiss={() => setAppliedFor("nivoda-curated", undefined)}
         >
-          {(v, set) => (
-            <BooleanChipFilter
-              value={v}
-              onChange={set}
-              label="Only Nivoda Curated items"
-            />
+          {(draft, setDraft) => (
+            <div className="flex items-center gap-3">
+              <Switch
+                id="nivoda-curated-switch"
+                checked={draft === true}
+                onCheckedChange={(c) => setDraft(c ? true : undefined)}
+              />
+              <Label htmlFor="nivoda-curated-switch" className="cursor-pointer">
+                Only Nivoda Curated items
+              </Label>
+            </div>
           )}
         </FilterButton>
       ),
@@ -288,7 +318,8 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("color", undefined)}
         >
           {(v, set) => (
-            <MultiSelectChipsFilter
+            <ChipSelectFilter
+              mode="multiple"
               value={v}
               onChange={set}
               options={GEMSTONE_COLOR_OPTIONS}
@@ -312,7 +343,8 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("clarity", undefined)}
         >
           {(v, set) => (
-            <MultiSelectChipsFilter
+            <ChipSelectFilter
+              mode="multiple"
               value={v}
               onChange={set}
               options={GEMSTONE_CLARITY_OPTIONS}
@@ -336,7 +368,8 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("treatment", undefined)}
         >
           {(v, set) => (
-            <SingleSelectChipsFilter
+            <ChipSelectFilter
+              mode="single"
               value={v}
               onChange={set}
               options={GEMSTONE_TREATMENT_OPTIONS}
@@ -359,21 +392,32 @@ function useGemstoneFilterButtons(
           onClear={() => setAppliedFor("location", undefined)}
           onDismiss={() => setAppliedFor("location", undefined)}
         >
-          {(v, set) => (
-            <SingleSelectDropdownFilter
-              value={v}
-              onChange={set}
-              options={GEMSTONE_LOCATION_OPTIONS}
-            />
+          {(v, setDraft) => (
+            <Select
+              value={v ?? ""}
+              onValueChange={(val) => setDraft(val || undefined)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select..." />
+              </SelectTrigger>
+              <SelectContent>
+                {GEMSTONE_LOCATION_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
         </FilterButton>
       ),
       price: (
-        <FilterButton<{ min: number; max: number }>
+        <FilterButton<Record<string, { min: number; max: number }>>
           key="price"
           label="Price"
           chipSummary={formatRangeChip(
             applied.price,
+            "price",
             GEMSTONE_PRICE_CONFIG.unit
           )}
           isActive={!!applied.price}
@@ -383,24 +427,17 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("price", undefined)}
         >
           {(v, set) => (
-            <RangeSliderFilter
-              value={v}
-              onChange={set}
-              min={GEMSTONE_PRICE_CONFIG.min}
-              max={GEMSTONE_PRICE_CONFIG.max}
-              step={GEMSTONE_PRICE_CONFIG.step}
-              unit={GEMSTONE_PRICE_CONFIG.unit}
-              histogram={GEMSTONE_PRICE_CONFIG.histogram}
-            />
+            <RangeFilter value={v} onChange={set} axes={[GEMSTONE_PRICE_CONFIG]} />
           )}
         </FilterButton>
       ),
       carat: (
-        <FilterButton<{ min: number; max: number }>
+        <FilterButton<Record<string, { min: number; max: number }>>
           key="carat"
           label="Carat"
           chipSummary={formatRangeChip(
             applied.carat,
+            "carat",
             GEMSTONE_CARAT_CONFIG.unit
           )}
           isActive={!!applied.carat}
@@ -410,15 +447,7 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("carat", undefined)}
         >
           {(v, set) => (
-            <RangeSliderFilter
-              value={v}
-              onChange={set}
-              min={GEMSTONE_CARAT_CONFIG.min}
-              max={GEMSTONE_CARAT_CONFIG.max}
-              step={GEMSTONE_CARAT_CONFIG.step}
-              unit={GEMSTONE_CARAT_CONFIG.unit}
-              histogram={GEMSTONE_CARAT_CONFIG.histogram}
-            />
+            <RangeFilter value={v} onChange={set} axes={[GEMSTONE_CARAT_CONFIG]} />
           )}
         </FilterButton>
       ),
@@ -434,11 +463,7 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("size", undefined)}
         >
           {(v, set) => (
-            <MultiAxisRangeFilter
-              value={v}
-              onChange={set}
-              axes={GEMSTONE_SIZE_AXES}
-            />
+            <RangeFilter value={v} onChange={set} axes={GEMSTONE_SIZE_AXES} />
           )}
         </FilterButton>
       ),
@@ -484,78 +509,90 @@ function GemstoneDrawerBody({
   const { draft, setDraftFor } = ctrl;
   return (
     <>
-      <PlpFilterSection label="Nivoda Curated" separator={false}>
-        <BooleanChipFilter
-          value={draft["nivoda-curated"]}
-          onChange={(v) => setDraftFor("nivoda-curated", v)}
-          label="Only Nivoda Curated items"
-        />
-      </PlpFilterSection>
-      <PlpFilterSection label="Color">
-        <MultiSelectChipsFilter
+      <FilterSection label="Nivoda Curated" separator={false}>
+        <div className="flex items-center gap-3">
+          <Switch
+            id="drawer-nivoda-curated"
+            checked={draft["nivoda-curated"] === true}
+            onCheckedChange={(c) =>
+              setDraftFor("nivoda-curated", c ? true : undefined)
+            }
+          />
+          <Label htmlFor="drawer-nivoda-curated" className="cursor-pointer">
+            Only Nivoda Curated items
+          </Label>
+        </div>
+      </FilterSection>
+      <FilterSection label="Color">
+        <ChipSelectFilter
+          mode="multiple"
           value={draft.color}
           onChange={(v) => setDraftFor("color", v)}
           options={GEMSTONE_COLOR_OPTIONS}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Clarity">
-        <MultiSelectChipsFilter
+      </FilterSection>
+      <FilterSection label="Clarity">
+        <ChipSelectFilter
+          mode="multiple"
           value={draft.clarity}
           onChange={(v) => setDraftFor("clarity", v)}
           options={GEMSTONE_CLARITY_OPTIONS}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Treatment">
-        <SingleSelectChipsFilter
+      </FilterSection>
+      <FilterSection label="Treatment">
+        <ChipSelectFilter
+          mode="single"
           value={draft.treatment}
           onChange={(v) => setDraftFor("treatment", v)}
           options={GEMSTONE_TREATMENT_OPTIONS}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Location">
-        <SingleSelectDropdownFilter
-          value={draft.location}
-          onChange={(v) => setDraftFor("location", v)}
-          options={GEMSTONE_LOCATION_OPTIONS}
-        />
-      </PlpFilterSection>
-      <PlpFilterSection label="Price">
-        <RangeSliderFilter
+      </FilterSection>
+      <FilterSection label="Location">
+        <Select
+          value={draft.location ?? ""}
+          onValueChange={(v) => setDraftFor("location", v || undefined)}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select..." />
+          </SelectTrigger>
+          <SelectContent>
+            {GEMSTONE_LOCATION_OPTIONS.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FilterSection>
+      <FilterSection label="Price">
+        <RangeFilter
           value={draft.price}
           onChange={(v) => setDraftFor("price", v)}
-          min={GEMSTONE_PRICE_CONFIG.min}
-          max={GEMSTONE_PRICE_CONFIG.max}
-          step={GEMSTONE_PRICE_CONFIG.step}
-          unit={GEMSTONE_PRICE_CONFIG.unit}
-          histogram={GEMSTONE_PRICE_CONFIG.histogram}
+          axes={[GEMSTONE_PRICE_CONFIG]}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Carat">
-        <RangeSliderFilter
+      </FilterSection>
+      <FilterSection label="Carat">
+        <RangeFilter
           value={draft.carat}
           onChange={(v) => setDraftFor("carat", v)}
-          min={GEMSTONE_CARAT_CONFIG.min}
-          max={GEMSTONE_CARAT_CONFIG.max}
-          step={GEMSTONE_CARAT_CONFIG.step}
-          unit={GEMSTONE_CARAT_CONFIG.unit}
-          histogram={GEMSTONE_CARAT_CONFIG.histogram}
+          axes={[GEMSTONE_CARAT_CONFIG]}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Size (mm)">
-        <MultiAxisRangeFilter
+      </FilterSection>
+      <FilterSection label="Size (mm)">
+        <RangeFilter
           value={draft.size}
           onChange={(v) => setDraftFor("size", v)}
           axes={GEMSTONE_SIZE_AXES}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Supplier">
+      </FilterSection>
+      <FilterSection label="Supplier">
         <AsyncComboboxFilter
           value={draft.supplier}
           onChange={(v) => setDraftFor("supplier", v)}
           searchFn={GEMSTONE_SUPPLIER_SEARCH}
           searchPlaceholder="Search suppliers..."
         />
-      </PlpFilterSection>
+      </FilterSection>
     </>
   );
 }
@@ -585,7 +622,8 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("shape", undefined)}
         >
           {(v, set) => (
-            <MultiSelectChipsFilter
+            <ChipSelectFilter
+              mode="multiple"
               value={v}
               onChange={set}
               options={DIAMOND_SHAPE_OPTIONS}
@@ -605,7 +643,8 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("color", undefined)}
         >
           {(v, set) => (
-            <MultiSelectChipsFilter
+            <ChipSelectFilter
+              mode="multiple"
               value={v}
               onChange={set}
               options={DIAMOND_COLOR_OPTIONS}
@@ -625,7 +664,8 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("clarity", undefined)}
         >
           {(v, set) => (
-            <MultiSelectChipsFilter
+            <ChipSelectFilter
+              mode="multiple"
               value={v}
               onChange={set}
               options={DIAMOND_CLARITY_OPTIONS}
@@ -634,11 +674,12 @@ function useDiamondFilterButtons(
         </FilterButton>
       ),
       price: (
-        <FilterButton<{ min: number; max: number }>
+        <FilterButton<Record<string, { min: number; max: number }>>
           key="price"
           label="Price"
           chipSummary={formatRangeChip(
             applied.price,
+            "price",
             DIAMOND_PRICE_CONFIG.unit
           )}
           isActive={!!applied.price}
@@ -648,24 +689,17 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("price", undefined)}
         >
           {(v, set) => (
-            <RangeSliderFilter
-              value={v}
-              onChange={set}
-              min={DIAMOND_PRICE_CONFIG.min}
-              max={DIAMOND_PRICE_CONFIG.max}
-              step={DIAMOND_PRICE_CONFIG.step}
-              unit={DIAMOND_PRICE_CONFIG.unit}
-              histogram={DIAMOND_PRICE_CONFIG.histogram}
-            />
+            <RangeFilter value={v} onChange={set} axes={[DIAMOND_PRICE_CONFIG]} />
           )}
         </FilterButton>
       ),
       carat: (
-        <FilterButton<{ min: number; max: number }>
+        <FilterButton<Record<string, { min: number; max: number }>>
           key="carat"
           label="Carat"
           chipSummary={formatRangeChip(
             applied.carat,
+            "carat",
             DIAMOND_CARAT_CONFIG.unit
           )}
           isActive={!!applied.carat}
@@ -675,15 +709,7 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("carat", undefined)}
         >
           {(v, set) => (
-            <RangeSliderFilter
-              value={v}
-              onChange={set}
-              min={DIAMOND_CARAT_CONFIG.min}
-              max={DIAMOND_CARAT_CONFIG.max}
-              step={DIAMOND_CARAT_CONFIG.step}
-              unit={DIAMOND_CARAT_CONFIG.unit}
-              histogram={DIAMOND_CARAT_CONFIG.histogram}
-            />
+            <RangeFilter value={v} onChange={set} axes={[DIAMOND_CARAT_CONFIG]} />
           )}
         </FilterButton>
       ),
@@ -699,11 +725,7 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("size", undefined)}
         >
           {(v, set) => (
-            <MultiAxisRangeFilter
-              value={v}
-              onChange={set}
-              axes={DIAMOND_SIZE_AXES}
-            />
+            <RangeFilter value={v} onChange={set} axes={DIAMOND_SIZE_AXES} />
           )}
         </FilterButton>
       ),
@@ -745,64 +767,59 @@ function DiamondDrawerBody({
   const { draft, setDraftFor } = ctrl;
   return (
     <>
-      <PlpFilterSection label="Shape" separator={false}>
-        <MultiSelectChipsFilter
+      <FilterSection label="Shape" separator={false}>
+        <ChipSelectFilter
+          mode="multiple"
           value={draft.shape}
           onChange={(v) => setDraftFor("shape", v)}
           options={DIAMOND_SHAPE_OPTIONS}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Color">
-        <MultiSelectChipsFilter
+      </FilterSection>
+      <FilterSection label="Color">
+        <ChipSelectFilter
+          mode="multiple"
           value={draft.color}
           onChange={(v) => setDraftFor("color", v)}
           options={DIAMOND_COLOR_OPTIONS}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Clarity">
-        <MultiSelectChipsFilter
+      </FilterSection>
+      <FilterSection label="Clarity">
+        <ChipSelectFilter
+          mode="multiple"
           value={draft.clarity}
           onChange={(v) => setDraftFor("clarity", v)}
           options={DIAMOND_CLARITY_OPTIONS}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Price">
-        <RangeSliderFilter
+      </FilterSection>
+      <FilterSection label="Price">
+        <RangeFilter
           value={draft.price}
           onChange={(v) => setDraftFor("price", v)}
-          min={DIAMOND_PRICE_CONFIG.min}
-          max={DIAMOND_PRICE_CONFIG.max}
-          step={DIAMOND_PRICE_CONFIG.step}
-          unit={DIAMOND_PRICE_CONFIG.unit}
-          histogram={DIAMOND_PRICE_CONFIG.histogram}
+          axes={[DIAMOND_PRICE_CONFIG]}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Carat">
-        <RangeSliderFilter
+      </FilterSection>
+      <FilterSection label="Carat">
+        <RangeFilter
           value={draft.carat}
           onChange={(v) => setDraftFor("carat", v)}
-          min={DIAMOND_CARAT_CONFIG.min}
-          max={DIAMOND_CARAT_CONFIG.max}
-          step={DIAMOND_CARAT_CONFIG.step}
-          unit={DIAMOND_CARAT_CONFIG.unit}
-          histogram={DIAMOND_CARAT_CONFIG.histogram}
+          axes={[DIAMOND_CARAT_CONFIG]}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Size (mm)">
-        <MultiAxisRangeFilter
+      </FilterSection>
+      <FilterSection label="Size (mm)">
+        <RangeFilter
           value={draft.size}
           onChange={(v) => setDraftFor("size", v)}
           axes={DIAMOND_SIZE_AXES}
         />
-      </PlpFilterSection>
-      <PlpFilterSection label="Supplier">
+      </FilterSection>
+      <FilterSection label="Supplier">
         <AsyncComboboxFilter
           value={draft.supplier}
           onChange={(v) => setDraftFor("supplier", v)}
           searchFn={DIAMOND_SUPPLIER_SEARCH}
           searchPlaceholder="Search suppliers..."
         />
-      </PlpFilterSection>
+      </FilterSection>
     </>
   );
 }
@@ -810,7 +827,7 @@ function DiamondDrawerBody({
 // ── Toolbar + sticky slot routing ─────────────────────────────────────
 //
 // Given a buttons-by-id map, a pinned id list, and the currently active
-// ids, produce the two slot arrays the template consumes:
+// ids, produce the two slot arrays the FilterToolbar consumes:
 // - `toolbarFilters`: pinned ids first (always), then engaged non-pinned
 // - `stickyFilters`: only engaged ids (no empty pinned buttons)
 
@@ -834,7 +851,7 @@ function routeFilterSlots(
   return { toolbarFilters, stickyFilters };
 }
 
-// ── Helpers ───────────────────────────────────────────────
+// ── Card/row builder helpers ──────────────────────────────────────────
 
 function buildGemstoneCards(count: number): ReactNode[] {
   return generateGemstoneItems(count).map((item) => (
@@ -860,7 +877,163 @@ function buildDiamondRows(count: number): ReactNode[] {
   ));
 }
 
-// ── Story meta ────────────────────────────────────────────
+// ── AssemblyShell ─────────────────────────────────────────────────────
+//
+// Local helper that wires PlpHeading + FilterToolbar + content + optional
+// pagination + FilterDrawer sibling into the canonical page layout.
+
+function AssemblyShell({
+  breadcrumbs,
+  title,
+  resultsCount,
+  banner,
+  toolbarFilters,
+  stickyFilters,
+  activeFilterCount,
+  hasActiveFilters,
+  onOpenDrawer,
+  onClearAll,
+  onSearchSubmit,
+  searchPlaceholder,
+  sortOptions,
+  sortValue,
+  onSortChange,
+  actions,
+  children,
+  drawer,
+  pagination,
+}: {
+  breadcrumbs: BreadcrumbSegment[];
+  title: string;
+  resultsCount: number;
+  banner?: ReactNode;
+  toolbarFilters?: ReactNode[];
+  stickyFilters?: ReactNode[];
+  activeFilterCount: number;
+  hasActiveFilters: boolean;
+  onOpenDrawer: () => void;
+  onClearAll: () => void;
+  onSearchSubmit?: (q: string) => void;
+  searchPlaceholder?: string;
+  sortOptions?: FilterToolbarSortOption[];
+  sortValue?: string;
+  onSortChange?: (value: string) => void;
+  actions?: ReactNode;
+  children: ReactNode;
+  drawer?: ReactNode;
+  pagination?: ReactNode;
+}) {
+  return (
+    <main className="space-y-4" data-slot="plp-assembly">
+      <PlpHeading
+        breadcrumbs={breadcrumbs}
+        title={title}
+        resultsCount={resultsCount}
+      />
+      {banner}
+      <FilterToolbar
+        filters={toolbarFilters}
+        stickyFilters={stickyFilters}
+        activeFilterCount={activeFilterCount}
+        hasActiveFilters={hasActiveFilters}
+        onOpenDrawer={onOpenDrawer}
+        onClearAll={onClearAll}
+        onSearchSubmit={onSearchSubmit}
+        searchPlaceholder={searchPlaceholder}
+        sortOptions={sortOptions}
+        sortValue={sortValue}
+        onSortChange={onSortChange}
+        actions={actions}
+      />
+      {children}
+      {pagination}
+      {drawer}
+    </main>
+  );
+}
+
+// ── InlinePagination ──────────────────────────────────────────────────
+
+function InlinePagination({
+  page,
+  pageSize,
+  totalItems,
+  pageSizeOptions = [20, 50, 100],
+  onPageChange,
+  onPageSizeChange,
+}: {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  pageSizeOptions?: number[];
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+}) {
+  const totalPages = Math.ceil(totalItems / pageSize);
+  return (
+    <div className="flex items-center justify-center gap-4 py-4">
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Typography as="span" variant="body-2">
+          Results per page
+        </Typography>
+        <Select
+          value={String(pageSize)}
+          onValueChange={(v) => onPageSizeChange(Number(v))}
+        >
+          <SelectTrigger className="w-auto">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {pageSizeOptions.map((s) => (
+              <SelectItem key={s} value={String(s)}>
+                {s}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (page > 1) onPageChange(page - 1);
+              }}
+              aria-disabled={page <= 1}
+              className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+          <PaginationItem>
+            <Typography
+              as="span"
+              variant="body-2"
+              className="px-2 text-muted-foreground"
+            >
+              Page {page} of {totalPages}
+            </Typography>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                if (page < totalPages) onPageChange(page + 1);
+              }}
+              aria-disabled={page >= totalPages}
+              className={
+                page >= totalPages ? "pointer-events-none opacity-50" : ""
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
+  );
+}
+
+// ── Story meta ────────────────────────────────────────────────────────
 
 const meta: Meta = {
   title: "Templates/PLP",
@@ -879,77 +1052,54 @@ const meta: Meta = {
 
 export default meta;
 
-// ── Shared interactive wrappers ───────────────────────────
+// ── Shared props interface ────────────────────────────────────────────
 
-type InteractiveTemplateShellProps = Omit<
-  PlpTemplateProps,
-  | "toolbarFilters"
-  | "stickyFilters"
-  | "activeFilterCount"
-  | "hasActiveFilters"
-  | "onOpenDrawer"
-  | "onClearAll"
-  | "sortValue"
-  | "onSortChange"
-  | "page"
-  | "onPageChange"
-  | "pageSize"
-  | "onPageSizeChange"
-  | "viewMode"
-  | "onViewModeChange"
-  | "status"
-> & {
+interface InteractiveShellProps {
+  breadcrumbs: BreadcrumbSegment[];
+  title: string;
+  resultsCount: number;
+  totalItems: number;
+  sortOptions?: FilterToolbarSortOption[];
+  searchPlaceholder?: string;
+  onSearchSubmit?: (q: string) => void;
+  listHeader?: ReactNode;
+  listRows?: ReactNode[];
+  listViewAvailable?: boolean;
+  gridItems?: ReactNode[];
+  onRetry?: () => void;
+  emptyMessage?: string;
+  emptyFilterSuggestions?: string[];
   initialSortValue?: string;
   initialPage?: number;
   initialPageSize?: number;
   initialViewMode?: PlpViewMode;
   baselineStatus?: PlpStatus;
-};
+}
 
-/**
- * Local state for sort/page/view mode + simulated commit status.
- * Filter state is supplied by the caller via the controller.
- */
-function usePlpShellState({
+// ── GemstoneInteractive ───────────────────────────────────────────────
+
+function GemstoneInteractive({
+  initialFilterState = {},
+  breadcrumbs,
+  title,
+  resultsCount,
+  totalItems,
+  sortOptions,
+  searchPlaceholder,
+  onSearchSubmit,
+  listHeader,
+  listRows,
+  listViewAvailable = false,
+  gridItems,
+  onRetry,
+  emptyMessage,
+  emptyFilterSuggestions,
   initialSortValue = "price-asc",
   initialPage = 1,
   initialPageSize = 20,
   initialViewMode = "grid",
   baselineStatus = "success",
-  applied,
-}: {
-  initialSortValue?: string;
-  initialPage?: number;
-  initialPageSize?: number;
-  initialViewMode?: PlpViewMode;
-  baselineStatus?: PlpStatus;
-  applied: object;
-}) {
-  const [sortValue, setSortValue] = useState(initialSortValue);
-  const [page, setPage] = useState(initialPage);
-  const [pageSize, setPageSize] = useState(initialPageSize);
-  const [viewMode, setViewMode] = useState<PlpViewMode>(initialViewMode);
-  const status = useSimulatedCommitStatus(applied, baselineStatus);
-
-  return {
-    sortValue,
-    setSortValue,
-    page,
-    setPage,
-    pageSize,
-    setPageSize,
-    viewMode,
-    setViewMode,
-    status,
-  };
-}
-
-// ── Stories ───────────────────────────────────────────────
-
-function GemstoneInteractive({
-  initialFilterState = {},
-  ...shellProps
-}: InteractiveTemplateShellProps & {
+}: InteractiveShellProps & {
   initialFilterState?: Partial<GemstoneFilterState>;
 }) {
   const ctrl = useFilterController<GemstoneFilterState>(initialFilterState);
@@ -960,50 +1110,127 @@ function GemstoneInteractive({
     ctrl.activeIds
   );
   const preview = usePreviewCount(ctrl.draft);
-  const shell = usePlpShellState({
-    ...shellProps,
-    applied: ctrl.applied,
-  });
+
+  const [sortValue, setSortValue] = useState(initialSortValue);
+  const [page, setPage] = useState(initialPage);
+  const [pageSize, setPageSize] = useState(initialPageSize);
+  const [view, setView] = useState<PlpViewMode>(initialViewMode);
+  const status = useSimulatedCommitStatus(ctrl.applied, baselineStatus);
+
+  const isTabletUp = useIsTabletUp();
+  const effectiveView: PlpViewMode =
+    listViewAvailable && isTabletUp && view === "list" ? "list" : "grid";
 
   return (
-    <>
-      <PlpTemplate
-        {...shellProps}
-        toolbarFilters={toolbarFilters}
-        stickyFilters={stickyFilters}
-        activeFilterCount={ctrl.activeCount}
-        hasActiveFilters={ctrl.activeCount > 0}
-        onOpenDrawer={ctrl.openDrawer}
-        onClearAll={ctrl.clearAll}
-        sortValue={shell.sortValue}
-        onSortChange={shell.setSortValue}
-        page={shell.page}
-        onPageChange={shell.setPage}
-        pageSize={shell.pageSize}
-        onPageSizeChange={shell.setPageSize}
-        viewMode={shell.viewMode}
-        onViewModeChange={shell.setViewMode}
-        status={shell.status}
-      />
-      <PlpFilterDrawer
-        open={ctrl.drawerOpen}
-        onOpenChange={ctrl.setDrawerOpen}
-        onApply={ctrl.applyDraft}
-        onClearDraft={ctrl.clearDraft}
-        hasActiveDraft={ctrl.hasActiveDraft}
-        resultsCount={preview.count}
-        isCountLoading={preview.loading}
-      >
-        <GemstoneDrawerBody ctrl={ctrl} />
-      </PlpFilterDrawer>
-    </>
+    <AssemblyShell
+      breadcrumbs={breadcrumbs}
+      title={title}
+      resultsCount={resultsCount}
+      toolbarFilters={toolbarFilters}
+      stickyFilters={stickyFilters}
+      activeFilterCount={ctrl.activeCount}
+      hasActiveFilters={ctrl.activeCount > 0}
+      onOpenDrawer={ctrl.openDrawer}
+      onClearAll={ctrl.clearAll}
+      onSearchSubmit={onSearchSubmit}
+      searchPlaceholder={searchPlaceholder}
+      sortOptions={sortOptions}
+      sortValue={sortValue}
+      onSortChange={setSortValue}
+      actions={
+        listViewAvailable ? (
+          <div className="hidden lg:flex">
+            <ToggleGroup
+              type="single"
+              value={view}
+              onValueChange={(v) => v && setView(v as PlpViewMode)}
+            >
+              <ToggleGroupItem value="grid" aria-label="Grid view">
+                <IconLayoutGrid className="h-4 w-4" />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="list" aria-label="List view">
+                <IconList className="h-4 w-4" />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+        ) : undefined
+      }
+      pagination={
+        status === "success" && totalItems > 0 ? (
+          <InlinePagination
+            page={page}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        ) : undefined
+      }
+      drawer={
+        <FilterDrawer
+          open={ctrl.drawerOpen}
+          onOpenChange={ctrl.setDrawerOpen}
+          onApply={ctrl.applyDraft}
+          onClearDraft={ctrl.clearDraft}
+          hasActiveDraft={ctrl.hasActiveDraft}
+          resultsCount={preview.count}
+          isCountLoading={preview.loading}
+        >
+          <GemstoneDrawerBody ctrl={ctrl} />
+        </FilterDrawer>
+      }
+    >
+      {status === "empty-filtered" ? (
+        <PlpEmpty
+          variant="empty-filtered"
+          onClearFilters={ctrl.clearAll}
+          filterSuggestions={emptyFilterSuggestions}
+        />
+      ) : status === "empty-no-items" ? (
+        <PlpEmpty variant="empty-no-items" message={emptyMessage} />
+      ) : status === "error" ? (
+        <PlpError onRetry={onRetry} />
+      ) : effectiveView === "list" ? (
+        <PlpListContainer
+          header={listHeader}
+          loading={status === "loading"}
+          skeletonCount={pageSize}
+        >
+          {listRows}
+        </PlpListContainer>
+      ) : (
+        <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
+          {gridItems}
+        </PlpGridContainer>
+      )}
+    </AssemblyShell>
   );
 }
 
+// ── DiamondInteractive ────────────────────────────────────────────────
+
 function DiamondInteractive({
   initialFilterState = {},
-  ...shellProps
-}: InteractiveTemplateShellProps & {
+  breadcrumbs,
+  title,
+  resultsCount,
+  totalItems,
+  sortOptions,
+  searchPlaceholder,
+  onSearchSubmit,
+  listHeader,
+  listRows,
+  listViewAvailable = false,
+  gridItems,
+  onRetry,
+  emptyMessage,
+  emptyFilterSuggestions,
+  initialSortValue = "price-asc",
+  initialPage = 1,
+  initialPageSize = 20,
+  initialViewMode = "grid",
+  baselineStatus = "success",
+}: InteractiveShellProps & {
   initialFilterState?: Partial<DiamondFilterState>;
 }) {
   const ctrl = useFilterController<DiamondFilterState>(initialFilterState);
@@ -1014,45 +1241,524 @@ function DiamondInteractive({
     ctrl.activeIds
   );
   const preview = usePreviewCount(ctrl.draft);
-  const shell = usePlpShellState({
-    ...shellProps,
-    applied: ctrl.applied,
-  });
+
+  const [sortValue, setSortValue] = useState(initialSortValue);
+  const [page, setPage] = useState(initialPage);
+  const [pageSize, setPageSize] = useState(initialPageSize);
+  const [view, setView] = useState<PlpViewMode>(initialViewMode);
+  const status = useSimulatedCommitStatus(ctrl.applied, baselineStatus);
+
+  const isTabletUp = useIsTabletUp();
+  const effectiveView: PlpViewMode =
+    listViewAvailable && isTabletUp && view === "list" ? "list" : "grid";
 
   return (
-    <>
-      <PlpTemplate
-        {...shellProps}
-        toolbarFilters={toolbarFilters}
-        stickyFilters={stickyFilters}
-        activeFilterCount={ctrl.activeCount}
-        hasActiveFilters={ctrl.activeCount > 0}
-        onOpenDrawer={ctrl.openDrawer}
-        onClearAll={ctrl.clearAll}
-        sortValue={shell.sortValue}
-        onSortChange={shell.setSortValue}
-        page={shell.page}
-        onPageChange={shell.setPage}
-        pageSize={shell.pageSize}
-        onPageSizeChange={shell.setPageSize}
-        viewMode={shell.viewMode}
-        onViewModeChange={shell.setViewMode}
-        status={shell.status}
-      />
-      <PlpFilterDrawer
-        open={ctrl.drawerOpen}
-        onOpenChange={ctrl.setDrawerOpen}
-        onApply={ctrl.applyDraft}
-        onClearDraft={ctrl.clearDraft}
-        hasActiveDraft={ctrl.hasActiveDraft}
-        resultsCount={preview.count}
-        isCountLoading={preview.loading}
-      >
-        <DiamondDrawerBody ctrl={ctrl} />
-      </PlpFilterDrawer>
-    </>
+    <AssemblyShell
+      breadcrumbs={breadcrumbs}
+      title={title}
+      resultsCount={resultsCount}
+      toolbarFilters={toolbarFilters}
+      stickyFilters={stickyFilters}
+      activeFilterCount={ctrl.activeCount}
+      hasActiveFilters={ctrl.activeCount > 0}
+      onOpenDrawer={ctrl.openDrawer}
+      onClearAll={ctrl.clearAll}
+      onSearchSubmit={onSearchSubmit}
+      searchPlaceholder={searchPlaceholder}
+      sortOptions={sortOptions}
+      sortValue={sortValue}
+      onSortChange={setSortValue}
+      actions={
+        listViewAvailable ? (
+          <div className="hidden lg:flex">
+            <ToggleGroup
+              type="single"
+              value={view}
+              onValueChange={(v) => v && setView(v as PlpViewMode)}
+            >
+              <ToggleGroupItem value="grid" aria-label="Grid view">
+                <IconLayoutGrid className="h-4 w-4" />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="list" aria-label="List view">
+                <IconList className="h-4 w-4" />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+        ) : undefined
+      }
+      pagination={
+        status === "success" && totalItems > 0 ? (
+          <InlinePagination
+            page={page}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        ) : undefined
+      }
+      drawer={
+        <FilterDrawer
+          open={ctrl.drawerOpen}
+          onOpenChange={ctrl.setDrawerOpen}
+          onApply={ctrl.applyDraft}
+          onClearDraft={ctrl.clearDraft}
+          hasActiveDraft={ctrl.hasActiveDraft}
+          resultsCount={preview.count}
+          isCountLoading={preview.loading}
+        >
+          <DiamondDrawerBody ctrl={ctrl} />
+        </FilterDrawer>
+      }
+    >
+      {status === "empty-filtered" ? (
+        <PlpEmpty
+          variant="empty-filtered"
+          onClearFilters={ctrl.clearAll}
+          filterSuggestions={emptyFilterSuggestions}
+        />
+      ) : status === "empty-no-items" ? (
+        <PlpEmpty variant="empty-no-items" message={emptyMessage} />
+      ) : status === "error" ? (
+        <PlpError onRetry={onRetry} />
+      ) : effectiveView === "list" ? (
+        <PlpListContainer
+          header={listHeader}
+          loading={status === "loading"}
+          skeletonCount={pageSize}
+        >
+          {listRows}
+        </PlpListContainer>
+      ) : (
+        <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
+          {gridItems}
+        </PlpGridContainer>
+      )}
+    </AssemblyShell>
   );
 }
+
+// ── Jewelry — inline filter schema to show the composition pattern ────
+
+interface JewelryFilterState {
+  "stone-shape"?: string[];
+  metal?: string[];
+  style?: string[];
+}
+
+const JEWELRY_STONE_SHAPE_OPTIONS = [
+  { value: "round", label: "Round" },
+  { value: "oval", label: "Oval" },
+  { value: "cushion", label: "Cushion" },
+];
+
+const JEWELRY_METAL_OPTIONS = [
+  { value: "gold", label: "Gold" },
+  { value: "platinum", label: "Platinum" },
+  { value: "silver", label: "Silver" },
+];
+
+const JEWELRY_STYLE_OPTIONS = [
+  { value: "solitaire", label: "Solitaire" },
+  { value: "halo", label: "Halo" },
+  { value: "three-stone", label: "Three stone" },
+];
+
+const JEWELRY_PINNED_IDS = ["stone-shape", "metal"] as const;
+
+function JewelryInteractive() {
+  const ctrl = useFilterController<JewelryFilterState>({});
+  const { applied, setAppliedFor, draft, setDraftFor } = ctrl;
+
+  const buttons: Record<string, ReactNode> = {
+    "stone-shape": (
+      <FilterButton<string[]>
+        key="stone-shape"
+        label="Stone shape"
+        chipSummary={formatMultiSelectChip(
+          (applied["stone-shape"] ?? []).map((v) =>
+            labelForValue(JEWELRY_STONE_SHAPE_OPTIONS, v)
+          )
+        )}
+        isActive={(applied["stone-shape"] ?? []).length > 0}
+        initialValue={applied["stone-shape"]}
+        onApply={(v) => setAppliedFor("stone-shape", v)}
+        onClear={() => setAppliedFor("stone-shape", undefined)}
+        onDismiss={() => setAppliedFor("stone-shape", undefined)}
+      >
+        {(v, set) => (
+          <ChipSelectFilter
+            mode="multiple"
+            value={v}
+            onChange={set}
+            options={JEWELRY_STONE_SHAPE_OPTIONS}
+          />
+        )}
+      </FilterButton>
+    ),
+    metal: (
+      <FilterButton<string[]>
+        key="metal"
+        label="Metal"
+        chipSummary={formatMultiSelectChip(
+          (applied.metal ?? []).map((v) =>
+            labelForValue(JEWELRY_METAL_OPTIONS, v)
+          )
+        )}
+        isActive={(applied.metal ?? []).length > 0}
+        initialValue={applied.metal}
+        onApply={(v) => setAppliedFor("metal", v)}
+        onClear={() => setAppliedFor("metal", undefined)}
+        onDismiss={() => setAppliedFor("metal", undefined)}
+      >
+        {(v, set) => (
+          <ChipSelectFilter
+            mode="multiple"
+            value={v}
+            onChange={set}
+            options={JEWELRY_METAL_OPTIONS}
+          />
+        )}
+      </FilterButton>
+    ),
+    style: (
+      <FilterButton<string[]>
+        key="style"
+        label="Style"
+        chipSummary={formatMultiSelectChip(
+          (applied.style ?? []).map((v) =>
+            labelForValue(JEWELRY_STYLE_OPTIONS, v)
+          )
+        )}
+        isActive={(applied.style ?? []).length > 0}
+        initialValue={applied.style}
+        onApply={(v) => setAppliedFor("style", v)}
+        onClear={() => setAppliedFor("style", undefined)}
+        onDismiss={() => setAppliedFor("style", undefined)}
+      >
+        {(v, set) => (
+          <ChipSelectFilter
+            mode="multiple"
+            value={v}
+            onChange={set}
+            options={JEWELRY_STYLE_OPTIONS}
+          />
+        )}
+      </FilterButton>
+    ),
+  };
+
+  const { toolbarFilters, stickyFilters } = routeFilterSlots(
+    buttons,
+    JEWELRY_PINNED_IDS,
+    ctrl.activeIds
+  );
+  const preview = usePreviewCount(ctrl.draft);
+
+  const [sortValue, setSortValue] = useState("featured");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const status = useSimulatedCommitStatus(ctrl.applied, "success");
+
+  const totalItems = 1234567;
+
+  const items = Array.from({ length: 20 }, (_, i) => ({
+    id: `ring-${i}`,
+    name: "Three-Stone Anniversary Band",
+    image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Ring+${i + 1}`,
+    sku: "SKU 100019ERDPL",
+    price: 9999.0,
+  }));
+
+  const gridItems: ReactNode[] = items.map((item) => (
+    <PlpGridItem key={item.id}>
+      <PlpGridItemMedia image={item.image} imageAlt={item.name} />
+      <PlpGridItemName>{item.name}</PlpGridItemName>
+      <Typography variant="caption" className="text-muted-foreground">
+        Wedding ring · {item.sku}
+      </Typography>
+      <PlpGridItemDelivery
+        variant="regular"
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice amount={item.price} currency="USD" />
+    </PlpGridItem>
+  ));
+
+  return (
+    <AssemblyShell
+      breadcrumbs={[{ label: "Jewelry", href: "#" }, { label: "Wedding rings" }]}
+      title="Wedding rings"
+      resultsCount={totalItems}
+      toolbarFilters={toolbarFilters}
+      stickyFilters={stickyFilters}
+      activeFilterCount={ctrl.activeCount}
+      hasActiveFilters={ctrl.activeCount > 0}
+      onOpenDrawer={ctrl.openDrawer}
+      onClearAll={ctrl.clearAll}
+      sortOptions={[
+        { value: "featured", label: "Featured" },
+        ...SORT_OPTIONS.slice(0, 2),
+      ]}
+      sortValue={sortValue}
+      onSortChange={setSortValue}
+      pagination={
+        status === "success" && totalItems > 0 ? (
+          <InlinePagination
+            page={page}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        ) : undefined
+      }
+      drawer={
+        <FilterDrawer
+          open={ctrl.drawerOpen}
+          onOpenChange={ctrl.setDrawerOpen}
+          onApply={ctrl.applyDraft}
+          onClearDraft={ctrl.clearDraft}
+          hasActiveDraft={ctrl.hasActiveDraft}
+          resultsCount={preview.count}
+          isCountLoading={preview.loading}
+        >
+          <FilterSection label="Stone shape" separator={false}>
+            <ChipSelectFilter
+              mode="multiple"
+              value={draft["stone-shape"]}
+              onChange={(v) => setDraftFor("stone-shape", v)}
+              options={JEWELRY_STONE_SHAPE_OPTIONS}
+            />
+          </FilterSection>
+          <FilterSection label="Metal">
+            <ChipSelectFilter
+              mode="multiple"
+              value={draft.metal}
+              onChange={(v) => setDraftFor("metal", v)}
+              options={JEWELRY_METAL_OPTIONS}
+            />
+          </FilterSection>
+          <FilterSection label="Style">
+            <ChipSelectFilter
+              mode="multiple"
+              value={draft.style}
+              onChange={(v) => setDraftFor("style", v)}
+              options={JEWELRY_STYLE_OPTIONS}
+            />
+          </FilterSection>
+        </FilterDrawer>
+      }
+    >
+      <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
+        {gridItems}
+      </PlpGridContainer>
+    </AssemblyShell>
+  );
+}
+
+// ── Custom filter inside a FilterButton ───────────────────────────────
+//
+// Demonstrates that any React node can sit inside a FilterButton's
+// children — not just the shipped presets. Here, a star-rating control
+// is composed inline.
+
+interface CustomRatingFilterState {
+  "quality-rating"?: string;
+  color?: string[];
+  clarity?: string[];
+}
+
+function CustomRatingInteractive() {
+  const ctrl = useFilterController<CustomRatingFilterState>({});
+  const { applied, setAppliedFor, draft, setDraftFor } = ctrl;
+
+  const colorButton = (
+    <FilterButton<string[]>
+      key="color"
+      label="Color"
+      chipSummary={formatMultiSelectChip(
+        (applied.color ?? []).map((v) =>
+          labelForValue(GEMSTONE_COLOR_OPTIONS, v)
+        )
+      )}
+      isActive={(applied.color ?? []).length > 0}
+      initialValue={applied.color}
+      popoverWidth={320}
+      onApply={(v) => setAppliedFor("color", v)}
+      onClear={() => setAppliedFor("color", undefined)}
+      onDismiss={() => setAppliedFor("color", undefined)}
+    >
+      {(v, set) => (
+        <ChipSelectFilter
+          mode="multiple"
+          value={v}
+          onChange={set}
+          options={GEMSTONE_COLOR_OPTIONS}
+        />
+      )}
+    </FilterButton>
+  );
+
+  const clarityButton = (
+    <FilterButton<string[]>
+      key="clarity"
+      label="Clarity"
+      chipSummary={formatMultiSelectChip(
+        (applied.clarity ?? []).map((v) =>
+          labelForValue(GEMSTONE_CLARITY_OPTIONS, v)
+        )
+      )}
+      isActive={(applied.clarity ?? []).length > 0}
+      initialValue={applied.clarity}
+      onApply={(v) => setAppliedFor("clarity", v)}
+      onClear={() => setAppliedFor("clarity", undefined)}
+      onDismiss={() => setAppliedFor("clarity", undefined)}
+    >
+      {(v, set) => (
+        <ChipSelectFilter
+          mode="multiple"
+          value={v}
+          onChange={set}
+          options={GEMSTONE_CLARITY_OPTIONS}
+        />
+      )}
+    </FilterButton>
+  );
+
+  const ratingButton: ReactNode = (
+    <FilterButton<string>
+      key="quality-rating"
+      label="Quality Rating"
+      chipSummary={
+        applied["quality-rating"]
+          ? `${applied["quality-rating"]}+ stars`
+          : undefined
+      }
+      isActive={!!applied["quality-rating"]}
+      initialValue={applied["quality-rating"]}
+      onApply={(v) => setAppliedFor("quality-rating", v)}
+      onClear={() => setAppliedFor("quality-rating", undefined)}
+      onDismiss={() => setAppliedFor("quality-rating", undefined)}
+    >
+      {(v, set) => (
+        <div className="flex gap-2">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              className={`text-xl ${Number(v) >= star ? "text-warning" : "text-muted"}`}
+              onClick={() => set(String(star))}
+            >
+              ★
+            </button>
+          ))}
+        </div>
+      )}
+    </FilterButton>
+  );
+
+  const buttons: Record<string, ReactNode> = {
+    color: colorButton,
+    clarity: clarityButton,
+    "quality-rating": ratingButton,
+  };
+  const pinnedIds = ["color", "clarity", "quality-rating"] as const;
+  const { toolbarFilters, stickyFilters } = routeFilterSlots(
+    buttons,
+    pinnedIds,
+    ctrl.activeIds
+  );
+  const preview = usePreviewCount(ctrl.draft);
+
+  const [sortValue, setSortValue] = useState("price-asc");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const status = useSimulatedCommitStatus(ctrl.applied, "success");
+  const totalItems = 1234567;
+
+  return (
+    <AssemblyShell
+      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
+      title="Sapphire"
+      resultsCount={totalItems}
+      toolbarFilters={toolbarFilters}
+      stickyFilters={stickyFilters}
+      activeFilterCount={ctrl.activeCount}
+      hasActiveFilters={ctrl.activeCount > 0}
+      onOpenDrawer={ctrl.openDrawer}
+      onClearAll={ctrl.clearAll}
+      sortOptions={SORT_OPTIONS}
+      sortValue={sortValue}
+      onSortChange={setSortValue}
+      pagination={
+        status === "success" && totalItems > 0 ? (
+          <InlinePagination
+            page={page}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        ) : undefined
+      }
+      drawer={
+        <FilterDrawer
+          open={ctrl.drawerOpen}
+          onOpenChange={ctrl.setDrawerOpen}
+          onApply={ctrl.applyDraft}
+          onClearDraft={ctrl.clearDraft}
+          hasActiveDraft={ctrl.hasActiveDraft}
+          resultsCount={preview.count}
+          isCountLoading={preview.loading}
+        >
+          <FilterSection label="Color" separator={false}>
+            <ChipSelectFilter
+              mode="multiple"
+              value={draft.color}
+              onChange={(v) => setDraftFor("color", v)}
+              options={GEMSTONE_COLOR_OPTIONS}
+            />
+          </FilterSection>
+          <FilterSection label="Clarity">
+            <ChipSelectFilter
+              mode="multiple"
+              value={draft.clarity}
+              onChange={(v) => setDraftFor("clarity", v)}
+              options={GEMSTONE_CLARITY_OPTIONS}
+            />
+          </FilterSection>
+          <FilterSection label="Quality Rating">
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  className={`text-xl ${
+                    Number(draft["quality-rating"]) >= star
+                      ? "text-warning"
+                      : "text-muted"
+                  }`}
+                  onClick={() => setDraftFor("quality-rating", String(star))}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+          </FilterSection>
+        </FilterDrawer>
+      }
+    >
+      <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
+        {buildGemstoneCards(20)}
+      </PlpGridContainer>
+    </AssemblyShell>
+  );
+}
+
+// ── Story exports ─────────────────────────────────────────────────────
 
 export const GemstoneCategory: StoryObj = {
   render: () => (
@@ -1095,7 +1801,7 @@ export const WithActiveFilters: StoryObj = {
       initialFilterState={{
         color: ["blue", "green"],
         treatment: "heated",
-        price: { min: 1000, max: 5000 },
+        price: { price: { min: 1000, max: 5000 } },
         supplier: GEMSTONE_PRESELECTED_SUPPLIERS,
       }}
       sortOptions={SORT_OPTIONS}
@@ -1106,420 +1812,23 @@ export const WithActiveFilters: StoryObj = {
   ),
 };
 
-// ── Jewelry — inlines its own filter schema to show the composition pattern
-
-interface JewelryFilterState {
-  "stone-shape"?: string[];
-  metal?: string[];
-  style?: string[];
-}
-
-const JEWELRY_STONE_SHAPE_OPTIONS: MultiSelectChipOption[] = [
-  { value: "round", label: "Round" },
-  { value: "oval", label: "Oval" },
-  { value: "cushion", label: "Cushion" },
-];
-
-const JEWELRY_METAL_OPTIONS: MultiSelectChipOption[] = [
-  { value: "gold", label: "Gold" },
-  { value: "platinum", label: "Platinum" },
-  { value: "silver", label: "Silver" },
-];
-
-const JEWELRY_STYLE_OPTIONS: MultiSelectChipOption[] = [
-  { value: "solitaire", label: "Solitaire" },
-  { value: "halo", label: "Halo" },
-  { value: "three-stone", label: "Three stone" },
-];
-
-const JEWELRY_PINNED_IDS = ["stone-shape", "metal"] as const;
-
-function JewelryInteractive() {
-  const ctrl = useFilterController<JewelryFilterState>({});
-  const { applied, setAppliedFor, draft, setDraftFor } = ctrl;
-
-  const buttons: Record<string, ReactNode> = {
-    "stone-shape": (
-      <FilterButton<string[]>
-        key="stone-shape"
-        label="Stone shape"
-        chipSummary={formatMultiSelectChip(
-          (applied["stone-shape"] ?? []).map((v) =>
-            labelForValue(JEWELRY_STONE_SHAPE_OPTIONS, v)
-          )
-        )}
-        isActive={(applied["stone-shape"] ?? []).length > 0}
-        initialValue={applied["stone-shape"]}
-        onApply={(v) => setAppliedFor("stone-shape", v)}
-        onClear={() => setAppliedFor("stone-shape", undefined)}
-        onDismiss={() => setAppliedFor("stone-shape", undefined)}
-      >
-        {(v, set) => (
-          <MultiSelectChipsFilter
-            value={v}
-            onChange={set}
-            options={JEWELRY_STONE_SHAPE_OPTIONS}
-          />
-        )}
-      </FilterButton>
-    ),
-    metal: (
-      <FilterButton<string[]>
-        key="metal"
-        label="Metal"
-        chipSummary={formatMultiSelectChip(
-          (applied.metal ?? []).map((v) =>
-            labelForValue(JEWELRY_METAL_OPTIONS, v)
-          )
-        )}
-        isActive={(applied.metal ?? []).length > 0}
-        initialValue={applied.metal}
-        onApply={(v) => setAppliedFor("metal", v)}
-        onClear={() => setAppliedFor("metal", undefined)}
-        onDismiss={() => setAppliedFor("metal", undefined)}
-      >
-        {(v, set) => (
-          <MultiSelectChipsFilter
-            value={v}
-            onChange={set}
-            options={JEWELRY_METAL_OPTIONS}
-          />
-        )}
-      </FilterButton>
-    ),
-    style: (
-      <FilterButton<string[]>
-        key="style"
-        label="Style"
-        chipSummary={formatMultiSelectChip(
-          (applied.style ?? []).map((v) =>
-            labelForValue(JEWELRY_STYLE_OPTIONS, v)
-          )
-        )}
-        isActive={(applied.style ?? []).length > 0}
-        initialValue={applied.style}
-        onApply={(v) => setAppliedFor("style", v)}
-        onClear={() => setAppliedFor("style", undefined)}
-        onDismiss={() => setAppliedFor("style", undefined)}
-      >
-        {(v, set) => (
-          <MultiSelectChipsFilter
-            value={v}
-            onChange={set}
-            options={JEWELRY_STYLE_OPTIONS}
-          />
-        )}
-      </FilterButton>
-    ),
-  };
-
-  const { toolbarFilters, stickyFilters } = routeFilterSlots(
-    buttons,
-    JEWELRY_PINNED_IDS,
-    ctrl.activeIds
-  );
-  const preview = usePreviewCount(ctrl.draft);
-  const shell = usePlpShellState({
-    initialSortValue: "featured",
-    applied: ctrl.applied,
-  });
-
-  const items = Array.from({ length: 20 }, (_, i) => ({
-    id: `ring-${i}`,
-    name: "Three-Stone Anniversary Band",
-    image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Ring+${i + 1}`,
-    sku: "SKU 100019ERDPL",
-    price: 9999.0,
-  }));
-
-  const gridItems: ReactNode[] = items.map((item) => (
-    <PlpGridItem key={item.id}>
-      <PlpGridItemMedia image={item.image} imageAlt={item.name} />
-      <PlpGridItemName>{item.name}</PlpGridItemName>
-      <Typography variant="caption" className="text-muted-foreground">
-        Wedding ring · {item.sku}
-      </Typography>
-      <PlpGridItemDelivery
-        variant="regular"
-        date="Nov 18 – 23"
-        shipsFrom="United States"
-      />
-      <PlpGridItemReturnable variant="returnable" />
-      <PlpGridItemPrice amount={item.price} currency="USD" />
-    </PlpGridItem>
-  ));
-
-  return (
-    <>
-      <PlpTemplate
-        breadcrumbs={[{ label: "Jewelry", href: "#" }, { label: "Wedding rings" }]}
-        title="Wedding rings"
-        resultsCount={1234567}
-        toolbarFilters={toolbarFilters}
-        stickyFilters={stickyFilters}
-        activeFilterCount={ctrl.activeCount}
-        hasActiveFilters={ctrl.activeCount > 0}
-        onOpenDrawer={ctrl.openDrawer}
-        onClearAll={ctrl.clearAll}
-        sortOptions={[
-          { value: "featured", label: "Featured" },
-          ...SORT_OPTIONS.slice(0, 2),
-        ]}
-        sortValue={shell.sortValue}
-        onSortChange={shell.setSortValue}
-        gridItems={gridItems}
-        page={shell.page}
-        onPageChange={shell.setPage}
-        pageSize={shell.pageSize}
-        onPageSizeChange={shell.setPageSize}
-        totalItems={1234567}
-        status={shell.status}
-        onRetry={fn()}
-      />
-      <PlpFilterDrawer
-        open={ctrl.drawerOpen}
-        onOpenChange={ctrl.setDrawerOpen}
-        onApply={ctrl.applyDraft}
-        onClearDraft={ctrl.clearDraft}
-        hasActiveDraft={ctrl.hasActiveDraft}
-        resultsCount={preview.count}
-        isCountLoading={preview.loading}
-      >
-        <PlpFilterSection label="Stone shape" separator={false}>
-          <MultiSelectChipsFilter
-            value={draft["stone-shape"]}
-            onChange={(v) => setDraftFor("stone-shape", v)}
-            options={JEWELRY_STONE_SHAPE_OPTIONS}
-          />
-        </PlpFilterSection>
-        <PlpFilterSection label="Metal">
-          <MultiSelectChipsFilter
-            value={draft.metal}
-            onChange={(v) => setDraftFor("metal", v)}
-            options={JEWELRY_METAL_OPTIONS}
-          />
-        </PlpFilterSection>
-        <PlpFilterSection label="Style">
-          <MultiSelectChipsFilter
-            value={draft.style}
-            onChange={(v) => setDraftFor("style", v)}
-            options={JEWELRY_STYLE_OPTIONS}
-          />
-        </PlpFilterSection>
-      </PlpFilterDrawer>
-    </>
-  );
-}
-
 export const JewelryCategory: StoryObj = {
   render: () => <JewelryInteractive />,
 };
-
-// ── Custom filter inside a quick filter ───────────────────
-//
-// Demonstrates that any React node can sit inside a FilterButton's
-// children — not just the shipped presets. Here, a star-rating control
-// is composed inline.
-
-interface CustomRatingFilterState {
-  "quality-rating"?: string;
-  color?: string[];
-  clarity?: string[];
-}
-
-function CustomRatingInteractive() {
-  const ctrl = useFilterController<CustomRatingFilterState>({});
-  const { applied, setAppliedFor, draft, setDraftFor } = ctrl;
-
-  const colorButton = (
-    <FilterButton<string[]>
-      key="color"
-      label="Color"
-      chipSummary={formatMultiSelectChip(
-        (applied.color ?? []).map((v) =>
-          labelForValue(GEMSTONE_COLOR_OPTIONS, v)
-        )
-      )}
-      isActive={(applied.color ?? []).length > 0}
-      initialValue={applied.color}
-      popoverWidth={320}
-      onApply={(v) => setAppliedFor("color", v)}
-      onClear={() => setAppliedFor("color", undefined)}
-      onDismiss={() => setAppliedFor("color", undefined)}
-    >
-      {(v, set) => (
-        <MultiSelectChipsFilter
-          value={v}
-          onChange={set}
-          options={GEMSTONE_COLOR_OPTIONS}
-        />
-      )}
-    </FilterButton>
-  );
-
-  const clarityButton = (
-    <FilterButton<string[]>
-      key="clarity"
-      label="Clarity"
-      chipSummary={formatMultiSelectChip(
-        (applied.clarity ?? []).map((v) =>
-          labelForValue(GEMSTONE_CLARITY_OPTIONS, v)
-        )
-      )}
-      isActive={(applied.clarity ?? []).length > 0}
-      initialValue={applied.clarity}
-      onApply={(v) => setAppliedFor("clarity", v)}
-      onClear={() => setAppliedFor("clarity", undefined)}
-      onDismiss={() => setAppliedFor("clarity", undefined)}
-    >
-      {(v, set) => (
-        <MultiSelectChipsFilter
-          value={v}
-          onChange={set}
-          options={GEMSTONE_CLARITY_OPTIONS}
-        />
-      )}
-    </FilterButton>
-  );
-
-  const ratingButton: ReactNode = (() => {
-    const props: FilterButtonProps<string> = {
-      label: "Quality Rating",
-      chipSummary: applied["quality-rating"]
-        ? `${applied["quality-rating"]}+ stars`
-        : undefined,
-      isActive: !!applied["quality-rating"],
-      initialValue: applied["quality-rating"],
-      onApply: (v) => setAppliedFor("quality-rating", v),
-      onClear: () => setAppliedFor("quality-rating", undefined),
-      onDismiss: () => setAppliedFor("quality-rating", undefined),
-      children: (v, set) => (
-        <div className="flex gap-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              className={`text-xl ${Number(v) >= star ? "text-warning" : "text-muted"}`}
-              onClick={() => set(String(star))}
-            >
-              ★
-            </button>
-          ))}
-        </div>
-      ),
-    };
-    return <FilterButton key="quality-rating" {...props} />;
-  })();
-
-  const buttons: Record<string, ReactNode> = {
-    color: colorButton,
-    clarity: clarityButton,
-    "quality-rating": ratingButton,
-  };
-  const pinnedIds = ["color", "clarity", "quality-rating"] as const;
-  const { toolbarFilters, stickyFilters } = routeFilterSlots(
-    buttons,
-    pinnedIds,
-    ctrl.activeIds
-  );
-  const preview = usePreviewCount(ctrl.draft);
-  const shell = usePlpShellState({ applied: ctrl.applied });
-
-  return (
-    <>
-      <PlpTemplate
-        breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-        title="Sapphire"
-        resultsCount={1234567}
-        toolbarFilters={toolbarFilters}
-        stickyFilters={stickyFilters}
-        activeFilterCount={ctrl.activeCount}
-        hasActiveFilters={ctrl.activeCount > 0}
-        onOpenDrawer={ctrl.openDrawer}
-        onClearAll={ctrl.clearAll}
-        sortOptions={SORT_OPTIONS}
-        sortValue={shell.sortValue}
-        onSortChange={shell.setSortValue}
-        gridItems={buildGemstoneCards(20)}
-        page={shell.page}
-        onPageChange={shell.setPage}
-        pageSize={shell.pageSize}
-        onPageSizeChange={shell.setPageSize}
-        totalItems={1234567}
-        status={shell.status}
-        onRetry={fn()}
-      />
-      <PlpFilterDrawer
-        open={ctrl.drawerOpen}
-        onOpenChange={ctrl.setDrawerOpen}
-        onApply={ctrl.applyDraft}
-        onClearDraft={ctrl.clearDraft}
-        hasActiveDraft={ctrl.hasActiveDraft}
-        resultsCount={preview.count}
-        isCountLoading={preview.loading}
-      >
-        <PlpFilterSection label="Color" separator={false}>
-          <MultiSelectChipsFilter
-            value={draft.color}
-            onChange={(v) => setDraftFor("color", v)}
-            options={GEMSTONE_COLOR_OPTIONS}
-          />
-        </PlpFilterSection>
-        <PlpFilterSection label="Clarity">
-          <MultiSelectChipsFilter
-            value={draft.clarity}
-            onChange={(v) => setDraftFor("clarity", v)}
-            options={GEMSTONE_CLARITY_OPTIONS}
-          />
-        </PlpFilterSection>
-        <PlpFilterSection label="Quality Rating">
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                className={`text-xl ${
-                  Number(draft["quality-rating"]) >= star
-                    ? "text-warning"
-                    : "text-muted"
-                }`}
-                onClick={() => setDraftFor("quality-rating", String(star))}
-              >
-                ★
-              </button>
-            ))}
-          </div>
-        </PlpFilterSection>
-      </PlpFilterDrawer>
-    </>
-  );
-}
 
 export const WithCustomFilter: StoryObj = {
   render: () => <CustomRatingInteractive />,
 };
 
-// ── Static status stories (loading / empty / error) ───────
-
 export const Loading: StoryObj = {
   render: () => (
-    <PlpTemplate
+    <GemstoneInteractive
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
       title="Sapphire"
       resultsCount={0}
-      activeFilterCount={0}
-      hasActiveFilters={false}
-      onOpenDrawer={fn()}
-      onClearAll={fn()}
       sortOptions={SORT_OPTIONS}
-      sortValue="price-asc"
-      onSortChange={fn()}
-      page={1}
-      pageSize={20}
       totalItems={0}
-      onPageChange={fn()}
-      onPageSizeChange={fn()}
-      status="loading"
+      baselineStatus="loading"
     />
   ),
 };
@@ -1540,23 +1849,16 @@ export const EmptyFiltered: StoryObj = {
 
 export const EmptyNoItems: StoryObj = {
   render: () => (
-    <PlpTemplate
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Alexandrite" }]}
+    <GemstoneInteractive
+      breadcrumbs={[
+        { label: "Gemstones", href: "#" },
+        { label: "Alexandrite" },
+      ]}
       title="Alexandrite"
       resultsCount={0}
-      activeFilterCount={0}
-      hasActiveFilters={false}
-      onOpenDrawer={fn()}
-      onClearAll={fn()}
       sortOptions={SORT_OPTIONS}
-      sortValue="price-asc"
-      onSortChange={fn()}
-      page={1}
-      pageSize={20}
       totalItems={0}
-      onPageChange={fn()}
-      onPageSizeChange={fn()}
-      status="empty-no-items"
+      baselineStatus="empty-no-items"
       emptyMessage="No alexandrite available at the moment."
     />
   ),
@@ -1564,29 +1866,17 @@ export const EmptyNoItems: StoryObj = {
 
 export const Error: StoryObj = {
   render: () => (
-    <PlpTemplate
+    <GemstoneInteractive
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
       title="Sapphire"
       resultsCount={0}
-      activeFilterCount={0}
-      hasActiveFilters={false}
-      onOpenDrawer={fn()}
-      onClearAll={fn()}
       sortOptions={SORT_OPTIONS}
-      sortValue="price-asc"
-      onSortChange={fn()}
-      page={1}
-      pageSize={20}
       totalItems={0}
-      onPageChange={fn()}
-      onPageSizeChange={fn()}
-      status="error"
+      baselineStatus="error"
       onRetry={fn()}
     />
   ),
 };
-
-// ── List-view stories ─────────────────────────────────────
 
 export const DiamondListView: StoryObj = {
   render: () => (

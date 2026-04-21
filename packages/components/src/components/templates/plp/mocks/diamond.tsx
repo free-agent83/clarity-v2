@@ -41,10 +41,9 @@ import {
   PlpListRowReturnable,
 } from "../list/plp-list-row";
 import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
-import type { AsyncComboboxOption } from "../filters/presets/async-combobox";
-import type { MultiSelectChipOption } from "../filters/presets/multi-select-chips";
-import type { MultiAxisRangeAxis } from "../filters/presets/multi-axis-range";
-import type { RangeSliderHistogram } from "../filters/presets/range-slider";
+import type { AsyncComboboxOption } from "../../../molecules/async-combobox-filter/async-combobox-filter";
+import type { ChipSelectOption } from "../../../molecules/chip-select-filter/chip-select-filter";
+import type { RangeAxis } from "../../../molecules/range-filter/range-filter";
 import {
   SAMPLE_360_VIDEO_URL,
   buildMockHistogram,
@@ -81,22 +80,22 @@ export interface DiamondFilterState {
   shape?: string[];
   color?: string[];
   clarity?: string[];
-  price?: { min: number; max: number };
-  carat?: { min: number; max: number };
+  price?: Record<string, { min: number; max: number }>;
+  carat?: Record<string, { min: number; max: number }>;
   size?: Record<string, { min: number; max: number }>;
   supplier?: AsyncComboboxOption[];
 }
 
 // -- Filter configuration ---------------------------------------------------
 
-export const DIAMOND_SHAPE_OPTIONS: MultiSelectChipOption[] = [
+export const DIAMOND_SHAPE_OPTIONS: ChipSelectOption[] = [
   { value: "round", label: "Round" },
   { value: "oval", label: "Oval" },
   { value: "cushion", label: "Cushion" },
   { value: "princess", label: "Princess" },
 ];
 
-export const DIAMOND_COLOR_OPTIONS: MultiSelectChipOption[] = [
+export const DIAMOND_COLOR_OPTIONS: ChipSelectOption[] = [
   "D",
   "E",
   "F",
@@ -105,7 +104,7 @@ export const DIAMOND_COLOR_OPTIONS: MultiSelectChipOption[] = [
   "I",
 ].map((c) => ({ value: c, label: c }));
 
-export const DIAMOND_CLARITY_OPTIONS: MultiSelectChipOption[] = [
+export const DIAMOND_CLARITY_OPTIONS: ChipSelectOption[] = [
   "IF",
   "VVS1",
   "VVS2",
@@ -114,13 +113,8 @@ export const DIAMOND_CLARITY_OPTIONS: MultiSelectChipOption[] = [
   "SI1",
 ].map((c) => ({ value: c, label: c }));
 
-export const DIAMOND_PRICE_CONFIG: {
-  min: number;
-  max: number;
-  step: number;
-  unit: string;
-  histogram: RangeSliderHistogram;
-} = {
+export const DIAMOND_PRICE_CONFIG: RangeAxis = {
+  id: "price",
   min: 0,
   max: 10000,
   step: 10,
@@ -128,13 +122,8 @@ export const DIAMOND_PRICE_CONFIG: {
   histogram: buildMockHistogram(0, 10000, 40, 2500),
 };
 
-export const DIAMOND_CARAT_CONFIG: {
-  min: number;
-  max: number;
-  step: number;
-  unit: string;
-  histogram: RangeSliderHistogram;
-} = {
+export const DIAMOND_CARAT_CONFIG: RangeAxis = {
+  id: "carat",
   min: 0,
   max: 10,
   step: 0.1,
@@ -142,7 +131,7 @@ export const DIAMOND_CARAT_CONFIG: {
   histogram: buildMockHistogram(0, 10, 40, 2),
 };
 
-export const DIAMOND_SIZE_AXES: MultiAxisRangeAxis[] = [
+export const DIAMOND_SIZE_AXES: RangeAxis[] = [
   { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
   { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
   { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
