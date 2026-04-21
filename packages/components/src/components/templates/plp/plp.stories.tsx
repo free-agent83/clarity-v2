@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { IconArrowRight } from "@tabler/icons-react";
+import { IconArrowRight, IconLayoutGrid, IconList } from "@tabler/icons-react";
 import { Button } from "../../atoms/button/button";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "../../atoms/toggle-group/toggle-group";
 import { Typography } from "../../atoms/typography/typography";
 import {
   AppShell,
@@ -27,6 +31,19 @@ import {
 import { generateDiamondItems } from "./__fixtures__/diamond-items";
 
 const items = generateDiamondItems(20);
+
+function GridListToggle({ initial = "grid" }: { initial?: "grid" | "list" }) {
+  return (
+    <ToggleGroup variant="outline" type="single" defaultValue={initial}>
+      <ToggleGroupItem value="grid" aria-label="Grid view">
+        <IconLayoutGrid className="h-4 w-4" />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="list" aria-label="List view">
+        <IconList className="h-4 w-4" />
+      </ToggleGroupItem>
+    </ToggleGroup>
+  );
+}
 
 const PromoBanner = (
   <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-linear-to-r from-slate-900 via-violet-950 to-slate-900 px-6 py-6 text-primary-foreground">
@@ -101,7 +118,7 @@ export default meta;
 
 export const GridView: StoryObj = {
   render: () => (
-    <DiamondPage>
+    <DiamondPage actions={<GridListToggle initial="grid" />}>
       <PlpGridContainer>
         {items.map((item) => (
           <DiamondPlpGridItem key={item.id} item={item} />
@@ -114,7 +131,7 @@ export const GridView: StoryObj = {
 
 export const ListView: StoryObj = {
   render: () => (
-    <DiamondPage>
+    <DiamondPage actions={<GridListToggle initial="list" />}>
       <PlpListContainer header={<DiamondPlpListHeader />}>
         {items.map((item) => (
           <DiamondPlpListRow key={item.id} item={item} />
@@ -133,7 +150,10 @@ export const ListView: StoryObj = {
  */
 export const WithBanner: StoryObj = {
   render: () => (
-    <DiamondPage banner={PromoBanner}>
+    <DiamondPage
+      banner={PromoBanner}
+      actions={<GridListToggle initial="grid" />}
+    >
       <PlpGridContainer>
         {items.map((item) => (
           <DiamondPlpGridItem key={item.id} item={item} />
@@ -162,7 +182,7 @@ export const WithInGridBanner: StoryObj = {
     const GridBanner = (
       <div
         key="in-grid-banner"
-        className="col-start-2 row-start-1 flex flex-col justify-between gap-3 rounded-lg bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-6 text-primary-foreground sm:col-start-3 lg:col-start-4"
+        className="col-start-2 row-start-1 flex flex-col justify-center items-center text-center gap-3 rounded-lg bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-6 text-primary-foreground sm:col-start-3 lg:col-start-4"
       >
         <div>
           <Typography
@@ -185,7 +205,7 @@ export const WithInGridBanner: StoryObj = {
       </div>
     );
     return (
-      <DiamondPage>
+      <DiamondPage actions={<GridListToggle initial="grid" />}>
         <PlpGridContainer>
           {GridBanner}
           {items.map((item) => (
