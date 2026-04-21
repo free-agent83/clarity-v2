@@ -1,12 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
-import { useState } from "react";
-import { FilterToolbar } from "./filter-toolbar";
+import { useState, type ReactNode } from "react";
+import { FilterToolbar, FilterSection } from "./filter-toolbar";
 import {
   AppShell,
   AppShellHeader,
   AppShellMain,
 } from "../../organisms/app-shell/app-shell";
+import { FilterButton } from "../../atoms/filter-button/filter-button";
+import {
+  ChipSelectFilter,
+  type ChipSelectOption,
+} from "../../molecules/chip-select-filter/chip-select-filter";
+import { RangeFilter } from "../../molecules/range-filter/range-filter";
+import type { RangeAxis } from "../../molecules/range-filter/range-filter";
 
 const meta: Meta<typeof FilterToolbar> = {
   title: "Filtering/FilterToolbar",
@@ -24,23 +31,66 @@ const SORT_OPTIONS = [
   { value: "newest", label: "Newest" },
 ];
 
+const COLOR_OPTIONS: ChipSelectOption[] = [
+  { value: "blue", label: "Blue" },
+  { value: "green", label: "Green" },
+  { value: "red", label: "Red" },
+  { value: "teal", label: "Teal" },
+  { value: "pink", label: "Pink" },
+  { value: "yellow", label: "Yellow" },
+];
+
+const PRICE_AXIS: RangeAxis = {
+  id: "price",
+  min: 0,
+  max: 10000,
+  step: 10,
+  unit: "$",
+};
+
+function formatMultiSelectChip(labels: string[]): string {
+  if (labels.length === 0) return "";
+  if (labels.length === 1) return labels[0];
+  if (labels.length === 2) return `${labels[0]}, ${labels[1]}`;
+  return `${labels[0]}, ${labels[1]} +${labels.length - 2} more`;
+}
+
+function labelForValue(options: ChipSelectOption[], v: string) {
+  return options.find((o) => o.value === v)?.label ?? v;
+}
+
+type PriceValue = Record<string, { min: number; max: number }> | undefined;
+
 function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }) {
   const [sort, setSort] = useState("price-asc");
   const [colors, setColors] = useState<string[] | undefined>(
     hasActiveFilters ? ["blue", "green"] : undefined
   );
+  const [draftColors, setDraftColors] = useState<string[] | undefined>(colors);
 
-  // A raw button stands in here to keep this story focused on the toolbar
-  // itself. See templates/plp/plp.stories.tsx for the full FilterButton +
-  // ChipSelectFilter wiring that a real consumer would use.
-  const colorButton = (
-    <button
+  const colorButton: ReactNode = (
+    <FilterButton<string[]>
       key="color"
-      type="button"
-      className="h-11 rounded-md border px-3 text-sm"
+      label="Color"
+      chipSummary={formatMultiSelectChip(
+        (colors ?? []).map((v) => labelForValue(COLOR_OPTIONS, v))
+      )}
+      isActive={(colors ?? []).length > 0}
+      initialValue={colors}
+      popoverWidth={320}
+      onApply={(v) => setColors(v)}
+      onClear={() => setColors(undefined)}
+      onDismiss={() => setColors(undefined)}
     >
-      Color{colors ? `: ${colors.join(", ")}` : ""}
-    </button>
+      {(draft, setDraft) => (
+        <ChipSelectFilter
+          mode="multiple"
+          value={draft}
+          onChange={setDraft}
+          options={COLOR_OPTIONS}
+        />
+      )}
+    </FilterButton>
   );
 
   const activeCount = colors ? 1 : 0;
@@ -60,13 +110,19 @@ function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }
         onSortChange={setSort}
         drawer={{
           content: (
-            <div className="text-sm text-muted-foreground">
-              Drawer body goes here.
-            </div>
+            <FilterSection label="Color" separator={false}>
+              <ChipSelectFilter
+                mode="multiple"
+                value={draftColors}
+                onChange={setDraftColors}
+                options={COLOR_OPTIONS}
+              />
+            </FilterSection>
           ),
-          onApply: fn(),
-          onClearDraft: fn(),
-          hasActiveDraft: hasActiveFilters,
+          onOpen: () => setDraftColors(colors),
+          onApply: () => setColors(draftColors),
+          onClearDraft: () => setDraftColors(undefined),
+          hasActiveDraft: (draftColors ?? []).length > 0,
           resultsCount: hasActiveFilters ? 342 : undefined,
         }}
       />
@@ -85,8 +141,8 @@ export const WithActiveFilters: Story = {
  * fade in under the `AppShellHeader` (offset: 72px by default).
  *
  * The sticky bar only appears when `hasActiveFilters` is true — so this
- * story seeds an active "Color" filter. A long grid wireframe below
- * provides enough scroll distance to trigger the IntersectionObserver.
+ * story seeds two active filters. A long grid wireframe below provides
+ * enough scroll distance to trigger the IntersectionObserver.
  */
 export const StickyBarBehaviour: Story = {
   parameters: { layout: "fullscreen" },
@@ -96,29 +152,56 @@ export const StickyBarBehaviour: Story = {
       "blue",
       "green",
     ]);
-    const [price, setPrice] = useState<{ min: number; max: number } | undefined>({
-      min: 500,
-      max: 5000,
+    const [price, setPrice] = useState<PriceValue>({
+      price: { min: 500, max: 5000 },
     });
+    const [draftColors, setDraftColors] = useState<string[] | undefined>(colors);
+    const [draftPrice, setDraftPrice] = useState<PriceValue>(price);
 
-    const colorButton = (
-      <button
+    const colorButton: ReactNode = (
+      <FilterButton<string[]>
         key="color"
-        type="button"
-        className="h-11 rounded-md border px-3 text-sm"
+        label="Color"
+        chipSummary={formatMultiSelectChip(
+          (colors ?? []).map((v) => labelForValue(COLOR_OPTIONS, v))
+        )}
+        isActive={(colors ?? []).length > 0}
+        initialValue={colors}
+        popoverWidth={320}
+        onApply={(v) => setColors(v)}
+        onClear={() => setColors(undefined)}
+        onDismiss={() => setColors(undefined)}
       >
-        Color{colors ? `: ${colors.join(", ")}` : ""}
-      </button>
+        {(draft, setDraft) => (
+          <ChipSelectFilter
+            mode="multiple"
+            value={draft}
+            onChange={setDraft}
+            options={COLOR_OPTIONS}
+          />
+        )}
+      </FilterButton>
     );
 
-    const priceButton = (
-      <button
+    const priceButton: ReactNode = (
+      <FilterButton<PriceValue>
         key="price"
-        type="button"
-        className="h-11 rounded-md border px-3 text-sm"
+        label="Price"
+        chipSummary={
+          price?.price
+            ? `$${price.price.min}\u2013$${price.price.max}`
+            : undefined
+        }
+        isActive={!!price}
+        initialValue={price}
+        onApply={(v) => setPrice(v)}
+        onClear={() => setPrice(undefined)}
+        onDismiss={() => setPrice(undefined)}
       >
-        Price{price ? `: $${price.min}–$${price.max}` : ""}
-      </button>
+        {(draft, setDraft) => (
+          <RangeFilter value={draft} onChange={setDraft} axes={[PRICE_AXIS]} />
+        )}
+      </FilterButton>
     );
 
     const engagedButtons = [
@@ -150,13 +233,38 @@ export const StickyBarBehaviour: Story = {
             onSortChange={setSort}
             drawer={{
               content: (
-                <div className="text-sm text-muted-foreground">
-                  Drawer body goes here.
-                </div>
+                <>
+                  <FilterSection label="Color" separator={false}>
+                    <ChipSelectFilter
+                      mode="multiple"
+                      value={draftColors}
+                      onChange={setDraftColors}
+                      options={COLOR_OPTIONS}
+                    />
+                  </FilterSection>
+                  <FilterSection label="Price">
+                    <RangeFilter
+                      value={draftPrice}
+                      onChange={setDraftPrice}
+                      axes={[PRICE_AXIS]}
+                    />
+                  </FilterSection>
+                </>
               ),
-              onApply: fn(),
-              onClearDraft: clearAll,
-              hasActiveDraft: activeCount > 0,
+              onOpen: () => {
+                setDraftColors(colors);
+                setDraftPrice(price);
+              },
+              onApply: () => {
+                setColors(draftColors);
+                setPrice(draftPrice);
+              },
+              onClearDraft: () => {
+                setDraftColors(undefined);
+                setDraftPrice(undefined);
+              },
+              hasActiveDraft:
+                (draftColors ?? []).length > 0 || draftPrice !== undefined,
               resultsCount: 342,
             }}
           />
