@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import { fn, userEvent, within } from "@storybook/test";
 import { useState, type ReactNode } from "react";
 import { FilterToolbar, FilterSection } from "./filter-toolbar";
 import {
@@ -133,6 +133,88 @@ function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }
 export const Default: Story = { render: () => <Controlled /> };
 export const WithActiveFilters: Story = {
   render: () => <Controlled hasActiveFilters />,
+};
+
+/**
+ * Drawer loading state — the "Show X results" Apply button renders a
+ * spinner and is disabled while a preview-count fetch is in flight.
+ *
+ * The story auto-opens the drawer via a `play` function (click on the
+ * All Filters button) so the loading state is immediately visible
+ * without manual interaction.
+ */
+export const DrawerLoadingState: Story = {
+  render: () => {
+    const [sort, setSort] = useState("price-asc");
+    const [colors, setColors] = useState<string[] | undefined>(["blue", "green"]);
+    const [draftColors, setDraftColors] = useState<string[] | undefined>(colors);
+
+    const colorButton: ReactNode = (
+      <FilterButton<string[]>
+        key="color"
+        label="Color"
+        chipSummary={formatMultiSelectChip(
+          (colors ?? []).map((v) => labelForValue(COLOR_OPTIONS, v))
+        )}
+        isActive={(colors ?? []).length > 0}
+        initialValue={colors}
+        popoverWidth={320}
+        onApply={(v) => setColors(v)}
+        onClear={() => setColors(undefined)}
+        onDismiss={() => setColors(undefined)}
+      >
+        {(draft, setDraft) => (
+          <ChipSelectFilter
+            mode="multiple"
+            value={draft}
+            onChange={setDraft}
+            options={COLOR_OPTIONS}
+          />
+        )}
+      </FilterButton>
+    );
+
+    return (
+      <div className="p-4">
+        <FilterToolbar
+          filters={[colorButton]}
+          stickyFilters={[colorButton]}
+          activeFilterCount={1}
+          hasActiveFilters
+          onClearAll={() => setColors(undefined)}
+          sortOptions={SORT_OPTIONS}
+          sortValue={sort}
+          onSortChange={setSort}
+          drawer={{
+            content: (
+              <FilterSection label="Color" separator={false}>
+                <ChipSelectFilter
+                  mode="multiple"
+                  value={draftColors}
+                  onChange={setDraftColors}
+                  options={COLOR_OPTIONS}
+                />
+              </FilterSection>
+            ),
+            onOpen: () => setDraftColors(colors),
+            onApply: () => setColors(draftColors),
+            onClearDraft: () => setDraftColors(undefined),
+            hasActiveDraft: (draftColors ?? []).length > 0,
+            resultsCount: 1234,
+            // Frozen loading state for the demo — real consumers flip this
+            // during a debounced preview-count fetch triggered by draft
+            // state changes.
+            isCountLoading: true,
+          }}
+        />
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = await canvas.findByRole("button", { name: /all filters/i });
+    await userEvent.click(trigger);
+  },
 };
 
 /**
