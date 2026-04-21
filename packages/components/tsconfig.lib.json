@@ -8,5 +8,9 @@
     "emitDeclarationOnly": true
   },
   "include": ["src"],
-  "exclude": ["src/**/*.stories.tsx", "src/**/*.test.tsx"]
+  "exclude": [
+    "src/**/*.stories.tsx",
+    "src/**/*.test.tsx",
+    "src/**/__fixtures__/**"
+  ]
 }
