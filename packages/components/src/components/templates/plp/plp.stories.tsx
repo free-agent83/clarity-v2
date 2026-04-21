@@ -57,6 +57,18 @@ import {
   PlpGridItemPrice,
   PlpGridItemReturnable,
 } from "./grid/plp-grid-item";
+import {
+  PlpListCell,
+  PlpListHeaderCell,
+  PlpListHeaderRow,
+  PlpListRow,
+  PlpListRowCheckbox,
+  PlpListRowDelivery,
+  PlpListRowMedia,
+  PlpListRowName,
+  PlpListRowPrice,
+  PlpListRowReturnable,
+} from "./list/plp-list-row";
 import { PlpGridContainer } from "./plp-grid-container";
 import { PlpHeading } from "./plp-heading";
 import { PlpListContainer } from "./plp-list-container";
@@ -1553,7 +1565,19 @@ const JEWELRY_STYLE_OPTIONS = [
 
 const JEWELRY_PINNED_IDS = ["stone-shape", "metal"] as const;
 
-function JewelryInteractive() {
+interface JewelryInteractiveProps {
+  listHeader?: ReactNode;
+  listRows?: ReactNode[];
+  listViewAvailable?: boolean;
+  initialViewMode?: PlpViewMode;
+}
+
+function JewelryInteractive({
+  listHeader,
+  listRows,
+  listViewAvailable = false,
+  initialViewMode = "grid",
+}: JewelryInteractiveProps = {}) {
   const ctrl = useFilterController<JewelryFilterState>({});
   const { applied, setAppliedFor, draft, setDraftFor } = ctrl;
 
@@ -1672,7 +1696,11 @@ function JewelryInteractive() {
   const [sortValue, setSortValue] = useState("featured");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [view, setView] = useState<PlpViewMode>(initialViewMode);
   const status = useSimulatedCommitStatus(ctrl.applied, "success");
+  const isTabletUp = useIsTabletUp();
+  const effectiveView: PlpViewMode =
+    listViewAvailable && isTabletUp && view === "list" ? "list" : "grid";
 
   const totalItems = 1234567;
 
@@ -1717,6 +1745,24 @@ function JewelryInteractive() {
       ]}
       sortValue={sortValue}
       onSortChange={setSortValue}
+      actions={
+        listViewAvailable ? (
+          <div className="hidden lg:flex">
+            <ToggleGroup
+              type="single"
+              value={view}
+              onValueChange={(v) => v && setView(v as PlpViewMode)}
+            >
+              <ToggleGroupItem value="grid" aria-label="Grid view">
+                <IconLayoutGrid className="h-4 w-4" />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="list" aria-label="List view">
+                <IconList className="h-4 w-4" />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+        ) : undefined
+      }
       pagination={
         status === "success" && totalItems > 0 ? (
           <InlinePagination
@@ -1792,65 +1838,198 @@ function JewelryInteractive() {
         isCountLoading: preview.loading,
       }}
     >
-      <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
-        {gridItems}
-      </PlpGridContainer>
+      {effectiveView === "list" ? (
+        <PlpListContainer
+          header={listHeader}
+          loading={status === "loading"}
+          skeletonCount={pageSize}
+        >
+          {listRows}
+        </PlpListContainer>
+      ) : (
+        <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
+          {gridItems}
+        </PlpGridContainer>
+      )}
     </AssemblyShell>
   );
 }
 
+// ── Jewellery list-view helpers ───────────────────────────────────────
+//
+// Minimal header + rows inline in the story since Jewellery doesn't
+// have its own mock / primitives folder. Real consumers would assemble
+// these the same way gemstone / diamond mocks do.
+
+function JewelryPlpListHeader() {
+  return (
+    <PlpListHeaderRow>
+      <PlpListHeaderCell width={44}>
+        <span className="sr-only">Select</span>
+      </PlpListHeaderCell>
+      <PlpListHeaderCell width={72}>
+        <span className="sr-only">Thumbnail</span>
+      </PlpListHeaderCell>
+      <PlpListHeaderCell>Name</PlpListHeaderCell>
+      <PlpListHeaderCell>SKU</PlpListHeaderCell>
+      <PlpListHeaderCell>Delivery</PlpListHeaderCell>
+      <PlpListHeaderCell>Returns</PlpListHeaderCell>
+      <PlpListHeaderCell>Price</PlpListHeaderCell>
+    </PlpListHeaderRow>
+  );
+}
+
+function buildJewelryListRows(count: number): ReactNode[] {
+  return Array.from({ length: count }, (_, i) => {
+    const id = `ring-${i}`;
+    return (
+      <PlpListRow key={id}>
+        <PlpListCell>
+          <PlpListRowCheckbox checked={false} onChange={fn()} />
+        </PlpListCell>
+        <PlpListCell>
+          <PlpListRowMedia
+            image={`https://placehold.co/72x72/f5f5f4/a3a3a3?text=R${i + 1}`}
+            imageAlt="Three-Stone Anniversary Band"
+          />
+        </PlpListCell>
+        <PlpListCell>
+          <PlpListRowName>Three-Stone Anniversary Band</PlpListRowName>
+        </PlpListCell>
+        <PlpListCell>
+          <span className="font-mono text-xs">SKU 100019ERDPL</span>
+        </PlpListCell>
+        <PlpListCell>
+          <PlpListRowDelivery
+            variant="regular"
+            date="Nov 18 – 23"
+            shipsFrom="United States"
+          />
+        </PlpListCell>
+        <PlpListCell>
+          <PlpListRowReturnable variant="returnable" />
+        </PlpListCell>
+        <PlpListCell>
+          <PlpListRowPrice amount={9999} currency="USD" />
+        </PlpListCell>
+      </PlpListRow>
+    );
+  });
+}
+
 // ── Story exports ─────────────────────────────────────────────────────
 
-/**
- * One PLP at a time, switchable between Gemstones and Jewelry via the
- * `category` tweakable. Each selection renders the full assembly for a
- * real category with its own filter set, sort options, and sample data.
- */
-type FullCategoryArgs = { category: "gemstones" | "jewelry" };
+type CategoryArg = "diamonds" | "gemstones" | "jewellery";
+type CategoryStoryArgs = { category: CategoryArg };
 
-export const FullCategory: StoryObj<FullCategoryArgs> = {
-  args: { category: "gemstones" },
+const CATEGORY_OPTIONS: CategoryArg[] = ["diamonds", "gemstones", "jewellery"];
+
+/**
+ * The canonical "healthy PLP in grid view" — switch between categories
+ * with the `category` tweakable.
+ */
+export const GridView: StoryObj<CategoryStoryArgs> = {
+  args: { category: "diamonds" },
   argTypes: {
     category: {
       control: { type: "radio" },
-      options: ["gemstones", "jewelry"],
+      options: CATEGORY_OPTIONS,
     },
   },
   render: ({ category }) => {
-    if (category === "jewelry") return <JewelryInteractive />;
+    if (category === "jewellery") return <JewelryInteractive />;
+    if (category === "gemstones") {
+      return (
+        <GemstoneInteractive
+          breadcrumbs={[
+            { label: "Gemstones", href: "#" },
+            { label: "Sapphire" },
+          ]}
+          title="Sapphire"
+          resultsCount={1234567}
+          sortOptions={SORT_OPTIONS}
+          searchPlaceholder="Search by certificate number or stock ID..."
+          onSearchSubmit={fn()}
+          gridItems={buildGemstoneCards(20)}
+          totalItems={1234567}
+          onRetry={fn()}
+        />
+      );
+    }
     return (
-      <GemstoneInteractive
-        breadcrumbs={[
-          { label: "Gemstones", href: "#" },
-          { label: "Sapphire" },
-        ]}
-        title="Sapphire"
-        resultsCount={1234567}
+      <DiamondInteractive
+        breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
+        title="Natural Diamonds"
+        resultsCount={48291}
         sortOptions={SORT_OPTIONS}
         searchPlaceholder="Search by certificate number or stock ID..."
         onSearchSubmit={fn()}
-        gridItems={buildGemstoneCards(20)}
-        totalItems={1234567}
+        gridItems={buildDiamondCards(20)}
+        totalItems={48291}
         onRetry={fn()}
       />
     );
   },
 };
 
-export const DiamondsCategory: StoryObj = {
-  render: () => (
-    <DiamondInteractive
-      breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
-      title="Natural Diamonds"
-      resultsCount={48291}
-      sortOptions={SORT_OPTIONS}
-      searchPlaceholder="Search by certificate number or stock ID..."
-      onSearchSubmit={fn()}
-      gridItems={buildDiamondCards(20)}
-      totalItems={48291}
-      onRetry={fn()}
-    />
-  ),
+/**
+ * The canonical "healthy PLP in list view" — same `category` tweakable.
+ */
+export const ListView: StoryObj<CategoryStoryArgs> = {
+  args: { category: "diamonds" },
+  argTypes: {
+    category: {
+      control: { type: "radio" },
+      options: CATEGORY_OPTIONS,
+    },
+  },
+  render: ({ category }) => {
+    if (category === "jewellery") {
+      return (
+        <JewelryInteractive
+          listHeader={<JewelryPlpListHeader />}
+          listRows={buildJewelryListRows(20)}
+          listViewAvailable
+          initialViewMode="list"
+        />
+      );
+    }
+    if (category === "gemstones") {
+      return (
+        <GemstoneInteractive
+          breadcrumbs={[
+            { label: "Gemstones", href: "#" },
+            { label: "Sapphire" },
+          ]}
+          title="Sapphire"
+          resultsCount={1234567}
+          sortOptions={SORT_OPTIONS}
+          gridItems={buildGemstoneCards(20)}
+          listHeader={<GemstonePlpListHeader />}
+          listRows={buildGemstoneRows(20)}
+          listViewAvailable
+          initialViewMode="list"
+          totalItems={1234567}
+          onRetry={fn()}
+        />
+      );
+    }
+    return (
+      <DiamondInteractive
+        breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
+        title="Natural Diamonds"
+        resultsCount={48291}
+        sortOptions={SORT_OPTIONS}
+        gridItems={buildDiamondCards(20)}
+        listHeader={<DiamondPlpListHeader />}
+        listRows={buildDiamondRows(20)}
+        listViewAvailable
+        initialViewMode="list"
+        totalItems={48291}
+        onRetry={fn()}
+      />
+    );
+  },
 };
 
 export const WithActiveFilters: StoryObj = {
@@ -1913,42 +2092,6 @@ export const Error: StoryObj = {
       sortOptions={SORT_OPTIONS}
       totalItems={0}
       baselineStatus="error"
-      onRetry={fn()}
-    />
-  ),
-};
-
-export const DiamondListView: StoryObj = {
-  render: () => (
-    <DiamondInteractive
-      breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
-      title="Natural Diamonds"
-      resultsCount={48291}
-      sortOptions={SORT_OPTIONS}
-      gridItems={buildDiamondCards(20)}
-      listHeader={<DiamondPlpListHeader />}
-      listRows={buildDiamondRows(20)}
-      listViewAvailable
-      initialViewMode="list"
-      totalItems={48291}
-      onRetry={fn()}
-    />
-  ),
-};
-
-export const GemstoneListView: StoryObj = {
-  render: () => (
-    <GemstoneInteractive
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-      title="Sapphire"
-      resultsCount={1234567}
-      sortOptions={SORT_OPTIONS}
-      gridItems={buildGemstoneCards(20)}
-      listHeader={<GemstonePlpListHeader />}
-      listRows={buildGemstoneRows(20)}
-      listViewAvailable
-      initialViewMode="list"
-      totalItems={1234567}
       onRetry={fn()}
     />
   ),
