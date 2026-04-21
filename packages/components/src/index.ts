@@ -24,6 +24,8 @@ export { Badge, badgeVariants } from "./components/atoms/badge/badge";
 export type { BadgeProps } from "./components/atoms/badge/badge";
 export { Brand } from "./components/atoms/brand/brand";
 export type { BrandProps } from "./components/atoms/brand/brand";
+export { BrandExpress } from "./components/atoms/brand-express/brand-express";
+export type { BrandExpressProps } from "./components/atoms/brand-express/brand-express";
 export { Button, buttonVariants } from "./components/atoms/button/button";
 export type { ButtonProps } from "./components/atoms/button/button";
 // export { ButtonGroup, ButtonGroupSeparator, ButtonGroupText, buttonGroupVariants } from "./components/atoms/button-group/button-group";
@@ -32,6 +34,8 @@ export type { ButtonProps } from "./components/atoms/button/button";
 // export { DirectionProvider, useDirection } from "./components/atoms/direction/direction";
 // export { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMedia } from "./components/atoms/empty/empty";
 // export { Field, FieldLabel, FieldDescription, FieldError, FieldGroup, FieldLegend, FieldSeparator, FieldSet, FieldContent, FieldTitle } from "./components/atoms/field/field";
+// export { FilterButton, filterButtonVariants } from "./components/atoms/filter-button/filter-button";
+// export type { FilterButtonProps } from "./components/atoms/filter-button/filter-button";
 // export { HoverCard, HoverCardTrigger, HoverCardContent } from "./components/atoms/hover-card/hover-card";
 export { Input } from "./components/atoms/input/input";
 export type { InputProps } from "./components/atoms/input/input";
@@ -95,3 +99,23 @@ export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShell
 // export { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger, NavigationMenuLink, NavigationMenuIndicator, NavigationMenuViewport, navigationMenuTriggerStyle } from "./components/organisms/navigation-menu/navigation-menu";
 // export { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, useSidebar } from "./components/organisms/sidebar/sidebar";
 // export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "./components/organisms/table/table";
+
+// ────────────────────── Filtering ──────────────────────
+
+// export { FilterButton } from "./components/atoms/filter-button/filter-button";
+// export type { FilterButtonProps } from "./components/atoms/filter-button/filter-button";
+// export { RangeFilter } from "./components/molecules/range-filter/range-filter";
+// export type { RangeFilterProps, RangeAxis, RangeHistogram, RangeValue } from "./components/molecules/range-filter/range-filter";
+// export { AsyncComboboxFilter } from "./components/molecules/async-combobox-filter/async-combobox-filter";
+// export type { AsyncComboboxFilterProps, AsyncComboboxOption, AsyncComboboxValue } from "./components/molecules/async-combobox-filter/async-combobox-filter";
+// export { FilterToolbar, FilterSection } from "./components/organisms/filter-toolbar/filter-toolbar";
+// export type { FilterToolbarProps, FilterToolbarDrawer, FilterToolbarSortOption, FilterSectionProps } from "./components/organisms/filter-toolbar/filter-toolbar";
+
+// ────────────────────── Templates / PLP ──────────────────────
+
+// export { PlpHeading } from "./components/templates/plp/plp-heading";
+// export type { PlpHeadingProps } from "./components/templates/plp/plp-heading";
+// export { PlpGridContainer } from "./components/templates/plp/plp-grid-container";
+// export type { PlpGridContainerProps } from "./components/templates/plp/plp-grid-container";
+// export { PlpListContainer } from "./components/templates/plp/plp-list-container";
+// export type { PlpListContainerProps } from "./components/templates/plp/plp-list-container";

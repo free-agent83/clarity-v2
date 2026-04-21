@@ -8,6 +8,19 @@ const dir = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   test: {
     projects: [
+      // Node-based unit tests for pure logic (registries, utils, helpers).
+      {
+        resolve: {
+          alias: {
+            "@": resolve(dir, "src"),
+          },
+        },
+        test: {
+          name: "unit",
+          include: ["src/**/*.test.ts"],
+          environment: "node",
+        },
+      },
       {
         plugins: [
           storybookTest({

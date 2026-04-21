@@ -2,6 +2,144 @@
 
 ---
 
+### PLP polish: FilterToolbar consolidation + story quality ([#122](https://github.com/free-agent83/clarity-v2/pull/122))
+Second-wave consolidation after the filter-subsystem extraction: several thin modules folded into their owners, two unused PLP-specific empty/error wrappers deleted, and a thorough story quality pass.
+
+Breaking changes (all unstable, nothing in production):
+
+- `FilterDrawer` is no longer a standalone molecule. `FilterToolbar` now owns the drawer via a `drawer: FilterToolbarDrawer` prop. Replace `<FilterToolbar .../>` + `<FilterDrawer .../>` with `<FilterToolbar drawer={{ content, onOpen, onApply, ... }} .../>`. The `onOpenDrawer` prop on `FilterToolbar` is removed. `FilterSection` is now imported from `filter-toolbar`, not `filter-drawer`. (`ef679c9`, `34fe4fa`)
+- `ChipSelectFilter` removed. Replace with `ToggleGroup` + `ToggleGroupItem` (with `variant="outline"`) directly at each call site; inline the empty ↔ undefined conversion as `value ?? []` / `next.length > 0 ? next : undefined`. (`df966ea`)
+- `PlpEmpty` and `PlpError` removed. Use the `Empty` atom directly; `plp.stories.tsx` exports `renderPlpEmptyState` as a copy-and-adapt reference. (`2581a73`)
+
+- Per-piece `COMPONENT.md` files (`plp-heading`, `plp-grid-container`, `plp-list-container`) consolidated into a single `templates/plp/COMPONENT.md`; `PlpGridItem` stories nested under `Templates/PLP/` in the Storybook sidebar. (`2581a73`, `4215eb1`)
+- PLP stories refactored into category-specific modules under `plp-stories/` (`DiamondInteractive`, `GemstoneInteractive`, `JewelryInteractive`); `Default` story gains a `category` control (diamonds / gemstones / jewellery) in place of separate story exports; added `WithBanner` and `WithPromoItems` stories using real mockup images. (`ee702c0`, `f2bb20c`, `8d84f34`, `3b6d3d1`, `2221e89`)
+- `FilterToolbar` stories updated with real `FilterButton` chips; new `StickyBarBehaviour`, `DrawerLoadingState`, and `DrawerMultipleSections` scenarios added; `COMPONENT.md` rewritten to match the current API. (`659d23b`, `799929e`, `fd18b90`, `54f1c03`)
+
+---
+
+### Filter subsystem extracted; PLP becomes a kit (breaking, unstable 0.6.0)
+
+Two coupled moves. (1) The PLP-scoped filter system is extracted into reusable molecules and an organism under a new `Filtering/` Storybook section: `FilterDrawer`, `FilterSection`, `AllFiltersButton`, `ChipSelectFilter` (merged single + multi chips), `RangeFilter` (merged single-axis + multi-axis), `AsyncComboboxFilter` — plus the `FilterToolbar` organism (internal sticky chrome via IntersectionObserver). `FilterButton` (atom) absorbs the old `PlpQuickFilter`'s per-popover draft lifecycle. (2) `PlpTemplate` is deleted; PLP becomes a kit of individually-exported building blocks — `PlpHeading`, `PlpGridContainer`, `PlpListContainer`, `PlpEmpty`, `PlpError`, plus the existing grid item and list row primitives. Consumers assemble the PLP page in their own code.
+
+Breaking changes:
+
+- `PlpTemplate` component removed. Assemble pages from the kit — see `templates/plp/plp.stories.tsx` for the canonical pattern.
+- `PlpQuickFilter` removed; use `FilterButton` directly with its new render-prop children API and draft-lifecycle props (`initialValue`, `onApply(value)`, `isActive`, `chipSummary`).
+- `PlpViewToggle` removed; use `ToggleGroup` + `ToggleGroupItem` inline inside `FilterToolbar`'s `actions` slot.
+- `BooleanChipFilter` removed; use `Toggle` or `Switch` atoms directly inside `FilterButton` / `FilterSection`.
+- `SingleSelectDropdownFilter` removed; use `Select` + `SelectTrigger` + `SelectContent` + `SelectItem` inline.
+- `SingleSelectChipsFilter` + `MultiSelectChipsFilter` merged into `ChipSelectFilter` with a `mode: "single" | "multiple"` discriminated union.
+- `RangeSliderFilter` + `MultiAxisRangeFilter` merged into `RangeFilter` with an `axes: RangeAxis[]` prop. Value shape is always `Record<string, { min; max }> | undefined` keyed by axis id — single-axis consumers key the value by their chosen axis id (e.g. `{ price: { min, max } }`).
+- `PlpFilterDrawer`, `PlpFilterSection`, `PlpAllFiltersButton`, `PlpToolbar`, `PlpStickyFilterBar` renamed to `FilterDrawer`, `FilterSection`, `AllFiltersButton`, `FilterToolbar` and relocated to their new molecule / organism folders.
+- `FilterToolbar` bundles the sticky chrome via internal IntersectionObserver; consumers no longer render a separate sticky bar.
+- `FilterDrawer` gains `applyLabel?: string` for non-list use.
+- `PlpEmpty` and `PlpError` are retained as thin PLP kit pieces — the generic `Empty` atom's default dashed-border styling diverges from the PLP invariant.
+
+No code shipped to production yet — all components are unstable. See the design spec at `docs/plans/specs/2026-04-21-filter-subsystem-and-plp-kit-design.md` and the implementation plan at `docs/plans/2026-04-21-filter-subsystem-and-plp-kit-plan.md`.
+
+---
+
+### PLP filter system decoupled from business logic (breaking, unstable 0.5.0)
+
+Splits the PLP filter system into presentational building blocks owned by the library and wiring owned by the consumer. The `FilterDefinition` schema and preset registry are demolished; each preset is now a standalone component with direct props and its own exported value + option types. The PLP template no longer renders the drawer — consumers render `PlpFilterDrawer` as a sibling and own drawer state, draft buffering, and chip-summary formatting.
+
+Breaking changes for `PlpTemplate` consumers:
+
+- `filters`, `filterState`, `onFilterChange`, `filteredResultsCount`, `isCountLoading`, `onDraftFilterStateChange`, `emptyFilterSuggestions` removed.
+- New props: `toolbarFilters: ReactNode[]`, `stickyFilters: ReactNode[]`, `activeFilterCount`, `hasActiveFilters`, `onOpenDrawer`, `onClearAll`.
+- Preset components now take direct props (`value`, `onChange`, plus config like `min`/`max`/`options`/`axes`/`searchFn`). Each preset exports its own `Value` type and, where applicable, its own `Option` type.
+- `PlpQuickFilter` takes a render-prop child `(draft, setDraft) => ReactNode` and a pre-formatted `chipSummary`. Registry lookup removed.
+- `PlpFilterDrawer` takes `children` (the filter sections), plus `open`, `onOpenChange`, `onApply`, `onClearDraft`, `hasActiveDraft`, `resultsCount`, `isCountLoading`.
+- New `PlpFilterSection` primitive for drawer-body entries (heading + separator).
+- `plp-types.ts` drops `FilterDefinition`, `PresetFilterDefinition`, `CustomFilterDefinition`, `FilterPresetName`, `FilterControlProps`, `FilterState`, `FilterValue`, and `FilterOption`. `AppUserContextValue` was moved earlier to `.storybook/app-user-context.tsx`.
+- `plp-filter-registry.ts` and its test are deleted.
+
+Stories rebuilt against the new API with a local `useFilterController` hook as the canonical wiring reference. See [`docs/plans/specs/2026-04-21-plp-filter-decoupling-design.md`](../../docs/plans/specs/2026-04-21-plp-filter-decoupling-design.md) for the full design.
+
+---
+
+### FilterButton bakes in Apply/Clear; PLP gains a sticky filter bar
+
+- `FilterButton` now renders Apply and Clear buttons in its popover footer automatically. Consumers supply the filter control as `children` and wire `onApply` / `onClear` callbacks — the popover auto-closes after either fires. The previous `popoverContent` prop is replaced by `children`.
+- `PlpQuickFilter` simplified to compose the new FilterButton API; manual Apply/Clear rendering removed.
+- New internal `PlpStickyFilterBar` component — a fixed-position bar below the AppShellHeader that appears when the main toolbar scrolls out of view. Shows the "All Filters" button and any engaged filter buttons (quick or non-quick) as a single-row horizontal list with a right-side gradient fade to signify horizontal scrollability. No visible scrollbar. Hides when the main toolbar scrolls back into view or when no filter is engaged.
+- `PlpTemplate` wires the sticky bar via an `IntersectionObserver` on the main toolbar, with `rootMargin: "-72px"` to account for the AppShellHeader height.
+
+---
+
+### Add FilterButton atom (unstable 0.1.0)
+
+Introduces `FilterButton` — a two-state control for applied filters. In the inactive state it renders a single outline button with just the filter label; in the active state it splits into a main clickable region showing `label: value` (opens a popover for editing) and an inline dismiss X (clears the filter). Styling is modelled on Button's `outline` variant with a filled `bg-muted` tint for the active state.
+
+- New atom under `atoms/filter-button/` with `.tsx`, `.stories.tsx` (under `Actions/Filter Button`), and `COMPONENT.md`
+- Barrel export added as commented `unstable` line — promote when stable
+- `PlpQuickFilter` refactored to compose `FilterButton` instead of raw `Button + Popover`; removes the duplicated popover/active-state logic and inherits the inline dismiss behaviour that the active filters strip previously provided
+
+---
+
+### PLP Template — Phase 3c (analytics hooks) deferred
+
+The planned Phase 3c analytics surface on the PLP template is deferred indefinitely. Consumers wire analytics at their own state-setters and handlers rather than through a template-provided callback. Captured as ADR-001 in this package's [`ADRS.md`](./ADRS.md); the PLP architectural spec §8 has been annotated with a status note pointing at the ADR. No code changes shipped.
+
+---
+
+### PLP Template — Phase 3b (unstable 0.4.0)
+
+Adds 360 rotatable media on hover to the PLP grid thumbnail. On pointer devices, items with a `media360.videoUrl` crossfade from their static image into a rotating video; horizontal cursor movement scrubs through the rotation. Touch devices skip the 360 code path entirely.
+
+- New optional `media360: { videoUrl: string }` field on `GridItemData` — category opt-in per item (`4d9ef9a`)
+- New `useHasHover` hook gating the entire 360 path on pointer-device detection — no video element mounts on touch (`aad08b3`)
+- Extracted `PlpGridThumbnail` sub-component owning the static image, optional 360 video with lazy intersection-observer loading and mousemove scrubbing, hover action toolbar, and selection checkbox (`a2110e9`)
+- `PlpGridItem` simplified to delegate thumbnail rendering to `PlpGridThumbnail` (`e532cba`)
+- Storybook: new `With360Media` grid item story; ~1/3 of mock items in PLP stories now include `media360` (`6463c28`, `178bdb3`)
+- COMPONENT.md bumped to 0.4.0 with `media360` field and encoding guidance documented (`b05f849`)
+
+---
+
+### PLP Template — Phase 3a (unstable 0.3.0)
+
+Adds three advanced filter presets and chip truncation for multi-select values.
+
+- `range-slider` preset: two-thumb Slider with commit-on-blur numeric inputs, optional distribution histogram that highlights the selected sub-range, unit shown as prefix for currencies and suffix otherwise (`3c98403`)
+- `multi-axis-range` preset: one slider + numeric input pair per named axis, human-readable axis labels in UI and chip text (`3a7d693`)
+- `async-combobox` preset: multi-select Combobox with lazy initial load on open, debounced search, selected-option label caching so chips survive query changes (`997952b`)
+- `FilterPresetName`, `PresetFilterDefinition`, and `FilterValue` extended to cover the new presets and the multi-axis value shape (`2390c54`)
+- Chip truncation for multi-select (`multi-select-chips` and `async-combobox`): first two values shown, `+N more` for the rest (`e62569d`)
+- Registry threads `definition` through to all preset surfaces (drawer, quick filter popover, active chip edit popover); range and multi-axis chip formatters added (`b2d4218`)
+- Storybook: every existing PLP story now exercises all filter presets (`40cba5a`)
+- `PlpTemplate` COMPONENT.md bumped to 0.3.0 with the new preset names documented (`9a4a48f`)
+
+---
+
+### PLP Template — Phase 2 (unstable 0.2.0)
+
+Adds list view to the PLP template, alongside the existing grid view. Stateless controlled `viewMode` with viewport-based fallback to grid below 1024px. Opt-in per category via the new `listColumns` prop.
+
+- Added `ListColumn<TItem>` and `PlpViewMode` types and a `useIsTabletUp` hook mirroring `useIsMobile` at the 1024px breakpoint (`110c3a8`, `d89d694`)
+- List view container with sticky header and conditional Price/ct column, row renderer reading fixed core fields from `GridItemData` and category fields from the raw `TItem` via each column's `cell` function, hover-gated actions cell with Add to cart + More menu (platform + category actions), and skeleton loading rows that preserve column headers (`922cced`, `920b448`, `7793527`, `7447f12`)
+- Grid/list view toggle using the `ToggleGroup` atom, wired into the toolbar behind a `hidden lg:flex` responsive gate (`a479799`, `1062f44`)
+- `PlpTemplate` gained `listColumns`, `viewMode`, `onViewModeChange`, and `onItemClick` props; resolves effective view mode from consumer intent + availability + viewport without mutating consumer state on fallback (`4422048`)
+- Storybook: `DiamondListView` with 6 list columns (carat, shape, color, clarity, origin, certificate) and `GemstoneListView` with 3 list columns, both starting in list view (`98accc3`)
+- `PlpTemplate` COMPONENT.md bumped to `0.2.0` with the new props documented (`7931302`)
+
+---
+
+### PLP Template — Phase 1 (unstable 0.1.0)
+
+Introduces the `Templates/` tier and ships the first page-level template: `PlpTemplate`. Full grid view with filter system, sorting, pagination, and responsive behaviour. Stateless — consumer owns filter state, sort, pagination, and data fetching. Rendered inside `AppShell`.
+
+- Formalised `templates/` tier in CONTRIBUTING.md; added classification guidance and updated Storybook sidebar taxonomy to remove the "Phase C" qualifier on Templates (`870ad89`)
+- PLP type system + filter registry with preset resolver (`resolveFilterControl`, `formatFilterChipValue`) and test coverage (`870ad89`, `b12acf0`)
+- Four filter presets: boolean chip, single-select chips, multi-select chips, single-select dropdown — with `renderOption` escape hatch on `FilterOption` for rich per-option layouts (card-shaped cut selectors etc.) (`0ba88f5`)
+- Grid item with 10 fixed sections, optional `lead` / `categorySlotTop` / `categorySlotBottom` slots, platform thumbnail actions (favorite/share/viewMedia), category-specific actions, and auto-rendered pricing variants (discount, per-carat, tariffs, legacy, multi-currency) driven by user context (`8a49307`)
+- Toolbar (search + All Filters + quick filters + sort), All Filters drawer with result-count-aware footer, active filters strip with sticky behaviour and inline chip editing (`1f748b1`, `270d23e`, `622f23d`)
+- Grid container (2/3/4 column responsive), skeleton loading, empty/error states, heading with breadcrumbs (`9b62fc6`, `0700cc7`, `a8a67fd`)
+- `PlpTemplate` orchestrator wiring all sub-components, with pagination via the existing `Pagination` molecule (`186d9eb`, `1ddb192`)
+- Storybook: isolated grid item variant playground (12 stories) under `Templates/PLP Grid Item` and full template stories (8 stories) inside `AppShell` under `Templates/PLP` (`2db11ae`, `910e7a2`)
+- COMPONENT.md with full prop table, usage guidelines, and best practices (`e1aa4eb`)
+
+---
+
 ### Typography atom ([#121](https://github.com/free-agent83/clarity-v2/pull/121))
 
 New `Typography` atom covering the DSW Web Components typography styles (H1–H6, Body 1/2 Regular+Emphasis, Caption Regular+Emphasis). Link and Dashed Link treatments deferred to a future Link atom.

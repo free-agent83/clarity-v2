@@ -97,7 +97,8 @@ Components are organised using atomic design taxonomy:
 src/components/
 ├── atoms/        Single-purpose primitives (Button, Input, Badge, Label, Separator)
 ├── molecules/    Composed from atoms (Card, Dialog, Tooltip, Tabs)
-└── organisms/    Complex compositions (DataTable, AppShell)
+├── organisms/    Complex compositions (DataTable, AppShell)
+└── templates/    Page-level systems with internal sub-components (PLP, PDP, Dashboard)
 ```
 
 ### Classification guidance
@@ -105,6 +106,7 @@ src/components/
 - **Atoms** render a single interactive or display element. They don't compose other components from this library.
 - **Molecules** combine two or more atoms into a reusable unit with its own behaviour.
 - **Organisms** are complex, page-level compositions. Rare in a design system — most components are atoms or molecules.
+- **Templates** are full page-level systems that orchestrate organisms, molecules, and atoms into a complete user experience. A template owns its own internal sub-components (e.g., a PLP template owns its grid item, filter drawer, and toolbar) which are scoped to the template and not exported individually. Templates are composed from design system primitives — they don't build from scratch. If an internal sub-component proves useful to a second template, that's a signal to extract it into the library as a standalone atom, molecule, or organism.
 
 When in doubt, start as an atom. Promote to molecule when composition becomes the component's defining characteristic.
 
@@ -340,13 +342,13 @@ Feedback/       Alert, Toast, Progress, Skeleton
 Display/        Card, Badge, Chip, Avatar, Separator, Carousel
 Data/           Table, Data Grid
 Navigation/     Tabs, Accordion, Breadcrumb
-Templates/      [Phase C — PLP, PDP, Dashboard, Auth, Checkout, Settings]
+Templates/      PLP, PDP, Dashboard, Auth, Checkout, Settings
 Docs/           [Phase C — Getting started, Prompt patterns, Migration from MUI]
 ```
 
 `Data/` is a top-level category separate from `Display/`. Table and Data Grid are heavy, stateful, dataset-oriented components — they don't sit naturally alongside decorative primitives like Badge or Avatar. Matches MUI's Data Display vs Data Grid split and leaves the section room to grow (charts, pivot tables, metrics in future phases).
 
-**Folder structure stays atomic.** `src/components/atoms/button/button.tsx` is unchanged. The story `title:` field only sets the sidebar location — two independent concerns.
+**Folder structure stays atomic (plus templates).** `src/components/atoms/button/button.tsx` is unchanged; templates live under `src/components/templates/`. The story `title:` field only sets the sidebar location — two independent concerns.
 
 ### Story naming
 
@@ -466,6 +468,66 @@ A component is considered done when all of the following are true:
 - [ ] TypeScript compiles with no errors (`tsc --noEmit`)
 
 **Publishing with flagged violations.** A component may be promoted to `stable` and barrel-exported even if it has flagged Rule 1 violations. The "Tokens only" DoD item remains unticked in that component's `COMPONENT.md` with an inline note pointing at the flag. Publishing is allowed; completion is not. This is an explicit exception for Phase B, not a permanent carve-out — each flag is a ticket for a later per-component review.
+
+---
+
+## Writing an ADR
+
+Package-scoped architectural decisions live in [`ADRS.md`](./ADRS.md) at the package root. Use a package-level ADR when a decision meaningfully shapes the library but doesn't affect the wider project — for example, dropping a planned API surface on a component, adopting a cross-cutting pattern (how variants are expressed, how templates compose), or rejecting a feature consumers might reasonably expect.
+
+Project-wide decisions (token pipeline, build tooling, documentation stack, visual regression policy, etc.) go in the project-level [`docs/architecture/architecture.md`](../../docs/architecture/architecture.md) § "Architectural Decisions" instead. If you're unsure which layer a decision belongs to, ask: does the decision only make sense if you're working *inside* this package? If yes, it's package-scoped.
+
+### When to write one
+
+Write an ADR when:
+
+- A feature described in a spec is deliberately *not* being built, and the reason would be non-obvious to a future reader who finds the spec but not the code.
+- A consumer-visible pattern is being adopted or rejected that will set precedent for similar future decisions.
+- A workaround is being accepted that looks strange without the history (e.g., "why isn't this tokenised?").
+- A reversible decision is being made whose cost-to-revisit is high (e.g., a prop name or data shape that would be breaking to change).
+
+Don't write an ADR for routine component work. Component-level rationale belongs in the `COMPONENT.md` under "Usage guidelines" and "Best practices", not in ADRS.md.
+
+### Format
+
+Follow the project-level ADR format:
+
+```md
+## ADR-NNN: Title (Month Year)
+
+**Context:** What's the situation, what was planned, what triggered the decision.
+
+**Decision:** One or two sentences stating what's being chosen.
+
+**Rationale:**
+
+1. **Reason heading.** Explanation.
+2. **Reason heading.** Explanation.
+(...)
+
+**Trade-offs accepted:**
+
+- Bullet 1
+- Bullet 2
+
+**Reversibility:** High / Medium / Low, with a sentence explaining what reversing would require.
+
+**When to reconsider:**
+
+- Specific condition 1.
+- Specific condition 2.
+
+**Related:** (optional)
+- Links to specs, parent ADRs, related decisions.
+```
+
+### Numbering
+
+Append the next sequential number. Never renumber existing entries — ADR numbers are stable references. New entries go at the **bottom** of the file so the file reads chronologically.
+
+### Cross-references
+
+When an ADR supersedes or modifies an earlier decision, the earlier ADR should gain a short status note at its top pointing at the new one (keep the original content intact — don't rewrite history). When a spec's planned work is being deferred or overturned, add a status note at the top of the affected spec section pointing at the ADR.
 
 ---
 

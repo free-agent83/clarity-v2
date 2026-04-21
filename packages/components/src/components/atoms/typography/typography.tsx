@@ -7,31 +7,43 @@ import { cn } from "@/lib/utils"
 /**
  * Typography variants.
  *
- * Variant axis = role preset (h1–h6, body1, body1Emphasis, body2, body2Emphasis, caption, captionEmphasis)
+ * Variant axis = role preset (h1–h6, subtitle-1, subtitle-2, body-1, body-2, caption).
+ * Orthogonal `emphasis` axis bumps font-weight on body-1, body-2, and caption
+ * (a no-op on variants whose weight is fixed by spec).
  *
- * Each variant maps 1:1 to a `text-typography-*` utility defined in globals.css,
- * which applies font-size, line-height, font-weight and letter-spacing together.
- * See globals.css → "Typography role presets".
+ * Each variant composes stock Tailwind utilities (font-size, font-weight,
+ * line-height, letter-spacing) so consumer-supplied `className` overrides
+ * merge correctly through `tailwind-merge`. Sizes target the DSW Web
+ * Components Figma spec, collapsed to the closest stock utility.
  */
 const typographyVariants = cva("font-sans", {
   variants: {
     variant: {
-      h1: "text-typography-h1",
-      h2: "text-typography-h2",
-      h3: "text-typography-h3",
-      h4: "text-typography-h4",
-      h5: "text-typography-h5",
-      h6: "text-typography-h6",
-      body1: "text-typography-body-1",
-      body1Emphasis: "text-typography-body-1-emphasis",
-      body2: "text-typography-body-2",
-      body2Emphasis: "text-typography-body-2-emphasis",
-      caption: "text-typography-caption",
-      captionEmphasis: "text-typography-caption-emphasis",
+      h1: "text-8xl font-light leading-28 tracking-tight",
+      h2: "text-6xl font-light leading-18",
+      h3: "text-5xl font-medium leading-14",
+      h4: "text-4xl font-medium leading-11",
+      h5: "text-2xl font-medium leading-8",
+      h6: "text-xl font-medium leading-8",
+      "subtitle-1": "text-base font-normal leading-7",
+      "subtitle-2": "text-sm font-medium leading-5",
+      "body-1": "text-base font-normal leading-6",
+      "body-2": "text-sm font-normal leading-5",
+      caption: "text-xs font-normal leading-5 tracking-wide",
+    },
+    emphasis: {
+      true: "",
+      false: "",
     },
   },
+  compoundVariants: [
+    { variant: "body-1", emphasis: true, className: "font-medium" },
+    { variant: "body-2", emphasis: true, className: "font-medium" },
+    { variant: "caption", emphasis: true, className: "font-medium" },
+  ],
   defaultVariants: {
-    variant: "body2",
+    variant: "body-2",
+    emphasis: false,
   },
 })
 
@@ -42,12 +54,11 @@ const defaultElementByVariant = {
   h4: "h4",
   h5: "h5",
   h6: "h6",
-  body1: "p",
-  body1Emphasis: "p",
-  body2: "p",
-  body2Emphasis: "p",
+  "subtitle-1": "h6",
+  "subtitle-2": "h6",
+  "body-1": "p",
+  "body-2": "p",
   caption: "p",
-  captionEmphasis: "p",
 } as const
 
 type TypographyElement =
@@ -74,7 +85,8 @@ interface TypographyProps
  * Pick the `variant` that matches the role ("is this a page title? a
  * caption under a form field?"). The component picks a sensible HTML
  * element for that role (`h1`–`h6` render their matching heading tag,
- * body and caption variants render `<p>`); pass `as` to override when
+ * subtitles render `<h6>`, body and caption variants render `<p>`);
+ * pass `as` to override when
  * the visual weight shouldn't imply document structure. Pass `asChild`
  * to render via Radix Slot — e.g. to style a Next.js `<Link>` as body
  * text — in which case `as` is ignored.
@@ -87,20 +99,22 @@ interface TypographyProps
  */
 function Typography({
   className,
-  variant = "body2",
+  variant = "body-2",
+  emphasis = false,
   as,
   asChild = false,
   ...props
 }: TypographyProps) {
   const Comp = asChild
     ? Slot.Root
-    : (as ?? defaultElementByVariant[variant ?? "body2"])
+    : (as ?? defaultElementByVariant[variant ?? "body-2"])
 
   return (
     <Comp
       data-slot="typography"
       data-variant={variant}
-      className={cn(typographyVariants({ variant }), className)}
+      data-emphasis={emphasis || undefined}
+      className={cn(typographyVariants({ variant, emphasis }), className)}
       {...props}
     />
   )
