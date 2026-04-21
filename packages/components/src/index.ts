@@ -127,5 +127,3 @@ export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShell
 // export type { PlpGridContainerProps } from "./components/templates/plp/plp-grid-container";
 // export { PlpListContainer } from "./components/templates/plp/plp-list-container";
 // export type { PlpListContainerProps } from "./components/templates/plp/plp-list-container";
-// export { PlpEmpty } from "./components/templates/plp/states/plp-empty";
-// export { PlpError } from "./components/templates/plp/states/plp-error";

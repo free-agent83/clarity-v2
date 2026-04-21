@@ -11,6 +11,7 @@ import {
   IconLayoutGrid,
   IconList,
 } from "@tabler/icons-react";
+import { Button } from "../../atoms/button/button";
 import { FilterButton } from "../../atoms/filter-button/filter-button";
 import { Label } from "../../atoms/label/label";
 import { Switch } from "../../atoms/switch/switch";
@@ -56,8 +57,13 @@ import {
 import { PlpGridContainer } from "./plp-grid-container";
 import { PlpHeading } from "./plp-heading";
 import { PlpListContainer } from "./plp-list-container";
-import { PlpEmpty } from "./states/plp-empty";
-import { PlpError } from "./states/plp-error";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "../../atoms/empty/empty";
 import type { BreadcrumbSegment, PlpStatus, PlpViewMode } from "./plp-types";
 import { SORT_OPTIONS, mockPreviewCount } from "./mocks/common";
 import { MOCK_LATENCY } from "./mocks/simulate-api-call";
@@ -1033,6 +1039,91 @@ function InlinePagination({
   );
 }
 
+// ── Empty / error state suggestion ────────────────────────────────────
+//
+// The library doesn't ship PLP-specific empty/error components.
+// Consumers compose the `Empty` atom with the copy and CTAs that fit
+// their context. This helper is one example of what that looks like
+// for a product-listing page — copy it into your app and adapt.
+
+function renderPlpEmptyState({
+  status,
+  onClearAll,
+  onRetry,
+  emptyMessage,
+  emptyFilterSuggestions,
+}: {
+  status: "empty-filtered" | "empty-no-items" | "error";
+  onClearAll?: () => void;
+  onRetry?: () => void;
+  emptyMessage?: string;
+  emptyFilterSuggestions?: string[];
+}): ReactNode {
+  if (status === "empty-filtered") {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyTitle>No items match your filters</EmptyTitle>
+          <EmptyDescription>
+            Try adjusting your filters to find what you're looking for.
+          </EmptyDescription>
+          {emptyFilterSuggestions && emptyFilterSuggestions.length > 0 && (
+            <EmptyDescription>
+              Try removing:{" "}
+              <Typography
+                as="span"
+                variant="body-2"
+                emphasis
+                className="text-foreground"
+              >
+                {emptyFilterSuggestions.join(", ")}
+              </Typography>
+            </EmptyDescription>
+          )}
+        </EmptyHeader>
+        {onClearAll && (
+          <EmptyContent>
+            <Button variant="outline" onClick={onClearAll}>
+              Clear all filters
+            </Button>
+          </EmptyContent>
+        )}
+      </Empty>
+    );
+  }
+
+  if (status === "empty-no-items") {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyTitle>No items available</EmptyTitle>
+          <EmptyDescription>
+            {emptyMessage || "There are no items in this category yet."}
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyTitle>Something went wrong</EmptyTitle>
+        <EmptyDescription>
+          We couldn't load the products. Please try again or contact support
+          if the problem persists.
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        {onRetry && <Button onClick={onRetry}>Try again</Button>}
+        <Button variant="outline" asChild>
+          <a href="/support">Contact support</a>
+        </Button>
+      </EmptyContent>
+    </Empty>
+  );
+}
+
 // ── Story meta ────────────────────────────────────────────────────────
 
 const meta: Meta = {
@@ -1180,16 +1271,16 @@ function GemstoneInteractive({
         </FilterDrawer>
       }
     >
-      {status === "empty-filtered" ? (
-        <PlpEmpty
-          variant="empty-filtered"
-          onClearFilters={ctrl.clearAll}
-          filterSuggestions={emptyFilterSuggestions}
-        />
-      ) : status === "empty-no-items" ? (
-        <PlpEmpty variant="empty-no-items" message={emptyMessage} />
-      ) : status === "error" ? (
-        <PlpError onRetry={onRetry} />
+      {status === "empty-filtered" ||
+      status === "empty-no-items" ||
+      status === "error" ? (
+        renderPlpEmptyState({
+          status,
+          onClearAll: ctrl.clearAll,
+          onRetry,
+          emptyMessage,
+          emptyFilterSuggestions,
+        })
       ) : effectiveView === "list" ? (
         <PlpListContainer
           header={listHeader}
@@ -1311,16 +1402,16 @@ function DiamondInteractive({
         </FilterDrawer>
       }
     >
-      {status === "empty-filtered" ? (
-        <PlpEmpty
-          variant="empty-filtered"
-          onClearFilters={ctrl.clearAll}
-          filterSuggestions={emptyFilterSuggestions}
-        />
-      ) : status === "empty-no-items" ? (
-        <PlpEmpty variant="empty-no-items" message={emptyMessage} />
-      ) : status === "error" ? (
-        <PlpError onRetry={onRetry} />
+      {status === "empty-filtered" ||
+      status === "empty-no-items" ||
+      status === "error" ? (
+        renderPlpEmptyState({
+          status,
+          onClearAll: ctrl.clearAll,
+          onRetry,
+          emptyMessage,
+          emptyFilterSuggestions,
+        })
       ) : effectiveView === "list" ? (
         <PlpListContainer
           header={listHeader}
