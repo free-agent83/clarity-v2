@@ -1,4 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { IconArrowRight } from "@tabler/icons-react";
+import { Button } from "../../atoms/button/button";
+import { Typography } from "../../atoms/typography/typography";
 import {
   AppShell,
   AppShellHeader,
@@ -24,6 +27,31 @@ import {
 import { generateDiamondItems } from "./__fixtures__/diamond-items";
 
 const items = generateDiamondItems(20);
+
+const PromoBanner = (
+  <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-linear-to-r from-slate-900 via-violet-950 to-slate-900 px-6 py-5 text-primary-foreground">
+    <div className="min-w-0">
+      <Typography
+        as="h2"
+        variant="body-1"
+        emphasis
+        className="text-primary-foreground"
+      >
+        Boost your productivity. Start using our app today.
+      </Typography>
+      <Typography variant="body-2" className="text-primary-foreground/80">
+        Incididunt sint fugiat pariatur cupidatat consectetur sit cillum anim.
+      </Typography>
+    </div>
+    <div className="flex items-center gap-2">
+      <Button>Get started</Button>
+      <Button variant="ghost" className="text-primary-foreground">
+        Learn more
+        <IconArrowRight className="h-4 w-4" />
+      </Button>
+    </div>
+  </div>
+);
 
 const StaticPagination = (
   <Pagination className="mt-4">
@@ -93,6 +121,25 @@ export const ListView: StoryObj = {
           <DiamondPlpListRow key={item.id} item={item} />
         ))}
       </PlpListContainer>
+      {StaticPagination}
+    </DiamondPage>
+  ),
+};
+
+/**
+ * Demonstrates a promotional banner slotted in between the PLP heading
+ * and the filter toolbar. The library doesn't bake a banner prop into
+ * any component — `PlpPageShell` flows whatever node the consumer hands
+ * in through its `banner` slot.
+ */
+export const WithBanner: StoryObj = {
+  render: () => (
+    <DiamondPage banner={PromoBanner}>
+      <PlpGridContainer>
+        {items.map((item) => (
+          <DiamondPlpGridItem key={item.id} item={item} />
+        ))}
+      </PlpGridContainer>
       {StaticPagination}
     </DiamondPage>
   ),
