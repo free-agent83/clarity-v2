@@ -1,101 +1,102 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { FilterButton } from "../../../atoms/filter-button/filter-button";
-import {
-  resolveFilterControl,
-  formatFilterChipValue,
-} from "../filters/plp-filter-registry";
-import type { FilterDefinition, FilterState, FilterValue } from "../plp-types";
+
+export interface PlpQuickFilterProps<V> {
+  /** Filter label (e.g. "Colour"). Always shown on the button. */
+  label: string;
+  /**
+   * Formatted summary of the current applied value (e.g. "Blue, Green +3").
+   * Provide when the filter is active; omit when it is not. Consumers own
+   * the formatting — the library does not ship a chip formatter.
+   */
+  chipSummary?: string;
+  /** Whether the filter currently has an applied value. */
+  isActive: boolean;
+  /**
+   * Value to seed the popover's draft with each time the popover opens.
+   * Usually the consumer's applied value for this filter. Drafts are
+   * discarded when the popover closes without applying.
+   */
+  initialValue: V | undefined;
+  /** Optional fixed width for the popover (CSS value or pixel number). */
+  popoverWidth?: number | string;
+  /** Fired with the draft value when the user clicks Apply inside the popover. */
+  onApply: (value: V | undefined) => void;
+  /** Fired when the user clicks Clear inside the popover. */
+  onClear: () => void;
+  /**
+   * Fired when the user clicks the dismiss X on the active chip (if any).
+   * Only rendered when `isActive` is true; omit to hide the X.
+   */
+  onDismiss?: () => void;
+  /**
+   * Render function for the filter control. Receives the current draft
+   * value and a setter. The draft lifecycle (seed on open, reset to the
+   * current applied value each time the popover opens, commit on apply)
+   * is managed here — the consumer only writes the controlled filter
+   * component against `draft` and `setDraft`.
+   */
+  children: (draft: V | undefined, setDraft: (v: V | undefined) => void) => ReactNode;
+}
 
 /**
  * Toolbar-row filter control.
  *
- * Renders a `FilterButton` whose active/inactive state is driven by the
- * current `filterState[definition.id]` value:
+ * Wraps a `FilterButton` with a per-popover draft state lifecycle:
  *
- * - Empty value → inactive `FilterButton` showing just the label.
- * - Any value → active `FilterButton` showing `label: valueSummary` with
- *   an inline dismiss X that clears the filter.
+ * - Each time the popover opens, the draft is reseeded from `initialValue`
+ *   so the popover always starts from the currently-applied value.
+ * - Edits mutate the draft only; the consumer's applied state is not
+ *   touched until the user clicks Apply.
+ * - Apply commits the draft through `onApply`; Clear commits `undefined`
+ *   through `onClear`; the dismiss X on the active chip fires `onDismiss`
+ *   without opening the popover.
  *
- * The popover's Apply / Clear buttons are provided by `FilterButton`
- * itself. This component manages the local draft value and wires
- * `onApply` / `onClear` / `onOpenChange` to commit-on-apply semantics
- * matching the drawer.
- *
- * Used for both pinned "quick filters" (always present in the toolbar,
- * even when empty) and engaged non-quick filters (shown only when they
- * have a value). The branching between those two cases happens at the
- * toolbar level.
+ * The preset control is provided as a render-prop child so each consumer
+ * picks which filter component to render for this quick filter — the
+ * library no longer maintains a registry.
  */
-export function PlpQuickFilter({
-  definition,
-  filterState,
-  onFilterChange,
-}: {
-  definition: FilterDefinition;
-  filterState: FilterState;
-  onFilterChange: (filterId: string, value: FilterValue) => void;
-}) {
-  const value = filterState[definition.id];
-  const [localValue, setLocalValue] = useState<FilterValue>(value);
-
-  const isActive = value !== undefined;
-  const FilterControl = resolveFilterControl(definition);
-
-  const valueSummary = isActive
-    ? formatFilterChipValue(definition, value)
-    : undefined;
+export function PlpQuickFilter<V>({
+  label,
+  chipSummary,
+  isActive,
+  initialValue,
+  popoverWidth,
+  onApply,
+  onClear,
+  onDismiss,
+  children,
+}: PlpQuickFilterProps<V>) {
+  const [draft, setDraft] = useState<V | undefined>(initialValue);
 
   function handleOpenChange(open: boolean) {
     if (open) {
-      // Reset draft to the currently applied value each time the popover opens
-      setLocalValue(filterState[definition.id]);
+      setDraft(initialValue);
     }
   }
 
   function handleApply() {
-    onFilterChange(definition.id, localValue);
+    onApply(draft);
   }
 
   function handleClear() {
-    onFilterChange(definition.id, undefined);
-    setLocalValue(undefined);
+    setDraft(undefined);
+    onClear();
   }
-
-  function handleDismiss() {
-    onFilterChange(definition.id, undefined);
-  }
-
-  // Build options for the control — boolean-chip gets chipLabel as a single option
-  const controlOptions =
-    definition.preset === "boolean-chip"
-      ? [
-          {
-            value: "true",
-            label: (definition as any).chipLabel || definition.label,
-          },
-        ]
-      : "options" in definition
-        ? definition.options
-        : undefined;
 
   return (
     <FilterButton
-      label={definition.label}
-      valueSummary={valueSummary}
-      popoverWidth={definition.popoverWidth}
+      label={label}
+      valueSummary={isActive ? chipSummary : undefined}
+      popoverWidth={popoverWidth}
       onOpenChange={handleOpenChange}
       onApply={handleApply}
       onClear={handleClear}
-      onDismiss={isActive ? handleDismiss : undefined}
+      onDismiss={isActive ? onDismiss : undefined}
     >
-      <FilterControl
-        value={localValue}
-        onChange={setLocalValue}
-        options={controlOptions}
-        definition={definition}
-      />
+      {children(draft, setDraft)}
     </FilterButton>
   );
 }

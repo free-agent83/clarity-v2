@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import {
   Select,
   SelectContent,
@@ -7,7 +8,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../../molecules/select/select";
-import type { FilterControlProps } from "../../plp-types";
+
+/**
+ * Option shape for `SingleSelectDropdownFilter`. Each preset declares its
+ * own option type so presets stay decoupled and can evolve independently.
+ */
+export interface SingleSelectDropdownOption {
+  value: string;
+  label: string;
+  /** Small visual before the label (flag icon, swatch). */
+  adornment?: ReactNode;
+}
+
+export type SingleSelectDropdownValue = string | undefined;
+
+export interface SingleSelectDropdownFilterProps {
+  value: SingleSelectDropdownValue;
+  onChange: (value: SingleSelectDropdownValue) => void;
+  options: SingleSelectDropdownOption[];
+  placeholder?: string;
+}
 
 /**
  * Dropdown filter using the design system Select molecule.
@@ -19,19 +39,18 @@ export function SingleSelectDropdownFilter({
   value,
   onChange,
   options,
-}: FilterControlProps) {
-  const stringValue = typeof value === "string" ? value : "";
-
+  placeholder = "Select...",
+}: SingleSelectDropdownFilterProps) {
   return (
     <Select
-      value={stringValue}
+      value={value ?? ""}
       onValueChange={(v) => onChange(v || undefined)}
     >
       <SelectTrigger className="w-full">
-        <SelectValue placeholder="Select..." />
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options?.map((option) => (
+        {options.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             <span className="flex items-center gap-2">
               {option.adornment}

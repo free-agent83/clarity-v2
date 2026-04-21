@@ -1,8 +1,35 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Toggle } from "../../../../atoms/toggle/toggle";
-import type { FilterControlProps } from "../../plp-types";
+
+/**
+ * Option shape for `MultiSelectChipsFilter`. Each preset declares its own
+ * option type so presets stay decoupled and can evolve independently.
+ */
+export interface MultiSelectChipOption {
+  value: string;
+  label: string;
+  /** Small visual before the label (colour swatch, icon). */
+  adornment?: ReactNode;
+  /**
+   * Replaces the default toggle button content entirely. Receives
+   * selection state so the consumer can style the contents accordingly.
+   * The preset still owns the outer button shell (click, aria, selection
+   * border). Use for rich option layouts (icon on top + label below,
+   * card-shaped selectors, etc.).
+   */
+  renderOption?: (props: { selected: boolean }) => ReactNode;
+}
+
+export type MultiSelectChipsValue = string[] | undefined;
+
+export interface MultiSelectChipsFilterProps {
+  value: MultiSelectChipsValue;
+  onChange: (value: MultiSelectChipsValue) => void;
+  options: MultiSelectChipOption[];
+}
 
 /**
  * Multi-select chip group with optional adornments.
@@ -12,15 +39,14 @@ import type { FilterControlProps } from "../../plp-types";
  * presence in the selected array.
  *
  * Each toggle is independent (not wrapped in a `ToggleGroup`) so options
- * can use `renderOption` for richer layouts like card-shaped cut-shape
- * selectors with an icon on top and a label below.
+ * can use `renderOption` for richer layouts like card-shaped selectors.
  */
 export function MultiSelectChipsFilter({
   value,
   onChange,
   options,
-}: FilterControlProps) {
-  const selected = Array.isArray(value) ? value : [];
+}: MultiSelectChipsFilterProps) {
+  const selected = value ?? [];
 
   function toggle(optionValue: string) {
     const next = selected.includes(optionValue)
@@ -31,7 +57,7 @@ export function MultiSelectChipsFilter({
 
   return (
     <div className="flex flex-wrap gap-2">
-      {options?.map((option) => {
+      {options.map((option) => {
         const isSelected = selected.includes(option.value);
         return (
           <Toggle

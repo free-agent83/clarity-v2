@@ -1,14 +1,16 @@
 ---
 name: PlpTemplate
 slug: plp-template
-version: 0.4.0
+version: 0.5.0
 status: unstable
-lastUpdated: 2026-04-16
+lastUpdated: 2026-04-21
 ---
 
 # PlpTemplate
 
-Product Listing Page template — a page-level component that orchestrates a complete product listing experience with heading, toolbar, filtering, responsive product grid, pagination, and loading/empty/error states.
+Product Listing Page template — a page-level layout component that orchestrates a complete product listing experience: heading, toolbar with filter slot + sort + view toggle, responsive product grid or list, pagination, and loading/empty/error states. Must be rendered inside an AppShell.
+
+The template is a presentational container. It holds no filter schema, no item data shape, and no commit semantics. Consumers compose filter buttons, grid cards, and list rows from library primitives, and hand them in as `ReactNode[]` slots. All business logic (filter state, drawer draft buffering, preview-count fetching, chip summary formatting, pricing variants, user-context decisions) lives in the consumer. See [plp-template.stories.tsx](./plp-template.stories.tsx) for the canonical wiring pattern, including the `useFilterController` reference implementation.
 
 ## Props
 
@@ -16,22 +18,24 @@ Product Listing Page template — a page-level component that orchestrates a com
 |------|------|---------|-------------|
 | `breadcrumbs` | `BreadcrumbSegment[]` | — | Breadcrumb navigation segments |
 | `title` | `string` | — | Category title |
-| `resultsCount` | `number` | — | Total results to display in heading |
-| `filters` | `FilterDefinition[]` | — | Filter definitions (preset or custom) |
-| `filterState` | `FilterState` | — | Current filter values keyed by filter ID |
-| `onFilterChange` | `(id: string, value: FilterValue) => void` | — | Called when any filter value changes |
-| `filteredResultsCount` | `number` | — | Count shown in the "Show X results" drawer button |
+| `resultsCount` | `number` | — | Total results displayed in the heading |
+| `toolbarFilters` | `ReactNode[]` | — | Pre-composed filter buttons for the toolbar row. Typically pinned quick filters plus engaged non-pinned filters. Each element must carry its own `key`. |
+| `stickyFilters` | `ReactNode[]` | — | Pre-composed filter buttons for the sticky bar. Typically the engaged subset only. |
+| `activeFilterCount` | `number` | — | Drives the "All filters" badge |
+| `hasActiveFilters` | `boolean` | — | Drives Clear all visibility and the sticky-bar engagement gate |
+| `onOpenDrawer` | `() => void` | — | Fired when either "All filters" button is clicked |
+| `onClearAll` | `() => void` | — | Fired by the toolbar's Clear all and the empty-filtered state's clear action |
 | `sortOptions` | `SortOption[]` | — | Available sort options |
 | `sortValue` | `string` | — | Currently selected sort value |
 | `onSortChange` | `(value: string) => void` | — | Called when sort changes |
 | `searchPlaceholder` | `string` | `"Search..."` | Placeholder for the search input |
 | `onSearchSubmit` | `(query: string) => void` | — | Called on search submit (Enter key) |
-| `items` | `TItem[]` | — | Raw items from the consumer |
-| `renderGridItem` | `(item: TItem) => GridItemData` | — | Maps raw items to the grid item data shape |
-| `listColumns` | `ListColumn<TItem>[]` | — | Category-configured columns for list view. Presence of a non-empty array enables the grid/list toggle. Omit for grid-only. |
-| `viewMode` | `"grid" \| "list"` | `"grid"` | Current view mode. Template silently falls back to grid at viewports < 1024px. |
-| `onViewModeChange` | `(mode: "grid" \| "list") => void` | — | Called when the user toggles view mode. |
-| `onItemClick` | `(item: TItem) => void` | — | Called when a list view row is clicked. No effect in grid view. |
+| `gridItems` | `ReactNode[]` | — | Pre-rendered grid cards composed from `PlpGridItem*` primitives |
+| `listHeader` | `ReactNode` | — | Pre-rendered list header row |
+| `listRows` | `ReactNode[]` | — | Pre-rendered list rows composed from `PlpListRow*` primitives |
+| `listViewAvailable` | `boolean` | `false` | When true, exposes the grid/list toggle. Template falls back to grid at viewports < 1024px. |
+| `viewMode` | `"grid" \| "list"` | `"grid"` | Current view mode |
+| `onViewModeChange` | `(mode) => void` | — | Called when the user toggles view mode |
 | `page` | `number` | — | Current page number |
 | `pageSize` | `number` | — | Items per page |
 | `totalItems` | `number` | — | Total items for pagination |
@@ -40,71 +44,46 @@ Product Listing Page template — a page-level component that orchestrates a com
 | `onPageSizeChange` | `(size: number) => void` | — | Called when page size changes |
 | `status` | `PlpStatus` | — | Content area state: loading, success, empty-filtered, empty-no-items, error |
 | `onRetry` | `() => void` | — | Retry handler for error state |
-| `emptyFilterSuggestions` | `string[]` | — | Filter names to suggest removing in empty-filtered state |
-| `emptyMessage` | `string` | — | Custom message for empty-no-items state |
+| `emptyMessage` | `string` | — | Custom message for the empty-no-items state |
 
-## GridItemData fields
+## Filter composition
 
-The `renderGridItem` mapper must return a `GridItemData` object. Key fields:
+The template renders a fixed filter chrome (All Filters button, Clear all, sticky bar), and flows consumer-supplied `ReactNode[]` slots into that chrome. The actual drawer is not part of the template — consumers render `PlpFilterDrawer` as a sibling and wire `onOpenDrawer` to flip a local `open` state.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `string` | Unique item identifier |
-| `name` | `string` | Item display name |
-| `thumbnailSrc` | `string` | Static thumbnail image URL |
-| `thumbnailAlt` | `string` | Accessible alt text for the thumbnail |
-| `lead` | `ReactNode \| undefined` | Category-owned slot above badges |
-| `badges` | `ReactNode[] \| undefined` | Optional badge nodes |
-| `categorySlotTop` | `ReactNode \| undefined` | Optional category slot between badges and delivery |
-| `categorySlotBottom` | `ReactNode \| undefined` | Optional category slot below pricing |
-| `delivery` | `{ estimatedDate, shipsFrom, isExpress? }` | Delivery info |
-| `returns` | `{ isReturnable }` | Returns policy |
-| `pricing` | `PricingData` | Pricing data (see type for variants) |
-| `onAddToCart` | `() => void` | Add to cart callback |
-| `enableSelection` | `boolean \| undefined` | When true, selection checkbox appears |
-| `categoryActions` | `CategoryThumbnailAction[] \| undefined` | Category-specific thumbnail actions |
-| `onFavorite` | `(itemId: string) => void \| undefined` | Platform favorite action |
-| `onShare` | `(itemId: string) => void \| undefined` | Platform share action |
-| `onViewMedia` | `(itemId: string) => void \| undefined` | Platform view media action |
-| `media360` | `{ videoUrl: string } \| undefined` | Optional 360 rotation video. When present and the viewport supports hover, the thumbnail crossfades into the video on hover and horizontal cursor position scrubs it. Omit to skip 360 on a per-item basis. |
+Typical wiring:
+
+1. A local controller (see `useFilterController` in the stories) owns applied filter state, drawer draft buffer, and a drawer-open flag.
+2. Quick filter buttons are composed via `PlpQuickFilter`, each wrapping a preset control (`RangeSliderFilter`, `MultiSelectChipsFilter`, etc.) inside a render-prop child that exposes the popover's draft value.
+3. The consumer derives `toolbarFilters` and `stickyFilters` from its own pinned-vs-engaged classification.
+4. The drawer is rendered as a sibling to `PlpTemplate`, with `PlpFilterSection` wrappers around each preset control written directly against the controller's draft state.
+5. Chip summaries for active filter buttons are formatted by the consumer (the library no longer ships a chip formatter).
 
 ## Usage guidelines
 
-**When to use:** Any product listing page that shows a grid of items with filtering, sorting, and pagination. Must be rendered inside an AppShell.
+**When to use:** Any product listing page that shows a grid or list of items with filtering, sorting, and pagination. Must be rendered inside an AppShell.
 
-**When NOT to use:** Pages that aren't product listings (dashboards, settings, auth flows). Pages that need a completely custom layout not matching the PLP structure.
+**When NOT to use:** Pages that aren't product listings (dashboards, settings, auth flows), or pages that need a completely custom layout.
 
-### List view (Phase 2)
+### List view
 
-List view is a density-oriented alternative to grid view for categories that benefit from parameter-by-parameter comparison (diamonds is the canonical case). Opt in by passing a non-empty `listColumns` array. The grid/list toggle appears in the toolbar automatically when list view is available and the viewport is ≥ 1024px. Below the tablet breakpoint, the template silently falls back to grid view — the consumer's `viewMode` state is preserved and honored when the viewport grows.
+List view is a density-oriented alternative to grid for categories that benefit from parameter-by-parameter comparison (diamonds is the canonical case). Opt in by passing `listViewAvailable`, `listHeader`, and `listRows`. The grid/list toggle appears in the toolbar when list view is available and the viewport is ≥ 1024px. Below the tablet breakpoint the template silently falls back to grid while preserving the consumer's `viewMode` intent.
 
 ## Best practices
 
-**Do:** Supply all filter definitions as a configuration array. The template resolves them identically across all three surfaces (quick filter, drawer, active chip).
+**Do:** Compose filter buttons once and route them to the right slot based on your own pinned/engaged rules. Keep the routing in the consumer, not the template.
 
-**Do:** Use the `renderGridItem` mapper to transform raw API data into the structured `GridItemData` shape. The template controls render order.
+**Do:** Format chip summaries close to the filter definition so the display text tracks the value shape.
 
-**Don't:** Try to inject custom rendering for template-driven sections (delivery, returns, pricing). Supply the data; the template handles the rendering.
+**Do:** Wire `onDraftFilterStateChange`-style behaviour at the drawer level — observe the controller's `draft` and fetch a debounced preview count from your backend, then feed it into `PlpFilterDrawer.resultsCount` / `isCountLoading`.
 
-**Don't:** Use custom filters when a preset fits. Custom filters drift visually over time.
+**Don't:** Re-introduce a library-owned `FilterDefinition` schema. The point of this version is that each preset stands alone and the consumer wires it.
 
-### 360 media (Phase 3b)
+## Related components
 
-Grid items with 360 rotation video opt in via the `media360.videoUrl` field on `GridItemData`. On pointer devices, hovering the thumbnail crossfades the static image into the video and horizontal cursor movement scrubs through the rotation. Videos are lazy-loaded via intersection observer, so off-screen items don't consume bandwidth until they scroll into view.
-
-Touch devices skip the 360 code path entirely — no video element is mounted, no network requests are issued. Touch users access 360 content through the `viewMedia` platform action, which is expected to open a Lightbox (separate spec).
-
-Encode source videos with dense keyframes (e.g. a keyframe every 2–3 frames) for smooth seek-based scrubbing. Sparse-keyframe videos will stutter when the cursor moves quickly.
-
-### Phase 3a presets
-
-Three advanced presets added in Phase 3a (unstable 0.3.0):
-
-- `range-slider` — Numeric min/max with a two-thumb Slider and commit-on-blur inputs. Reads `min`, `max`, `step`, `unit`, `histogram`. Unit is shown as a prefix for currencies and suffix otherwise. Histogram is optional — when supplied it renders a distribution bar chart that highlights the selected sub-range.
-- `multi-axis-range` — Multiple named ranges under one filter, each axis rendered as one slider + numeric input pair. Reads `axes[]`. Human-readable axis labels appear in both the filter UI and active chip text. No histogram support.
-- `async-combobox` — Multi-select Combobox with lazy-loaded options. Reads `searchFn`, `searchDebounceMs`, `searchPlaceholder`. Options load on first open; subsequent queries are debounced. Selected-option labels are cached so chips survive query changes.
-
-All three presets participate in chip truncation: for `multi-select-chips` and `async-combobox`, the first two selected values are shown inline and any additional values are collapsed to `+N more`.
+- [PlpFilterDrawer](./filters/plp-filter-drawer.tsx) — the Sheet container consumers render as a sibling
+- [PlpFilterSection](./filters/plp-filter-section.tsx) — heading + separator wrapper for entries inside the drawer
+- [PlpQuickFilter](./toolbar/plp-quick-filter.tsx) — toolbar-row filter button with per-popover draft state
+- Presets: [BooleanChipFilter](./filters/presets/boolean-chip.tsx), [SingleSelectChipsFilter](./filters/presets/single-select-chips.tsx), [MultiSelectChipsFilter](./filters/presets/multi-select-chips.tsx), [SingleSelectDropdownFilter](./filters/presets/single-select-dropdown.tsx), [RangeSliderFilter](./filters/presets/range-slider.tsx), [MultiAxisRangeFilter](./filters/presets/multi-axis-range.tsx), [AsyncComboboxFilter](./filters/presets/async-combobox.tsx)
 
 ## Quality checklist
 

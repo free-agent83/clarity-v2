@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "../../../atoms/button/button";
 import { Input } from "../../../atoms/input/input";
@@ -13,59 +13,22 @@ import {
   SelectValue,
 } from "../../../molecules/select/select";
 import { PlpAllFiltersButton } from "./plp-all-filters-button";
-import { PlpQuickFilter } from "./plp-quick-filter";
 import { PlpViewToggle } from "./plp-view-toggle";
-import type {
-  FilterDefinition,
-  FilterState,
-  FilterValue,
-  PlpViewMode,
-  SortOption,
-} from "../plp-types";
+import type { PlpViewMode, SortOption } from "../plp-types";
 
-/**
- * PLP toolbar — search, All Filters button, inline filter buttons, view
- * toggle, and sort.
- *
- * **Filter model:** quick filters and engaged non-quick filters render as
- * a single row of buttons in the toolbar. Quick filters are "pinned" —
- * always present, showing either an active or empty state depending on
- * whether they have a value. Non-quick filters appear only when engaged
- * and disappear when cleared. Both share the same `PlpQuickFilter`
- * component; they look and behave identically (click to edit, Clear
- * inside the popover to dismiss).
- *
- * The filter row wraps to multiple lines when it overflows. The Sort
- * dropdown stays top-aligned on the right so it doesn't drift down the
- * column as filters wrap.
- *
- * "Clear all" appears at the end of the filter row whenever any filter
- * (quick or non-quick) has a value.
- *
- * On mobile (< 640px): only the All Filters button and Sort are shown;
- * the inline filter row is hidden. Users see engaged filter count via
- * the All Filters button's badge.
- */
-export function PlpToolbar({
-  filters,
-  filterState,
-  onFilterChange,
-  onClearAll,
-  onOpenDrawer,
-  sortOptions,
-  sortValue,
-  onSortChange,
-  searchPlaceholder,
-  onSearchSubmit,
-  viewMode,
-  onViewModeChange,
-  showViewToggle = false,
-}: {
-  filters: FilterDefinition[];
-  filterState: FilterState;
-  onFilterChange: (filterId: string, value: FilterValue) => void;
-  onClearAll: () => void;
+export interface PlpToolbarProps {
+  /**
+   * Pre-composed inline filter buttons. Consumers assemble these from
+   * `PlpQuickFilter` (or any other node) and decide which filters
+   * belong in the toolbar row. Each element must carry its own `key`.
+   */
+  toolbarFilters?: ReactNode[];
+  /** Drives the "All filters" button badge. */
+  activeFilterCount: number;
+  /** Drives the visibility of the "Clear all" action. */
+  hasActiveFilters: boolean;
   onOpenDrawer: () => void;
+  onClearAll: () => void;
   sortOptions: SortOption[];
   sortValue: string;
   onSortChange: (value: string) => void;
@@ -74,18 +37,43 @@ export function PlpToolbar({
   viewMode?: PlpViewMode;
   onViewModeChange?: (mode: PlpViewMode) => void;
   showViewToggle?: boolean;
-}) {
-  const [searchQuery, setSearchQuery] = useState("");
+}
 
-  const pinnedFilters = filters.filter((f) => f.isQuickFilter);
-  const engagedNonQuickFilters = filters.filter(
-    (f) => !f.isQuickFilter && filterState[f.id] !== undefined
-  );
-  const inlineFilters = [...pinnedFilters, ...engagedNonQuickFilters];
-  const activeFilterCount = Object.keys(filterState).filter(
-    (id) => filterState[id] !== undefined
-  ).length;
-  const hasActiveFilters = activeFilterCount > 0;
+/**
+ * PLP toolbar — search, All Filters button, inline filter slot, view
+ * toggle, and sort.
+ *
+ * **Filter model:** the toolbar does not reason about the filters
+ * themselves. It flows a pre-composed `toolbarFilters` node list into
+ * a wrapping row after the All Filters button and appends "Clear all"
+ * when the consumer signals `hasActiveFilters`. Consumers decide what
+ * belongs in the row (pinned quick filters, engaged non-quick filters,
+ * or anything else) and how each filter button is composed.
+ *
+ * The filter row wraps to multiple lines when it overflows. Sort stays
+ * top-aligned on the right so it doesn't drift down the column as
+ * filters wrap.
+ *
+ * On mobile (< 640px): only the All Filters button and Sort are shown;
+ * the inline filter row is hidden. Users see engaged filter count via
+ * the All Filters button's badge.
+ */
+export function PlpToolbar({
+  toolbarFilters,
+  activeFilterCount,
+  hasActiveFilters,
+  onOpenDrawer,
+  onClearAll,
+  sortOptions,
+  sortValue,
+  onSortChange,
+  searchPlaceholder,
+  onSearchSubmit,
+  viewMode,
+  onViewModeChange,
+  showViewToggle = false,
+}: PlpToolbarProps) {
+  const [searchQuery, setSearchQuery] = useState("");
 
   function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && onSearchSubmit) {
@@ -113,26 +101,16 @@ export function PlpToolbar({
 
       {/* Filter row (wraps) + view toggle + sort (top-aligned right) */}
       <div className="flex items-start gap-2">
-        {/* Wrapping filter container */}
         <div className="flex flex-1 flex-wrap items-start gap-2">
-          {/* All Filters button */}
           <PlpAllFiltersButton
             activeFilterCount={activeFilterCount}
             onClick={onOpenDrawer}
           />
 
-          {/* Pinned quick filters + engaged non-quick filters -- hidden on mobile */}
+          {/* Inline filter slot + Clear all -- hidden on mobile */}
           <div className="hidden flex-wrap items-start gap-2 sm:contents">
-            {inlineFilters.map((def) => (
-              <PlpQuickFilter
-                key={def.id}
-                definition={def}
-                filterState={filterState}
-                onFilterChange={onFilterChange}
-              />
-            ))}
+            {toolbarFilters}
 
-            {/* Clear all — appears at the end whenever any filter is engaged */}
             {hasActiveFilters && (
               <Button
                 variant="ghost"
@@ -148,7 +126,7 @@ export function PlpToolbar({
         {/* Sort */}
         <div className="shrink-0">
           <Select value={sortValue} onValueChange={onSortChange}>
-            <SelectTrigger className="w-auto min-w-[140px]">
+            <SelectTrigger className="w-auto min-w-35">
               <Typography as="span" variant="body-2" className="mr-1 text-muted-foreground">
                 Sort by
               </Typography>
@@ -164,8 +142,7 @@ export function PlpToolbar({
           </Select>
         </div>
 
-        {/* View toggle -- only at tablet+ when list view is available.
-            Sits to the right of Sort. */}
+        {/* View toggle -- only at tablet+ when list view is available. */}
         {renderViewToggle && (
           <div className={cn("hidden shrink-0 lg:flex")}>
             <PlpViewToggle value={viewMode!} onValueChange={onViewModeChange!} />

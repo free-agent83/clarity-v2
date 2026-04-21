@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import {
   Combobox,
   ComboboxChip,
@@ -12,62 +12,80 @@ import {
   ComboboxList,
 } from "../../../../molecules/combobox/combobox";
 import { Typography } from "../../../../atoms/typography/typography";
-import type {
-  FilterControlProps,
-  FilterOption,
-  PresetFilterDefinition,
-} from "../../plp-types";
+
+/**
+ * Option shape for `AsyncComboboxFilter`. Each preset declares its own
+ * option type so presets stay decoupled and can evolve independently.
+ */
+export interface AsyncComboboxOption {
+  value: string;
+  label: string;
+  /** Small visual before the label (flag icon, swatch). */
+  adornment?: ReactNode;
+}
+
+/**
+ * Value shape for `AsyncComboboxFilter`. Carries the full Option objects
+ * (not just values) so labels are retained across search-query changes
+ * without the component holding an internal selection cache. Consumers
+ * pass `Option[]` back in and receive `Option[]` in `onChange`.
+ */
+export type AsyncComboboxValue = AsyncComboboxOption[] | undefined;
+
+export interface AsyncComboboxFilterProps {
+  value: AsyncComboboxValue;
+  onChange: (value: AsyncComboboxValue) => void;
+  /**
+   * Called to load options. Invoked once with an empty query when the
+   * popover first opens, then on each debounced query change.
+   */
+  searchFn: (query: string) => Promise<AsyncComboboxOption[]>;
+  /** Debounce delay for `searchFn` invocations on input. Defaults to 250ms. */
+  searchDebounceMs?: number;
+  /** Placeholder text for the combobox input. */
+  searchPlaceholder?: string;
+}
 
 /**
  * Async multi-select combobox filter preset.
  *
- * Loads options lazily via `definition.searchFn`:
+ * Loads options lazily via `searchFn`:
  * - Once with an empty query when the popover first opens.
  * - On each debounced keystroke in the combobox input.
  *
- * Caches selected `FilterOption` objects (value + label) so chips in the
- * combobox and in the active filters strip display correctly even after
- * the user types a new query and the server-side options list changes.
- *
- * The preset writes the cached selected options back into
- * `definition.options` so the registry's chip formatter can resolve
- * labels from value strings without a separate cache.
+ * Selection state is a fully controlled `Option[]` on the consumer side
+ * — labels are retained across query changes without any internal cache,
+ * and the consumer can format chip summaries directly from the value.
  */
 export function AsyncComboboxFilter({
   value,
   onChange,
-  definition: rawDefinition,
-}: FilterControlProps) {
-  if (!rawDefinition || rawDefinition.preset !== "async-combobox") {
-    return null;
-  }
-  const definition: PresetFilterDefinition = rawDefinition;
-  const selectedValues = Array.isArray(value) ? value : [];
-  const debounceMs = definition.searchDebounceMs ?? 250;
+  searchFn,
+  searchDebounceMs = 250,
+  searchPlaceholder,
+}: AsyncComboboxFilterProps) {
+  const selectedOptions = value ?? [];
+  const selectedValues = selectedOptions.map((o) => o.value);
 
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [items, setItems] = useState<FilterOption[]>([]);
+  const [items, setItems] = useState<AsyncComboboxOption[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
 
-  const selectedCacheRef = useRef<Map<string, FilterOption>>(new Map());
-
   const runSearch = useCallback(
     async (q: string) => {
-      if (!definition.searchFn) return;
       setLoading(true);
       try {
-        const results = await definition.searchFn(q);
+        const results = await searchFn(q);
         setItems(results);
       } finally {
         setLoading(false);
       }
     },
-    [definition]
+    [searchFn]
   );
 
-  // Lazy initial load on first open
   useEffect(() => {
     if (open && !hasOpenedOnce) {
       setHasOpenedOnce(true);
@@ -75,42 +93,27 @@ export function AsyncComboboxFilter({
     }
   }, [open, hasOpenedOnce, runSearch]);
 
-  // Debounced search on query change
   useEffect(() => {
     if (!open) return;
     if (query === "" && !hasOpenedOnce) return;
     const handle = setTimeout(() => {
       void runSearch(query);
-    }, debounceMs);
+    }, searchDebounceMs);
     return () => clearTimeout(handle);
-  }, [query, open, debounceMs, runSearch, hasOpenedOnce]);
+  }, [query, open, searchDebounceMs, runSearch, hasOpenedOnce]);
 
   function handleValueChange(next: unknown) {
-    const nextArray = Array.isArray(next) ? (next as string[]) : [];
-
-    // Cache any newly-selected options by looking them up in current items
-    for (const v of nextArray) {
-      if (!selectedCacheRef.current.has(v)) {
-        const option = items.find((opt) => opt.value === v);
-        if (option) {
-          selectedCacheRef.current.set(v, option);
-        }
-      }
-    }
-
-    // Write cached selected options back into definition.options so the
-    // registry's chip formatter can resolve labels.
-    const cachedOptions = nextArray
-      .map((v) => selectedCacheRef.current.get(v))
-      .filter((o): o is FilterOption => !!o);
-    definition.options = cachedOptions;
-
-    onChange(nextArray.length > 0 ? nextArray : undefined);
+    const nextValues = Array.isArray(next) ? (next as string[]) : [];
+    const pool = [...selectedOptions, ...items];
+    const nextOptions = nextValues
+      .map((v) => pool.find((o) => o.value === v))
+      .filter((o): o is AsyncComboboxOption => !!o);
+    onChange(nextOptions.length > 0 ? nextOptions : undefined);
   }
 
-  // Merge cached selected options into items so chips render correctly
+  // Merge selected options with current items so chips render correctly
   // even when the current query doesn't include them.
-  const itemsWithSelected = mergeWithSelected(items, selectedValues, selectedCacheRef.current);
+  const itemsWithSelected = mergeWithSelected(items, selectedOptions);
 
   return (
     <Combobox
@@ -121,21 +124,18 @@ export function AsyncComboboxFilter({
       onValueChange={handleValueChange}
       items={itemsWithSelected}
       inputValue={query}
-      onInputValueChange={(val: unknown) => setQuery(typeof val === "string" ? val : "")}
+      onInputValueChange={(val: unknown) =>
+        setQuery(typeof val === "string" ? val : "")
+      }
     >
       <ComboboxChips>
-        {selectedValues.map((v) => {
-          const option = selectedCacheRef.current.get(v);
-          return (
-            <ComboboxChip key={v}>
-              {option?.label ?? v}
-            </ComboboxChip>
-          );
-        })}
+        {selectedOptions.map((option) => (
+          <ComboboxChip key={option.value}>{option.label}</ComboboxChip>
+        ))}
         <ComboboxChipsInput
           placeholder={
-            selectedValues.length === 0
-              ? (definition.searchPlaceholder ?? "Search...")
+            selectedOptions.length === 0
+              ? (searchPlaceholder ?? "Search...")
               : undefined
           }
         />
@@ -174,19 +174,14 @@ export function AsyncComboboxFilter({
 }
 
 /**
- * Merges currently-fetched items with any cached selected options that
- * aren't in the current result set. This ensures selected values always
- * render with a label, even after the user types a new query.
+ * Prepends any selected options not present in the current result set so
+ * chips and list items stay renderable across query changes.
  */
 function mergeWithSelected(
-  items: FilterOption[],
-  selectedValues: string[],
-  cache: Map<string, FilterOption>
-): FilterOption[] {
+  items: AsyncComboboxOption[],
+  selectedOptions: AsyncComboboxOption[]
+): AsyncComboboxOption[] {
   const itemValues = new Set(items.map((i) => i.value));
-  const missingSelected = selectedValues
-    .filter((v) => !itemValues.has(v))
-    .map((v) => cache.get(v))
-    .filter((o): o is FilterOption => !!o);
-  return [...missingSelected, ...items];
+  const missing = selectedOptions.filter((o) => !itemValues.has(o.value));
+  return [...missing, ...items];
 }

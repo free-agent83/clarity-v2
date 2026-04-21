@@ -9,24 +9,28 @@ import {
 } from "../../../../atoms/input-group/input-group";
 import { Slider } from "../../../../atoms/slider/slider";
 import { Typography } from "../../../../atoms/typography/typography";
-import type {
-  FilterControlProps,
-  FilterValue,
-  PresetFilterDefinition,
-} from "../../plp-types";
 
-type AxisValues = Record<string, { min: number; max: number }>;
+/** A single axis within a `MultiAxisRangeFilter`. */
+export interface MultiAxisRangeAxis {
+  /** Machine-readable key for this axis. Becomes a key in the filter value. */
+  id: string;
+  /** Human-readable label shown as the axis heading and in chip text. */
+  label: string;
+  min: number;
+  max: number;
+  step?: number;
+  unit?: string;
+}
 
-function toAxisValues(value: FilterValue): AxisValues {
-  if (
-    value &&
-    typeof value === "object" &&
-    !Array.isArray(value) &&
-    !("min" in value && typeof (value as { min: unknown }).min === "number")
-  ) {
-    return value as AxisValues;
-  }
-  return {};
+/** Value shape for `MultiAxisRangeFilter`. Keyed by axis id. */
+export type MultiAxisRangeValue =
+  | Record<string, { min: number; max: number }>
+  | undefined;
+
+export interface MultiAxisRangeFilterProps {
+  value: MultiAxisRangeValue;
+  onChange: (value: MultiAxisRangeValue) => void;
+  axes: MultiAxisRangeAxis[];
 }
 
 /**
@@ -34,19 +38,15 @@ function toAxisValues(value: FilterValue): AxisValues {
  *
  * Renders one range control per axis, each with its own min/max slider
  * and numeric inputs. Value is a record keyed by axis id. Axes at their
- * full range are omitted from the value object; clearing all axes yields
- * `undefined`.
+ * full range are omitted from the value object; clearing every axis
+ * collapses the value to `undefined`.
  */
 export function MultiAxisRangeFilter({
   value,
   onChange,
-  definition,
-}: FilterControlProps) {
-  if (!definition || definition.preset !== "multi-axis-range") {
-    return null;
-  }
-  const axes = definition.axes ?? [];
-  const axisValues = toAxisValues(value);
+  axes,
+}: MultiAxisRangeFilterProps) {
+  const axisValues = value ?? {};
 
   function commitAxis(axisId: string, nextMin: number, nextMax: number) {
     const axis = axes.find((a) => a.id === axisId);
@@ -58,7 +58,7 @@ export function MultiAxisRangeFilter({
     const orderedMax = Math.max(clampedMin, clampedMax);
 
     const isFullRange = orderedMin === axis.min && orderedMax === axis.max;
-    const next: AxisValues = { ...axisValues };
+    const next = { ...axisValues };
 
     if (isFullRange) {
       delete next[axisId];
@@ -93,7 +93,7 @@ function AxisRow({
   currentMax,
   onCommit,
 }: {
-  axis: NonNullable<PresetFilterDefinition["axes"]>[number];
+  axis: MultiAxisRangeAxis;
   currentMin: number;
   currentMax: number;
   onCommit: (min: number, max: number) => void;

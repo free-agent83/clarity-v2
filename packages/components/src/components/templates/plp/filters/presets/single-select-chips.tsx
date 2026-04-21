@@ -1,8 +1,35 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Toggle } from "../../../../atoms/toggle/toggle";
-import type { FilterControlProps } from "../../plp-types";
+
+/**
+ * Option shape for `SingleSelectChipsFilter`. Each preset declares its own
+ * option type so presets stay decoupled and can evolve independently.
+ */
+export interface SingleSelectChipOption {
+  value: string;
+  label: string;
+  /** Small visual before the label (colour swatch, icon). */
+  adornment?: ReactNode;
+  /**
+   * Replaces the default toggle button content entirely. Receives
+   * selection state so the consumer can style the contents accordingly.
+   * The preset still owns the outer button shell (click, aria, selection
+   * border). Use for rich option layouts (icon on top + label below,
+   * card-shaped selectors, etc.).
+   */
+  renderOption?: (props: { selected: boolean }) => ReactNode;
+}
+
+export type SingleSelectChipsValue = string | undefined;
+
+export interface SingleSelectChipsFilterProps {
+  value: SingleSelectChipsValue;
+  onChange: (value: SingleSelectChipsValue) => void;
+  options: SingleSelectChipOption[];
+}
 
 /**
  * Single-select chip group — mutually exclusive options.
@@ -12,17 +39,16 @@ import type { FilterControlProps } from "../../plp-types";
  * filter. Clicking a different option replaces the selected value.
  *
  * Each toggle is independent (not wrapped in a `ToggleGroup`) so options
- * can use `renderOption` for richer layouts like card-shaped selectors
- * with an icon on top and a label below.
+ * can use `renderOption` for richer layouts like card-shaped selectors.
  */
 export function SingleSelectChipsFilter({
   value,
   onChange,
   options,
-}: FilterControlProps) {
+}: SingleSelectChipsFilterProps) {
   return (
     <div className="flex flex-wrap gap-2">
-      {options?.map((option) => {
+      {options.map((option) => {
         const isSelected = value === option.value;
         return (
           <Toggle

@@ -34,15 +34,11 @@ import {
   TableHeader,
   TableRow,
 } from "../../organisms/table/table";
-import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
 import { PlpEmpty } from "./states/plp-empty";
 import { PlpError } from "./states/plp-error";
 import { useIsTabletUp } from "../../../hooks/use-is-tablet-up";
 import type {
   BreadcrumbSegment,
-  FilterDefinition,
-  FilterState,
-  FilterValue,
   PlpStatus,
   PlpViewMode,
   SortOption,
@@ -51,11 +47,12 @@ import type {
 /**
  * Props for the PLP template.
  *
- * The template is a pure layout container. Both grid and list paths are
- * data-shape-agnostic — consumers compose cards / rows in-situ from the
- * PLP primitives and hand them to the template as ReactNodes. All
- * business logic (pricing variants, user-context decisions, row
- * click-through) lives in the consumer.
+ * The template is a stateless layout container. Filter content, grid
+ * items, and list rows are all composed by the consumer and handed in
+ * as `ReactNode` slots — the template does not reason about filter
+ * shape, item data, or commit semantics. All business logic (filter
+ * state, pricing variants, user-context decisions, preview-count
+ * fetching, drawer assembly) lives in the consumer.
  */
 export interface PlpTemplateProps {
   // Heading
@@ -63,38 +60,34 @@ export interface PlpTemplateProps {
   title: string;
   resultsCount: number;
 
-  // Filters
-  filters: FilterDefinition[];
-  filterState: FilterState;
-  onFilterChange: (filterId: string, value: FilterValue) => void;
-  filteredResultsCount?: number;
+  // Filters (slots + signals only — see PlpFilterDrawer for drawer)
   /**
-   * When `true`, the drawer's "Show X results" button shows a loading
-   * state (spinner, disabled). Consumers set this while a preview-count
-   * request is in flight so the button reflects that the displayed
-   * count is about to update.
+   * Pre-composed inline filter buttons for the toolbar row. Typically
+   * pinned quick filters plus any engaged non-pinned filters. Each
+   * element must carry its own `key`.
    */
-  isCountLoading?: boolean;
+  toolbarFilters?: ReactNode[];
   /**
-   * Fires whenever the draft filter state inside the All Filters drawer
-   * changes, plus once on open with the initial state (= applied
-   * `filterState`).
-   *
-   * Required: the drawer is designed around a live preview-count pattern.
-   * Consumers use this to fetch a preview result count from their backend
-   * and drive `filteredResultsCount` in real time while the user edits,
-   * so the "Show X results" button reflects what the draft would yield.
-   * Debouncing is the consumer's responsibility.
-   *
-   * If a consumer genuinely doesn't want a live preview count, pass a
-   * no-op — but the expected pattern is to wire this to a debounced API
-   * call and update `filteredResultsCount` accordingly.
-   *
-   * Not called on drawer close without apply — the applied state is
-   * unchanged, so the consumer's existing count remains correct. On the
-   * next open, this fires again with the applied state.
+   * Pre-composed inline filter buttons for the sticky bar. Typically a
+   * subset of `toolbarFilters` — only engaged filters, no empty pinned
+   * ones. Each element must carry its own `key`.
    */
-  onDraftFilterStateChange: (draftState: FilterState) => void;
+  stickyFilters?: ReactNode[];
+  /** Drives the "All filters" button badge in both the toolbar and sticky bar. */
+  activeFilterCount: number;
+  /**
+   * Drives the "Clear all" button visibility in the toolbar and the
+   * sticky bar's engagement gate (the bar only appears when the main
+   * toolbar is off-screen AND at least one filter is engaged).
+   */
+  hasActiveFilters: boolean;
+  /** Fired when the user clicks either "All filters" button. */
+  onOpenDrawer: () => void;
+  /**
+   * Fired when the user clicks "Clear all" in the toolbar or the
+   * "Clear all filters" button inside the empty-filtered state.
+   */
+  onClearAll: () => void;
 
   // Sort
   sortOptions: SortOption[];
@@ -130,9 +123,7 @@ export interface PlpTemplateProps {
    * grid without calling `onViewModeChange`.
    */
   listViewAvailable?: boolean;
-  /**
-   * Current view mode. Defaults to "grid" when undefined.
-   */
+  /** Current view mode. Defaults to "grid" when undefined. */
   viewMode?: PlpViewMode;
   onViewModeChange?: (mode: PlpViewMode) => void;
 
@@ -147,7 +138,6 @@ export interface PlpTemplateProps {
   // States
   status: PlpStatus;
   onRetry?: () => void;
-  emptyFilterSuggestions?: string[];
   emptyMessage?: string;
 }
 
@@ -155,29 +145,28 @@ export interface PlpTemplateProps {
  * Product Listing Page template.
  *
  * A page-level component that orchestrates a complete product listing
- * experience: heading, toolbar with filtering/sorting/view toggle,
+ * experience: heading, toolbar with filter slot + sort + view toggle,
  * responsive product grid or list, pagination, and loading/empty/error
  * states.
  *
- * The template is stateless with respect to data fetching, routing, and
- * persistence. It receives state and emits change events. Consumers own
- * the data lifecycle.
+ * The template is stateless with respect to filter schema, data
+ * fetching, routing, and persistence. It renders what it's given.
+ * Consumers own the filter drawer (rendered as a sibling via
+ * `PlpFilterDrawer`), filter state + draft buffering, chip-summary
+ * formatting, and all business logic.
  *
  * Must be rendered inside an AppShell.
- *
- * @see docs/plans/specs/2026-04-16-plp-template-phase1-design.md
- * @see docs/plans/specs/2026-04-16-plp-template-phase2-design.md
  */
 export function PlpTemplate({
   breadcrumbs,
   title,
   resultsCount,
-  filters,
-  filterState,
-  onFilterChange,
-  filteredResultsCount,
-  isCountLoading,
-  onDraftFilterStateChange,
+  toolbarFilters,
+  stickyFilters,
+  activeFilterCount,
+  hasActiveFilters,
+  onOpenDrawer,
+  onClearAll,
   sortOptions,
   sortValue,
   onSortChange,
@@ -197,10 +186,8 @@ export function PlpTemplate({
   onPageSizeChange,
   status,
   onRetry,
-  emptyFilterSuggestions,
   emptyMessage,
 }: PlpTemplateProps) {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const isTabletUp = useIsTabletUp();
 
   // Show a fixed filter bar once the main toolbar scrolls under the
@@ -222,18 +209,6 @@ export function PlpTemplate({
     return () => observer.disconnect();
   }, []);
 
-  const hasEngagedFilters = Object.values(filterState).some(
-    (v) => v !== undefined
-  );
-
-  function handleClearAllFilters() {
-    for (const filter of filters) {
-      if (filterState[filter.id] !== undefined) {
-        onFilterChange(filter.id, undefined);
-      }
-    }
-  }
-
   const totalPages = Math.ceil(totalItems / pageSize);
 
   // Resolve the effective view mode:
@@ -247,21 +222,19 @@ export function PlpTemplate({
 
   return (
     <main className="space-y-4" data-slot="plp-template">
-      {/* Heading */}
       <PlpHeading
         breadcrumbs={breadcrumbs}
         title={title}
         resultsCount={resultsCount}
       />
 
-      {/* Toolbar */}
       <div ref={toolbarRef}>
         <PlpToolbar
-          filters={filters}
-          filterState={filterState}
-          onFilterChange={onFilterChange}
-          onClearAll={handleClearAllFilters}
-          onOpenDrawer={() => setDrawerOpen(true)}
+          toolbarFilters={toolbarFilters}
+          activeFilterCount={activeFilterCount}
+          hasActiveFilters={hasActiveFilters}
+          onOpenDrawer={onOpenDrawer}
+          onClearAll={onClearAll}
           sortOptions={sortOptions}
           sortValue={sortValue}
           onSortChange={onSortChange}
@@ -273,18 +246,16 @@ export function PlpTemplate({
         />
       </div>
 
-      {/* Sticky filter bar — always mounted so it can animate in and out;
-          `visible` is true only when the main toolbar is out of view and
-          at least one filter is engaged. */}
+      {/* Sticky bar — always mounted so it can animate in and out. Visible
+          only when the main toolbar is off-screen AND at least one filter
+          is engaged. */}
       <PlpStickyFilterBar
-        visible={showStickyFilterBar && hasEngagedFilters}
-        filters={filters}
-        filterState={filterState}
-        onFilterChange={onFilterChange}
-        onOpenDrawer={() => setDrawerOpen(true)}
+        visible={showStickyFilterBar && hasActiveFilters}
+        stickyFilters={stickyFilters}
+        activeFilterCount={activeFilterCount}
+        onOpenDrawer={onOpenDrawer}
       />
 
-      {/* Content area */}
       {status === "loading" &&
         (effectiveViewMode === "list" ? (
           <ListShell header={listHeader}>
@@ -319,17 +290,13 @@ export function PlpTemplate({
       {(status === "empty-filtered" || status === "empty-no-items") && (
         <PlpEmpty
           variant={status}
-          onClearFilters={
-            status === "empty-filtered" ? handleClearAllFilters : undefined
-          }
-          filterSuggestions={emptyFilterSuggestions}
+          onClearFilters={status === "empty-filtered" ? onClearAll : undefined}
           message={emptyMessage}
         />
       )}
 
       {status === "error" && <PlpError onRetry={onRetry} />}
 
-      {/* Pagination -- only shown when there are items */}
       {status === "success" && totalItems > 0 && (
         <PlpPagination
           page={page}
@@ -340,18 +307,6 @@ export function PlpTemplate({
           onPageSizeChange={onPageSizeChange}
         />
       )}
-
-      {/* Filter drawer */}
-      <PlpFilterDrawer
-        open={drawerOpen}
-        onOpenChange={setDrawerOpen}
-        filters={filters}
-        filterState={filterState}
-        onFilterChange={onFilterChange}
-        filteredResultsCount={filteredResultsCount}
-        isCountLoading={isCountLoading}
-        onDraftFilterStateChange={onDraftFilterStateChange}
-      />
     </main>
   );
 }
@@ -385,11 +340,6 @@ function ListShell({
   );
 }
 
-/**
- * Generic single-cell skeleton row used by the list's loading state. Spans
- * the full width regardless of the consumer's column count — the visual
- * transition into the real rows is brief and harmless.
- */
 function ListSkeletonRow() {
   return (
     <TableRow>
@@ -400,11 +350,6 @@ function ListSkeletonRow() {
   );
 }
 
-/**
- * Single-slot skeleton card used by the grid's loading state. Matches the
- * default `PlpGridItem` proportions so a full page of skeletons reads
- * like the populated grid will.
- */
 function GridSkeletonCard() {
   return (
     <div className="flex flex-col gap-2">
@@ -424,13 +369,6 @@ function GridSkeletonCard() {
   );
 }
 
-/**
- * PLP heading area — breadcrumbs, category title, and results count.
- *
- * Breadcrumbs support arbitrary nesting. The last segment is rendered
- * as the current page (not a link). Results count announces via
- * `aria-live="polite"` when it changes.
- */
 function PlpHeading({
   breadcrumbs,
   title,
@@ -484,12 +422,6 @@ function PlpHeading({
   );
 }
 
-/**
- * PLP pagination footer — results per page selector + previous/next navigation.
- *
- * Uses the design system Pagination molecule for Previous/Next and the
- * Select molecule for the page size dropdown.
- */
 function PlpPagination({
   page,
   pageSize,

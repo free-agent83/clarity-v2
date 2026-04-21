@@ -41,14 +41,16 @@ import {
   PlpListRowReturnable,
 } from "../list/plp-list-row";
 import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
-import type { FilterDefinition } from "../plp-types";
+import type { AsyncComboboxOption } from "../filters/presets/async-combobox";
+import type { MultiSelectChipOption } from "../filters/presets/multi-select-chips";
+import type { MultiAxisRangeAxis } from "../filters/presets/multi-axis-range";
+import type { RangeSliderHistogram } from "../filters/presets/range-slider";
 import {
   SAMPLE_360_VIDEO_URL,
   buildMockHistogram,
   mockSupplierSearch,
 } from "./common";
 
-// Module-level mock handlers so every rendered card shares identity.
 const onAddToShortlist = fn();
 const onShare = fn();
 const onViewMedia = fn();
@@ -72,74 +74,83 @@ export interface DiamondItem {
   isReturnable: boolean;
 }
 
-export const DIAMOND_FILTERS: FilterDefinition[] = [
-  {
-    id: "shape",
-    label: "Shape",
-    preset: "multi-select-chips",
-    isQuickFilter: true,
-    options: [
-      { value: "round", label: "Round" },
-      { value: "oval", label: "Oval" },
-      { value: "cushion", label: "Cushion" },
-      { value: "princess", label: "Princess" },
-    ],
-  },
-  {
-    id: "color",
-    label: "Color",
-    preset: "multi-select-chips",
-    isQuickFilter: true,
-    options: ["D", "E", "F", "G", "H", "I"].map((c) => ({ value: c, label: c })),
-  },
-  {
-    id: "clarity",
-    label: "Clarity",
-    preset: "multi-select-chips",
-    options: ["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1"].map((c) => ({
-      value: c,
-      label: c,
-    })),
-  },
-  {
-    id: "price",
-    label: "Price",
-    preset: "range-slider",
-    isQuickFilter: true,
-    min: 0,
-    max: 10000,
-    step: 10,
-    unit: "$",
-    histogram: buildMockHistogram(0, 10000, 40, 2500),
-  },
-  {
-    id: "carat",
-    label: "Carat",
-    preset: "range-slider",
-    min: 0,
-    max: 10,
-    step: 0.1,
-    unit: "ct",
-    histogram: buildMockHistogram(0, 10, 40, 2),
-  },
-  {
-    id: "size",
-    label: "Size (mm)",
-    preset: "multi-axis-range",
-    axes: [
-      { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
-      { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
-      { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
-    ],
-  },
-  {
-    id: "supplier",
-    label: "Supplier",
-    preset: "async-combobox",
-    searchFn: mockSupplierSearch,
-    searchPlaceholder: "Search suppliers...",
-  },
+/**
+ * Filter-state shape for the diamond mock PLP.
+ */
+export interface DiamondFilterState {
+  shape?: string[];
+  color?: string[];
+  clarity?: string[];
+  price?: { min: number; max: number };
+  carat?: { min: number; max: number };
+  size?: Record<string, { min: number; max: number }>;
+  supplier?: AsyncComboboxOption[];
+}
+
+// -- Filter configuration ---------------------------------------------------
+
+export const DIAMOND_SHAPE_OPTIONS: MultiSelectChipOption[] = [
+  { value: "round", label: "Round" },
+  { value: "oval", label: "Oval" },
+  { value: "cushion", label: "Cushion" },
+  { value: "princess", label: "Princess" },
 ];
+
+export const DIAMOND_COLOR_OPTIONS: MultiSelectChipOption[] = [
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+].map((c) => ({ value: c, label: c }));
+
+export const DIAMOND_CLARITY_OPTIONS: MultiSelectChipOption[] = [
+  "IF",
+  "VVS1",
+  "VVS2",
+  "VS1",
+  "VS2",
+  "SI1",
+].map((c) => ({ value: c, label: c }));
+
+export const DIAMOND_PRICE_CONFIG: {
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  histogram: RangeSliderHistogram;
+} = {
+  min: 0,
+  max: 10000,
+  step: 10,
+  unit: "$",
+  histogram: buildMockHistogram(0, 10000, 40, 2500),
+};
+
+export const DIAMOND_CARAT_CONFIG: {
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  histogram: RangeSliderHistogram;
+} = {
+  min: 0,
+  max: 10,
+  step: 0.1,
+  unit: "ct",
+  histogram: buildMockHistogram(0, 10, 40, 2),
+};
+
+export const DIAMOND_SIZE_AXES: MultiAxisRangeAxis[] = [
+  { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
+  { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
+  { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
+];
+
+export const DIAMOND_SUPPLIER_SEARCH = mockSupplierSearch;
+
+// -- Item generation + cards/rows -------------------------------------------
 
 export function generateDiamondItems(count: number): DiamondItem[] {
   const shapes = ["Round", "Oval", "Cushion", "Princess", "Pear", "Emerald"];
@@ -167,12 +178,6 @@ export function generateDiamondItems(count: number): DiamondItem[] {
   }));
 }
 
-/**
- * Storybook-only category card assembled from PlpGridItem primitives.
- * Mirrors what a consumer app would build in-situ — the library ships
- * the primitives; the consumer owns the composition, the data binding,
- * and the rules that pick pricing variants based on user context.
- */
 export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
   const userContext = useStorybookAppUser();
 
@@ -250,10 +255,6 @@ export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
   );
 }
 
-/**
- * Storybook-only header row for the diamonds list view. Columns align
- * with the cells inside `DiamondPlpListRow`.
- */
 export function DiamondPlpListHeader() {
   return (
     <PlpListHeaderRow>
@@ -281,11 +282,6 @@ export function DiamondPlpListHeader() {
   );
 }
 
-/**
- * Storybook-only diamond row assembled from PlpListRow primitives. The
- * consumer owns every business decision — which pricing variants to
- * pass, which actions to show, what click-through means.
- */
 export function DiamondPlpListRow({
   item,
   onClick,

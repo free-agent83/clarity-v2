@@ -3,23 +3,30 @@
 import { useId } from "react";
 import { Label } from "../../../../atoms/label/label";
 import { Switch } from "../../../../atoms/switch/switch";
-import type { FilterControlProps } from "../../plp-types";
+
+/**
+ * Value shape for `BooleanChipFilter`. Strictly `true` (active) or
+ * `undefined` (cleared) — no `false` — so the value is symmetric with how
+ * other presets encode an empty state.
+ */
+export type BooleanChipValue = true | undefined;
+
+export interface BooleanChipFilterProps {
+  value: BooleanChipValue;
+  onChange: (value: BooleanChipValue) => void;
+  /** Label shown next to the switch (e.g. "Only Nivoda Curated items"). */
+  label: string;
+}
 
 /**
  * Boolean on/off filter control.
  *
- * Renders a `Switch` paired with a `Label`. The label text is supplied
- * via the `chipLabel` field on the filter definition — it reaches this
- * component through the `options` prop as a single-element array with
- * the label as its `label`. If no options are provided, renders a
- * generic "Enabled" label.
- *
- * The filter value is strictly `true` (active) or `undefined` (cleared).
+ * Renders a `Switch` paired with a `Label`. Value is strictly `true`
+ * (active) or `undefined` (cleared); there is no explicit `false`.
  */
-export function BooleanChipFilter({ value, onChange, options }: FilterControlProps) {
+export function BooleanChipFilter({ value, onChange, label }: BooleanChipFilterProps) {
   const id = useId();
   const isActive = value === true;
-  const label = options?.[0]?.label ?? "Enabled";
 
   function handleCheckedChange(checked: boolean) {
     onChange(checked ? true : undefined);

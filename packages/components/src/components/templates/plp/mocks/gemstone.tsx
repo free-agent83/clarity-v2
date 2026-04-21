@@ -40,7 +40,12 @@ import {
   PlpListRowReturnable,
 } from "../list/plp-list-row";
 import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
-import type { FilterDefinition } from "../plp-types";
+import type { AsyncComboboxOption } from "../filters/presets/async-combobox";
+import type { MultiSelectChipOption } from "../filters/presets/multi-select-chips";
+import type { SingleSelectChipOption } from "../filters/presets/single-select-chips";
+import type { SingleSelectDropdownOption } from "../filters/presets/single-select-dropdown";
+import type { MultiAxisRangeAxis } from "../filters/presets/multi-axis-range";
+import type { RangeSliderHistogram } from "../filters/presets/range-slider";
 import {
   MOCK_SUPPLIERS,
   SAMPLE_360_VIDEO_URL,
@@ -48,7 +53,6 @@ import {
   mockSupplierSearch,
 } from "./common";
 
-// Module-level mock handlers so every rendered card shares identity.
 const onAddToShortlist = fn();
 const onShare = fn();
 const onViewMedia = fn();
@@ -71,107 +75,100 @@ export interface GemstoneItem {
   includeTariffs: boolean;
 }
 
-export const GEMSTONE_FILTERS: FilterDefinition[] = [
-  {
-    id: "nivoda-curated",
-    label: "Nivoda Curated",
-    preset: "boolean-chip",
-    chipLabel: "Only Nivoda Curated items",
-    isQuickFilter: true,
-  },
-  {
-    id: "color",
-    label: "Color",
-    preset: "multi-select-chips",
-    isQuickFilter: true,
-    popoverWidth: 320,
-    options: [
-      { value: "blue", label: "Blue" },
-      { value: "green", label: "Green" },
-      { value: "red", label: "Red" },
-      { value: "teal", label: "Teal" },
-      { value: "pink", label: "Pink" },
-      { value: "yellow", label: "Yellow" },
-    ],
-  },
-  {
-    id: "clarity",
-    label: "Clarity",
-    preset: "multi-select-chips",
-    options: [
-      { value: "eye-clean", label: "Eye clean" },
-      { value: "slightly-included", label: "Slightly included" },
-      { value: "moderately-included", label: "Moderately included" },
-      { value: "visibly-included", label: "Visibly included" },
-    ],
-  },
-  {
-    id: "treatment",
-    label: "Treatment",
-    preset: "single-select-chips",
-    options: [
-      { value: "none", label: "None" },
-      { value: "heated", label: "Heated" },
-      { value: "oiled", label: "Oiled" },
-    ],
-  },
-  {
-    id: "location",
-    label: "Location",
-    preset: "single-select-dropdown",
-    options: [
-      { value: "us", label: "United States" },
-      { value: "eu", label: "Europe" },
-      { value: "asia", label: "Asia" },
-    ],
-  },
-  {
-    id: "price",
-    label: "Price",
-    preset: "range-slider",
-    isQuickFilter: true,
-    min: 0,
-    max: 10000,
-    step: 10,
-    unit: "$",
-    histogram: buildMockHistogram(0, 10000, 40, 2500),
-  },
-  {
-    id: "carat",
-    label: "Carat",
-    preset: "range-slider",
-    min: 0,
-    max: 10,
-    step: 0.1,
-    unit: "ct",
-    histogram: buildMockHistogram(0, 10, 40, 2),
-  },
-  {
-    id: "size",
-    label: "Size (mm)",
-    preset: "multi-axis-range",
-    axes: [
-      { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
-      { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
-      { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
-    ],
-  },
-  {
-    id: "supplier",
-    label: "Supplier",
-    preset: "async-combobox",
-    searchFn: mockSupplierSearch,
-    searchPlaceholder: "Search suppliers...",
-  },
+/**
+ * Filter-state shape for the gemstone mock PLP. Story wiring types its
+ * `useFilterController` against this shape; each key corresponds to one
+ * filter rendered in the toolbar / drawer.
+ */
+export interface GemstoneFilterState {
+  "nivoda-curated"?: true;
+  color?: string[];
+  clarity?: string[];
+  treatment?: string;
+  location?: string;
+  price?: { min: number; max: number };
+  carat?: { min: number; max: number };
+  size?: Record<string, { min: number; max: number }>;
+  supplier?: AsyncComboboxOption[];
+}
+
+// -- Filter configuration ---------------------------------------------------
+
+export const GEMSTONE_COLOR_OPTIONS: MultiSelectChipOption[] = [
+  { value: "blue", label: "Blue" },
+  { value: "green", label: "Green" },
+  { value: "red", label: "Red" },
+  { value: "teal", label: "Teal" },
+  { value: "pink", label: "Pink" },
+  { value: "yellow", label: "Yellow" },
 ];
 
-// Pre-seed supplier options for stories that start with a value set
-const _gemstoneSupplier = GEMSTONE_FILTERS.find((f) => f.id === "supplier");
-if (_gemstoneSupplier && _gemstoneSupplier.preset === "async-combobox") {
-  _gemstoneSupplier.options = MOCK_SUPPLIERS.filter((s) =>
+export const GEMSTONE_CLARITY_OPTIONS: MultiSelectChipOption[] = [
+  { value: "eye-clean", label: "Eye clean" },
+  { value: "slightly-included", label: "Slightly included" },
+  { value: "moderately-included", label: "Moderately included" },
+  { value: "visibly-included", label: "Visibly included" },
+];
+
+export const GEMSTONE_TREATMENT_OPTIONS: SingleSelectChipOption[] = [
+  { value: "none", label: "None" },
+  { value: "heated", label: "Heated" },
+  { value: "oiled", label: "Oiled" },
+];
+
+export const GEMSTONE_LOCATION_OPTIONS: SingleSelectDropdownOption[] = [
+  { value: "us", label: "United States" },
+  { value: "eu", label: "Europe" },
+  { value: "asia", label: "Asia" },
+];
+
+export const GEMSTONE_PRICE_CONFIG: {
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  histogram: RangeSliderHistogram;
+} = {
+  min: 0,
+  max: 10000,
+  step: 10,
+  unit: "$",
+  histogram: buildMockHistogram(0, 10000, 40, 2500),
+};
+
+export const GEMSTONE_CARAT_CONFIG: {
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  histogram: RangeSliderHistogram;
+} = {
+  min: 0,
+  max: 10,
+  step: 0.1,
+  unit: "ct",
+  histogram: buildMockHistogram(0, 10, 40, 2),
+};
+
+export const GEMSTONE_SIZE_AXES: MultiAxisRangeAxis[] = [
+  { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
+  { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
+  { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
+];
+
+export const GEMSTONE_SUPPLIER_SEARCH = mockSupplierSearch;
+
+/**
+ * Convenience: a pre-selected supplier set used by stories that start
+ * with an engaged supplier filter. The value is already `Option[]`, so
+ * labels are preserved without any cache plumbing.
+ */
+export const GEMSTONE_PRESELECTED_SUPPLIERS: AsyncComboboxOption[] =
+  MOCK_SUPPLIERS.filter((s) =>
     ["sup-acme", "sup-globex", "sup-initech"].includes(s.value)
   );
-}
+
+// -- Item generation + cards/rows -------------------------------------------
 
 export function generateGemstoneItems(count: number): GemstoneItem[] {
   return Array.from({ length: count }, (_, i) => ({
@@ -285,9 +282,6 @@ export function GemstonePlpGridItem({ item }: { item: GemstoneItem }) {
   );
 }
 
-/**
- * Storybook-only header row for the gemstones list view.
- */
 export function GemstonePlpListHeader() {
   return (
     <PlpListHeaderRow>
@@ -310,12 +304,6 @@ export function GemstonePlpListHeader() {
   );
 }
 
-/**
- * Storybook-only gemstone row assembled from PlpListRow primitives. Wires
- * the same user-context-aware pricing decisions as `GemstonePlpGridItem`
- * (tariff note, discount, alternate currency) — business rules live in
- * the consumer, not the library.
- */
 export function GemstonePlpListRow({
   item,
   onClick,

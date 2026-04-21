@@ -1,4 +1,4 @@
-import type { FilterState, SortOption } from "../plp-types";
+import type { SortOption } from "../plp-types";
 import { MOCK_LATENCY, simulateApiCall } from "./simulate-api-call";
 
 /**
@@ -52,14 +52,13 @@ export const SORT_OPTIONS: SortOption[] = [
 
 /**
  * Mock preview-count fetcher for stories. Simulates a backend call that
- * returns a count derived from the current filter state. Debounced by
- * the caller via `setTimeout`-based delay.
+ * returns a count derived from the current draft filter state. Debounced
+ * by the caller via `setTimeout`-based delay.
+ *
+ * Shape-agnostic: counts any keys whose value is not `undefined`.
  */
-export async function mockPreviewCount(
-  draftState: FilterState
-): Promise<number> {
+export async function mockPreviewCount(draftState: object): Promise<number> {
   await simulateApiCall(MOCK_LATENCY.fetch);
-  // Arbitrary formula: start from a big number and divide by (active filter count + 1).
   const activeCount = Object.values(draftState).filter(
     (v) => v !== undefined
   ).length;

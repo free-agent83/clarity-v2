@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   InputGroup,
@@ -10,37 +10,55 @@ import {
 } from "../../../../atoms/input-group/input-group";
 import { Slider } from "../../../../atoms/slider/slider";
 import { Typography } from "../../../../atoms/typography/typography";
-import type { FilterControlProps } from "../../plp-types";
+
+/** Value shape for `RangeSliderFilter`. `undefined` when the full range is selected. */
+export type RangeSliderValue = { min: number; max: number } | undefined;
+
+export interface RangeSliderHistogram {
+  /** Equal-width bucket counts across the histogram's `[min, max]` domain. */
+  buckets: number[];
+  min: number;
+  max: number;
+}
+
+export interface RangeSliderFilterProps {
+  value: RangeSliderValue;
+  onChange: (value: RangeSliderValue) => void;
+  /** Lower bound of the selectable range. */
+  min: number;
+  /** Upper bound of the selectable range. */
+  max: number;
+  /** Increment between slider stops. Defaults to 1. */
+  step?: number;
+  /**
+   * Unit for the numeric inputs. Currency symbols (`$`, `€`, `£`, `¥`)
+   * and ISO codes (`USD`, `EUR`, `GBP`, `JPY`) render as a prefix;
+   * everything else renders as a suffix.
+   */
+  unit?: string;
+  /** Optional distribution histogram drawn behind the slider track. */
+  histogram?: RangeSliderHistogram;
+}
 
 /**
  * Range slider filter preset.
  *
  * Renders a two-thumb slider, an optional distribution histogram behind
  * the track, and commit-on-blur numeric inputs for precise min/max entry.
- * Reads `min`, `max`, `step`, `unit`, and `histogram` from the definition.
  */
 export function RangeSliderFilter({
   value,
   onChange,
-  definition,
-}: FilterControlProps) {
-  if (!definition || definition.preset !== "range-slider") {
-    return null;
-  }
-  const rangeMin = definition.min ?? 0;
-  const rangeMax = definition.max ?? 100;
-  const step = definition.step ?? 1;
+  min,
+  max,
+  step = 1,
+  unit,
+  histogram,
+}: RangeSliderFilterProps) {
+  const idBase = useId();
+  const currentMin = value?.min ?? min;
+  const currentMax = value?.max ?? max;
 
-  const currentMin =
-    value && typeof value === "object" && "min" in value
-      ? (value as { min: number; max: number }).min
-      : rangeMin;
-  const currentMax =
-    value && typeof value === "object" && "max" in value
-      ? (value as { min: number; max: number }).max
-      : rangeMax;
-
-  // Local input state — commits to `onChange` on blur or Enter
   const [minInput, setMinInput] = useState(String(currentMin));
   const [maxInput, setMaxInput] = useState(String(currentMax));
 
@@ -50,12 +68,12 @@ export function RangeSliderFilter({
   }, [currentMin, currentMax]);
 
   function commit(nextMin: number, nextMax: number) {
-    const clampedMin = Math.max(rangeMin, Math.min(nextMin, rangeMax));
-    const clampedMax = Math.max(rangeMin, Math.min(nextMax, rangeMax));
+    const clampedMin = Math.max(min, Math.min(nextMin, max));
+    const clampedMax = Math.max(min, Math.min(nextMax, max));
     const orderedMin = Math.min(clampedMin, clampedMax);
     const orderedMax = Math.max(clampedMin, clampedMax);
 
-    if (orderedMin === rangeMin && orderedMax === rangeMax) {
+    if (orderedMin === min && orderedMax === max) {
       onChange(undefined);
     } else {
       onChange({ min: orderedMin, max: orderedMax });
@@ -63,8 +81,7 @@ export function RangeSliderFilter({
   }
 
   function handleSliderChange(values: number[]) {
-    const [nextMin, nextMax] = values;
-    commit(nextMin, nextMax);
+    commit(values[0], values[1]);
   }
 
   function commitInputs() {
@@ -73,7 +90,6 @@ export function RangeSliderFilter({
     if (Number.isFinite(nextMin) && Number.isFinite(nextMax)) {
       commit(nextMin, nextMax);
     } else {
-      // Invalid — reset to last valid values
       setMinInput(String(currentMin));
       setMaxInput(String(currentMax));
     }
@@ -87,20 +103,20 @@ export function RangeSliderFilter({
     }
   }
 
-  const isCurrencyUnit = definition.unit
-    ? ["$", "€", "£", "¥"].some((c) => definition.unit!.startsWith(c)) ||
-      ["USD", "EUR", "GBP", "JPY"].includes(definition.unit)
+  const isCurrencyUnit = unit
+    ? ["$", "€", "£", "¥"].some((c) => unit.startsWith(c)) ||
+      ["USD", "EUR", "GBP", "JPY"].includes(unit)
     : false;
 
   return (
     <div className="flex flex-col gap-4">
-      {definition.histogram && (
+      {histogram && (
         <Histogram
-          buckets={definition.histogram.buckets}
-          histogramMin={definition.histogram.min}
-          histogramMax={definition.histogram.max}
-          sliderMin={rangeMin}
-          sliderMax={rangeMax}
+          buckets={histogram.buckets}
+          histogramMin={histogram.min}
+          histogramMax={histogram.max}
+          sliderMin={min}
+          sliderMax={max}
           selectedMin={currentMin}
           selectedMax={currentMax}
         />
@@ -108,8 +124,8 @@ export function RangeSliderFilter({
 
       <Slider
         value={[currentMin, currentMax]}
-        min={rangeMin}
-        max={rangeMax}
+        min={min}
+        max={max}
         step={step}
         onValueChange={handleSliderChange}
         className="my-2"
@@ -118,16 +134,16 @@ export function RangeSliderFilter({
       <div className="flex items-center gap-2">
         <div className="flex flex-1 flex-col gap-1">
           <Typography asChild variant="caption" className="text-muted-foreground">
-            <label htmlFor={`${definition.id}-min`}>Min</label>
+            <label htmlFor={`${idBase}-min`}>Min</label>
           </Typography>
           <InputGroup>
-            {isCurrencyUnit && definition.unit && (
+            {isCurrencyUnit && unit && (
               <InputGroupAddon align="inline-start">
-                <InputGroupText>{definition.unit}</InputGroupText>
+                <InputGroupText>{unit}</InputGroupText>
               </InputGroupAddon>
             )}
             <InputGroupInput
-              id={`${definition.id}-min`}
+              id={`${idBase}-min`}
               type="number"
               inputMode="decimal"
               value={minInput}
@@ -135,25 +151,25 @@ export function RangeSliderFilter({
               onBlur={commitInputs}
               onKeyDown={handleKeyDown}
             />
-            {!isCurrencyUnit && definition.unit && (
+            {!isCurrencyUnit && unit && (
               <InputGroupAddon align="inline-end">
-                <InputGroupText>{definition.unit}</InputGroupText>
+                <InputGroupText>{unit}</InputGroupText>
               </InputGroupAddon>
             )}
           </InputGroup>
         </div>
         <div className="flex flex-1 flex-col gap-1">
           <Typography asChild variant="caption" className="text-muted-foreground">
-            <label htmlFor={`${definition.id}-max`}>Max</label>
+            <label htmlFor={`${idBase}-max`}>Max</label>
           </Typography>
           <InputGroup>
-            {isCurrencyUnit && definition.unit && (
+            {isCurrencyUnit && unit && (
               <InputGroupAddon align="inline-start">
-                <InputGroupText>{definition.unit}</InputGroupText>
+                <InputGroupText>{unit}</InputGroupText>
               </InputGroupAddon>
             )}
             <InputGroupInput
-              id={`${definition.id}-max`}
+              id={`${idBase}-max`}
               type="number"
               inputMode="decimal"
               value={maxInput}
@@ -161,9 +177,9 @@ export function RangeSliderFilter({
               onBlur={commitInputs}
               onKeyDown={handleKeyDown}
             />
-            {!isCurrencyUnit && definition.unit && (
+            {!isCurrencyUnit && unit && (
               <InputGroupAddon align="inline-end">
-                <InputGroupText>{definition.unit}</InputGroupText>
+                <InputGroupText>{unit}</InputGroupText>
               </InputGroupAddon>
             )}
           </InputGroup>
