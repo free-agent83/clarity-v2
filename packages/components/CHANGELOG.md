@@ -2,7 +2,7 @@
 
 ---
 
-### PLP polish: FilterToolbar consolidation + story quality ([#NNN](https://github.com/free-agent83/clarity-v2/pull/NNN))
+### PLP polish: FilterToolbar consolidation + story quality ([#122](https://github.com/free-agent83/clarity-v2/pull/122))
 Second-wave consolidation after the filter-subsystem extraction: several thin modules folded into their owners, two unused PLP-specific empty/error wrappers deleted, and a thorough story quality pass.
 
 Breaking changes (all unstable, nothing in production):
