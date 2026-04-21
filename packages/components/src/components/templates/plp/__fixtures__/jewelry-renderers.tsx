@@ -1,10 +1,5 @@
-// ── Jewelry markup ────────────────────────────────────────────────────
-//
-// Card, list header, and list row renderers. Pure view layer — take a
-// JewelryItem, output JSX.
-
 import { useState } from "react";
-import { Typography } from "../../../../atoms/typography/typography";
+import { Typography } from "../../../atoms/typography/typography";
 import {
   PlpGridItem,
   PlpGridItemDelivery,
@@ -12,7 +7,7 @@ import {
   PlpGridItemName,
   PlpGridItemPrice,
   PlpGridItemReturnable,
-} from "../../grid/plp-grid-item";
+} from "../grid/plp-grid-item";
 import {
   PlpListCell,
   PlpListHeaderCell,
@@ -24,8 +19,8 @@ import {
   PlpListRowName,
   PlpListRowPrice,
   PlpListRowReturnable,
-} from "../../list/plp-list-row";
-import type { JewelryItem } from "./api";
+} from "../list/plp-list-row";
+import type { JewelryItem } from "./jewelry-items";
 
 export function JewelryPlpGridItem({ item }: { item: JewelryItem }) {
   return (
@@ -64,17 +59,11 @@ export function JewelryPlpListHeader() {
   );
 }
 
-export function JewelryPlpListRow({
-  item,
-  onClick,
-}: {
-  item: JewelryItem;
-  onClick?: () => void;
-}) {
+export function JewelryPlpListRow({ item }: { item: JewelryItem }) {
   const [selected, setSelected] = useState(false);
 
   return (
-    <PlpListRow onClick={onClick} selected={selected}>
+    <PlpListRow selected={selected}>
       <PlpListCell>
         <PlpListRowCheckbox checked={selected} onChange={setSelected} />
       </PlpListCell>

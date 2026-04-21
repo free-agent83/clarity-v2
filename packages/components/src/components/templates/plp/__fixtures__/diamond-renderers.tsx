@@ -1,25 +1,19 @@
-// ── Diamond markup ────────────────────────────────────────────────────
-//
-// Card, list header, and list row renderers. Pure view layer — take a
-// DiamondItem, output JSX. No state management, no data fetching.
-
 import { useState } from "react";
-import { fn } from "@storybook/test";
 import {
   IconDotsVertical,
   IconHeart,
   IconPhoto,
   IconShare,
 } from "@tabler/icons-react";
-import { Badge } from "../../../../atoms/badge/badge";
-import { Button } from "../../../../atoms/button/button";
+import { Badge } from "../../../atoms/badge/badge";
+import { Button } from "../../../atoms/button/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../../../molecules/dropdown-menu/dropdown-menu";
-import { Typography } from "../../../../atoms/typography/typography";
+} from "../../../molecules/dropdown-menu/dropdown-menu";
+import { Typography } from "../../../atoms/typography/typography";
 import {
   PlpGridItem,
   PlpGridItemMedia,
@@ -30,7 +24,7 @@ import {
   PlpGridItemReturnable,
   PlpGridItemPrice,
   PlpGridItemPrimaryAction,
-} from "../../grid/plp-grid-item";
+} from "../grid/plp-grid-item";
 import {
   PlpListCell,
   PlpListHeaderCell,
@@ -44,15 +38,12 @@ import {
   PlpListRowPrice,
   PlpListRowPricePerCarat,
   PlpListRowReturnable,
-} from "../../list/plp-list-row";
-import { useStorybookAppUser } from "../../../../../../.storybook/app-user-context";
-import { SAMPLE_360_VIDEO_URL } from "../shared/fixtures";
-import type { DiamondItem } from "./api";
+} from "../list/plp-list-row";
+import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
+import { SAMPLE_360_VIDEO_URL } from "./sort-options";
+import type { DiamondItem } from "./diamond-items";
 
-const onAddToShortlist = fn();
-const onShare = fn();
-const onViewMedia = fn();
-const onAddToCart = fn();
+const noop = () => {};
 
 export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
   const userContext = useStorybookAppUser();
@@ -74,17 +65,13 @@ export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
           <PlpGridItemMediaAction
             icon={IconHeart}
             label="Add to shortlist"
-            onClick={onAddToShortlist}
+            onClick={noop}
           />
-          <PlpGridItemMediaAction
-            icon={IconShare}
-            label="Share"
-            onClick={onShare}
-          />
+          <PlpGridItemMediaAction icon={IconShare} label="Share" onClick={noop} />
           <PlpGridItemMediaAction
             icon={IconPhoto}
             label="View media"
-            onClick={onViewMedia}
+            onClick={noop}
           />
         </PlpGridItemMediaToolbar>
       </PlpGridItemMedia>
@@ -123,7 +110,7 @@ export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
       />
 
       <PlpGridItemPrimaryAction>
-        <Button className="w-full" onClick={onAddToCart}>
+        <Button className="w-full" onClick={noop}>
           Add to cart
         </Button>
       </PlpGridItemPrimaryAction>
@@ -158,13 +145,7 @@ export function DiamondPlpListHeader() {
   );
 }
 
-export function DiamondPlpListRow({
-  item,
-  onClick,
-}: {
-  item: DiamondItem;
-  onClick?: () => void;
-}) {
+export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
   const userContext = useStorybookAppUser();
   const [selected, setSelected] = useState(false);
 
@@ -174,7 +155,7 @@ export function DiamondPlpListRow({
       : undefined;
 
   return (
-    <PlpListRow onClick={onClick} selected={selected}>
+    <PlpListRow selected={selected}>
       <PlpListCell>
         <PlpListRowCheckbox checked={selected} onChange={setSelected} />
       </PlpListCell>
@@ -223,7 +204,7 @@ export function DiamondPlpListRow({
       </PlpListCell>
       <PlpListCell align="right">
         <PlpListRowActions>
-          <Button size="sm" onClick={onAddToCart}>
+          <Button size="sm" onClick={noop}>
             Add to cart
           </Button>
           <DropdownMenu>
@@ -238,15 +219,15 @@ export function DiamondPlpListRow({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-              <DropdownMenuItem onSelect={onAddToShortlist}>
+              <DropdownMenuItem onSelect={noop}>
                 <IconHeart className="h-4 w-4" />
                 Add to shortlist
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={onShare}>
+              <DropdownMenuItem onSelect={noop}>
                 <IconShare className="h-4 w-4" />
                 Share
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={onViewMedia}>
+              <DropdownMenuItem onSelect={noop}>
                 <IconPhoto className="h-4 w-4" />
                 View media
               </DropdownMenuItem>

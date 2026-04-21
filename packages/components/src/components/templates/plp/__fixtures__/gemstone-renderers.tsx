@@ -1,25 +1,19 @@
-// ── Gemstone markup ───────────────────────────────────────────────────
-//
-// Card, list header, and list row renderers. Pure view layer — take a
-// GemstoneItem, output JSX.
-
 import { useState } from "react";
-import { fn } from "@storybook/test";
 import {
   IconDotsVertical,
   IconHeart,
   IconPhoto,
   IconShare,
 } from "@tabler/icons-react";
-import { Badge } from "../../../../atoms/badge/badge";
-import { Button } from "../../../../atoms/button/button";
+import { Badge } from "../../../atoms/badge/badge";
+import { Button } from "../../../atoms/button/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../../../molecules/dropdown-menu/dropdown-menu";
-import { Typography } from "../../../../atoms/typography/typography";
+} from "../../../molecules/dropdown-menu/dropdown-menu";
+import { Typography } from "../../../atoms/typography/typography";
 import {
   PlpGridItem,
   PlpGridItemMedia,
@@ -30,7 +24,7 @@ import {
   PlpGridItemReturnable,
   PlpGridItemPrice,
   PlpGridItemPrimaryAction,
-} from "../../grid/plp-grid-item";
+} from "../grid/plp-grid-item";
 import {
   PlpListCell,
   PlpListHeaderCell,
@@ -43,22 +37,13 @@ import {
   PlpListRowName,
   PlpListRowPrice,
   PlpListRowReturnable,
-} from "../../list/plp-list-row";
-import { useStorybookAppUser } from "../../../../../../.storybook/app-user-context";
-import { SAMPLE_360_VIDEO_URL } from "../shared/fixtures";
-import type { GemstoneItem } from "./api";
+} from "../list/plp-list-row";
+import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
+import { SAMPLE_360_VIDEO_URL } from "./sort-options";
+import type { GemstoneItem } from "./gemstone-items";
 
-const onAddToShortlist = fn();
-const onShare = fn();
-const onViewMedia = fn();
-const onAddToCart = fn();
+const noop = () => {};
 
-/**
- * Storybook-only category card assembled from PlpGridItem primitives.
- * Drives the "Nivoda Curated" treatment, tariff note (when the user is
- * in the US), discount line, and per-carat secondary line based on the
- * item data and the current emulated app-user context.
- */
 export function GemstonePlpGridItem({ item }: { item: GemstoneItem }) {
   const userContext = useStorybookAppUser();
 
@@ -84,17 +69,13 @@ export function GemstonePlpGridItem({ item }: { item: GemstoneItem }) {
           <PlpGridItemMediaAction
             icon={IconHeart}
             label="Add to shortlist"
-            onClick={onAddToShortlist}
+            onClick={noop}
           />
-          <PlpGridItemMediaAction
-            icon={IconShare}
-            label="Share"
-            onClick={onShare}
-          />
+          <PlpGridItemMediaAction icon={IconShare} label="Share" onClick={noop} />
           <PlpGridItemMediaAction
             icon={IconPhoto}
             label="View media"
-            onClick={onViewMedia}
+            onClick={noop}
           />
         </PlpGridItemMediaToolbar>
       </PlpGridItemMedia>
@@ -138,7 +119,7 @@ export function GemstonePlpGridItem({ item }: { item: GemstoneItem }) {
       />
 
       <PlpGridItemPrimaryAction>
-        <Button className="w-full" onClick={onAddToCart}>
+        <Button className="w-full" onClick={noop}>
           Add to cart
         </Button>
       </PlpGridItemPrimaryAction>
@@ -168,13 +149,7 @@ export function GemstonePlpListHeader() {
   );
 }
 
-export function GemstonePlpListRow({
-  item,
-  onClick,
-}: {
-  item: GemstoneItem;
-  onClick?: () => void;
-}) {
+export function GemstonePlpListRow({ item }: { item: GemstoneItem }) {
   const userContext = useStorybookAppUser();
   const [selected, setSelected] = useState(false);
 
@@ -189,7 +164,7 @@ export function GemstonePlpListRow({
       : undefined;
 
   return (
-    <PlpListRow onClick={onClick} selected={selected}>
+    <PlpListRow selected={selected}>
       <PlpListCell>
         <PlpListRowCheckbox checked={selected} onChange={setSelected} />
       </PlpListCell>
@@ -233,7 +208,7 @@ export function GemstonePlpListRow({
       </PlpListCell>
       <PlpListCell align="right">
         <PlpListRowActions>
-          <Button size="sm" onClick={onAddToCart}>
+          <Button size="sm" onClick={noop}>
             Add to cart
           </Button>
           <DropdownMenu>
@@ -248,15 +223,15 @@ export function GemstonePlpListRow({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-              <DropdownMenuItem onSelect={onAddToShortlist}>
+              <DropdownMenuItem onSelect={noop}>
                 <IconHeart className="h-4 w-4" />
                 Add to shortlist
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={onShare}>
+              <DropdownMenuItem onSelect={noop}>
                 <IconShare className="h-4 w-4" />
                 Share
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={onViewMedia}>
+              <DropdownMenuItem onSelect={noop}>
                 <IconPhoto className="h-4 w-4" />
                 View media
               </DropdownMenuItem>

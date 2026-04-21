@@ -106,8 +106,6 @@ export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShell
 // export type { FilterButtonProps } from "./components/atoms/filter-button/filter-button";
 // export { RangeFilter } from "./components/molecules/range-filter/range-filter";
 // export type { RangeFilterProps, RangeAxis, RangeHistogram, RangeValue } from "./components/molecules/range-filter/range-filter";
-// export { AsyncComboboxFilter } from "./components/molecules/async-combobox-filter/async-combobox-filter";
-// export type { AsyncComboboxFilterProps, AsyncComboboxOption, AsyncComboboxValue } from "./components/molecules/async-combobox-filter/async-combobox-filter";
 // export { FilterToolbar, FilterSection } from "./components/organisms/filter-toolbar/filter-toolbar";
 // export type { FilterToolbarProps, FilterToolbarDrawer, FilterToolbarSortOption, FilterSectionProps } from "./components/organisms/filter-toolbar/filter-toolbar";
 
