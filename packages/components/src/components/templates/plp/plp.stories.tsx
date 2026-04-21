@@ -24,7 +24,6 @@ import {
 } from "../../organisms/app-shell/app-shell";
 import { AsyncComboboxFilter } from "../../molecules/async-combobox-filter/async-combobox-filter";
 import type { AsyncComboboxOption } from "../../molecules/async-combobox-filter/async-combobox-filter";
-import { ChipSelectFilter } from "../../molecules/chip-select-filter/chip-select-filter";
 import {
   FilterSection,
   FilterToolbar,
@@ -328,12 +327,21 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("color", undefined)}
         >
           {(v, set) => (
-            <ChipSelectFilter
-              mode="multiple"
-              value={v}
-              onChange={set}
-              options={GEMSTONE_COLOR_OPTIONS}
-            />
+            <ToggleGroup
+              type="multiple"
+              variant="outline"
+              spacing={2}
+              value={v ?? []}
+              onValueChange={(next: string[]) =>
+                set(next.length > 0 ? next : undefined)
+              }
+            >
+              {GEMSTONE_COLOR_OPTIONS.map((o) => (
+                <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                  {o.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           )}
         </FilterButton>
       ),
@@ -353,12 +361,21 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("clarity", undefined)}
         >
           {(v, set) => (
-            <ChipSelectFilter
-              mode="multiple"
-              value={v}
-              onChange={set}
-              options={GEMSTONE_CLARITY_OPTIONS}
-            />
+            <ToggleGroup
+              type="multiple"
+              variant="outline"
+              spacing={2}
+              value={v ?? []}
+              onValueChange={(next: string[]) =>
+                set(next.length > 0 ? next : undefined)
+              }
+            >
+              {GEMSTONE_CLARITY_OPTIONS.map((o) => (
+                <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                  {o.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           )}
         </FilterButton>
       ),
@@ -378,12 +395,19 @@ function useGemstoneFilterButtons(
           onDismiss={() => setAppliedFor("treatment", undefined)}
         >
           {(v, set) => (
-            <ChipSelectFilter
-              mode="single"
-              value={v}
-              onChange={set}
-              options={GEMSTONE_TREATMENT_OPTIONS}
-            />
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              spacing={2}
+              value={v ?? ""}
+              onValueChange={(next: string) => set(next || undefined)}
+            >
+              {GEMSTONE_TREATMENT_OPTIONS.map((o) => (
+                <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                  {o.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           )}
         </FilterButton>
       ),
@@ -534,28 +558,55 @@ function GemstoneDrawerBody({
         </div>
       </FilterSection>
       <FilterSection label="Color">
-        <ChipSelectFilter
-          mode="multiple"
-          value={draft.color}
-          onChange={(v) => setDraftFor("color", v)}
-          options={GEMSTONE_COLOR_OPTIONS}
-        />
+        <ToggleGroup
+          type="multiple"
+          variant="outline"
+          spacing={2}
+          value={draft.color ?? []}
+          onValueChange={(next: string[]) =>
+            setDraftFor("color", next.length > 0 ? next : undefined)
+          }
+        >
+          {GEMSTONE_COLOR_OPTIONS.map((o) => (
+            <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+              {o.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </FilterSection>
       <FilterSection label="Clarity">
-        <ChipSelectFilter
-          mode="multiple"
-          value={draft.clarity}
-          onChange={(v) => setDraftFor("clarity", v)}
-          options={GEMSTONE_CLARITY_OPTIONS}
-        />
+        <ToggleGroup
+          type="multiple"
+          variant="outline"
+          spacing={2}
+          value={draft.clarity ?? []}
+          onValueChange={(next: string[]) =>
+            setDraftFor("clarity", next.length > 0 ? next : undefined)
+          }
+        >
+          {GEMSTONE_CLARITY_OPTIONS.map((o) => (
+            <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+              {o.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </FilterSection>
       <FilterSection label="Treatment">
-        <ChipSelectFilter
-          mode="single"
-          value={draft.treatment}
-          onChange={(v) => setDraftFor("treatment", v)}
-          options={GEMSTONE_TREATMENT_OPTIONS}
-        />
+        <ToggleGroup
+          type="single"
+          variant="outline"
+          spacing={2}
+          value={draft.treatment ?? ""}
+          onValueChange={(next: string) =>
+            setDraftFor("treatment", next || undefined)
+          }
+        >
+          {GEMSTONE_TREATMENT_OPTIONS.map((o) => (
+            <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+              {o.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </FilterSection>
       <FilterSection label="Location">
         <Select
@@ -632,12 +683,21 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("shape", undefined)}
         >
           {(v, set) => (
-            <ChipSelectFilter
-              mode="multiple"
-              value={v}
-              onChange={set}
-              options={DIAMOND_SHAPE_OPTIONS}
-            />
+            <ToggleGroup
+              type="multiple"
+              variant="outline"
+              spacing={2}
+              value={v ?? []}
+              onValueChange={(next: string[]) =>
+                set(next.length > 0 ? next : undefined)
+              }
+            >
+              {DIAMOND_SHAPE_OPTIONS.map((o) => (
+                <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                  {o.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           )}
         </FilterButton>
       ),
@@ -653,12 +713,21 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("color", undefined)}
         >
           {(v, set) => (
-            <ChipSelectFilter
-              mode="multiple"
-              value={v}
-              onChange={set}
-              options={DIAMOND_COLOR_OPTIONS}
-            />
+            <ToggleGroup
+              type="multiple"
+              variant="outline"
+              spacing={2}
+              value={v ?? []}
+              onValueChange={(next: string[]) =>
+                set(next.length > 0 ? next : undefined)
+              }
+            >
+              {DIAMOND_COLOR_OPTIONS.map((o) => (
+                <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                  {o.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           )}
         </FilterButton>
       ),
@@ -674,12 +743,21 @@ function useDiamondFilterButtons(
           onDismiss={() => setAppliedFor("clarity", undefined)}
         >
           {(v, set) => (
-            <ChipSelectFilter
-              mode="multiple"
-              value={v}
-              onChange={set}
-              options={DIAMOND_CLARITY_OPTIONS}
-            />
+            <ToggleGroup
+              type="multiple"
+              variant="outline"
+              spacing={2}
+              value={v ?? []}
+              onValueChange={(next: string[]) =>
+                set(next.length > 0 ? next : undefined)
+              }
+            >
+              {DIAMOND_CLARITY_OPTIONS.map((o) => (
+                <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                  {o.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           )}
         </FilterButton>
       ),
@@ -778,28 +856,55 @@ function DiamondDrawerBody({
   return (
     <>
       <FilterSection label="Shape" separator={false}>
-        <ChipSelectFilter
-          mode="multiple"
-          value={draft.shape}
-          onChange={(v) => setDraftFor("shape", v)}
-          options={DIAMOND_SHAPE_OPTIONS}
-        />
+        <ToggleGroup
+          type="multiple"
+          variant="outline"
+          spacing={2}
+          value={draft.shape ?? []}
+          onValueChange={(next: string[]) =>
+            setDraftFor("shape", next.length > 0 ? next : undefined)
+          }
+        >
+          {DIAMOND_SHAPE_OPTIONS.map((o) => (
+            <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+              {o.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </FilterSection>
       <FilterSection label="Color">
-        <ChipSelectFilter
-          mode="multiple"
-          value={draft.color}
-          onChange={(v) => setDraftFor("color", v)}
-          options={DIAMOND_COLOR_OPTIONS}
-        />
+        <ToggleGroup
+          type="multiple"
+          variant="outline"
+          spacing={2}
+          value={draft.color ?? []}
+          onValueChange={(next: string[]) =>
+            setDraftFor("color", next.length > 0 ? next : undefined)
+          }
+        >
+          {DIAMOND_COLOR_OPTIONS.map((o) => (
+            <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+              {o.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </FilterSection>
       <FilterSection label="Clarity">
-        <ChipSelectFilter
-          mode="multiple"
-          value={draft.clarity}
-          onChange={(v) => setDraftFor("clarity", v)}
-          options={DIAMOND_CLARITY_OPTIONS}
-        />
+        <ToggleGroup
+          type="multiple"
+          variant="outline"
+          spacing={2}
+          value={draft.clarity ?? []}
+          onValueChange={(next: string[]) =>
+            setDraftFor("clarity", next.length > 0 ? next : undefined)
+          }
+        >
+          {DIAMOND_CLARITY_OPTIONS.map((o) => (
+            <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+              {o.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </FilterSection>
       <FilterSection label="Price">
         <RangeFilter
@@ -1469,12 +1574,21 @@ function JewelryInteractive() {
         onDismiss={() => setAppliedFor("stone-shape", undefined)}
       >
         {(v, set) => (
-          <ChipSelectFilter
-            mode="multiple"
-            value={v}
-            onChange={set}
-            options={JEWELRY_STONE_SHAPE_OPTIONS}
-          />
+          <ToggleGroup
+            type="multiple"
+            variant="outline"
+            spacing={2}
+            value={v ?? []}
+            onValueChange={(next: string[]) =>
+              set(next.length > 0 ? next : undefined)
+            }
+          >
+            {JEWELRY_STONE_SHAPE_OPTIONS.map((o) => (
+              <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                {o.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         )}
       </FilterButton>
     ),
@@ -1494,12 +1608,21 @@ function JewelryInteractive() {
         onDismiss={() => setAppliedFor("metal", undefined)}
       >
         {(v, set) => (
-          <ChipSelectFilter
-            mode="multiple"
-            value={v}
-            onChange={set}
-            options={JEWELRY_METAL_OPTIONS}
-          />
+          <ToggleGroup
+            type="multiple"
+            variant="outline"
+            spacing={2}
+            value={v ?? []}
+            onValueChange={(next: string[]) =>
+              set(next.length > 0 ? next : undefined)
+            }
+          >
+            {JEWELRY_METAL_OPTIONS.map((o) => (
+              <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                {o.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         )}
       </FilterButton>
     ),
@@ -1519,12 +1642,21 @@ function JewelryInteractive() {
         onDismiss={() => setAppliedFor("style", undefined)}
       >
         {(v, set) => (
-          <ChipSelectFilter
-            mode="multiple"
-            value={v}
-            onChange={set}
-            options={JEWELRY_STYLE_OPTIONS}
-          />
+          <ToggleGroup
+            type="multiple"
+            variant="outline"
+            spacing={2}
+            value={v ?? []}
+            onValueChange={(next: string[]) =>
+              set(next.length > 0 ? next : undefined)
+            }
+          >
+            {JEWELRY_STYLE_OPTIONS.map((o) => (
+              <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                {o.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         )}
       </FilterButton>
     ),
@@ -1600,28 +1732,55 @@ function JewelryInteractive() {
         content: (
           <>
             <FilterSection label="Stone shape" separator={false}>
-              <ChipSelectFilter
-                mode="multiple"
-                value={draft["stone-shape"]}
-                onChange={(v) => setDraftFor("stone-shape", v)}
-                options={JEWELRY_STONE_SHAPE_OPTIONS}
-              />
+              <ToggleGroup
+                type="multiple"
+                variant="outline"
+                spacing={2}
+                value={draft["stone-shape"] ?? []}
+                onValueChange={(next: string[]) =>
+                  setDraftFor("stone-shape", next.length > 0 ? next : undefined)
+                }
+              >
+                {JEWELRY_STONE_SHAPE_OPTIONS.map((o) => (
+                  <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                    {o.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
             </FilterSection>
             <FilterSection label="Metal">
-              <ChipSelectFilter
-                mode="multiple"
-                value={draft.metal}
-                onChange={(v) => setDraftFor("metal", v)}
-                options={JEWELRY_METAL_OPTIONS}
-              />
+              <ToggleGroup
+                type="multiple"
+                variant="outline"
+                spacing={2}
+                value={draft.metal ?? []}
+                onValueChange={(next: string[]) =>
+                  setDraftFor("metal", next.length > 0 ? next : undefined)
+                }
+              >
+                {JEWELRY_METAL_OPTIONS.map((o) => (
+                  <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                    {o.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
             </FilterSection>
             <FilterSection label="Style">
-              <ChipSelectFilter
-                mode="multiple"
-                value={draft.style}
-                onChange={(v) => setDraftFor("style", v)}
-                options={JEWELRY_STYLE_OPTIONS}
-              />
+              <ToggleGroup
+                type="multiple"
+                variant="outline"
+                spacing={2}
+                value={draft.style ?? []}
+                onValueChange={(next: string[]) =>
+                  setDraftFor("style", next.length > 0 ? next : undefined)
+                }
+              >
+                {JEWELRY_STYLE_OPTIONS.map((o) => (
+                  <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                    {o.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
             </FilterSection>
           </>
         ),

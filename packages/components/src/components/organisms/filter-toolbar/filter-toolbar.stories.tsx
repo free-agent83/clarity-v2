@@ -9,9 +9,9 @@ import {
 } from "../../organisms/app-shell/app-shell";
 import { FilterButton } from "../../atoms/filter-button/filter-button";
 import {
-  ChipSelectFilter,
-  type ChipSelectOption,
-} from "../../molecules/chip-select-filter/chip-select-filter";
+  ToggleGroup,
+  ToggleGroupItem,
+} from "../../atoms/toggle-group/toggle-group";
 import { RangeFilter } from "../../molecules/range-filter/range-filter";
 import type { RangeAxis } from "../../molecules/range-filter/range-filter";
 
@@ -25,13 +25,15 @@ const meta: Meta<typeof FilterToolbar> = {
 export default meta;
 type Story = StoryObj<typeof FilterToolbar>;
 
-const SORT_OPTIONS = [
+type Option = { value: string; label: string };
+
+const SORT_OPTIONS: Option[] = [
   { value: "price-asc", label: "Price, low to high" },
   { value: "price-desc", label: "Price, high to low" },
   { value: "newest", label: "Newest" },
 ];
 
-const COLOR_OPTIONS: ChipSelectOption[] = [
+const COLOR_OPTIONS: Option[] = [
   { value: "blue", label: "Blue" },
   { value: "green", label: "Green" },
   { value: "red", label: "Red" },
@@ -55,7 +57,7 @@ function formatMultiSelectChip(labels: string[]): string {
   return `${labels[0]}, ${labels[1]} +${labels.length - 2} more`;
 }
 
-function labelForValue(options: ChipSelectOption[], v: string) {
+function labelForValue(options: Option[], v: string) {
   return options.find((o) => o.value === v)?.label ?? v;
 }
 
@@ -83,12 +85,21 @@ function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }
       onDismiss={() => setColors(undefined)}
     >
       {(draft, setDraft) => (
-        <ChipSelectFilter
-          mode="multiple"
-          value={draft}
-          onChange={setDraft}
-          options={COLOR_OPTIONS}
-        />
+        <ToggleGroup
+          type="multiple"
+          variant="outline"
+          spacing={2}
+          value={draft ?? []}
+          onValueChange={(next: string[]) =>
+            setDraft(next.length > 0 ? next : undefined)
+          }
+        >
+          {COLOR_OPTIONS.map((o) => (
+            <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+              {o.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       )}
     </FilterButton>
   );
@@ -111,12 +122,25 @@ function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }
         drawer={{
           content: (
             <FilterSection label="Color" separator={false}>
-              <ChipSelectFilter
-                mode="multiple"
-                value={draftColors}
-                onChange={setDraftColors}
-                options={COLOR_OPTIONS}
-              />
+              <ToggleGroup
+                type="multiple"
+                variant="outline"
+                spacing={2}
+                value={draftColors ?? []}
+                onValueChange={(next: string[]) =>
+                  setDraftColors(next.length > 0 ? next : undefined)
+                }
+              >
+                {COLOR_OPTIONS.map((o) => (
+                  <ToggleGroupItem
+                    key={o.value}
+                    value={o.value}
+                    aria-label={o.label}
+                  >
+                    {o.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
             </FilterSection>
           ),
           onOpen: () => setDraftColors(colors),
@@ -164,12 +188,21 @@ export const DrawerLoadingState: Story = {
         onDismiss={() => setColors(undefined)}
       >
         {(draft, setDraft) => (
-          <ChipSelectFilter
-            mode="multiple"
-            value={draft}
-            onChange={setDraft}
-            options={COLOR_OPTIONS}
-          />
+          <ToggleGroup
+            type="multiple"
+            variant="outline"
+            spacing={2}
+            value={draft ?? []}
+            onValueChange={(next: string[]) =>
+              setDraft(next.length > 0 ? next : undefined)
+            }
+          >
+            {COLOR_OPTIONS.map((o) => (
+              <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                {o.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         )}
       </FilterButton>
     );
@@ -188,12 +221,25 @@ export const DrawerLoadingState: Story = {
           drawer={{
             content: (
               <FilterSection label="Color" separator={false}>
-                <ChipSelectFilter
-                  mode="multiple"
-                  value={draftColors}
-                  onChange={setDraftColors}
-                  options={COLOR_OPTIONS}
-                />
+                <ToggleGroup
+                  type="multiple"
+                  variant="outline"
+                  spacing={2}
+                  value={draftColors ?? []}
+                  onValueChange={(next: string[]) =>
+                    setDraftColors(next.length > 0 ? next : undefined)
+                  }
+                >
+                  {COLOR_OPTIONS.map((o) => (
+                    <ToggleGroupItem
+                      key={o.value}
+                      value={o.value}
+                      aria-label={o.label}
+                    >
+                      {o.label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
               </FilterSection>
             ),
             onOpen: () => setDraftColors(colors),
@@ -255,12 +301,21 @@ export const StickyBarBehaviour: Story = {
         onDismiss={() => setColors(undefined)}
       >
         {(draft, setDraft) => (
-          <ChipSelectFilter
-            mode="multiple"
-            value={draft}
-            onChange={setDraft}
-            options={COLOR_OPTIONS}
-          />
+          <ToggleGroup
+            type="multiple"
+            variant="outline"
+            spacing={2}
+            value={draft ?? []}
+            onValueChange={(next: string[]) =>
+              setDraft(next.length > 0 ? next : undefined)
+            }
+          >
+            {COLOR_OPTIONS.map((o) => (
+              <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+                {o.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         )}
       </FilterButton>
     );
@@ -317,12 +372,25 @@ export const StickyBarBehaviour: Story = {
               content: (
                 <>
                   <FilterSection label="Color" separator={false}>
-                    <ChipSelectFilter
-                      mode="multiple"
-                      value={draftColors}
-                      onChange={setDraftColors}
-                      options={COLOR_OPTIONS}
-                    />
+                    <ToggleGroup
+                      type="multiple"
+                      variant="outline"
+                      spacing={2}
+                      value={draftColors ?? []}
+                      onValueChange={(next: string[]) =>
+                        setDraftColors(next.length > 0 ? next : undefined)
+                      }
+                    >
+                      {COLOR_OPTIONS.map((o) => (
+                        <ToggleGroupItem
+                          key={o.value}
+                          value={o.value}
+                          aria-label={o.label}
+                        >
+                          {o.label}
+                        </ToggleGroupItem>
+                      ))}
+                    </ToggleGroup>
                   </FilterSection>
                   <FilterSection label="Price">
                     <RangeFilter
@@ -367,5 +435,103 @@ export const StickyBarBehaviour: Story = {
         </AppShellMain>
       </AppShell>
     );
+  },
+};
+
+/**
+ * Drawer with many `FilterSection`s, including a section that composes
+ * multiple nested subsections. The section bodies are wireframes so the
+ * story focuses on layout and scrolling rather than on any specific
+ * filter control.
+ *
+ * Auto-opens the drawer via a `play` function so the layout is visible
+ * without manual interaction.
+ */
+export const DrawerMultipleSections: Story = {
+  render: () => {
+    function Wireframe({ label }: { label: string }) {
+      return (
+        <div className="flex h-10 items-center rounded-md border border-dashed border-border bg-muted/40 px-3 text-xs text-muted-foreground">
+          {label}
+        </div>
+      );
+    }
+
+    return (
+      <div className="p-4">
+        <FilterToolbar
+          filters={[]}
+          activeFilterCount={0}
+          hasActiveFilters={false}
+          onClearAll={fn()}
+          sortOptions={SORT_OPTIONS}
+          sortValue="price-asc"
+          onSortChange={fn()}
+          drawer={{
+            content: (
+              <>
+                <FilterSection label="Shape" separator={false}>
+                  <Wireframe label="Chip group control" />
+                </FilterSection>
+
+                <FilterSection label="Colour">
+                  <Wireframe label="Chip group control" />
+                </FilterSection>
+
+                {/* A section with multiple nested subsections. Each
+                    subsection is itself a FilterSection rendered inside
+                    the parent's body. `separator={false}` is used on the
+                    first subsection to keep the nesting visually clean
+                    (the parent already has its own separator above). */}
+                <FilterSection label="Dimensions">
+                  <div className="space-y-2">
+                    <Wireframe label="Summary input" />
+                    <div className="pl-3">
+                      <FilterSection label="Length" separator={false}>
+                        <Wireframe label="Range slider" />
+                      </FilterSection>
+                      <FilterSection label="Width">
+                        <Wireframe label="Range slider" />
+                      </FilterSection>
+                      <FilterSection label="Depth">
+                        <Wireframe label="Range slider" />
+                      </FilterSection>
+                    </div>
+                  </div>
+                </FilterSection>
+
+                <FilterSection label="Price">
+                  <Wireframe label="Range slider" />
+                </FilterSection>
+
+                <FilterSection label="Carat">
+                  <Wireframe label="Range slider" />
+                </FilterSection>
+
+                <FilterSection label="Origin">
+                  <Wireframe label="Chip group control" />
+                </FilterSection>
+
+                <FilterSection label="Supplier">
+                  <Wireframe label="Async combobox" />
+                </FilterSection>
+
+                <FilterSection label="Certification">
+                  <Wireframe label="Chip group control" />
+                </FilterSection>
+              </>
+            ),
+            onApply: fn(),
+            onClearDraft: fn(),
+            hasActiveDraft: false,
+          }}
+        />
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = await canvas.findByRole("button", { name: /all filters/i });
+    await userEvent.click(trigger);
   },
 };

@@ -42,7 +42,6 @@ import {
 } from "../list/plp-list-row";
 import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
 import type { AsyncComboboxOption } from "../../../molecules/async-combobox-filter/async-combobox-filter";
-import type { ChipSelectOption } from "../../../molecules/chip-select-filter/chip-select-filter";
 import type { RangeAxis } from "../../../molecules/range-filter/range-filter";
 import {
   SAMPLE_360_VIDEO_URL,
@@ -88,14 +87,14 @@ export interface DiamondFilterState {
 
 // -- Filter configuration ---------------------------------------------------
 
-export const DIAMOND_SHAPE_OPTIONS: ChipSelectOption[] = [
+export const DIAMOND_SHAPE_OPTIONS: { value: string; label: string }[] = [
   { value: "round", label: "Round" },
   { value: "oval", label: "Oval" },
   { value: "cushion", label: "Cushion" },
   { value: "princess", label: "Princess" },
 ];
 
-export const DIAMOND_COLOR_OPTIONS: ChipSelectOption[] = [
+export const DIAMOND_COLOR_OPTIONS: { value: string; label: string }[] = [
   "D",
   "E",
   "F",
@@ -104,7 +103,7 @@ export const DIAMOND_COLOR_OPTIONS: ChipSelectOption[] = [
   "I",
 ].map((c) => ({ value: c, label: c }));
 
-export const DIAMOND_CLARITY_OPTIONS: ChipSelectOption[] = [
+export const DIAMOND_CLARITY_OPTIONS: { value: string; label: string }[] = [
   "IF",
   "VVS1",
   "VVS2",

@@ -41,7 +41,6 @@ import {
 } from "../list/plp-list-row";
 import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
 import type { AsyncComboboxOption } from "../../../molecules/async-combobox-filter/async-combobox-filter";
-import type { ChipSelectOption } from "../../../molecules/chip-select-filter/chip-select-filter";
 import type { RangeAxis } from "../../../molecules/range-filter/range-filter";
 import {
   MOCK_SUPPLIERS,
@@ -91,7 +90,7 @@ export interface GemstoneFilterState {
 
 // -- Filter configuration ---------------------------------------------------
 
-export const GEMSTONE_COLOR_OPTIONS: ChipSelectOption[] = [
+export const GEMSTONE_COLOR_OPTIONS: { value: string; label: string }[] = [
   { value: "blue", label: "Blue" },
   { value: "green", label: "Green" },
   { value: "red", label: "Red" },
@@ -100,14 +99,14 @@ export const GEMSTONE_COLOR_OPTIONS: ChipSelectOption[] = [
   { value: "yellow", label: "Yellow" },
 ];
 
-export const GEMSTONE_CLARITY_OPTIONS: ChipSelectOption[] = [
+export const GEMSTONE_CLARITY_OPTIONS: { value: string; label: string }[] = [
   { value: "eye-clean", label: "Eye clean" },
   { value: "slightly-included", label: "Slightly included" },
   { value: "moderately-included", label: "Moderately included" },
   { value: "visibly-included", label: "Visibly included" },
 ];
 
-export const GEMSTONE_TREATMENT_OPTIONS: ChipSelectOption[] = [
+export const GEMSTONE_TREATMENT_OPTIONS: { value: string; label: string }[] = [
   { value: "none", label: "None" },
   { value: "heated", label: "Heated" },
   { value: "oiled", label: "Oiled" },

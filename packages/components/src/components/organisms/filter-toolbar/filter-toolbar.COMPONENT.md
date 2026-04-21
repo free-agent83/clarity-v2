@@ -12,7 +12,7 @@ Complete filter chrome for a filterable / sortable / searchable listing view. Bu
 
 The drawer, its trigger button, and the `FilterSection` wrappers used inside the drawer body are all part of this module — they always ship together because a drawer without a trigger and a trigger without a drawer both have no purpose. The consumer passes drawer content and lifecycle callbacks through the `drawer` prop; the organism owns the drawer's open state.
 
-The toolbar is shape-agnostic about filters. Consumers compose filter chips from `FilterButton` (atom) plus preset controls (`ChipSelectFilter`, `RangeFilter`, `AsyncComboboxFilter`, or any custom React control) and hand them in as a `ReactNode[]` slot. The toolbar flows them into its wrapping row and mirrors a subset into the sticky chrome.
+The toolbar is shape-agnostic about filters. Consumers compose filter chips from `FilterButton` (atom) plus preset controls (`ToggleGroup` for chip-style select, `RangeFilter`, `AsyncComboboxFilter`, or any custom React control) and hand them in as a `ReactNode[]` slot. The toolbar flows them into its wrapping row and mirrors a subset into the sticky chrome.
 
 ## Exports
 
