@@ -2,6 +2,25 @@
 
 ---
 
+### PLP filter system decoupled from business logic (breaking, unstable 0.5.0)
+
+Splits the PLP filter system into presentational building blocks owned by the library and wiring owned by the consumer. The `FilterDefinition` schema and preset registry are demolished; each preset is now a standalone component with direct props and its own exported value + option types. The PLP template no longer renders the drawer — consumers render `PlpFilterDrawer` as a sibling and own drawer state, draft buffering, and chip-summary formatting.
+
+Breaking changes for `PlpTemplate` consumers:
+
+- `filters`, `filterState`, `onFilterChange`, `filteredResultsCount`, `isCountLoading`, `onDraftFilterStateChange`, `emptyFilterSuggestions` removed.
+- New props: `toolbarFilters: ReactNode[]`, `stickyFilters: ReactNode[]`, `activeFilterCount`, `hasActiveFilters`, `onOpenDrawer`, `onClearAll`.
+- Preset components now take direct props (`value`, `onChange`, plus config like `min`/`max`/`options`/`axes`/`searchFn`). Each preset exports its own `Value` type and, where applicable, its own `Option` type.
+- `PlpQuickFilter` takes a render-prop child `(draft, setDraft) => ReactNode` and a pre-formatted `chipSummary`. Registry lookup removed.
+- `PlpFilterDrawer` takes `children` (the filter sections), plus `open`, `onOpenChange`, `onApply`, `onClearDraft`, `hasActiveDraft`, `resultsCount`, `isCountLoading`.
+- New `PlpFilterSection` primitive for drawer-body entries (heading + separator).
+- `plp-types.ts` drops `FilterDefinition`, `PresetFilterDefinition`, `CustomFilterDefinition`, `FilterPresetName`, `FilterControlProps`, `FilterState`, `FilterValue`, and `FilterOption`. `AppUserContextValue` was moved earlier to `.storybook/app-user-context.tsx`.
+- `plp-filter-registry.ts` and its test are deleted.
+
+Stories rebuilt against the new API with a local `useFilterController` hook as the canonical wiring reference. See [`docs/plans/specs/2026-04-21-plp-filter-decoupling-design.md`](../../docs/plans/specs/2026-04-21-plp-filter-decoupling-design.md) for the full design.
+
+---
+
 ### FilterButton bakes in Apply/Clear; PLP gains a sticky filter bar
 
 - `FilterButton` now renders Apply and Clear buttons in its popover footer automatically. Consumers supply the filter control as `children` and wire `onApply` / `onClear` callbacks — the popover auto-closes after either fires. The previous `popoverContent` prop is replaced by `children`.
