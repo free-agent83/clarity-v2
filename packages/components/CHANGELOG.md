@@ -2,6 +2,28 @@
 
 ---
 
+### Filter subsystem extracted; PLP becomes a kit (breaking, unstable 0.6.0)
+
+Two coupled moves. (1) The PLP-scoped filter system is extracted into reusable molecules and an organism under a new `Filtering/` Storybook section: `FilterDrawer`, `FilterSection`, `AllFiltersButton`, `ChipSelectFilter` (merged single + multi chips), `RangeFilter` (merged single-axis + multi-axis), `AsyncComboboxFilter` — plus the `FilterToolbar` organism (internal sticky chrome via IntersectionObserver). `FilterButton` (atom) absorbs the old `PlpQuickFilter`'s per-popover draft lifecycle. (2) `PlpTemplate` is deleted; PLP becomes a kit of individually-exported building blocks — `PlpHeading`, `PlpGridContainer`, `PlpListContainer`, `PlpEmpty`, `PlpError`, plus the existing grid item and list row primitives. Consumers assemble the PLP page in their own code.
+
+Breaking changes:
+
+- `PlpTemplate` component removed. Assemble pages from the kit — see `templates/plp/plp.stories.tsx` for the canonical pattern.
+- `PlpQuickFilter` removed; use `FilterButton` directly with its new render-prop children API and draft-lifecycle props (`initialValue`, `onApply(value)`, `isActive`, `chipSummary`).
+- `PlpViewToggle` removed; use `ToggleGroup` + `ToggleGroupItem` inline inside `FilterToolbar`'s `actions` slot.
+- `BooleanChipFilter` removed; use `Toggle` or `Switch` atoms directly inside `FilterButton` / `FilterSection`.
+- `SingleSelectDropdownFilter` removed; use `Select` + `SelectTrigger` + `SelectContent` + `SelectItem` inline.
+- `SingleSelectChipsFilter` + `MultiSelectChipsFilter` merged into `ChipSelectFilter` with a `mode: "single" | "multiple"` discriminated union.
+- `RangeSliderFilter` + `MultiAxisRangeFilter` merged into `RangeFilter` with an `axes: RangeAxis[]` prop. Value shape is always `Record<string, { min; max }> | undefined` keyed by axis id — single-axis consumers key the value by their chosen axis id (e.g. `{ price: { min, max } }`).
+- `PlpFilterDrawer`, `PlpFilterSection`, `PlpAllFiltersButton`, `PlpToolbar`, `PlpStickyFilterBar` renamed to `FilterDrawer`, `FilterSection`, `AllFiltersButton`, `FilterToolbar` and relocated to their new molecule / organism folders.
+- `FilterToolbar` bundles the sticky chrome via internal IntersectionObserver; consumers no longer render a separate sticky bar.
+- `FilterDrawer` gains `applyLabel?: string` for non-list use.
+- `PlpEmpty` and `PlpError` are retained as thin PLP kit pieces — the generic `Empty` atom's default dashed-border styling diverges from the PLP invariant.
+
+No code shipped to production yet — all components are unstable. See the design spec at `docs/plans/specs/2026-04-21-filter-subsystem-and-plp-kit-design.md` and the implementation plan at `docs/plans/2026-04-21-filter-subsystem-and-plp-kit-plan.md`.
+
+---
+
 ### PLP filter system decoupled from business logic (breaking, unstable 0.5.0)
 
 Splits the PLP filter system into presentational building blocks owned by the library and wiring owned by the consumer. The `FilterDefinition` schema and preset registry are demolished; each preset is now a standalone component with direct props and its own exported value + option types. The PLP template no longer renders the drawer — consumers render `PlpFilterDrawer` as a sibling and own drawer state, draft buffering, and chip-summary formatting.
