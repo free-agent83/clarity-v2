@@ -48,6 +48,7 @@ import {
   buildMockHistogram,
   mockSupplierSearch,
 } from "./common";
+import diamondImg from "./images/diamond.png";
 
 const onAddToShortlist = fn();
 const onShare = fn();
@@ -150,7 +151,7 @@ export function generateDiamondItems(count: number): DiamondItem[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `diamond-${i}`,
     name: `${(0.5 + i * 0.1).toFixed(2)}ct ${shapes[i % shapes.length]} Diamond`,
-    image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Diamond+${i + 1}`,
+    image: diamondImg,
     stockId: `DM-${10000 + i}`,
     carat: Number((0.5 + i * 0.1).toFixed(2)),
     color: colors[i % colors.length],

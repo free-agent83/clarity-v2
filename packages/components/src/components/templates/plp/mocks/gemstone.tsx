@@ -48,6 +48,7 @@ import {
   buildMockHistogram,
   mockSupplierSearch,
 } from "./common";
+import gemstoneImg from "./images/gemstone.png";
 
 const onAddToShortlist = fn();
 const onShare = fn();
@@ -160,7 +161,7 @@ export function generateGemstoneItems(count: number): GemstoneItem[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `gem-${i}`,
     name: `Emerald Green Radiant ${(1 + i * 0.1).toFixed(1)}ct`,
-    image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Gem+${i + 1}`,
+    image: gemstoneImg,
     stockId: `GR-${10000 + i}`,
     origin: "Brazil",
     certLab: "IGI",

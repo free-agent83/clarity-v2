@@ -81,6 +81,7 @@ import {
 } from "../../atoms/empty/empty";
 import type { BreadcrumbSegment, PlpStatus, PlpViewMode } from "./plp-types";
 import { SORT_OPTIONS, mockPreviewCount } from "./mocks/common";
+import ringImg from "./mocks/images/ring.jpg";
 import { MOCK_LATENCY } from "./mocks/simulate-api-call";
 import {
   GEMSTONE_CARAT_CONFIG,
@@ -1283,6 +1284,8 @@ interface InteractiveShellProps {
   initialPageSize?: number;
   initialViewMode?: PlpViewMode;
   baselineStatus?: PlpStatus;
+  /** Optional node rendered under `PlpHeading`, above the toolbar. */
+  banner?: ReactNode;
 }
 
 // ── GemstoneInteractive ───────────────────────────────────────────────
@@ -1308,6 +1311,7 @@ function GemstoneInteractive({
   initialPageSize = 20,
   initialViewMode = "grid",
   baselineStatus = "success",
+  banner,
 }: InteractiveShellProps & {
   initialFilterState?: Partial<GemstoneFilterState>;
 }) {
@@ -1335,6 +1339,7 @@ function GemstoneInteractive({
       breadcrumbs={breadcrumbs}
       title={title}
       resultsCount={resultsCount}
+      banner={banner}
       toolbarFilters={toolbarFilters}
       stickyFilters={stickyFilters}
       activeFilterCount={ctrl.activeCount}
@@ -1434,6 +1439,7 @@ function DiamondInteractive({
   initialPageSize = 20,
   initialViewMode = "grid",
   baselineStatus = "success",
+  banner,
 }: InteractiveShellProps & {
   initialFilterState?: Partial<DiamondFilterState>;
 }) {
@@ -1461,6 +1467,7 @@ function DiamondInteractive({
       breadcrumbs={breadcrumbs}
       title={title}
       resultsCount={resultsCount}
+      banner={banner}
       toolbarFilters={toolbarFilters}
       stickyFilters={stickyFilters}
       activeFilterCount={ctrl.activeCount}
@@ -1707,7 +1714,7 @@ function JewelryInteractive({
   const items = Array.from({ length: 20 }, (_, i) => ({
     id: `ring-${i}`,
     name: "Three-Stone Anniversary Band",
-    image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Ring+${i + 1}`,
+    image: ringImg,
     sku: "SKU 100019ERDPL",
     price: 9999.0,
   }));
@@ -1889,7 +1896,7 @@ function buildJewelryListRows(count: number): ReactNode[] {
         </PlpListCell>
         <PlpListCell>
           <PlpListRowMedia
-            image={`https://placehold.co/72x72/f5f5f4/a3a3a3?text=R${i + 1}`}
+            image={ringImg}
             imageAlt="Three-Stone Anniversary Band"
           />
         </PlpListCell>
@@ -2095,4 +2102,120 @@ export const Error: StoryObj = {
       onRetry={fn()}
     />
   ),
+};
+
+/**
+ * Demonstrates how consumers can drop arbitrary content between the
+ * PLP heading and the filter toolbar. The kit doesn't bake banners
+ * into any template prop — `AssemblyShell` just flows a consumer-
+ * provided `banner` node into the layout, full width.
+ */
+export const WithBanner: StoryObj = {
+  render: () => (
+    <GemstoneInteractive
+      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
+      title="Sapphire"
+      resultsCount={1234567}
+      sortOptions={SORT_OPTIONS}
+      searchPlaceholder="Search by certificate number or stock ID..."
+      onSearchSubmit={fn()}
+      gridItems={buildGemstoneCards(20)}
+      totalItems={1234567}
+      onRetry={fn()}
+      banner={
+        <div className="flex items-center justify-between gap-4 rounded-lg bg-linear-to-r from-violet-600 to-indigo-600 px-6 py-5 text-primary-foreground">
+          <div>
+            <Typography as="h2" variant="body-1" emphasis className="text-primary-foreground">
+              Spring Sale — up to 20% off select gemstones
+            </Typography>
+            <Typography variant="body-2" className="text-primary-foreground/90">
+              Applies automatically at checkout. Ends 2026-05-15.
+            </Typography>
+          </div>
+          <Button variant="outline" className="bg-background text-foreground">
+            Browse deals
+          </Button>
+        </div>
+      }
+    />
+  ),
+};
+
+/**
+ * Demonstrates how consumers can freely mix non-item content into the
+ * grid — promo tiles, ad slots, recommendation cards, anything. The
+ * `gridItems` prop is a plain `ReactNode[]`; the `PlpGridContainer`
+ * doesn't reason about what a "product card" is, it just flows its
+ * children into the responsive grid. Here, positions 4 and 11 in a
+ * grid of 20 are swapped out for promo tiles.
+ */
+export const WithPromoItems: StoryObj = {
+  render: () => {
+    const cards = buildGemstoneCards(20);
+
+    function PromoTile({
+      headline,
+      subline,
+      className,
+    }: {
+      headline: string;
+      subline: string;
+      className?: string;
+    }) {
+      return (
+        <div
+          className={`flex aspect-square flex-col items-center justify-center gap-2 rounded-lg p-6 text-center ${className}`}
+        >
+          <Typography
+            as="h3"
+            variant="body-1"
+            emphasis
+            className="text-primary-foreground"
+          >
+            {headline}
+          </Typography>
+          <Typography variant="body-2" className="text-primary-foreground/90">
+            {subline}
+          </Typography>
+          <Button variant="outline" className="mt-2 bg-background text-foreground">
+            Shop now
+          </Button>
+        </div>
+      );
+    }
+
+    cards[3] = (
+      <PromoTile
+        key="promo-1"
+        headline="Free shipping on orders over $1,000"
+        subline="Applies automatically at checkout."
+        className="bg-linear-to-br from-emerald-600 to-teal-600"
+      />
+    );
+    cards[10] = (
+      <PromoTile
+        key="promo-2"
+        headline="New: Sapphire from Kashmir"
+        subline="Limited-release certified parcels."
+        className="bg-linear-to-br from-indigo-600 to-violet-600"
+      />
+    );
+
+    return (
+      <GemstoneInteractive
+        breadcrumbs={[
+          { label: "Gemstones", href: "#" },
+          { label: "Sapphire" },
+        ]}
+        title="Sapphire"
+        resultsCount={1234567}
+        sortOptions={SORT_OPTIONS}
+        searchPlaceholder="Search by certificate number or stock ID..."
+        onSearchSubmit={fn()}
+        gridItems={cards}
+        totalItems={1234567}
+        onRetry={fn()}
+      />
+    );
+  },
 };
