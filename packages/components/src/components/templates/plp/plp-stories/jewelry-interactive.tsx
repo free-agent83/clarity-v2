@@ -315,6 +315,7 @@ export function JewelryInteractive({
         listViewAvailable ? (
           <div className="hidden lg:flex">
             <ToggleGroup
+              variant="outline"
               type="single"
               value={view}
               onValueChange={(v) => v && setView(v as PlpViewMode)}

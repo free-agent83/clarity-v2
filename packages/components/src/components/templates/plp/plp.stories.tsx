@@ -7,7 +7,6 @@ import {
   AppShellHeader,
   AppShellMain,
 } from "../../organisms/app-shell/app-shell";
-import type { PlpViewMode } from "./plp-types";
 import { SORT_OPTIONS } from "./mocks/common";
 import {
   GemstonePlpListHeader,
@@ -54,41 +53,31 @@ export default meta;
 // ── Story exports ─────────────────────────────────────────────────────
 
 type CategoryArg = "diamonds" | "gemstones" | "jewellery";
-type DefaultStoryArgs = {
-  category: CategoryArg;
-  view: PlpViewMode;
-};
+type DefaultStoryArgs = { category: CategoryArg };
 
 const CATEGORY_OPTIONS: CategoryArg[] = ["diamonds", "gemstones", "jewellery"];
-const VIEW_OPTIONS: PlpViewMode[] = ["grid", "list"];
 
 /**
  * The canonical "healthy PLP" — tweak `category` to switch between
- * diamonds / gemstones / jewellery and `view` to set the starting
- * grid vs. list mode. The toolbar's view toggle stays available in
- * every variant, so readers can flip between grid and list at any
- * time without changing the tweakable.
+ * diamonds / gemstones / jewellery. The grid/list toggle lives in the
+ * toolbar itself, so readers flip between views there rather than via
+ * a story arg.
  */
 export const Default: StoryObj<DefaultStoryArgs> = {
-  args: { category: "diamonds", view: "grid" },
+  args: { category: "diamonds" },
   argTypes: {
     category: {
       control: { type: "radio" },
       options: CATEGORY_OPTIONS,
     },
-    view: {
-      control: { type: "radio" },
-      options: VIEW_OPTIONS,
-    },
   },
-  render: ({ category, view }) => {
+  render: ({ category }) => {
     if (category === "jewellery") {
       return (
         <JewelryInteractive
           listHeader={<JewelryPlpListHeader />}
           listRows={buildJewelryListRows(20)}
           listViewAvailable
-          initialViewMode={view}
         />
       );
     }
@@ -108,7 +97,6 @@ export const Default: StoryObj<DefaultStoryArgs> = {
           listHeader={<GemstonePlpListHeader />}
           listRows={buildGemstoneRows(20)}
           listViewAvailable
-          initialViewMode={view}
           totalItems={1234567}
           onRetry={fn()}
         />
@@ -126,7 +114,6 @@ export const Default: StoryObj<DefaultStoryArgs> = {
         listHeader={<DiamondPlpListHeader />}
         listRows={buildDiamondRows(20)}
         listViewAvailable
-        initialViewMode={view}
         totalItems={48291}
         onRetry={fn()}
       />

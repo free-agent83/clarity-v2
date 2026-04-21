@@ -2,6 +2,21 @@
 
 ---
 
+### PLP polish: FilterToolbar consolidation + story quality ([#NNN](https://github.com/free-agent83/clarity-v2/pull/NNN))
+Second-wave consolidation after the filter-subsystem extraction: several thin modules folded into their owners, two unused PLP-specific empty/error wrappers deleted, and a thorough story quality pass.
+
+Breaking changes (all unstable, nothing in production):
+
+- `FilterDrawer` is no longer a standalone molecule. `FilterToolbar` now owns the drawer via a `drawer: FilterToolbarDrawer` prop. Replace `<FilterToolbar .../>` + `<FilterDrawer .../>` with `<FilterToolbar drawer={{ content, onOpen, onApply, ... }} .../>`. The `onOpenDrawer` prop on `FilterToolbar` is removed. `FilterSection` is now imported from `filter-toolbar`, not `filter-drawer`. (`ef679c9`, `34fe4fa`)
+- `ChipSelectFilter` removed. Replace with `ToggleGroup` + `ToggleGroupItem` (with `variant="outline"`) directly at each call site; inline the empty ↔ undefined conversion as `value ?? []` / `next.length > 0 ? next : undefined`. (`df966ea`)
+- `PlpEmpty` and `PlpError` removed. Use the `Empty` atom directly; `plp.stories.tsx` exports `renderPlpEmptyState` as a copy-and-adapt reference. (`2581a73`)
+
+- Per-piece `COMPONENT.md` files (`plp-heading`, `plp-grid-container`, `plp-list-container`) consolidated into a single `templates/plp/COMPONENT.md`; `PlpGridItem` stories nested under `Templates/PLP/` in the Storybook sidebar. (`2581a73`, `4215eb1`)
+- PLP stories refactored into category-specific modules under `plp-stories/` (`DiamondInteractive`, `GemstoneInteractive`, `JewelryInteractive`); `Default` story gains a `category` control (diamonds / gemstones / jewellery) in place of separate story exports; added `WithBanner` and `WithPromoItems` stories using real mockup images. (`ee702c0`, `f2bb20c`, `8d84f34`, `3b6d3d1`, `2221e89`)
+- `FilterToolbar` stories updated with real `FilterButton` chips; new `StickyBarBehaviour`, `DrawerLoadingState`, and `DrawerMultipleSections` scenarios added; `COMPONENT.md` rewritten to match the current API. (`659d23b`, `799929e`, `fd18b90`, `54f1c03`)
+
+---
+
 ### Filter subsystem extracted; PLP becomes a kit (breaking, unstable 0.6.0)
 
 Two coupled moves. (1) The PLP-scoped filter system is extracted into reusable molecules and an organism under a new `Filtering/` Storybook section: `FilterDrawer`, `FilterSection`, `AllFiltersButton`, `ChipSelectFilter` (merged single + multi chips), `RangeFilter` (merged single-axis + multi-axis), `AsyncComboboxFilter` — plus the `FilterToolbar` organism (internal sticky chrome via IntersectionObserver). `FilterButton` (atom) absorbs the old `PlpQuickFilter`'s per-popover draft lifecycle. (2) `PlpTemplate` is deleted; PLP becomes a kit of individually-exported building blocks — `PlpHeading`, `PlpGridContainer`, `PlpListContainer`, `PlpEmpty`, `PlpError`, plus the existing grid item and list row primitives. Consumers assemble the PLP page in their own code.
