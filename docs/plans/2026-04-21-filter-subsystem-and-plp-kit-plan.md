@@ -75,19 +75,16 @@ Confirm from reading the Empty atom that this composition produces equivalent vi
 
 - [ ] **Step 4: Record decision inline in this task**
 
-Append one of the following lines to this task before moving on:
+**Decision (recorded 2026-04-21):** Keep thin `PlpEmpty` + `PlpError` in `templates/plp/states/` as pre-composed convenience wrappers. Task 14 will NOT delete these files or the `states/` folder. Task 13 stories will continue to render `<PlpEmpty>` and `<PlpError>` unchanged. The CHANGELOG entry in Task 17 will NOT claim these are removed.
 
-```
-Decision: Empty atom is sufficient. Proceed with deletion in Task 14.
-```
-or
-```
-Decision: Keep thin PlpEmpty + PlpError in templates/plp/states/ as pre-composed wrappers over Empty. Task 14 retains these files.
-```
-or
-```
-Decision: Extend Empty atom to cover {gap}. Added as sub-task before Task 13.
-```
+**Reasoning:** The `Empty` atom adds a dashed-border rounded-lg container with `p-12` centring, uses `text-lg font-medium tracking-tight` for titles and `text-sm/relaxed` for descriptions, and flows its children through `gap-4`. The current `PlpEmpty` / `PlpError` use `py-16 text-center` (no border), Typography `h5` variant titles, and `body-2` descriptions with ad-hoc `mt-*` spacing. These differences are visible, and the refactor's hard invariant requires story-level visual parity. Extending the `Empty` atom to cover the gap would be scope creep; the fallback path (keep thin wrappers) preserves parity cheaply.
+
+**Downstream impact on subsequent tasks:**
+- Task 13: render `<PlpEmpty>` / `<PlpError>` in the stories as today, not `<Empty>` compositions.
+- Task 14: do NOT remove `templates/plp/states/plp-empty.tsx`, `states/plp-error.tsx`, or the `states/` folder.
+- Task 15: no barrel changes for `PlpEmpty` / `PlpError` (they stay unstable, not exposed).
+- Task 16: mention `PlpEmpty` / `PlpError` in the PLP kit overview as kit pieces.
+- Task 17: the CHANGELOG must NOT claim `PlpEmpty` / `PlpError` are removed.
 
 - [ ] **Step 5: No commit — audit only**
 
