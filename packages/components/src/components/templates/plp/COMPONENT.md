@@ -1,92 +1,69 @@
 ---
-name: PlpTemplate
-slug: plp-template
-version: 0.5.0
+name: PLP (Product Listing Page) Kit
+slug: plp
+version: 0.6.0
 status: unstable
 lastUpdated: 2026-04-21
 ---
 
-# PlpTemplate
+# PLP Kit
 
-Product Listing Page template — a page-level layout component that orchestrates a complete product listing experience: heading, toolbar with filter slot + sort + view toggle, responsive product grid or list, pagination, and loading/empty/error states. Must be rendered inside an AppShell.
+The PLP kit is a set of PLP-specific building blocks plus a demonstration of how to assemble a full PLP page from them. There is no unified `PlpTemplate` component — consumers assemble the page in their own code. The kit pieces cover only what is PLP-specific; everything else (filter subsystem, pagination, view toggle) comes from the general library.
 
-The template is a presentational container. It holds no filter schema, no item data shape, and no commit semantics. Consumers compose filter buttons, grid cards, and list rows from library primitives, and hand them in as `ReactNode[]` slots. All business logic (filter state, drawer draft buffering, preview-count fetching, chip summary formatting, pricing variants, user-context decisions) lives in the consumer. See [plp-template.stories.tsx](./plp-template.stories.tsx) for the canonical wiring pattern, including the `useFilterController` reference implementation.
+## Kit pieces
 
-## Props
+| Component | Role |
+|-----------|------|
+| [`PlpHeading`](./plp-heading.tsx) | Breadcrumbs + title (H1) + results count (aria-live) |
+| [`PlpGridContainer`](./plp-grid-container.tsx) | Responsive 2/3/4-col grid + internal loading skeletons |
+| [`PlpListContainer`](./plp-list-container.tsx) | Table shell + internal loading skeletons |
+| [`PlpEmpty`](./states/plp-empty.tsx) | Empty-filtered / empty-no-items state wrappers with PLP-specific copy |
+| [`PlpError`](./states/plp-error.tsx) | Error state with retry + support link |
+| [`PlpGridItem` primitives](./grid/plp-grid-item.tsx) | Card composition primitives (media, name, price, etc.) |
+| [`PlpListRow` primitives](./list/plp-list-row.tsx) | Row composition primitives (cells, media, price, etc.) |
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `breadcrumbs` | `BreadcrumbSegment[]` | — | Breadcrumb navigation segments |
-| `title` | `string` | — | Category title |
-| `resultsCount` | `number` | — | Total results displayed in the heading |
-| `toolbarFilters` | `ReactNode[]` | — | Pre-composed filter buttons for the toolbar row. Typically pinned quick filters plus engaged non-pinned filters. Each element must carry its own `key`. |
-| `stickyFilters` | `ReactNode[]` | — | Pre-composed filter buttons for the sticky bar. Typically the engaged subset only. |
-| `activeFilterCount` | `number` | — | Drives the "All filters" badge |
-| `hasActiveFilters` | `boolean` | — | Drives Clear all visibility and the sticky-bar engagement gate |
-| `onOpenDrawer` | `() => void` | — | Fired when either "All filters" button is clicked |
-| `onClearAll` | `() => void` | — | Fired by the toolbar's Clear all and the empty-filtered state's clear action |
-| `sortOptions` | `SortOption[]` | — | Available sort options |
-| `sortValue` | `string` | — | Currently selected sort value |
-| `onSortChange` | `(value: string) => void` | — | Called when sort changes |
-| `searchPlaceholder` | `string` | `"Search..."` | Placeholder for the search input |
-| `onSearchSubmit` | `(query: string) => void` | — | Called on search submit (Enter key) |
-| `gridItems` | `ReactNode[]` | — | Pre-rendered grid cards composed from `PlpGridItem*` primitives |
-| `listHeader` | `ReactNode` | — | Pre-rendered list header row |
-| `listRows` | `ReactNode[]` | — | Pre-rendered list rows composed from `PlpListRow*` primitives |
-| `listViewAvailable` | `boolean` | `false` | When true, exposes the grid/list toggle. Template falls back to grid at viewports < 1024px. |
-| `viewMode` | `"grid" \| "list"` | `"grid"` | Current view mode |
-| `onViewModeChange` | `(mode) => void` | — | Called when the user toggles view mode |
-| `page` | `number` | — | Current page number |
-| `pageSize` | `number` | — | Items per page |
-| `totalItems` | `number` | — | Total items for pagination |
-| `pageSizeOptions` | `number[]` | `[20, 50, 100]` | Page size selector options |
-| `onPageChange` | `(page: number) => void` | — | Called when page changes |
-| `onPageSizeChange` | `(size: number) => void` | — | Called when page size changes |
-| `status` | `PlpStatus` | — | Content area state: loading, success, empty-filtered, empty-no-items, error |
-| `onRetry` | `() => void` | — | Retry handler for error state |
-| `emptyMessage` | `string` | — | Custom message for the empty-no-items state |
+## Dependencies from the rest of the library
 
-## Filter composition
+A full PLP page typically composes these non-PLP-specific pieces too:
 
-The template renders a fixed filter chrome (All Filters button, Clear all, sticky bar), and flows consumer-supplied `ReactNode[]` slots into that chrome. The actual drawer is not part of the template — consumers render `PlpFilterDrawer` as a sibling and wire `onOpenDrawer` to flip a local `open` state.
+- [`FilterToolbar`](../../organisms/filter-toolbar/filter-toolbar.tsx) — search + filters + sort + actions slot + sticky chrome
+- [`FilterDrawer`](../../molecules/filter-drawer/filter-drawer.tsx), [`FilterSection`](../../molecules/filter-section/filter-section.tsx), and preset molecules — composed inside the drawer for the full filter list
+- [`FilterButton`](../../atoms/filter-button/filter-button.tsx) — quick-filter chips in the toolbar row
+- [`Pagination`](../../molecules/pagination/pagination.tsx) + [`Select`](../../molecules/select/select.tsx) — pagination control
+- [`ToggleGroup`](../../atoms/toggle-group/toggle-group.tsx) — grid/list view toggle, rendered in the toolbar's `actions` slot
+- [`AppShell`](../../organisms/app-shell/app-shell.tsx) — wraps everything
 
-Typical wiring:
+## Assembly reference
 
-1. A local controller (see `useFilterController` in the stories) owns applied filter state, drawer draft buffer, and a drawer-open flag.
-2. Quick filter buttons are composed via `PlpQuickFilter`, each wrapping a preset control (`RangeSliderFilter`, `MultiSelectChipsFilter`, etc.) inside a render-prop child that exposes the popover's draft value.
-3. The consumer derives `toolbarFilters` and `stickyFilters` from its own pinned-vs-engaged classification.
-4. The drawer is rendered as a sibling to `PlpTemplate`, with `PlpFilterSection` wrappers around each preset control written directly against the controller's draft state.
-5. Chip summaries for active filter buttons are formatted by the consumer (the library no longer ships a chip formatter).
+The canonical assembly pattern is in [`plp.stories.tsx`](./plp.stories.tsx). That file is the source of truth for:
+
+- How to wire filter state via a consumer-owned `useFilterController` hook
+- How to compose filter buttons for both the toolbar row and the drawer body
+- How to route pinned vs. engaged filters between the main toolbar and the sticky chrome
+- How to wire the debounced preview-count loop into the drawer
+- How to branch on status for loading / empty-filtered / empty-no-items / error / content states
+- Where to insert banners / promos between kit pieces
+
+Consumers should read this file, copy the pattern, and adapt it. Do not try to encapsulate the assembly behind a wrapper component — the extensibility points (banner positioning, status branching, view toggle rendering) are the point.
 
 ## Usage guidelines
 
-**When to use:** Any product listing page that shows a grid or list of items with filtering, sorting, and pagination. Must be rendered inside an AppShell.
+**When to use:** Any product listing page. The kit covers grid + list views, filtering, sorting, search, pagination, and standard states.
 
-**When NOT to use:** Pages that aren't product listings (dashboards, settings, auth flows), or pages that need a completely custom layout.
-
-### List view
-
-List view is a density-oriented alternative to grid for categories that benefit from parameter-by-parameter comparison (diamonds is the canonical case). Opt in by passing `listViewAvailable`, `listHeader`, and `listRows`. The grid/list toggle appears in the toolbar when list view is available and the viewport is ≥ 1024px. Below the tablet breakpoint the template silently falls back to grid while preserving the consumer's `viewMode` intent.
+**When NOT to use:** Pages that aren't product listings (dashboards, settings, auth flows). Pages that need a completely custom layout.
 
 ## Best practices
 
-**Do:** Compose filter buttons once and route them to the right slot based on your own pinned/engaged rules. Keep the routing in the consumer, not the template.
+**Do:** Copy the assembly pattern from the story file and adapt to your data shape. Keep filter state in a consumer-owned controller hook.
 
-**Do:** Format chip summaries close to the filter definition so the display text tracks the value shape.
+**Do:** Use the library's filter subsystem (`FilterToolbar`, `FilterDrawer`, `FilterSection`, preset molecules) — don't re-implement a filter UI.
 
-**Do:** Wire `onDraftFilterStateChange`-style behaviour at the drawer level — observe the controller's `draft` and fetch a debounced preview count from your backend, then feed it into `PlpFilterDrawer.resultsCount` / `isCountLoading`.
+**Do:** Compose banners, promos, and recommendations between kit pieces as plain React children. The library's grid and list containers don't reach above themselves; insertion points are yours to decide.
 
-**Don't:** Re-introduce a library-owned `FilterDefinition` schema. The point of this version is that each preset stands alone and the consumer wires it.
-
-## Related components
-
-- [PlpFilterDrawer](./filters/plp-filter-drawer.tsx) — the Sheet container consumers render as a sibling
-- [PlpFilterSection](./filters/plp-filter-section.tsx) — heading + separator wrapper for entries inside the drawer
-- [PlpQuickFilter](./toolbar/plp-quick-filter.tsx) — toolbar-row filter button with per-popover draft state
-- Presets: [BooleanChipFilter](./filters/presets/boolean-chip.tsx), [SingleSelectChipsFilter](./filters/presets/single-select-chips.tsx), [MultiSelectChipsFilter](./filters/presets/multi-select-chips.tsx), [SingleSelectDropdownFilter](./filters/presets/single-select-dropdown.tsx), [RangeSliderFilter](./filters/presets/range-slider.tsx), [MultiAxisRangeFilter](./filters/presets/multi-axis-range.tsx), [AsyncComboboxFilter](./filters/presets/async-combobox.tsx)
+**Don't:** Re-introduce a unified PLP template. The kit is the deliberate surface.
 
 ## Quality checklist
 
-- [x] Accessibility: keyboard navigable, focus trapping in drawer/popovers, aria-live for results count, semantic landmarks
-- [x] Responsive: 2/3/4 column grid, mobile toolbar condensed to All Filters + Sort
-- [x] Tokens only: no hardcoded visual values
+- [x] Accessibility: heading, aria-live on counts, semantic landmarks in assembly reference
+- [x] Responsive: 2/3/4 col grid; list falls back to grid below 1024px at the consumer's discretion
+- [x] Tokens only: no hardcoded visual values in kit pieces
