@@ -26,19 +26,17 @@ import {
   PlpGridItemPrimaryAction,
 } from "../grid/plp-grid-item";
 import {
-  PlpListCell,
-  PlpListHeaderCell,
+  PlpListBodyCell,
+  PlpListBodyRow,
   PlpListHeaderRow,
-  PlpListRow,
   PlpListRowActions,
-  PlpListRowCheckbox,
+  PlpListRowCert,
   PlpListRowDelivery,
   PlpListRowMedia,
-  PlpListRowName,
   PlpListRowPrice,
-  PlpListRowPricePerCarat,
   PlpListRowReturnable,
 } from "../list/plp-list-row";
+import { TableHead } from "../../../organisms/table/table";
 import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
 import { SAMPLE_360_VIDEO_URL } from "./sort-options";
 import type { DiamondItem } from "./diamond-items";
@@ -121,26 +119,31 @@ export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
 export function DiamondPlpListHeader() {
   return (
     <PlpListHeaderRow>
-      <PlpListHeaderCell width={44}>
+      <TableHead style={{ width: 44 }}>
         <span className="sr-only">Select</span>
-      </PlpListHeaderCell>
-      <PlpListHeaderCell width={72}>
+      </TableHead>
+      <TableHead style={{ width: 73 }}>
         <span className="sr-only">Thumbnail</span>
-      </PlpListHeaderCell>
-      <PlpListHeaderCell>Name</PlpListHeaderCell>
-      <PlpListHeaderCell align="right">Carat</PlpListHeaderCell>
-      <PlpListHeaderCell>Shape</PlpListHeaderCell>
-      <PlpListHeaderCell align="center">Color</PlpListHeaderCell>
-      <PlpListHeaderCell align="center">Clarity</PlpListHeaderCell>
-      <PlpListHeaderCell>Origin</PlpListHeaderCell>
-      <PlpListHeaderCell>Certificate</PlpListHeaderCell>
-      <PlpListHeaderCell>Delivery</PlpListHeaderCell>
-      <PlpListHeaderCell>Returns</PlpListHeaderCell>
-      <PlpListHeaderCell>Price</PlpListHeaderCell>
-      <PlpListHeaderCell>Price/ct</PlpListHeaderCell>
-      <PlpListHeaderCell align="right">
+      </TableHead>
+      <TableHead>Shape</TableHead>
+      <TableHead>Ct</TableHead>
+      <TableHead>Col</TableHead>
+      <TableHead>Cla</TableHead>
+      <TableHead>Cut</TableHead>
+      <TableHead>Pol</TableHead>
+      <TableHead>Sym</TableHead>
+      <TableHead>Fluor</TableHead>
+      <TableHead>Table</TableHead>
+      <TableHead>Depth</TableHead>
+      <TableHead>Ratio</TableHead>
+      <TableHead>Measurements</TableHead>
+      <TableHead>Cert</TableHead>
+      <TableHead>Price</TableHead>
+      <TableHead>Ret</TableHead>
+      <TableHead>Delivery</TableHead>
+      <TableHead>
         <span className="sr-only">Actions</span>
-      </PlpListHeaderCell>
+      </TableHead>
     </PlpListHeaderRow>
   );
 }
@@ -155,54 +158,46 @@ export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
       : undefined;
 
   return (
-    <PlpListRow selected={selected}>
-      <PlpListCell>
-        <PlpListRowCheckbox checked={selected} onChange={setSelected} />
-      </PlpListCell>
-      <PlpListCell>
+    <PlpListBodyRow selected={selected} onSelectedChange={setSelected}>
+      <PlpListBodyCell>
         <PlpListRowMedia image={item.image} imageAlt={item.name} />
-      </PlpListCell>
-      <PlpListCell>
-        <div className="flex flex-col gap-0.5">
-          <PlpListRowName>{item.name}</PlpListRowName>
-          <Typography as="div" variant="caption" className="text-muted-foreground">
-            {item.stockId}
-          </Typography>
-        </div>
-      </PlpListCell>
-      <PlpListCell align="right">{item.carat.toFixed(2)}</PlpListCell>
-      <PlpListCell>{item.shape}</PlpListCell>
-      <PlpListCell align="center">{item.color}</PlpListCell>
-      <PlpListCell align="center">{item.clarity}</PlpListCell>
-      <PlpListCell>{item.origin}</PlpListCell>
-      <PlpListCell>
-        <span className="font-mono text-xs">
-          {item.certLab} {item.certNumber}
-        </span>
-      </PlpListCell>
-      <PlpListCell>
+      </PlpListBodyCell>
+      <PlpListBodyCell>{item.shape}</PlpListBodyCell>
+      <PlpListBodyCell>{item.carat.toFixed(2)}</PlpListBodyCell>
+      <PlpListBodyCell>{item.color}</PlpListBodyCell>
+      <PlpListBodyCell>{item.clarity}</PlpListBodyCell>
+      <PlpListBodyCell>{item.cut}</PlpListBodyCell>
+      <PlpListBodyCell>{item.polish}</PlpListBodyCell>
+      <PlpListBodyCell>{item.symmetry}</PlpListBodyCell>
+      <PlpListBodyCell>{item.fluorescence}</PlpListBodyCell>
+      <PlpListBodyCell>{item.tablePct}</PlpListBodyCell>
+      <PlpListBodyCell>{item.depthPct.toFixed(1)}</PlpListBodyCell>
+      <PlpListBodyCell>{item.ratio.toFixed(2)}</PlpListBodyCell>
+      <PlpListBodyCell>{item.measurements}</PlpListBodyCell>
+      <PlpListBodyCell>
+        <PlpListRowCert lab={item.certLab} number={item.certNumber} />
+      </PlpListBodyCell>
+      <PlpListBodyCell>
+        <PlpListRowPrice
+          amount={item.price}
+          currency="USD"
+          perCarat={{ amount: item.pricePerCarat, currency: "USD" }}
+          alternateCurrency={alternateCurrency}
+        />
+      </PlpListBodyCell>
+      <PlpListBodyCell>
+        <PlpListRowReturnable
+          variant={item.isReturnable ? "returnable" : "non-returnable"}
+        />
+      </PlpListBodyCell>
+      <PlpListBodyCell>
         <PlpListRowDelivery
           variant={item.isExpress ? "express" : "regular"}
           date="Nov 18 – 23"
           shipsFrom={item.origin}
         />
-      </PlpListCell>
-      <PlpListCell>
-        <PlpListRowReturnable
-          variant={item.isReturnable ? "returnable" : "non-returnable"}
-        />
-      </PlpListCell>
-      <PlpListCell>
-        <PlpListRowPrice
-          amount={item.price}
-          currency="USD"
-          alternateCurrency={alternateCurrency}
-        />
-      </PlpListCell>
-      <PlpListCell>
-        <PlpListRowPricePerCarat amount={item.pricePerCarat} currency="USD" />
-      </PlpListCell>
-      <PlpListCell align="right">
+      </PlpListBodyCell>
+      <PlpListBodyCell>
         <PlpListRowActions>
           <Button size="sm" onClick={noop}>
             Add to cart
@@ -234,7 +229,7 @@ export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
             </DropdownMenuContent>
           </DropdownMenu>
         </PlpListRowActions>
-      </PlpListCell>
-    </PlpListRow>
+      </PlpListBodyCell>
+    </PlpListBodyRow>
   );
 }
