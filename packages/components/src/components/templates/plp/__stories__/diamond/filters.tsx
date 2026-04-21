@@ -1,55 +1,34 @@
-// ── DiamondInteractive ────────────────────────────────────────────────
+// ── Diamond filter UI ─────────────────────────────────────────────────
+//
+// The toolbar-button factory and drawer body for the Diamond category.
+// Reads from `DIAMOND_FILTER_SCHEMA`, renders filter primitives, and
+// wires applied/draft state through a shared filter controller.
 
-import { useMemo, useState, type ReactNode } from "react";
-import { fn } from "@storybook/test";
-import { IconLayoutGrid, IconList } from "@tabler/icons-react";
-import { FilterButton } from "../../../atoms/filter-button/filter-button";
-import { ToggleGroup, ToggleGroupItem } from "../../../atoms/toggle-group/toggle-group";
-import { AsyncComboboxFilter } from "../../../molecules/async-combobox-filter/async-combobox-filter";
-import type { AsyncComboboxOption } from "../../../molecules/async-combobox-filter/async-combobox-filter";
-import { RangeFilter } from "../../../molecules/range-filter/range-filter";
+import { useMemo, type ReactNode } from "react";
+import { FilterButton } from "../../../../atoms/filter-button/filter-button";
+import { ToggleGroup, ToggleGroupItem } from "../../../../atoms/toggle-group/toggle-group";
 import {
-  FilterSection,
-} from "../../../organisms/filter-toolbar/filter-toolbar";
-import { PlpGridContainer } from "../plp-grid-container";
-import { PlpListContainer } from "../plp-list-container";
-import { useIsTabletUp } from "../../../../hooks/use-is-tablet-up";
-import type { PlpViewMode } from "../plp-types";
+  AsyncComboboxFilter,
+  type AsyncComboboxOption,
+} from "../../../../molecules/async-combobox-filter/async-combobox-filter";
+import { RangeFilter } from "../../../../molecules/range-filter/range-filter";
+import { FilterSection } from "../../../../organisms/filter-toolbar/filter-toolbar";
+import { mockApi } from "../shared/api";
 import {
-  DIAMOND_CARAT_CONFIG,
-  DIAMOND_CLARITY_OPTIONS,
-  DIAMOND_COLOR_OPTIONS,
-  DIAMOND_PRICE_CONFIG,
-  DIAMOND_SHAPE_OPTIONS,
-  DIAMOND_SIZE_AXES,
-  DIAMOND_SUPPLIER_SEARCH,
-  DiamondPlpGridItem,
-  DiamondPlpListRow,
-  generateDiamondItems,
-  type DiamondFilterState,
-} from "../mocks/diamond";
-import {
-  useFilterController,
-  usePreviewCount,
-  useSimulatedCommitStatus,
-  routeFilterSlots,
-} from "../__stories__/shared/controller";
-import { formatMultiSelectChip, formatRangeChip, formatMultiAxisChip } from "../__stories__/shared/formatters";
-import {
-  AssemblyShell,
-  InlinePagination,
-  renderPlpEmptyState,
-  type InteractiveShellProps,
-} from "../__stories__/shared/assembly";
+  formatMultiAxisChip,
+  formatMultiSelectChip,
+  formatRangeChip,
+} from "../shared/formatters";
+import type { useFilterController } from "../shared/controller";
+import { DIAMOND_FILTER_SCHEMA, type DiamondFilterState } from "./api";
 
-// ── Diamond filter buttons ────────────────────────────────────────────
+export const DIAMOND_PINNED_IDS = ["shape", "color", "price"] as const;
 
-const DIAMOND_PINNED_IDS = ["shape", "color", "price"] as const;
-
-function useDiamondFilterButtons(
+export function useDiamondFilterButtons(
   ctrl: ReturnType<typeof useFilterController<DiamondFilterState>>
 ): Record<string, ReactNode> {
   const { applied, setAppliedFor } = ctrl;
+  const { shape, color, clarity, price, carat, size } = DIAMOND_FILTER_SCHEMA;
 
   return useMemo<Record<string, ReactNode>>(
     () => ({
@@ -59,7 +38,7 @@ function useDiamondFilterButtons(
           label="Shape"
           chipSummary={formatMultiSelectChip(
             (applied.shape ?? []).map((v) =>
-              (DIAMOND_SHAPE_OPTIONS.find((o) => o.value === v)?.label ?? v)
+              shape.find((o) => o.value === v)?.label ?? v
             )
           )}
           isActive={(applied.shape ?? []).length > 0}
@@ -78,7 +57,7 @@ function useDiamondFilterButtons(
                 set(next.length > 0 ? next : undefined)
               }
             >
-              {DIAMOND_SHAPE_OPTIONS.map((o) => (
+              {shape.map((o) => (
                 <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
                   {o.label}
                 </ToggleGroupItem>
@@ -108,7 +87,7 @@ function useDiamondFilterButtons(
                 set(next.length > 0 ? next : undefined)
               }
             >
-              {DIAMOND_COLOR_OPTIONS.map((o) => (
+              {color.map((o) => (
                 <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
                   {o.label}
                 </ToggleGroupItem>
@@ -138,7 +117,7 @@ function useDiamondFilterButtons(
                 set(next.length > 0 ? next : undefined)
               }
             >
-              {DIAMOND_CLARITY_OPTIONS.map((o) => (
+              {clarity.map((o) => (
                 <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
                   {o.label}
                 </ToggleGroupItem>
@@ -151,56 +130,42 @@ function useDiamondFilterButtons(
         <FilterButton<Record<string, { min: number; max: number }>>
           key="price"
           label="Price"
-          chipSummary={formatRangeChip(
-            applied.price,
-            "price",
-            DIAMOND_PRICE_CONFIG.unit
-          )}
+          chipSummary={formatRangeChip(applied.price, "price", price.unit)}
           isActive={!!applied.price}
           initialValue={applied.price}
           onApply={(v) => setAppliedFor("price", v)}
           onClear={() => setAppliedFor("price", undefined)}
           onDismiss={() => setAppliedFor("price", undefined)}
         >
-          {(v, set) => (
-            <RangeFilter value={v} onChange={set} axes={[DIAMOND_PRICE_CONFIG]} />
-          )}
+          {(v, set) => <RangeFilter value={v} onChange={set} axes={[price]} />}
         </FilterButton>
       ),
       carat: (
         <FilterButton<Record<string, { min: number; max: number }>>
           key="carat"
           label="Carat"
-          chipSummary={formatRangeChip(
-            applied.carat,
-            "carat",
-            DIAMOND_CARAT_CONFIG.unit
-          )}
+          chipSummary={formatRangeChip(applied.carat, "carat", carat.unit)}
           isActive={!!applied.carat}
           initialValue={applied.carat}
           onApply={(v) => setAppliedFor("carat", v)}
           onClear={() => setAppliedFor("carat", undefined)}
           onDismiss={() => setAppliedFor("carat", undefined)}
         >
-          {(v, set) => (
-            <RangeFilter value={v} onChange={set} axes={[DIAMOND_CARAT_CONFIG]} />
-          )}
+          {(v, set) => <RangeFilter value={v} onChange={set} axes={[carat]} />}
         </FilterButton>
       ),
       size: (
         <FilterButton<Record<string, { min: number; max: number }>>
           key="size"
           label="Size (mm)"
-          chipSummary={formatMultiAxisChip(applied.size, DIAMOND_SIZE_AXES)}
+          chipSummary={formatMultiAxisChip(applied.size, size)}
           isActive={!!applied.size}
           initialValue={applied.size}
           onApply={(v) => setAppliedFor("size", v)}
           onClear={() => setAppliedFor("size", undefined)}
           onDismiss={() => setAppliedFor("size", undefined)}
         >
-          {(v, set) => (
-            <RangeFilter value={v} onChange={set} axes={DIAMOND_SIZE_AXES} />
-          )}
+          {(v, set) => <RangeFilter value={v} onChange={set} axes={size} />}
         </FilterButton>
       ),
       supplier: (
@@ -220,23 +185,24 @@ function useDiamondFilterButtons(
             <AsyncComboboxFilter
               value={v}
               onChange={set}
-              searchFn={DIAMOND_SUPPLIER_SEARCH}
+              searchFn={mockApi.searchSuppliers}
               searchPlaceholder="Search suppliers..."
             />
           )}
         </FilterButton>
       ),
     }),
-    [applied, setAppliedFor]
+    [applied, setAppliedFor, shape, color, clarity, price, carat, size]
   );
 }
 
-function DiamondDrawerBody({
+export function DiamondDrawerBody({
   ctrl,
 }: {
   ctrl: ReturnType<typeof useFilterController<DiamondFilterState>>;
 }) {
   const { draft, setDraftFor } = ctrl;
+  const { shape, color, clarity, price, carat, size } = DIAMOND_FILTER_SCHEMA;
   return (
     <>
       <FilterSection label="Shape" separator={false}>
@@ -249,7 +215,7 @@ function DiamondDrawerBody({
             setDraftFor("shape", next.length > 0 ? next : undefined)
           }
         >
-          {DIAMOND_SHAPE_OPTIONS.map((o) => (
+          {shape.map((o) => (
             <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
               {o.label}
             </ToggleGroupItem>
@@ -266,7 +232,7 @@ function DiamondDrawerBody({
             setDraftFor("color", next.length > 0 ? next : undefined)
           }
         >
-          {DIAMOND_COLOR_OPTIONS.map((o) => (
+          {color.map((o) => (
             <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
               {o.label}
             </ToggleGroupItem>
@@ -283,7 +249,7 @@ function DiamondDrawerBody({
             setDraftFor("clarity", next.length > 0 ? next : undefined)
           }
         >
-          {DIAMOND_CLARITY_OPTIONS.map((o) => (
+          {clarity.map((o) => (
             <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
               {o.label}
             </ToggleGroupItem>
@@ -294,172 +260,31 @@ function DiamondDrawerBody({
         <RangeFilter
           value={draft.price}
           onChange={(v) => setDraftFor("price", v)}
-          axes={[DIAMOND_PRICE_CONFIG]}
+          axes={[price]}
         />
       </FilterSection>
       <FilterSection label="Carat">
         <RangeFilter
           value={draft.carat}
           onChange={(v) => setDraftFor("carat", v)}
-          axes={[DIAMOND_CARAT_CONFIG]}
+          axes={[carat]}
         />
       </FilterSection>
       <FilterSection label="Size (mm)">
         <RangeFilter
           value={draft.size}
           onChange={(v) => setDraftFor("size", v)}
-          axes={DIAMOND_SIZE_AXES}
+          axes={size}
         />
       </FilterSection>
       <FilterSection label="Supplier">
         <AsyncComboboxFilter
           value={draft.supplier}
           onChange={(v) => setDraftFor("supplier", v)}
-          searchFn={DIAMOND_SUPPLIER_SEARCH}
+          searchFn={mockApi.searchSuppliers}
           searchPlaceholder="Search suppliers..."
         />
       </FilterSection>
     </>
-  );
-}
-
-// ── Card/row builder helpers ──────────────────────────────────────────
-
-export function buildDiamondCards(count: number): ReactNode[] {
-  return generateDiamondItems(count).map((item) => (
-    <DiamondPlpGridItem key={item.id} item={item} />
-  ));
-}
-
-export function buildDiamondRows(count: number): ReactNode[] {
-  return generateDiamondItems(count).map((item) => (
-    <DiamondPlpListRow key={item.id} item={item} onClick={fn()} />
-  ));
-}
-
-export function DiamondInteractive({
-  initialFilterState = {},
-  breadcrumbs,
-  title,
-  resultsCount,
-  totalItems,
-  sortOptions,
-  searchPlaceholder,
-  onSearchSubmit,
-  listHeader,
-  listRows,
-  listViewAvailable = false,
-  gridItems,
-  onRetry,
-  emptyMessage,
-  emptyFilterSuggestions,
-  initialSortValue = "price-asc",
-  initialPage = 1,
-  initialPageSize = 20,
-  initialViewMode = "grid",
-  baselineStatus = "success",
-  banner,
-}: InteractiveShellProps & {
-  initialFilterState?: Partial<DiamondFilterState>;
-}) {
-  const ctrl = useFilterController<DiamondFilterState>(initialFilterState);
-  const buttons = useDiamondFilterButtons(ctrl);
-  const { toolbarFilters, stickyFilters } = routeFilterSlots(
-    buttons,
-    DIAMOND_PINNED_IDS,
-    ctrl.activeIds
-  );
-  const preview = usePreviewCount(ctrl.draft);
-
-  const [sortValue, setSortValue] = useState(initialSortValue);
-  const [page, setPage] = useState(initialPage);
-  const [pageSize, setPageSize] = useState(initialPageSize);
-  const [view, setView] = useState<PlpViewMode>(initialViewMode);
-  const status = useSimulatedCommitStatus(ctrl.applied, baselineStatus);
-
-  const isTabletUp = useIsTabletUp();
-  const effectiveView: PlpViewMode =
-    listViewAvailable && isTabletUp && view === "list" ? "list" : "grid";
-
-  return (
-    <AssemblyShell
-      breadcrumbs={breadcrumbs}
-      title={title}
-      resultsCount={resultsCount}
-      banner={banner}
-      toolbarFilters={toolbarFilters}
-      stickyFilters={stickyFilters}
-      activeFilterCount={ctrl.activeCount}
-      hasActiveFilters={ctrl.activeCount > 0}
-      onClearAll={ctrl.clearAll}
-      onSearchSubmit={onSearchSubmit}
-      searchPlaceholder={searchPlaceholder}
-      sortOptions={sortOptions}
-      sortValue={sortValue}
-      onSortChange={setSortValue}
-      actions={
-        listViewAvailable ? (
-          <div className="hidden lg:flex">
-            <ToggleGroup
-              variant="outline"
-              type="single"
-              value={view}
-              onValueChange={(v) => v && setView(v as PlpViewMode)}
-            >
-              <ToggleGroupItem value="grid" aria-label="Grid view">
-                <IconLayoutGrid className="h-4 w-4" />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="list" aria-label="List view">
-                <IconList className="h-4 w-4" />
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-        ) : undefined
-      }
-      pagination={
-        status === "success" && totalItems > 0 ? (
-          <InlinePagination
-            page={page}
-            pageSize={pageSize}
-            totalItems={totalItems}
-            onPageChange={setPage}
-            onPageSizeChange={setPageSize}
-          />
-        ) : undefined
-      }
-      drawer={{
-        content: <DiamondDrawerBody ctrl={ctrl} />,
-        onOpen: ctrl.openDrawer,
-        onApply: ctrl.applyDraft,
-        onClearDraft: ctrl.clearDraft,
-        hasActiveDraft: ctrl.hasActiveDraft,
-        resultsCount: preview.count,
-        isCountLoading: preview.loading,
-      }}
-    >
-      {status === "empty-filtered" ||
-      status === "empty-no-items" ||
-      status === "error" ? (
-        renderPlpEmptyState({
-          status,
-          onClearAll: ctrl.clearAll,
-          onRetry,
-          emptyMessage,
-          emptyFilterSuggestions,
-        })
-      ) : effectiveView === "list" ? (
-        <PlpListContainer
-          header={listHeader}
-          loading={status === "loading"}
-          skeletonCount={pageSize}
-        >
-          {listRows}
-        </PlpListContainer>
-      ) : (
-        <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
-          {gridItems}
-        </PlpGridContainer>
-      )}
-    </AssemblyShell>
   );
 }

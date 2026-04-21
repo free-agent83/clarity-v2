@@ -1,3 +1,8 @@
+// ── Diamond markup ────────────────────────────────────────────────────
+//
+// Card, list header, and list row renderers. Pure view layer — take a
+// DiamondItem, output JSX. No state management, no data fetching.
+
 import { useState } from "react";
 import { fn } from "@storybook/test";
 import {
@@ -6,15 +11,15 @@ import {
   IconPhoto,
   IconShare,
 } from "@tabler/icons-react";
-import { Badge } from "../../../atoms/badge/badge";
-import { Button } from "../../../atoms/button/button";
+import { Badge } from "../../../../atoms/badge/badge";
+import { Button } from "../../../../atoms/button/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../../molecules/dropdown-menu/dropdown-menu";
-import { Typography } from "../../../atoms/typography/typography";
+} from "../../../../molecules/dropdown-menu/dropdown-menu";
+import { Typography } from "../../../../atoms/typography/typography";
 import {
   PlpGridItem,
   PlpGridItemMedia,
@@ -25,7 +30,7 @@ import {
   PlpGridItemReturnable,
   PlpGridItemPrice,
   PlpGridItemPrimaryAction,
-} from "../grid/plp-grid-item";
+} from "../../grid/plp-grid-item";
 import {
   PlpListCell,
   PlpListHeaderCell,
@@ -39,133 +44,15 @@ import {
   PlpListRowPrice,
   PlpListRowPricePerCarat,
   PlpListRowReturnable,
-} from "../list/plp-list-row";
-import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
-import type { AsyncComboboxOption } from "../../../molecules/async-combobox-filter/async-combobox-filter";
-import type { RangeAxis } from "../../../molecules/range-filter/range-filter";
-import {
-  SAMPLE_360_VIDEO_URL,
-  buildMockHistogram,
-} from "../__stories__/shared/fixtures";
-import { mockApi } from "../__stories__/shared/api";
-import diamondImg from "../__stories__/shared/images/diamond.png";
+} from "../../list/plp-list-row";
+import { useStorybookAppUser } from "../../../../../../.storybook/app-user-context";
+import { SAMPLE_360_VIDEO_URL } from "../shared/fixtures";
+import type { DiamondItem } from "./api";
 
 const onAddToShortlist = fn();
 const onShare = fn();
 const onViewMedia = fn();
 const onAddToCart = fn();
-
-export interface DiamondItem {
-  id: string;
-  name: string;
-  image: string;
-  stockId: string;
-  carat: number;
-  color: string;
-  clarity: string;
-  shape: string;
-  origin: string;
-  certLab: string;
-  certNumber: string;
-  price: number;
-  pricePerCarat: number;
-  isExpress: boolean;
-  isReturnable: boolean;
-}
-
-/**
- * Filter-state shape for the diamond mock PLP.
- */
-export interface DiamondFilterState {
-  shape?: string[];
-  color?: string[];
-  clarity?: string[];
-  price?: Record<string, { min: number; max: number }>;
-  carat?: Record<string, { min: number; max: number }>;
-  size?: Record<string, { min: number; max: number }>;
-  supplier?: AsyncComboboxOption[];
-}
-
-// -- Filter configuration ---------------------------------------------------
-
-export const DIAMOND_SHAPE_OPTIONS: { value: string; label: string }[] = [
-  { value: "round", label: "Round" },
-  { value: "oval", label: "Oval" },
-  { value: "cushion", label: "Cushion" },
-  { value: "princess", label: "Princess" },
-];
-
-export const DIAMOND_COLOR_OPTIONS: { value: string; label: string }[] = [
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-].map((c) => ({ value: c, label: c }));
-
-export const DIAMOND_CLARITY_OPTIONS: { value: string; label: string }[] = [
-  "IF",
-  "VVS1",
-  "VVS2",
-  "VS1",
-  "VS2",
-  "SI1",
-].map((c) => ({ value: c, label: c }));
-
-export const DIAMOND_PRICE_CONFIG: RangeAxis = {
-  id: "price",
-  min: 0,
-  max: 10000,
-  step: 10,
-  unit: "$",
-  histogram: buildMockHistogram(0, 10000, 40, 2500),
-};
-
-export const DIAMOND_CARAT_CONFIG: RangeAxis = {
-  id: "carat",
-  min: 0,
-  max: 10,
-  step: 0.1,
-  unit: "ct",
-  histogram: buildMockHistogram(0, 10, 40, 2),
-};
-
-export const DIAMOND_SIZE_AXES: RangeAxis[] = [
-  { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
-  { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
-  { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
-];
-
-export const DIAMOND_SUPPLIER_SEARCH = mockApi.searchSuppliers;
-
-// -- Item generation + cards/rows -------------------------------------------
-
-export function generateDiamondItems(count: number): DiamondItem[] {
-  const shapes = ["Round", "Oval", "Cushion", "Princess", "Pear", "Emerald"];
-  const colors = ["D", "E", "F", "G", "H", "I"];
-  const clarities = ["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1"];
-  const origins = ["Botswana", "Russia", "Canada", "Australia", "South Africa"];
-  const labs = ["GIA", "IGI", "AGS"];
-
-  return Array.from({ length: count }, (_, i) => ({
-    id: `diamond-${i}`,
-    name: `${(0.5 + i * 0.1).toFixed(2)}ct ${shapes[i % shapes.length]} Diamond`,
-    image: diamondImg,
-    stockId: `DM-${10000 + i}`,
-    carat: Number((0.5 + i * 0.1).toFixed(2)),
-    color: colors[i % colors.length],
-    clarity: clarities[i % clarities.length],
-    shape: shapes[i % shapes.length],
-    origin: origins[i % origins.length],
-    certLab: labs[i % labs.length],
-    certNumber: `${287329000 + i}`,
-    price: 2500 + i * 350,
-    pricePerCarat: 5000 + i * 100,
-    isExpress: i % 5 === 0,
-    isReturnable: i % 3 !== 0,
-  }));
-}
 
 export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
   const userContext = useStorybookAppUser();

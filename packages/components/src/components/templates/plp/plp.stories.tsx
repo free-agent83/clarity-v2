@@ -12,9 +12,7 @@ import {
   GemstonePlpListHeader,
   GEMSTONE_PRESELECTED_SUPPLIERS,
 } from "./mocks/gemstone";
-import {
-  DiamondPlpListHeader,
-} from "./mocks/diamond";
+import { DiamondPlpListHeader } from "./__stories__/diamond/renderers";
 import {
   GemstoneInteractive,
   buildGemstoneCards,
@@ -24,7 +22,7 @@ import {
   DiamondInteractive,
   buildDiamondCards,
   buildDiamondRows,
-} from "./plp-stories/diamond-interactive";
+} from "./__stories__/diamond/interactive";
 import {
   JewelryInteractive,
   JewelryPlpListHeader,
