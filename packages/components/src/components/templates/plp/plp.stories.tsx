@@ -204,7 +204,7 @@ function useSimulatedCommitStatus(applied: object, baseline: PlpStatus) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally keyed on `applied` only; baseline changing is a story-setup event, not a commit
   }, [applied]);
 
   return effective;

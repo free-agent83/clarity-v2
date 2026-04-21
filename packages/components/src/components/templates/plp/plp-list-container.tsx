@@ -57,8 +57,11 @@ export function PlpListContainer({
 }
 
 function ListSkeletonRow() {
+  // colSpan is deliberately unbounded — the container has no knowledge of
+  // the consumer's real column count, and the skeleton → real transition
+  // is brief enough that a single full-width cell reads fine.
   return (
-    <TableRow>
+    <TableRow aria-hidden="true">
       <TableCell colSpan={999} className="py-4">
         <Skeleton className="h-6 w-full" />
       </TableCell>

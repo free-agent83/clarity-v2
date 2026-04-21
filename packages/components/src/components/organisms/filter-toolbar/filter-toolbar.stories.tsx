@@ -25,8 +25,9 @@ function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }
     hasActiveFilters ? ["blue", "green"] : undefined
   );
 
-  // Placeholder filter button — Task 9 rewrites FilterButton with the
-  // generic render-prop API that the real story will demonstrate.
+  // A raw button stands in here to keep this story focused on the toolbar
+  // itself. See templates/plp/plp.stories.tsx for the full FilterButton +
+  // ChipSelectFilter wiring that a real consumer would use.
   const colorButton = (
     <button
       key="color"
