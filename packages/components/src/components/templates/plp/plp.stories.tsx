@@ -20,6 +20,12 @@ import {
   buildGemstoneCards,
   buildGemstoneRows,
 } from "./__stories__/gemstone/interactive";
+import { JewelryPlpListHeader } from "./__stories__/jewelry/renderers";
+import {
+  JewelryInteractive,
+  buildJewelryCards,
+  buildJewelryRows,
+} from "./__stories__/jewelry/interactive";
 
 /**
  * Pre-selected supplier set used by the WithActiveFilters story. Story
@@ -28,11 +34,11 @@ import {
 const GEMSTONE_PRESELECTED_SUPPLIERS = MOCK_SUPPLIERS.filter((s) =>
   ["sup-acme", "sup-globex", "sup-initech"].includes(s.value)
 );
-import {
-  JewelryInteractive,
-  JewelryPlpListHeader,
-  buildJewelryListRows,
-} from "./plp-stories/jewelry-interactive";
+
+const JEWELRY_SORT_OPTIONS = [
+  { value: "featured", label: "Featured" },
+  ...SORT_OPTIONS.slice(0, 2),
+];
 
 // ── Story meta ────────────────────────────────────────────────────────
 
@@ -78,9 +84,19 @@ export const Default: StoryObj<DefaultStoryArgs> = {
     if (category === "jewellery") {
       return (
         <JewelryInteractive
+          breadcrumbs={[
+            { label: "Jewelry", href: "#" },
+            { label: "Wedding rings" },
+          ]}
+          title="Wedding rings"
+          resultsCount={1234567}
+          totalItems={1234567}
+          sortOptions={JEWELRY_SORT_OPTIONS}
+          gridItems={buildJewelryCards(20)}
           listHeader={<JewelryPlpListHeader />}
-          listRows={buildJewelryListRows(20)}
+          listRows={buildJewelryRows(20)}
           listViewAvailable
+          onRetry={fn()}
         />
       );
     }
