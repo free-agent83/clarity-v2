@@ -85,6 +85,7 @@ function buildColorButton(
           type="multiple"
           variant="outline"
           spacing={2}
+          className="flex-wrap"
           value={draft ?? []}
           onValueChange={(next: string[]) =>
             setDraft(next.length > 0 ? next : undefined)
@@ -123,11 +124,42 @@ function buildPriceButton(
   );
 }
 
+function buildSimpleChipButton(
+  key: string,
+  label: string,
+  chipSummary: string
+): ReactNode {
+  return (
+    <FilterButton<string[]>
+      key={key}
+      label={label}
+      chipSummary={chipSummary}
+      isActive
+      initialValue={["placeholder"]}
+      popoverWidth={280}
+      onApply={noop}
+      onClear={noop}
+      onDismiss={noop}
+    >
+      {() => (
+        <div className="text-sm text-muted-foreground">
+          Illustrative only — this filter's popover body is elided.
+        </div>
+      )}
+    </FilterButton>
+  );
+}
+
 // ── Static drawer sections ────────────────────────────────────────────
 
 const colorDrawerSection: ReactNode = (
   <FilterSection label="Color" separator={false}>
-    <ToggleGroup type="multiple" variant="outline" spacing={2}>
+    <ToggleGroup
+      type="multiple"
+      variant="outline"
+      spacing={2}
+      className="flex-wrap"
+    >
       {COLOR_OPTIONS.map((o) => (
         <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
           {o.label}
@@ -293,6 +325,76 @@ export const StickyBarBehaviour: Story = {
           {/* Long scrollable wireframe so the sticky bar has distance to
               activate. Forty placeholder tiles, 4 columns, ~10 rows of
               content. */}
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+            {Array.from({ length: 40 }, (_, i) => (
+              <div
+                key={i}
+                className="flex aspect-square items-center justify-center rounded-lg border bg-muted/40 text-sm text-muted-foreground"
+              >
+                Item {i + 1}
+              </div>
+            ))}
+          </div>
+        </AppShellMain>
+      </AppShell>
+    );
+  },
+};
+
+/**
+ * Stress-test of the sticky bar with many active filters. Useful to
+ * eyeball the chip row's wrapping behaviour, the "+N more" overflow on
+ * narrow viewports, and the clear-all / active-count affordances when
+ * the chip set is dense. Same structure as `StickyBarBehaviour` — only
+ * the engaged-filters list differs.
+ */
+export const StickyBarManyFilters: Story = {
+  parameters: { layout: "fullscreen" },
+  render: () => {
+    const engagedButtons = [
+      buildColorButton(["blue", "green", "red"], "Blue, Green +1 more"),
+      buildPriceButton(
+        { price: { min: 500, max: 5000 } },
+        "$500–$5000"
+      ),
+      buildSimpleChipButton("shape", "Shape", "Round, Oval +2 more"),
+      buildSimpleChipButton("clarity", "Clarity", "VVS1, VVS2 +1 more"),
+      buildSimpleChipButton("carat", "Carat", "1.5–3.0ct"),
+      buildSimpleChipButton("origin", "Origin", "Botswana"),
+      buildSimpleChipButton("lab", "Lab", "GIA, IGI"),
+      buildSimpleChipButton("treatment", "Treatment", "None"),
+      buildSimpleChipButton("fluorescence", "Fluorescence", "None, Faint"),
+      buildSimpleChipButton("polish", "Polish", "Excellent"),
+    ];
+    return (
+      <AppShell>
+        <AppShellHeader onSearch={noop} />
+        <AppShellMain>
+          <FilterToolbar
+            filters={engagedButtons}
+            stickyFilters={engagedButtons}
+            activeFilterCount={engagedButtons.length}
+            hasActiveFilters
+            onClearAll={noop}
+            onSearchSubmit={noop}
+            searchPlaceholder="Search..."
+            sortOptions={SORT_OPTIONS}
+            sortValue="price-asc"
+            onSortChange={noop}
+            drawer={{
+              content: (
+                <>
+                  {colorDrawerSection}
+                  {priceDrawerSection}
+                </>
+              ),
+              onApply: noop,
+              onClearDraft: noop,
+              hasActiveDraft: true,
+              resultsCount: 342,
+            }}
+          />
+
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
             {Array.from({ length: 40 }, (_, i) => (
               <div

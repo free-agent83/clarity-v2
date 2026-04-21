@@ -39,6 +39,7 @@ export function StaticChipSelectFilter({
           type="multiple"
           variant="outline"
           spacing={2}
+          className="flex-wrap"
           value={draft ?? []}
           onValueChange={(next: string[]) =>
             setDraft(next.length > 0 ? next : undefined)
@@ -70,7 +71,12 @@ export function StaticChipSection({
 }) {
   return (
     <FilterSection label={label} separator={separator}>
-      <ToggleGroup type="multiple" variant="outline" spacing={2}>
+      <ToggleGroup
+        type="multiple"
+        variant="outline"
+        spacing={2}
+        className="flex-wrap"
+      >
         {options.map((o) => (
           <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
             {o.label}
