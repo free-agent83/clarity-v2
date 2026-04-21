@@ -1640,220 +1640,42 @@ function JewelryInteractive() {
   );
 }
 
-// ── Custom filter inside a FilterButton ───────────────────────────────
-//
-// Demonstrates that any React node can sit inside a FilterButton's
-// children — not just the shipped presets. Here, a star-rating control
-// is composed inline.
-
-interface CustomRatingFilterState {
-  "quality-rating"?: string;
-  color?: string[];
-  clarity?: string[];
-}
-
-function CustomRatingInteractive() {
-  const ctrl = useFilterController<CustomRatingFilterState>({});
-  const { applied, setAppliedFor, draft, setDraftFor } = ctrl;
-
-  const colorButton = (
-    <FilterButton<string[]>
-      key="color"
-      label="Color"
-      chipSummary={formatMultiSelectChip(
-        (applied.color ?? []).map((v) =>
-          labelForValue(GEMSTONE_COLOR_OPTIONS, v)
-        )
-      )}
-      isActive={(applied.color ?? []).length > 0}
-      initialValue={applied.color}
-      popoverWidth={320}
-      onApply={(v) => setAppliedFor("color", v)}
-      onClear={() => setAppliedFor("color", undefined)}
-      onDismiss={() => setAppliedFor("color", undefined)}
-    >
-      {(v, set) => (
-        <ChipSelectFilter
-          mode="multiple"
-          value={v}
-          onChange={set}
-          options={GEMSTONE_COLOR_OPTIONS}
-        />
-      )}
-    </FilterButton>
-  );
-
-  const clarityButton = (
-    <FilterButton<string[]>
-      key="clarity"
-      label="Clarity"
-      chipSummary={formatMultiSelectChip(
-        (applied.clarity ?? []).map((v) =>
-          labelForValue(GEMSTONE_CLARITY_OPTIONS, v)
-        )
-      )}
-      isActive={(applied.clarity ?? []).length > 0}
-      initialValue={applied.clarity}
-      onApply={(v) => setAppliedFor("clarity", v)}
-      onClear={() => setAppliedFor("clarity", undefined)}
-      onDismiss={() => setAppliedFor("clarity", undefined)}
-    >
-      {(v, set) => (
-        <ChipSelectFilter
-          mode="multiple"
-          value={v}
-          onChange={set}
-          options={GEMSTONE_CLARITY_OPTIONS}
-        />
-      )}
-    </FilterButton>
-  );
-
-  const ratingButton: ReactNode = (
-    <FilterButton<string>
-      key="quality-rating"
-      label="Quality Rating"
-      chipSummary={
-        applied["quality-rating"]
-          ? `${applied["quality-rating"]}+ stars`
-          : undefined
-      }
-      isActive={!!applied["quality-rating"]}
-      initialValue={applied["quality-rating"]}
-      onApply={(v) => setAppliedFor("quality-rating", v)}
-      onClear={() => setAppliedFor("quality-rating", undefined)}
-      onDismiss={() => setAppliedFor("quality-rating", undefined)}
-    >
-      {(v, set) => (
-        <div className="flex gap-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              className={`text-xl ${Number(v) >= star ? "text-warning" : "text-muted"}`}
-              onClick={() => set(String(star))}
-            >
-              ★
-            </button>
-          ))}
-        </div>
-      )}
-    </FilterButton>
-  );
-
-  const buttons: Record<string, ReactNode> = {
-    color: colorButton,
-    clarity: clarityButton,
-    "quality-rating": ratingButton,
-  };
-  const pinnedIds = ["color", "clarity", "quality-rating"] as const;
-  const { toolbarFilters, stickyFilters } = routeFilterSlots(
-    buttons,
-    pinnedIds,
-    ctrl.activeIds
-  );
-  const preview = usePreviewCount(ctrl.draft);
-
-  const [sortValue, setSortValue] = useState("price-asc");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-  const status = useSimulatedCommitStatus(ctrl.applied, "success");
-  const totalItems = 1234567;
-
-  return (
-    <AssemblyShell
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-      title="Sapphire"
-      resultsCount={totalItems}
-      toolbarFilters={toolbarFilters}
-      stickyFilters={stickyFilters}
-      activeFilterCount={ctrl.activeCount}
-      hasActiveFilters={ctrl.activeCount > 0}
-      onClearAll={ctrl.clearAll}
-      sortOptions={SORT_OPTIONS}
-      sortValue={sortValue}
-      onSortChange={setSortValue}
-      pagination={
-        status === "success" && totalItems > 0 ? (
-          <InlinePagination
-            page={page}
-            pageSize={pageSize}
-            totalItems={totalItems}
-            onPageChange={setPage}
-            onPageSizeChange={setPageSize}
-          />
-        ) : undefined
-      }
-      drawer={{
-        content: (
-          <>
-            <FilterSection label="Color" separator={false}>
-              <ChipSelectFilter
-                mode="multiple"
-                value={draft.color}
-                onChange={(v) => setDraftFor("color", v)}
-                options={GEMSTONE_COLOR_OPTIONS}
-              />
-            </FilterSection>
-            <FilterSection label="Clarity">
-              <ChipSelectFilter
-                mode="multiple"
-                value={draft.clarity}
-                onChange={(v) => setDraftFor("clarity", v)}
-                options={GEMSTONE_CLARITY_OPTIONS}
-              />
-            </FilterSection>
-            <FilterSection label="Quality Rating">
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    className={`text-xl ${
-                      Number(draft["quality-rating"]) >= star
-                        ? "text-warning"
-                        : "text-muted"
-                    }`}
-                    onClick={() => setDraftFor("quality-rating", String(star))}
-                  >
-                    ★
-                  </button>
-                ))}
-              </div>
-            </FilterSection>
-          </>
-        ),
-        onOpen: ctrl.openDrawer,
-        onApply: ctrl.applyDraft,
-        onClearDraft: ctrl.clearDraft,
-        hasActiveDraft: ctrl.hasActiveDraft,
-        resultsCount: preview.count,
-        isCountLoading: preview.loading,
-      }}
-    >
-      <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
-        {buildGemstoneCards(20)}
-      </PlpGridContainer>
-    </AssemblyShell>
-  );
-}
-
 // ── Story exports ─────────────────────────────────────────────────────
 
-export const GemstoneCategory: StoryObj = {
-  render: () => (
-    <GemstoneInteractive
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-      title="Sapphire"
-      resultsCount={1234567}
-      sortOptions={SORT_OPTIONS}
-      searchPlaceholder="Search by certificate number or stock ID..."
-      onSearchSubmit={fn()}
-      gridItems={buildGemstoneCards(20)}
-      totalItems={1234567}
-      onRetry={fn()}
-    />
-  ),
+/**
+ * One PLP at a time, switchable between Gemstones and Jewelry via the
+ * `category` tweakable. Each selection renders the full assembly for a
+ * real category with its own filter set, sort options, and sample data.
+ */
+type FullCategoryArgs = { category: "gemstones" | "jewelry" };
+
+export const FullCategory: StoryObj<FullCategoryArgs> = {
+  args: { category: "gemstones" },
+  argTypes: {
+    category: {
+      control: { type: "radio" },
+      options: ["gemstones", "jewelry"],
+    },
+  },
+  render: ({ category }) => {
+    if (category === "jewelry") return <JewelryInteractive />;
+    return (
+      <GemstoneInteractive
+        breadcrumbs={[
+          { label: "Gemstones", href: "#" },
+          { label: "Sapphire" },
+        ]}
+        title="Sapphire"
+        resultsCount={1234567}
+        sortOptions={SORT_OPTIONS}
+        searchPlaceholder="Search by certificate number or stock ID..."
+        onSearchSubmit={fn()}
+        gridItems={buildGemstoneCards(20)}
+        totalItems={1234567}
+        onRetry={fn()}
+      />
+    );
+  },
 };
 
 export const DiamondsCategory: StoryObj = {
@@ -1888,27 +1710,6 @@ export const WithActiveFilters: StoryObj = {
       gridItems={buildGemstoneCards(20)}
       totalItems={342}
       onRetry={fn()}
-    />
-  ),
-};
-
-export const JewelryCategory: StoryObj = {
-  render: () => <JewelryInteractive />,
-};
-
-export const WithCustomFilter: StoryObj = {
-  render: () => <CustomRatingInteractive />,
-};
-
-export const Loading: StoryObj = {
-  render: () => (
-    <GemstoneInteractive
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-      title="Sapphire"
-      resultsCount={0}
-      sortOptions={SORT_OPTIONS}
-      totalItems={0}
-      baselineStatus="loading"
     />
   ),
 };
