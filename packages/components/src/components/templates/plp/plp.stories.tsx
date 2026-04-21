@@ -29,7 +29,7 @@ import { generateDiamondItems } from "./__fixtures__/diamond-items";
 const items = generateDiamondItems(20);
 
 const PromoBanner = (
-  <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-linear-to-r from-slate-900 via-violet-950 to-slate-900 px-6 py-5 text-primary-foreground">
+  <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-linear-to-r from-slate-900 via-violet-950 to-slate-900 px-6 py-6 text-primary-foreground">
     <div className="min-w-0">
       <Typography
         as="h2"
@@ -37,15 +37,14 @@ const PromoBanner = (
         emphasis
         className="text-primary-foreground"
       >
-        Boost your productivity. Start using our app today.
+        Boost your sales. Get started with Showroom today.
       </Typography>
-      <Typography variant="body-2" className="text-primary-foreground/80">
+      <Typography variant="body-2" className="text-primary-foreground/70">
         Incididunt sint fugiat pariatur cupidatat consectetur sit cillum anim.
       </Typography>
     </div>
     <div className="flex items-center gap-2">
-      <Button>Get started</Button>
-      <Button variant="ghost" className="text-primary-foreground">
+      <Button className="bg-violet-600 hover:bg-violet-500">
         Learn more
         <IconArrowRight className="h-4 w-4" />
       </Button>
@@ -143,4 +142,56 @@ export const WithBanner: StoryObj = {
       {StaticPagination}
     </DiamondPage>
   ),
+};
+
+/**
+ * Demonstrates a banner dropped into the grid as a regular item. The
+ * `PlpGridContainer` doesn't reason about what a cell contains — the
+ * banner is just the first node in the `gridItems` array. The grid
+ * stretches every cell to the row's tallest intrinsic height, so the
+ * banner naturally matches its row without needing a fixed height.
+ *
+ * Here the banner spans two columns (full row on mobile, 2/3 on
+ * tablet, 1/2 on desktop) so it reads as a promo tile rather than a
+ * single card.
+ */
+export const WithInGridBanner: StoryObj = {
+  render: () => {
+    const GridBanner = (
+      <div
+        key="in-grid-banner"
+        className="col-span-2 flex flex-col justify-between gap-3 rounded-lg bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-6 text-primary-foreground"
+      >
+        <div>
+          <Typography
+            as="h2"
+            variant="body-1"
+            emphasis
+            className="text-primary-foreground"
+          >
+            Boost your sales. Get started with Showroom today.
+          </Typography>
+          <Typography variant="body-2" className="text-primary-foreground/70">
+            Incididunt sint fugiat pariatur cupidatat consectetur sit cillum
+            anim.
+          </Typography>
+        </div>
+        <Button className="w-fit bg-violet-600 hover:bg-violet-500">
+          Learn more
+          <IconArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+    return (
+      <DiamondPage>
+        <PlpGridContainer>
+          {GridBanner}
+          {items.map((item) => (
+            <DiamondPlpGridItem key={item.id} item={item} />
+          ))}
+        </PlpGridContainer>
+        {StaticPagination}
+      </DiamondPage>
+    );
+  },
 };
