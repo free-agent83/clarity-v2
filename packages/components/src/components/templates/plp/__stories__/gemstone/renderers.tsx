@@ -1,3 +1,8 @@
+// ── Gemstone markup ───────────────────────────────────────────────────
+//
+// Card, list header, and list row renderers. Pure view layer — take a
+// GemstoneItem, output JSX.
+
 import { useState } from "react";
 import { fn } from "@storybook/test";
 import {
@@ -6,15 +11,15 @@ import {
   IconPhoto,
   IconShare,
 } from "@tabler/icons-react";
-import { Badge } from "../../../atoms/badge/badge";
-import { Button } from "../../../atoms/button/button";
+import { Badge } from "../../../../atoms/badge/badge";
+import { Button } from "../../../../atoms/button/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../../molecules/dropdown-menu/dropdown-menu";
-import { Typography } from "../../../atoms/typography/typography";
+} from "../../../../molecules/dropdown-menu/dropdown-menu";
+import { Typography } from "../../../../atoms/typography/typography";
 import {
   PlpGridItem,
   PlpGridItemMedia,
@@ -25,7 +30,7 @@ import {
   PlpGridItemReturnable,
   PlpGridItemPrice,
   PlpGridItemPrimaryAction,
-} from "../grid/plp-grid-item";
+} from "../../grid/plp-grid-item";
 import {
   PlpListCell,
   PlpListHeaderCell,
@@ -38,143 +43,15 @@ import {
   PlpListRowName,
   PlpListRowPrice,
   PlpListRowReturnable,
-} from "../list/plp-list-row";
-import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
-import type { AsyncComboboxOption } from "../../../molecules/async-combobox-filter/async-combobox-filter";
-import type { RangeAxis } from "../../../molecules/range-filter/range-filter";
-import {
-  MOCK_SUPPLIERS,
-  SAMPLE_360_VIDEO_URL,
-  buildMockHistogram,
-} from "../__stories__/shared/fixtures";
-import { mockApi } from "../__stories__/shared/api";
-import gemstoneImg from "../__stories__/shared/images/gemstone.png";
+} from "../../list/plp-list-row";
+import { useStorybookAppUser } from "../../../../../../.storybook/app-user-context";
+import { SAMPLE_360_VIDEO_URL } from "../shared/fixtures";
+import type { GemstoneItem } from "./api";
 
 const onAddToShortlist = fn();
 const onShare = fn();
 const onViewMedia = fn();
 const onAddToCart = fn();
-
-export interface GemstoneItem {
-  id: string;
-  name: string;
-  image: string;
-  stockId: string;
-  origin: string;
-  certLab: string;
-  certNumber: string;
-  price: number;
-  pricePerCarat: number;
-  isExpress: boolean;
-  isReturnable: boolean;
-  discount: number | undefined;
-  originalPrice: number | undefined;
-  includeTariffs: boolean;
-}
-
-/**
- * Filter-state shape for the gemstone mock PLP. Story wiring types its
- * `useFilterController` against this shape; each key corresponds to one
- * filter rendered in the toolbar / drawer.
- */
-export interface GemstoneFilterState {
-  "nivoda-curated"?: true;
-  color?: string[];
-  clarity?: string[];
-  treatment?: string;
-  location?: string;
-  price?: Record<string, { min: number; max: number }>;
-  carat?: Record<string, { min: number; max: number }>;
-  size?: Record<string, { min: number; max: number }>;
-  supplier?: AsyncComboboxOption[];
-}
-
-// -- Filter configuration ---------------------------------------------------
-
-export const GEMSTONE_COLOR_OPTIONS: { value: string; label: string }[] = [
-  { value: "blue", label: "Blue" },
-  { value: "green", label: "Green" },
-  { value: "red", label: "Red" },
-  { value: "teal", label: "Teal" },
-  { value: "pink", label: "Pink" },
-  { value: "yellow", label: "Yellow" },
-];
-
-export const GEMSTONE_CLARITY_OPTIONS: { value: string; label: string }[] = [
-  { value: "eye-clean", label: "Eye clean" },
-  { value: "slightly-included", label: "Slightly included" },
-  { value: "moderately-included", label: "Moderately included" },
-  { value: "visibly-included", label: "Visibly included" },
-];
-
-export const GEMSTONE_TREATMENT_OPTIONS: { value: string; label: string }[] = [
-  { value: "none", label: "None" },
-  { value: "heated", label: "Heated" },
-  { value: "oiled", label: "Oiled" },
-];
-
-export const GEMSTONE_LOCATION_OPTIONS: { value: string; label: string }[] = [
-  { value: "us", label: "United States" },
-  { value: "eu", label: "Europe" },
-  { value: "asia", label: "Asia" },
-];
-
-export const GEMSTONE_PRICE_CONFIG: RangeAxis = {
-  id: "price",
-  min: 0,
-  max: 10000,
-  step: 10,
-  unit: "$",
-  histogram: buildMockHistogram(0, 10000, 40, 2500),
-};
-
-export const GEMSTONE_CARAT_CONFIG: RangeAxis = {
-  id: "carat",
-  min: 0,
-  max: 10,
-  step: 0.1,
-  unit: "ct",
-  histogram: buildMockHistogram(0, 10, 40, 2),
-};
-
-export const GEMSTONE_SIZE_AXES: RangeAxis[] = [
-  { id: "length", label: "Length", min: 0, max: 20, step: 0.1, unit: "mm" },
-  { id: "width", label: "Width", min: 0, max: 20, step: 0.1, unit: "mm" },
-  { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
-];
-
-export const GEMSTONE_SUPPLIER_SEARCH = mockApi.searchSuppliers;
-
-/**
- * Convenience: a pre-selected supplier set used by stories that start
- * with an engaged supplier filter. The value is already `Option[]`, so
- * labels are preserved without any cache plumbing.
- */
-export const GEMSTONE_PRESELECTED_SUPPLIERS: AsyncComboboxOption[] =
-  MOCK_SUPPLIERS.filter((s) =>
-    ["sup-acme", "sup-globex", "sup-initech"].includes(s.value)
-  );
-
-// -- Item generation + cards/rows -------------------------------------------
-
-export function generateGemstoneItems(count: number): GemstoneItem[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `gem-${i}`,
-    name: `Emerald Green Radiant ${(1 + i * 0.1).toFixed(1)}ct`,
-    image: gemstoneImg,
-    stockId: `GR-${10000 + i}`,
-    origin: "Brazil",
-    certLab: "IGI",
-    certNumber: `287329${300 + i}`,
-    price: 1910 + i * 100,
-    pricePerCarat: 1910.7,
-    isExpress: i % 4 === 0,
-    isReturnable: i % 3 !== 0,
-    discount: i % 5 === 0 ? 25 : undefined,
-    originalPrice: i % 5 === 0 ? 2548 : undefined,
-    includeTariffs: true,
-  }));
-}
 
 /**
  * Storybook-only category card assembled from PlpGridItem primitives.

@@ -7,22 +7,27 @@ import {
   AppShellHeader,
   AppShellMain,
 } from "../../organisms/app-shell/app-shell";
-import { SORT_OPTIONS } from "./__stories__/shared/fixtures";
-import {
-  GemstonePlpListHeader,
-  GEMSTONE_PRESELECTED_SUPPLIERS,
-} from "./mocks/gemstone";
+import { MOCK_SUPPLIERS, SORT_OPTIONS } from "./__stories__/shared/fixtures";
 import { DiamondPlpListHeader } from "./__stories__/diamond/renderers";
-import {
-  GemstoneInteractive,
-  buildGemstoneCards,
-  buildGemstoneRows,
-} from "./plp-stories/gemstone-interactive";
 import {
   DiamondInteractive,
   buildDiamondCards,
   buildDiamondRows,
 } from "./__stories__/diamond/interactive";
+import { GemstonePlpListHeader } from "./__stories__/gemstone/renderers";
+import {
+  GemstoneInteractive,
+  buildGemstoneCards,
+  buildGemstoneRows,
+} from "./__stories__/gemstone/interactive";
+
+/**
+ * Pre-selected supplier set used by the WithActiveFilters story. Story
+ * seed data, not part of the gemstone data contract.
+ */
+const GEMSTONE_PRESELECTED_SUPPLIERS = MOCK_SUPPLIERS.filter((s) =>
+  ["sup-acme", "sup-globex", "sup-initech"].includes(s.value)
+);
 import {
   JewelryInteractive,
   JewelryPlpListHeader,

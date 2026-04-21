@@ -51,6 +51,9 @@ export function formatMultiAxisChip(
   return `${segments[0]}, ${segments[1]} +${segments.length - 2} more`;
 }
 
-export function labelForValue(options: { value: string; label: string }[], v: string) {
+export function labelForValue(
+  options: readonly { value: string; label: string }[],
+  v: string
+) {
   return options.find((o) => o.value === v)?.label ?? v;
 }
