@@ -100,7 +100,32 @@ export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShell
 // export { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, useSidebar } from "./components/organisms/sidebar/sidebar";
 // export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "./components/organisms/table/table";
 
-// ────────────────────── Templates (0) ──────────────────────
+// ────────────────────── Filtering ──────────────────────
 
-// export { PlpTemplate } from "./components/templates/plp/plp-template";
-// export type { PlpTemplateProps } from "./components/templates/plp/plp-template";
+// export { FilterButton } from "./components/atoms/filter-button/filter-button";
+// export type { FilterButtonProps } from "./components/atoms/filter-button/filter-button";
+// export { AllFiltersButton } from "./components/molecules/all-filters-button/all-filters-button";
+// export type { AllFiltersButtonProps } from "./components/molecules/all-filters-button/all-filters-button";
+// export { FilterDrawer } from "./components/molecules/filter-drawer/filter-drawer";
+// export type { FilterDrawerProps } from "./components/molecules/filter-drawer/filter-drawer";
+// export { FilterSection } from "./components/molecules/filter-section/filter-section";
+// export type { FilterSectionProps } from "./components/molecules/filter-section/filter-section";
+// export { ChipSelectFilter } from "./components/molecules/chip-select-filter/chip-select-filter";
+// export type { ChipSelectFilterProps, ChipSelectOption } from "./components/molecules/chip-select-filter/chip-select-filter";
+// export { RangeFilter } from "./components/molecules/range-filter/range-filter";
+// export type { RangeFilterProps, RangeAxis, RangeHistogram, RangeValue } from "./components/molecules/range-filter/range-filter";
+// export { AsyncComboboxFilter } from "./components/molecules/async-combobox-filter/async-combobox-filter";
+// export type { AsyncComboboxFilterProps, AsyncComboboxOption, AsyncComboboxValue } from "./components/molecules/async-combobox-filter/async-combobox-filter";
+// export { FilterToolbar } from "./components/organisms/filter-toolbar/filter-toolbar";
+// export type { FilterToolbarProps, FilterToolbarSortOption } from "./components/organisms/filter-toolbar/filter-toolbar";
+
+// ────────────────────── Templates / PLP ──────────────────────
+
+// export { PlpHeading } from "./components/templates/plp/plp-heading";
+// export type { PlpHeadingProps } from "./components/templates/plp/plp-heading";
+// export { PlpGridContainer } from "./components/templates/plp/plp-grid-container";
+// export type { PlpGridContainerProps } from "./components/templates/plp/plp-grid-container";
+// export { PlpListContainer } from "./components/templates/plp/plp-list-container";
+// export type { PlpListContainerProps } from "./components/templates/plp/plp-list-container";
+// export { PlpEmpty } from "./components/templates/plp/states/plp-empty";
+// export { PlpError } from "./components/templates/plp/states/plp-error";
