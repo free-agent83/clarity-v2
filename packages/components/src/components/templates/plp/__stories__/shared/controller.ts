@@ -1,16 +1,16 @@
 // ── Reference wiring: useFilterController ─────────────────────────────
 //
-// This hook is the canonical pattern for wiring filter state into the
-// PLP assembly. It is deliberately defined inside this story file (not
-// exported from the library) — the refactor's goal is to show consumers
-// how to own filter state themselves rather than hide it behind a
-// library hook. Copy, adapt to your own state shape, or replace it
-// entirely; the library makes no assumptions.
+// The canonical pattern for wiring filter state into the PLP assembly.
+// Deliberately defined inside the story layer (not exported from the
+// library) — the goal is to show consumers how to own filter state
+// themselves rather than hide it behind a library hook. Copy, adapt
+// to your own state shape, or replace it entirely; the library makes
+// no assumptions.
 
 import { useEffect, useRef, useState } from "react";
-import { mockPreviewCount } from "../mocks/common";
-import { MOCK_LATENCY } from "../mocks/simulate-api-call";
-import type { PlpStatus } from "../plp-types";
+import type { ReactNode } from "react";
+import { MOCK_LATENCY, mockApi } from "./api";
+import type { PlpStatus } from "../../plp-types";
 
 export function useFilterController<T extends object>(initial: Partial<T> = {}) {
   const [applied, setApplied] = useState<Partial<T>>(initial);
@@ -79,7 +79,7 @@ export function usePreviewCount(draft: object) {
     setLoading(true);
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(async () => {
-      const next = await mockPreviewCount(draft);
+      const next = await mockApi.fetchPreviewCount(draft);
       setCount(next);
       setLoading(false);
     }, 200);
@@ -119,4 +119,31 @@ export function useSimulatedCommitStatus(applied: object, baseline: PlpStatus) {
   }, [applied]);
 
   return effective;
+}
+
+// ── Toolbar + sticky slot routing ─────────────────────────────────────
+//
+// Given a buttons-by-id map, a pinned id list, and the currently active
+// ids, produce the two slot arrays the FilterToolbar consumes:
+// - `toolbarFilters`: pinned ids first (always), then engaged non-pinned
+// - `stickyFilters`: only engaged ids (no empty pinned buttons)
+
+export function routeFilterSlots(
+  buttons: Record<string, ReactNode>,
+  pinnedIds: readonly string[],
+  activeIds: string[]
+) {
+  const pinnedSet = new Set(pinnedIds);
+  const engagedNonPinned = activeIds.filter((id) => !pinnedSet.has(id));
+
+  const toolbarFilters = [
+    ...pinnedIds.map((id) => buttons[id]),
+    ...engagedNonPinned.map((id) => buttons[id]),
+  ].filter((n): n is ReactNode => !!n);
+
+  const stickyFilters = activeIds
+    .map((id) => buttons[id])
+    .filter((n): n is ReactNode => !!n);
+
+  return { toolbarFilters, stickyFilters };
 }

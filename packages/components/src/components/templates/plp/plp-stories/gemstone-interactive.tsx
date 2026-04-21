@@ -38,15 +38,19 @@ import {
   generateGemstoneItems,
   type GemstoneFilterState,
 } from "../mocks/gemstone";
-import { useFilterController, usePreviewCount, useSimulatedCommitStatus } from "./controller";
-import { formatMultiSelectChip, formatRangeChip, formatMultiAxisChip, labelForValue } from "./formatters";
+import {
+  useFilterController,
+  usePreviewCount,
+  useSimulatedCommitStatus,
+  routeFilterSlots,
+} from "../__stories__/shared/controller";
+import { formatMultiSelectChip, formatRangeChip, formatMultiAxisChip, labelForValue } from "../__stories__/shared/formatters";
 import {
   AssemblyShell,
   InlinePagination,
   renderPlpEmptyState,
-  routeFilterSlots,
   type InteractiveShellProps,
-} from "./assembly";
+} from "../__stories__/shared/assembly";
 
 // ── Gemstone filter buttons ───────────────────────────────────────────
 

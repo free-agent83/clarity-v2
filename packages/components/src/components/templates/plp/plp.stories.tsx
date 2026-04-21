@@ -7,7 +7,7 @@ import {
   AppShellHeader,
   AppShellMain,
 } from "../../organisms/app-shell/app-shell";
-import { SORT_OPTIONS } from "./mocks/common";
+import { SORT_OPTIONS } from "./__stories__/shared/fixtures";
 import {
   GemstonePlpListHeader,
   GEMSTONE_PRESELECTED_SUPPLIERS,

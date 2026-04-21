@@ -28,15 +28,19 @@ import {
   generateDiamondItems,
   type DiamondFilterState,
 } from "../mocks/diamond";
-import { useFilterController, usePreviewCount, useSimulatedCommitStatus } from "./controller";
-import { formatMultiSelectChip, formatRangeChip, formatMultiAxisChip } from "./formatters";
+import {
+  useFilterController,
+  usePreviewCount,
+  useSimulatedCommitStatus,
+  routeFilterSlots,
+} from "../__stories__/shared/controller";
+import { formatMultiSelectChip, formatRangeChip, formatMultiAxisChip } from "../__stories__/shared/formatters";
 import {
   AssemblyShell,
   InlinePagination,
   renderPlpEmptyState,
-  routeFilterSlots,
   type InteractiveShellProps,
-} from "./assembly";
+} from "../__stories__/shared/assembly";
 
 // ── Diamond filter buttons ────────────────────────────────────────────
 

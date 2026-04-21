@@ -46,9 +46,9 @@ import {
   MOCK_SUPPLIERS,
   SAMPLE_360_VIDEO_URL,
   buildMockHistogram,
-  mockSupplierSearch,
-} from "./common";
-import gemstoneImg from "./images/gemstone.png";
+} from "../__stories__/shared/fixtures";
+import { mockApi } from "../__stories__/shared/api";
+import gemstoneImg from "../__stories__/shared/images/gemstone.png";
 
 const onAddToShortlist = fn();
 const onShare = fn();
@@ -143,7 +143,7 @@ export const GEMSTONE_SIZE_AXES: RangeAxis[] = [
   { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
 ];
 
-export const GEMSTONE_SUPPLIER_SEARCH = mockSupplierSearch;
+export const GEMSTONE_SUPPLIER_SEARCH = mockApi.searchSuppliers;
 
 /**
  * Convenience: a pre-selected supplier set used by stories that start

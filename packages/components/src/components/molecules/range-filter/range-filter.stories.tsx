@@ -6,7 +6,7 @@ import {
   type RangeHistogram,
   type RangeValue,
 } from "./range-filter";
-import { buildMockHistogram } from "../../templates/plp/mocks/common";
+import { buildMockHistogram } from "../../templates/plp/__stories__/shared/fixtures";
 
 const meta: Meta<typeof RangeFilter> = {
   title: "Filtering/RangeFilter",

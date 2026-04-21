@@ -30,16 +30,20 @@ import { PlpGridContainer } from "../plp-grid-container";
 import { PlpListContainer } from "../plp-list-container";
 import { useIsTabletUp } from "../../../../hooks/use-is-tablet-up";
 import type { PlpViewMode } from "../plp-types";
-import { SORT_OPTIONS } from "../mocks/common";
-import ringImg from "../mocks/images/ring.jpg";
+import { SORT_OPTIONS } from "../__stories__/shared/fixtures";
+import ringImg from "../__stories__/shared/images/ring.jpg";
 import { FilterSection } from "../../../organisms/filter-toolbar/filter-toolbar";
-import { useFilterController, usePreviewCount, useSimulatedCommitStatus } from "./controller";
-import { formatMultiSelectChip, labelForValue } from "./formatters";
+import {
+  useFilterController,
+  usePreviewCount,
+  useSimulatedCommitStatus,
+  routeFilterSlots,
+} from "../__stories__/shared/controller";
+import { formatMultiSelectChip, labelForValue } from "../__stories__/shared/formatters";
 import {
   AssemblyShell,
   InlinePagination,
-  routeFilterSlots,
-} from "./assembly";
+} from "../__stories__/shared/assembly";
 
 // ── Jewelry filter state ──────────────────────────────────────────────
 

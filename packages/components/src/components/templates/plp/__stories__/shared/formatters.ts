@@ -3,7 +3,7 @@
 // Each filter has its own chip-summary shape; format helpers live here
 // in the consumer. The library no longer ships a chip formatter.
 
-import type { RangeAxis } from "../../../molecules/range-filter/range-filter";
+import type { RangeAxis } from "../../../../molecules/range-filter/range-filter";
 
 export function formatMultiSelectChip(labels: string[]): string {
   if (labels.length === 0) return "";

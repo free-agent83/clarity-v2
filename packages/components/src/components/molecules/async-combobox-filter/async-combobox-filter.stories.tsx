@@ -5,10 +5,8 @@ import {
   type AsyncComboboxOption,
   type AsyncComboboxValue,
 } from "./async-combobox-filter";
-import {
-  MOCK_SUPPLIERS,
-  mockSupplierSearch,
-} from "../../templates/plp/mocks/common";
+import { MOCK_SUPPLIERS } from "../../templates/plp/__stories__/shared/fixtures";
+import { mockApi } from "../../templates/plp/__stories__/shared/api";
 
 const meta: Meta<typeof AsyncComboboxFilter> = {
   title: "Filtering/AsyncComboboxFilter",
@@ -26,7 +24,7 @@ function Controlled({ initial }: { initial?: AsyncComboboxValue }) {
       <AsyncComboboxFilter
         value={value}
         onChange={setValue}
-        searchFn={mockSupplierSearch}
+        searchFn={mockApi.searchSuppliers}
         searchPlaceholder="Search suppliers..."
       />
     </div>

@@ -1,9 +1,16 @@
-import type { SortOption } from "../plp-types";
-import { MOCK_LATENCY, simulateApiCall } from "./simulate-api-call";
+// ── Shared story fixtures ─────────────────────────────────────────────
+//
+// Static reference data the story layer pretends came from a backend:
+// sort options, supplier directory, sample assets, and the histogram
+// authoring helper used when domains bake their filter schemas at
+// module load. No async, no fetch emulation — that lives in `./api.ts`.
+
+import type { SortOption } from "../../plp-types";
 
 /**
- * Sample 360 rotation video — used for ~1/3 of mock items in PLP stories.
- * If this URL becomes unavailable, swap for another small public MP4.
+ * Sample 360 rotation video — used for ~1/3 of mock items in PLP
+ * stories. If this URL becomes unavailable, swap for another small
+ * public MP4.
  */
 export const SAMPLE_360_VIDEO_URL =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
@@ -21,11 +28,12 @@ export const MOCK_SUPPLIERS: { value: string; label: string }[] = [
   { value: "sup-tyrell", label: "Tyrell Heritage Stones" },
 ];
 
-export async function mockSupplierSearch(query: string) {
-  await simulateApiCall(MOCK_LATENCY.search);
-  const q = query.toLowerCase();
-  return MOCK_SUPPLIERS.filter((s) => s.label.toLowerCase().includes(q));
-}
+export const SORT_OPTIONS: SortOption[] = [
+  { value: "price-asc", label: "Price, low to high" },
+  { value: "price-desc", label: "Price, high to low" },
+  { value: "newest", label: "Newest" },
+  { value: "featured", label: "Featured" },
+];
 
 export function buildMockHistogram(
   min: number,
@@ -41,26 +49,4 @@ export function buildMockHistogram(
     return Math.round(normalized * 40 + Math.random() * 10);
   });
   return { buckets, min, max };
-}
-
-export const SORT_OPTIONS: SortOption[] = [
-  { value: "price-asc", label: "Price, low to high" },
-  { value: "price-desc", label: "Price, high to low" },
-  { value: "newest", label: "Newest" },
-  { value: "featured", label: "Featured" },
-];
-
-/**
- * Mock preview-count fetcher for stories. Simulates a backend call that
- * returns a count derived from the current draft filter state. Debounced
- * by the caller via `setTimeout`-based delay.
- *
- * Shape-agnostic: counts any keys whose value is not `undefined`.
- */
-export async function mockPreviewCount(draftState: object): Promise<number> {
-  await simulateApiCall(MOCK_LATENCY.fetch);
-  const activeCount = Object.values(draftState).filter(
-    (v) => v !== undefined
-  ).length;
-  return Math.max(1, Math.round(1_234_567 / (activeCount * 3 + 1)));
 }

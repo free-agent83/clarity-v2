@@ -46,9 +46,9 @@ import type { RangeAxis } from "../../../molecules/range-filter/range-filter";
 import {
   SAMPLE_360_VIDEO_URL,
   buildMockHistogram,
-  mockSupplierSearch,
-} from "./common";
-import diamondImg from "./images/diamond.png";
+} from "../__stories__/shared/fixtures";
+import { mockApi } from "../__stories__/shared/api";
+import diamondImg from "../__stories__/shared/images/diamond.png";
 
 const onAddToShortlist = fn();
 const onShare = fn();
@@ -137,7 +137,7 @@ export const DIAMOND_SIZE_AXES: RangeAxis[] = [
   { id: "depth", label: "Depth", min: 0, max: 10, step: 0.1, unit: "mm" },
 ];
 
-export const DIAMOND_SUPPLIER_SEARCH = mockSupplierSearch;
+export const DIAMOND_SUPPLIER_SEARCH = mockApi.searchSuppliers;
 
 // -- Item generation + cards/rows -------------------------------------------
 

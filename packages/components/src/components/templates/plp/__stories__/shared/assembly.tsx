@@ -1,41 +1,42 @@
 // ── AssemblyShell ─────────────────────────────────────────────────────
 //
-// Local helper that wires PlpHeading + FilterToolbar + content + optional
-// pagination + FilterDrawer sibling into the canonical page layout.
+// Wires PlpHeading + FilterToolbar + content + optional pagination +
+// FilterDrawer sibling into the canonical page layout. Pure markup:
+// callers do all the state management.
 
 import type { ReactNode } from "react";
 import {
   FilterToolbar,
-} from "../../../organisms/filter-toolbar/filter-toolbar";
+} from "../../../../organisms/filter-toolbar/filter-toolbar";
 import type {
   FilterToolbarDrawer,
   FilterToolbarSortOption,
-} from "../../../organisms/filter-toolbar/filter-toolbar";
-import { PlpHeading } from "../plp-heading";
+} from "../../../../organisms/filter-toolbar/filter-toolbar";
+import { PlpHeading } from "../../plp-heading";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "../../../molecules/pagination/pagination";
+} from "../../../../molecules/pagination/pagination";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../molecules/select/select";
-import { Typography } from "../../../atoms/typography/typography";
-import { Button } from "../../../atoms/button/button";
+} from "../../../../molecules/select/select";
+import { Typography } from "../../../../atoms/typography/typography";
+import { Button } from "../../../../atoms/button/button";
 import {
   Empty,
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
-} from "../../../atoms/empty/empty";
-import type { BreadcrumbSegment, PlpStatus } from "../plp-types";
+} from "../../../../atoms/empty/empty";
+import type { BreadcrumbSegment, PlpStatus, PlpViewMode } from "../../plp-types";
 
 // ── Shared props interface ────────────────────────────────────────────
 
@@ -57,7 +58,7 @@ export interface InteractiveShellProps {
   initialSortValue?: string;
   initialPage?: number;
   initialPageSize?: number;
-  initialViewMode?: import("../plp-types").PlpViewMode;
+  initialViewMode?: PlpViewMode;
   baselineStatus?: PlpStatus;
   /** Optional node rendered under `PlpHeading`, above the toolbar. */
   banner?: ReactNode;
@@ -294,31 +295,4 @@ export function renderPlpEmptyState({
       </EmptyContent>
     </Empty>
   );
-}
-
-// ── Toolbar + sticky slot routing ─────────────────────────────────────
-//
-// Given a buttons-by-id map, a pinned id list, and the currently active
-// ids, produce the two slot arrays the FilterToolbar consumes:
-// - `toolbarFilters`: pinned ids first (always), then engaged non-pinned
-// - `stickyFilters`: only engaged ids (no empty pinned buttons)
-
-export function routeFilterSlots(
-  buttons: Record<string, ReactNode>,
-  pinnedIds: readonly string[],
-  activeIds: string[]
-) {
-  const pinnedSet = new Set(pinnedIds);
-  const engagedNonPinned = activeIds.filter((id) => !pinnedSet.has(id));
-
-  const toolbarFilters = [
-    ...pinnedIds.map((id) => buttons[id]),
-    ...engagedNonPinned.map((id) => buttons[id]),
-  ].filter((n): n is ReactNode => !!n);
-
-  const stickyFilters = activeIds
-    .map((id) => buttons[id])
-    .filter((n): n is ReactNode => !!n);
-
-  return { toolbarFilters, stickyFilters };
 }
