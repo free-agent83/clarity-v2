@@ -151,16 +151,18 @@ export const WithBanner: StoryObj = {
  * stretches every cell to the row's tallest intrinsic height, so the
  * banner naturally matches its row without needing a fixed height.
  *
- * Here the banner spans two columns (full row on mobile, 2/3 on
- * tablet, 1/2 on desktop) so it reads as a promo tile rather than a
- * single card.
+ * Here the banner occupies a single column and is pinned to the last
+ * column of the first row via explicit grid placement. The grid's
+ * default stretch pulls it up to the full row height regardless of
+ * how tall the tallest card in the row happens to be. Auto-placement
+ * fills the remaining cells in DOM order.
  */
 export const WithInGridBanner: StoryObj = {
   render: () => {
     const GridBanner = (
       <div
         key="in-grid-banner"
-        className="col-span-2 flex flex-col justify-between gap-3 rounded-lg bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-6 text-primary-foreground"
+        className="col-start-2 row-start-1 flex flex-col justify-between gap-3 rounded-lg bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-6 text-primary-foreground sm:col-start-3 lg:col-start-4"
       >
         <div>
           <Typography
