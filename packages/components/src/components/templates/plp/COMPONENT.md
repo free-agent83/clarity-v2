@@ -62,7 +62,7 @@ Composition primitives for individual product cards (grid view) and rows (list v
 A full PLP page typically composes these non-PLP-specific pieces too:
 
 - [`FilterToolbar`](../../organisms/filter-toolbar/filter-toolbar.tsx) — search + filters + sort + actions slot + sticky chrome
-- [`FilterDrawer`](../../molecules/filter-drawer/filter-drawer.tsx), [`FilterSection`](../../molecules/filter-section/filter-section.tsx), and preset molecules — composed inside the drawer for the full filter list
+- [`FilterDrawer`](../../molecules/filter-drawer/filter-drawer.tsx) (with its co-located `FilterDrawerTrigger` and `FilterSection`) and the preset molecules — composed inside the drawer for the full filter list
 - [`FilterButton`](../../atoms/filter-button/filter-button.tsx) — quick-filter chips in the toolbar row
 - [`Empty`](../../atoms/empty/empty.tsx) + sub-components — empty / error states, composed by the consumer with the copy and CTAs that fit their context
 - [`Pagination`](../../molecules/pagination/pagination.tsx) + [`Select`](../../molecules/select/select.tsx) — pagination control

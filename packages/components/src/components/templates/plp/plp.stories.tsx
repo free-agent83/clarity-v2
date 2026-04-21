@@ -26,7 +26,7 @@ import { AsyncComboboxFilter } from "../../molecules/async-combobox-filter/async
 import type { AsyncComboboxOption } from "../../molecules/async-combobox-filter/async-combobox-filter";
 import { ChipSelectFilter } from "../../molecules/chip-select-filter/chip-select-filter";
 import { FilterDrawer } from "../../molecules/filter-drawer/filter-drawer";
-import { FilterSection } from "../../molecules/filter-section/filter-section";
+import { FilterSection } from "../../molecules/filter-drawer/filter-drawer";
 import {
   Pagination,
   PaginationContent,

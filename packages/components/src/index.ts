@@ -104,12 +104,8 @@ export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShell
 
 // export { FilterButton } from "./components/atoms/filter-button/filter-button";
 // export type { FilterButtonProps } from "./components/atoms/filter-button/filter-button";
-// export { AllFiltersButton } from "./components/molecules/all-filters-button/all-filters-button";
-// export type { AllFiltersButtonProps } from "./components/molecules/all-filters-button/all-filters-button";
-// export { FilterDrawer } from "./components/molecules/filter-drawer/filter-drawer";
-// export type { FilterDrawerProps } from "./components/molecules/filter-drawer/filter-drawer";
-// export { FilterSection } from "./components/molecules/filter-section/filter-section";
-// export type { FilterSectionProps } from "./components/molecules/filter-section/filter-section";
+// export { FilterDrawer, FilterDrawerTrigger, FilterSection } from "./components/molecules/filter-drawer/filter-drawer";
+// export type { FilterDrawerProps, FilterDrawerTriggerProps, FilterSectionProps } from "./components/molecules/filter-drawer/filter-drawer";
 // export { ChipSelectFilter } from "./components/molecules/chip-select-filter/chip-select-filter";
 // export type { ChipSelectFilterProps, ChipSelectOption } from "./components/molecules/chip-select-filter/chip-select-filter";
 // export { RangeFilter } from "./components/molecules/range-filter/range-filter";

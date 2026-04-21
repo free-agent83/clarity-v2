@@ -1,7 +1,10 @@
 "use client";
 
 import { type ReactNode } from "react";
+import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import { Button } from "../../atoms/button/button";
+import { Separator } from "../../atoms/separator/separator";
+import { Typography } from "../../atoms/typography/typography";
 import {
   Sheet,
   SheetContent,
@@ -95,5 +98,73 @@ export function FilterDrawer({
         </SheetFooter>
       </SheetContent>
     </Sheet>
+  );
+}
+
+export interface FilterDrawerTriggerProps {
+  /** Active filter count — drives the optional badge. Badge hidden when `0`. */
+  activeFilterCount: number;
+  /** Handler for the button click. Typically flips drawer open state. */
+  onClick: () => void;
+}
+
+/**
+ * Outline "All filters" button that opens a `FilterDrawer`. Shows an
+ * active-count badge when filters are engaged. Lives next to
+ * `FilterDrawer` because the two are always used together; a trigger
+ * without a drawer is meaningless.
+ */
+export function FilterDrawerTrigger({
+  activeFilterCount,
+  onClick,
+}: FilterDrawerTriggerProps) {
+  return (
+    <Button variant="outline" onClick={onClick} className="shrink-0">
+      <IconAdjustmentsHorizontal className="mr-1.5 h-4 w-4" />
+      All filters
+      {activeFilterCount > 0 && (
+        <Typography asChild variant="caption">
+          <span className="bg-accent text-accent-foreground px-1.5 rounded-full">
+            {activeFilterCount}
+          </span>
+        </Typography>
+      )}
+    </Button>
+  );
+}
+
+export interface FilterSectionProps {
+  label: string;
+  children: ReactNode;
+  /**
+   * When false, suppresses the leading separator. Set `false` on the
+   * first section of a drawer to avoid a redundant top rule.
+   * Defaults to `true`.
+   */
+  separator?: boolean;
+}
+
+/**
+ * Thin wrapper for a single filter entry inside a `FilterDrawer`.
+ * Renders an optional leading separator, a heading, and the filter
+ * control. Lives in the same module as `FilterDrawer` because they are
+ * designed to be used together — the section is the canonical
+ * per-filter scaffold for the drawer's body.
+ */
+export function FilterSection({
+  label,
+  children,
+  separator = true,
+}: FilterSectionProps) {
+  return (
+    <div data-slot="filter-section">
+      {separator && <Separator className="my-4" />}
+      <div className="space-y-3">
+        <Typography as="h3" variant="body-2" emphasis>
+          {label}
+        </Typography>
+        {children}
+      </div>
+    </div>
   );
 }

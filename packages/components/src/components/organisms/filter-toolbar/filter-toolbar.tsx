@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../molecules/select/select";
-import { AllFiltersButton } from "../../molecules/all-filters-button/all-filters-button";
+import { FilterDrawerTrigger } from "../../molecules/filter-drawer/filter-drawer";
 
 export interface FilterToolbarSortOption {
   value: string;
@@ -128,7 +128,7 @@ export function FilterToolbar({
 
         <div className="flex items-start gap-2">
           <div className="flex flex-1 flex-wrap items-start gap-2">
-            <AllFiltersButton
+            <FilterDrawerTrigger
               activeFilterCount={activeFilterCount}
               onClick={onOpenDrawer}
             />
@@ -216,7 +216,7 @@ function StickyChrome({
         <div className="relative">
           <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div className="w-4 shrink-0" aria-hidden="true" />
-            <AllFiltersButton
+            <FilterDrawerTrigger
               activeFilterCount={activeFilterCount}
               onClick={onOpenDrawer}
             />

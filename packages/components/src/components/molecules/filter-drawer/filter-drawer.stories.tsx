@@ -2,8 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { useState } from "react";
 import { Button } from "../../atoms/button/button";
-import { FilterDrawer } from "./filter-drawer";
-import { FilterSection } from "../filter-section/filter-section";
+import {
+  FilterDrawer,
+  FilterDrawerTrigger,
+  FilterSection,
+} from "./filter-drawer";
 
 const meta: Meta<typeof FilterDrawer> = {
   title: "Filtering/FilterDrawer",
