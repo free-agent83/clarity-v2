@@ -1,11 +1,32 @@
 import { fn } from "@storybook/test";
+import { IconHeart, IconPhoto, IconShare } from "@tabler/icons-react";
 import { Badge } from "../../../atoms/badge/badge";
+import { Button } from "../../../atoms/button/button";
+import { Typography } from "../../../atoms/typography/typography";
+import {
+  PlpGridItem,
+  PlpGridItemMedia,
+  PlpGridItemMediaAction,
+  PlpGridItemMediaToolbar,
+  PlpGridItemName,
+  PlpGridItemDelivery,
+  PlpGridItemReturnable,
+  PlpGridItemPrice,
+  PlpGridItemPrimaryAction,
+} from "../grid/plp-grid-item";
+import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
 import type { FilterDefinition, GridItemData, ListColumn } from "../plp-types";
 import {
   SAMPLE_360_VIDEO_URL,
   buildMockHistogram,
   mockSupplierSearch,
 } from "./common";
+
+// Module-level mock handlers so every rendered card shares identity.
+const onAddToShortlist = fn();
+const onShare = fn();
+const onViewMedia = fn();
+const onAddToCart = fn();
 
 export interface DiamondItem {
   id: string;
@@ -156,6 +177,89 @@ export function diamondRenderGridItem(item: DiamondItem): GridItemData {
     onShare: fn(),
     onViewMedia: fn(),
   };
+}
+
+/**
+ * Storybook-only category card assembled from PlpGridItem primitives.
+ * Mirrors what a consumer app would build in-situ — the library ships
+ * the primitives; the consumer owns the composition, the data binding,
+ * and the rules that pick pricing variants based on user context.
+ */
+export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
+  const userContext = useStorybookAppUser();
+
+  const video =
+    Number.parseInt(item.id.replace(/\D/g, ""), 10) % 3 === 0
+      ? SAMPLE_360_VIDEO_URL
+      : undefined;
+
+  const alternateCurrency =
+    userContext.currency !== "USD"
+      ? { amount: item.price, currency: userContext.currency }
+      : undefined;
+
+  return (
+    <PlpGridItem>
+      <PlpGridItemMedia image={item.image} imageAlt={item.name} video={video}>
+        <PlpGridItemMediaToolbar>
+          <PlpGridItemMediaAction
+            icon={IconHeart}
+            label="Add to shortlist"
+            onClick={onAddToShortlist}
+          />
+          <PlpGridItemMediaAction
+            icon={IconShare}
+            label="Share"
+            onClick={onShare}
+          />
+          <PlpGridItemMediaAction
+            icon={IconPhoto}
+            label="View media"
+            onClick={onViewMedia}
+          />
+        </PlpGridItemMediaToolbar>
+      </PlpGridItemMedia>
+
+      <PlpGridItemName>{item.name}</PlpGridItemName>
+
+      <Typography variant="caption" className="text-muted-foreground">
+        {item.certLab} {item.certNumber}
+      </Typography>
+
+      <div className="flex flex-wrap gap-1">
+        <Badge variant="outline" size="sm">
+          {item.origin}
+        </Badge>
+      </div>
+
+      <Typography variant="caption" className="text-muted-foreground">
+        {item.carat.toFixed(2)}ct · {item.shape} · {item.color} · {item.clarity}
+      </Typography>
+
+      <PlpGridItemDelivery
+        variant={item.isExpress ? "express" : "regular"}
+        date="Nov 18 – 23"
+        shipsFrom={item.origin}
+      />
+
+      <PlpGridItemReturnable
+        variant={item.isReturnable ? "returnable" : "non-returnable"}
+      />
+
+      <PlpGridItemPrice
+        amount={item.price}
+        currency="USD"
+        perCarat={{ amount: item.pricePerCarat, currency: "USD" }}
+        alternateCurrency={alternateCurrency}
+      />
+
+      <PlpGridItemPrimaryAction>
+        <Button className="w-full" onClick={onAddToCart}>
+          Add to cart
+        </Button>
+      </PlpGridItemPrimaryAction>
+    </PlpGridItem>
+  );
 }
 
 export const DIAMOND_LIST_COLUMNS: ListColumn<DiamondItem>[] = [

@@ -1,18 +1,24 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { PlpTemplate, type PlpTemplateProps } from "./plp-template";
-import { useStorybookAppUser } from "../../../../.storybook/app-user-context";
+import {
+  PlpGridItem,
+  PlpGridItemDelivery,
+  PlpGridItemMedia,
+  PlpGridItemName,
+  PlpGridItemPrice,
+  PlpGridItemReturnable,
+} from "./grid/plp-grid-item";
 import {
   AppShell,
   AppShellHeader,
-  AppShellActions,
   AppShellMain,
 } from "../../organisms/app-shell/app-shell";
+import { Typography } from "../../atoms/typography/typography";
 import type {
   FilterDefinition,
   FilterState,
-  GridItemData,
   PlpViewMode,
 } from "./plp-types";
 import { SORT_OPTIONS, mockPreviewCount } from "./mocks/common";
@@ -20,25 +26,28 @@ import { MOCK_LATENCY } from "./mocks/simulate-api-call";
 import {
   GEMSTONE_FILTERS,
   GEMSTONE_LIST_COLUMNS,
+  GemstonePlpGridItem,
   generateGemstoneItems,
   gemstoneRenderGridItem,
+  type GemstoneItem,
 } from "./mocks/gemstone";
 import {
   DIAMOND_FILTERS,
   DIAMOND_LIST_COLUMNS,
+  DiamondPlpGridItem,
   diamondRenderGridItem,
   generateDiamondItems,
+  type DiamondItem,
 } from "./mocks/diamond";
 
 // ── Stateful wrapper for interactive stories ──────────────
 
-function PlpTemplateInteractive<TItem>({
+function PlpTemplateInteractive<TListItem = never>({
   initialFilterState = {},
   initialViewMode = "grid",
   ...props
 }: Omit<
-  PlpTemplateProps<TItem>,
-  | "userContext"
+  PlpTemplateProps<TListItem>,
   | "filterState"
   | "onFilterChange"
   | "sortValue"
@@ -62,9 +71,8 @@ function PlpTemplateInteractive<TItem>({
   /** Initial preview count shown on the drawer's primary button. */
   filteredResultsCount?: number;
   /** Baseline status — the wrapper flips this to "loading" during simulated commits. */
-  status?: PlpTemplateProps<TItem>["status"];
+  status?: PlpTemplateProps<TListItem>["status"];
 }) {
-  const userContext = useStorybookAppUser();
   const baselineStatus = props.status ?? "success";
 
   const [filterState, setFilterState] = useState<FilterState>(initialFilterState);
@@ -77,12 +85,10 @@ function PlpTemplateInteractive<TItem>({
   );
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [effectiveStatus, setEffectiveStatus] =
-    useState<PlpTemplateProps<TItem>["status"]>(baselineStatus);
+    useState<PlpTemplateProps<TListItem>["status"]>(baselineStatus);
 
   // Debounced preview-count fetcher — consumer-side concern in real apps;
-  // here we keep it inline so stories are self-contained. Sets
-  // `isCountLoading` while a fetch is in flight so the drawer's primary
-  // action shows a spinner.
+  // here we keep it inline so stories are self-contained.
   const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   function schedulePreviewCount(draft: FilterState) {
     setIsCountLoading(true);
@@ -94,11 +100,10 @@ function PlpTemplateInteractive<TItem>({
     }, 200);
   }
 
-  // Simulate a backend roundtrip after any applied filter change
-  // (quick filter, active chip edit, drawer apply). Flips `status` to
-  // "loading" for ~600ms so the grid/list shows its skeleton, then
-  // restores the baseline status. Only active when baseline is
-  // "success" — other states (empty, error) are left alone.
+  // Simulate a backend roundtrip after any applied filter change. Flips
+  // `status` to "loading" for ~commit ms so the grid/list shows its
+  // skeleton, then restores the baseline status. Only active when
+  // baseline is "success" — other states are left alone.
   const statusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   function simulateBackendCommit() {
     if (baselineStatus !== "success") return;
@@ -112,7 +117,6 @@ function PlpTemplateInteractive<TItem>({
   return (
     <PlpTemplate
       {...props}
-      userContext={userContext}
       status={effectiveStatus}
       filterState={filterState}
       onFilterChange={(id, value) => {
@@ -141,6 +145,20 @@ function PlpTemplateInteractive<TItem>({
       onViewModeChange={setViewMode}
     />
   );
+}
+
+// ── Helpers ───────────────────────────────────────────────
+
+function buildGemstoneCards(count: number): ReactNode[] {
+  return generateGemstoneItems(count).map((item) => (
+    <GemstonePlpGridItem key={item.id} item={item} />
+  ));
+}
+
+function buildDiamondCards(count: number): ReactNode[] {
+  return generateDiamondItems(count).map((item) => (
+    <DiamondPlpGridItem key={item.id} item={item} />
+  ));
 }
 
 // ── Story meta ────────────────────────────────────────────
@@ -176,8 +194,7 @@ export const GemstoneCategory: StoryObj = {
       sortValue="price-asc"
       searchPlaceholder="Search by certificate number or stock ID..."
       onSearchSubmit={fn()}
-      items={generateGemstoneItems(20)}
-      renderGridItem={gemstoneRenderGridItem}
+      gridItems={buildGemstoneCards(20)}
       page={1}
       pageSize={20}
       totalItems={1234567}
@@ -199,10 +216,7 @@ export const DiamondsCategory: StoryObj = {
       sortValue="price-asc"
       searchPlaceholder="Search by certificate number or stock ID..."
       onSearchSubmit={fn()}
-      items={generateDiamondItems(20)}
-      renderGridItem={diamondRenderGridItem}
-      listColumns={DIAMOND_LIST_COLUMNS}
-      onItemClick={fn()}
+      gridItems={buildDiamondCards(20)}
       page={1}
       pageSize={20}
       totalItems={48291}
@@ -218,7 +232,7 @@ export const JewelryCategory: StoryObj = {
       id: `ring-${i}`,
       name: "Three-Stone Anniversary Band",
       image: `https://placehold.co/400x400/f5f5f4/a3a3a3?text=Ring+${i + 1}`,
-      sku: `SKU 100019ERDPL`,
+      sku: "SKU 100019ERDPL",
       price: 9999.0,
     }));
 
@@ -234,6 +248,33 @@ export const JewelryCategory: StoryObj = {
       ]},
     ];
 
+    const gridItems: ReactNode[] = items.map((item) => (
+      <PlpGridItem key={item.id}>
+        <PlpGridItemMedia image={item.image} imageAlt={item.name} />
+        <PlpGridItemName>{item.name}</PlpGridItemName>
+        <Typography variant="caption" className="text-muted-foreground">
+          Wedding ring · {item.sku}
+        </Typography>
+        <div className="flex gap-1">
+          {["⚪", "🟡", "🔵", "⬛"].map((s, i) => (
+            <span
+              key={i}
+              className="h-3 w-3 rounded-full border text-[8px] flex items-center justify-center"
+            >
+              {s}
+            </span>
+          ))}
+        </div>
+        <PlpGridItemDelivery
+          variant="regular"
+          date="Nov 18 – 23"
+          shipsFrom="United States"
+        />
+        <PlpGridItemReturnable variant="returnable" />
+        <PlpGridItemPrice amount={item.price} currency="USD" />
+      </PlpGridItem>
+    ));
+
     return (
       <PlpTemplateInteractive
         breadcrumbs={[{ label: "Jewelry", href: "#" }, { label: "Wedding rings" }]}
@@ -243,28 +284,7 @@ export const JewelryCategory: StoryObj = {
         filteredResultsCount={1234567}
         sortOptions={[{ value: "featured", label: "Featured" }, ...SORT_OPTIONS.slice(0, 2)]}
         sortValue="featured"
-        items={items}
-        renderGridItem={(item) => ({
-          id: item.id,
-          name: item.name,
-          thumbnailSrc: item.image,
-          thumbnailAlt: item.name,
-          lead: <span>Wedding ring · {item.sku}</span>,
-          delivery: { estimatedDate: "Nov 18 – 23", shipsFrom: "United States" },
-          returns: { isReturnable: true },
-          pricing: { amount: item.price, currency: "USD" },
-          onAddToCart: fn(),
-          onFavorite: fn(),
-          onShare: fn(),
-          onViewMedia: fn(),
-          categorySlotBottom: (
-            <div className="flex gap-1 mt-1">
-              {["⚪", "🟡", "🔵", "⬛"].map((s, i) => (
-                <span key={i} className="h-3 w-3 rounded-full border text-[8px] flex items-center justify-center">{s}</span>
-              ))}
-            </div>
-          ),
-        })}
+        gridItems={gridItems}
         page={1}
         pageSize={20}
         totalItems={1234567}
@@ -291,8 +311,7 @@ export const WithActiveFilters: StoryObj = {
       filteredResultsCount={342}
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
-      items={generateGemstoneItems(20)}
-      renderGridItem={gemstoneRenderGridItem}
+      gridItems={buildGemstoneCards(20)}
       page={1}
       pageSize={20}
       totalItems={342}
@@ -338,8 +357,7 @@ export const WithCustomFilter: StoryObj = {
         filteredResultsCount={10234}
         sortOptions={SORT_OPTIONS}
         sortValue="price-asc"
-        items={generateGemstoneItems(20)}
-        renderGridItem={gemstoneRenderGridItem}
+        gridItems={buildGemstoneCards(20)}
         page={1}
         pageSize={20}
         totalItems={1234567}
@@ -353,7 +371,6 @@ export const WithCustomFilter: StoryObj = {
 export const Loading: StoryObj = {
   render: () => (
     <PlpTemplate
-      userContext={useStorybookAppUser()}
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
       title="Sapphire"
       resultsCount={0}
@@ -364,8 +381,6 @@ export const Loading: StoryObj = {
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
       onSortChange={fn()}
-      items={[]}
-      renderGridItem={() => ({} as GridItemData)}
       page={1}
       pageSize={20}
       totalItems={0}
@@ -386,8 +401,6 @@ export const EmptyFiltered: StoryObj = {
       initialFilterState={{ color: ["pink"], clarity: ["eye-clean"] }}
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
-      items={[]}
-      renderGridItem={() => ({} as GridItemData)}
       page={1}
       pageSize={20}
       totalItems={0}
@@ -400,7 +413,6 @@ export const EmptyFiltered: StoryObj = {
 export const EmptyNoItems: StoryObj = {
   render: () => (
     <PlpTemplate
-      userContext={useStorybookAppUser()}
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Alexandrite" }]}
       title="Alexandrite"
       resultsCount={0}
@@ -411,8 +423,6 @@ export const EmptyNoItems: StoryObj = {
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
       onSortChange={fn()}
-      items={[]}
-      renderGridItem={() => ({} as GridItemData)}
       page={1}
       pageSize={20}
       totalItems={0}
@@ -427,7 +437,6 @@ export const EmptyNoItems: StoryObj = {
 export const Error: StoryObj = {
   render: () => (
     <PlpTemplate
-      userContext={useStorybookAppUser()}
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
       title="Sapphire"
       resultsCount={0}
@@ -438,8 +447,6 @@ export const Error: StoryObj = {
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
       onSortChange={fn()}
-      items={[]}
-      renderGridItem={() => ({} as GridItemData)}
       page={1}
       pageSize={20}
       totalItems={0}
@@ -451,9 +458,12 @@ export const Error: StoryObj = {
   ),
 };
 
+// List-view stories — legacy data-driven API, pending list-view refactor.
+// These stories still exercise the `listItems` + `renderListItem` path.
+
 export const DiamondListView: StoryObj = {
   render: () => (
-    <PlpTemplateInteractive
+    <PlpTemplateInteractive<DiamondItem>
       breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
       title="Natural Diamonds"
       resultsCount={48291}
@@ -461,8 +471,9 @@ export const DiamondListView: StoryObj = {
       filteredResultsCount={48291}
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
-      items={generateDiamondItems(20)}
-      renderGridItem={diamondRenderGridItem}
+      gridItems={buildDiamondCards(20)}
+      listItems={generateDiamondItems(20)}
+      renderListItem={diamondRenderGridItem}
       listColumns={DIAMOND_LIST_COLUMNS}
       initialViewMode="list"
       onItemClick={fn()}
@@ -477,7 +488,7 @@ export const DiamondListView: StoryObj = {
 
 export const GemstoneListView: StoryObj = {
   render: () => (
-    <PlpTemplateInteractive
+    <PlpTemplateInteractive<GemstoneItem>
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
       title="Sapphire"
       resultsCount={1234567}
@@ -485,8 +496,9 @@ export const GemstoneListView: StoryObj = {
       filteredResultsCount={10234}
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
-      items={generateGemstoneItems(20)}
-      renderGridItem={gemstoneRenderGridItem}
+      gridItems={buildGemstoneCards(20)}
+      listItems={generateGemstoneItems(20)}
+      renderListItem={gemstoneRenderGridItem}
       listColumns={GEMSTONE_LIST_COLUMNS}
       initialViewMode="list"
       onItemClick={fn()}

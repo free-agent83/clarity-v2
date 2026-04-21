@@ -1,5 +1,20 @@
 import { fn } from "@storybook/test";
+import { IconHeart, IconPhoto, IconShare } from "@tabler/icons-react";
 import { Badge } from "../../../atoms/badge/badge";
+import { Button } from "../../../atoms/button/button";
+import { Typography } from "../../../atoms/typography/typography";
+import {
+  PlpGridItem,
+  PlpGridItemMedia,
+  PlpGridItemMediaAction,
+  PlpGridItemMediaToolbar,
+  PlpGridItemName,
+  PlpGridItemDelivery,
+  PlpGridItemReturnable,
+  PlpGridItemPrice,
+  PlpGridItemPrimaryAction,
+} from "../grid/plp-grid-item";
+import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
 import type { FilterDefinition, GridItemData, ListColumn } from "../plp-types";
 import {
   MOCK_SUPPLIERS,
@@ -7,6 +22,12 @@ import {
   buildMockHistogram,
   mockSupplierSearch,
 } from "./common";
+
+// Module-level mock handlers so every rendered card shares identity.
+const onAddToShortlist = fn();
+const onShare = fn();
+const onViewMedia = fn();
+const onAddToCart = fn();
 
 export interface GemstoneItem {
   id: string;
@@ -186,6 +207,99 @@ export function gemstoneRenderGridItem(item: GemstoneItem): GridItemData {
     onShare: fn(),
     onViewMedia: fn(),
   };
+}
+
+/**
+ * Storybook-only category card assembled from PlpGridItem primitives.
+ * Drives the "Nivoda Curated" treatment, tariff note (when the user is
+ * in the US), discount line, and per-carat secondary line based on the
+ * item data and the current emulated app-user context.
+ */
+export function GemstonePlpGridItem({ item }: { item: GemstoneItem }) {
+  const userContext = useStorybookAppUser();
+
+  const video =
+    Number.parseInt(item.id.replace(/\D/g, ""), 10) % 3 === 0
+      ? SAMPLE_360_VIDEO_URL
+      : undefined;
+
+  const showTariffNote = item.includeTariffs && userContext.location === "US";
+  const alternateCurrency =
+    userContext.currency !== "USD"
+      ? { amount: item.price, currency: userContext.currency }
+      : undefined;
+  const discount =
+    item.discount !== undefined && item.originalPrice !== undefined
+      ? { percentage: item.discount, originalAmount: item.originalPrice }
+      : undefined;
+
+  return (
+    <PlpGridItem>
+      <PlpGridItemMedia image={item.image} imageAlt={item.name} video={video}>
+        <PlpGridItemMediaToolbar>
+          <PlpGridItemMediaAction
+            icon={IconHeart}
+            label="Add to shortlist"
+            onClick={onAddToShortlist}
+          />
+          <PlpGridItemMediaAction
+            icon={IconShare}
+            label="Share"
+            onClick={onShare}
+          />
+          <PlpGridItemMediaAction
+            icon={IconPhoto}
+            label="View media"
+            onClick={onViewMedia}
+          />
+        </PlpGridItemMediaToolbar>
+      </PlpGridItemMedia>
+
+      <PlpGridItemName>{item.name}</PlpGridItemName>
+
+      <Typography variant="caption" className="text-muted-foreground">
+        {item.stockId}
+      </Typography>
+
+      <div className="flex flex-wrap gap-1">
+        <Badge variant="outline" size="sm">
+          {item.origin}
+        </Badge>
+        <Badge variant="info" size="sm">
+          Nivoda Curated
+        </Badge>
+      </div>
+
+      <Typography variant="caption" className="text-muted-foreground">
+        Watermelon · Light color · 5.95 × 5.89 × 2.76mm
+      </Typography>
+
+      <PlpGridItemDelivery
+        variant={item.isExpress ? "express" : "regular"}
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+
+      <PlpGridItemReturnable
+        variant={item.isReturnable ? "returnable" : "non-returnable"}
+      />
+
+      <PlpGridItemPrice
+        amount={item.price}
+        currency="USD"
+        perCarat={{ amount: item.pricePerCarat, currency: "USD" }}
+        discount={discount}
+        includeTariffs={showTariffNote}
+        alternateCurrency={alternateCurrency}
+      />
+
+      <PlpGridItemPrimaryAction>
+        <Button className="w-full" onClick={onAddToCart}>
+          Add to cart
+        </Button>
+      </PlpGridItemPrimaryAction>
+    </PlpGridItem>
+  );
 }
 
 export const GEMSTONE_LIST_COLUMNS: ListColumn<GemstoneItem>[] = [

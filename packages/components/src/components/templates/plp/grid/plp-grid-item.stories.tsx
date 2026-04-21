@@ -1,50 +1,94 @@
 // plp/grid/plp-grid-item.stories.tsx
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
-import { userEvent, within } from "@storybook/test";
-import { PlpGridItem } from "./plp-grid-item";
-import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
+import { useState } from "react";
+import { IconHeart, IconPhoto, IconShare } from "@tabler/icons-react";
+import {
+  PlpGridItem,
+  PlpGridItemCheckbox,
+  PlpGridItemDelivery,
+  PlpGridItemMedia,
+  PlpGridItemMediaAction,
+  PlpGridItemMediaToolbar,
+  PlpGridItemName,
+  PlpGridItemPrice,
+  PlpGridItemPrimaryAction,
+  PlpGridItemReturnable,
+} from "./plp-grid-item";
 import { Badge } from "../../../atoms/badge/badge";
-import type { GridItemData } from "../plp-types";
+import { Button } from "../../../atoms/button/button";
+import { Typography } from "../../../atoms/typography/typography";
 
-type GridItemStoryArgs = React.ComponentProps<typeof PlpGridItem>;
+// Stable module-level handlers so every story shares action identity.
+const onAddToShortlist = fn();
+const onShare = fn();
+const onViewMedia = fn();
+const onAddToCart = fn();
 
-// ── Mock data builder ─────────────────────────────────────
+const SAMPLE_IMAGE = "https://placehold.co/400x400/f5f5f4/a3a3a3?text=Gem";
+const SAMPLE_360_VIDEO =
+  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
-function buildGridItemData(overrides: Partial<GridItemData> = {}): GridItemData {
-  return {
-    id: "item-1",
-    name: "Emerald Green Radiant 1ct",
-    thumbnailSrc: "https://placehold.co/400x400/f5f5f4/a3a3a3?text=Gem",
-    thumbnailAlt: "1ct Emerald Green Radiant",
-    lead: <span className="text-xs text-muted-foreground">GR · Stock ID</span>,
-    badges: [
-      <Badge key="origin" variant="outline" size="sm">Brazil</Badge>,
-      <Badge key="curated" variant="info" size="sm">Nivoda Curated</Badge>,
-    ],
-    delivery: {
-      estimatedDate: "Nov 18 – 23",
-      shipsFrom: "United States",
-      isExpress: false,
-    },
-    returns: { isReturnable: true },
-    pricing: {
-      amount: 9999.0,
-      currency: "USD",
-    },
-    onAddToCart: fn(),
-    onFavorite: fn(),
-    onShare: fn(),
-    onViewMedia: fn(),
-    ...overrides,
-  };
+// Shared composition used by most stories — represents a typical
+// Gemstone-shaped card.
+function DefaultCard({
+  selected,
+  disabled,
+}: {
+  selected?: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <PlpGridItem selected={selected} disabled={disabled}>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Emerald Green Radiant">
+        <PlpGridItemMediaToolbar>
+          <PlpGridItemMediaAction
+            icon={IconHeart}
+            label="Add to shortlist"
+            onClick={onAddToShortlist}
+          />
+          <PlpGridItemMediaAction
+            icon={IconShare}
+            label="Share"
+            onClick={onShare}
+          />
+          <PlpGridItemMediaAction
+            icon={IconPhoto}
+            label="View media"
+            onClick={onViewMedia}
+          />
+        </PlpGridItemMediaToolbar>
+      </PlpGridItemMedia>
+      <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
+      <Typography variant="caption" className="text-muted-foreground">
+        GR-10000
+      </Typography>
+      <div className="flex flex-wrap gap-1">
+        <Badge variant="outline" size="sm">
+          Brazil
+        </Badge>
+        <Badge variant="info" size="sm">
+          Nivoda Curated
+        </Badge>
+      </div>
+      <PlpGridItemDelivery
+        variant="regular"
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice amount={1910} currency="USD" />
+      <PlpGridItemPrimaryAction>
+        <Button className="w-full" onClick={onAddToCart}>
+          Add to cart
+        </Button>
+      </PlpGridItemPrimaryAction>
+    </PlpGridItem>
+  );
 }
 
-// ── Story meta ────────────────────────────────────────────
-
-const meta: Meta<GridItemStoryArgs> = {
+const meta: Meta = {
   title: "Templates/PLP Grid Item",
-  component: PlpGridItem,
   tags: ["autodocs"],
   decorators: [
     (Story) => (
@@ -53,174 +97,231 @@ const meta: Meta<GridItemStoryArgs> = {
       </div>
     ),
   ],
-  render: (args) => {
-    const userContext = useStorybookAppUser();
-    return <PlpGridItem {...args} userContext={userContext} />;
-  },
 };
 
 export default meta;
-type Story = StoryObj<GridItemStoryArgs>;
+type Story = StoryObj;
 
 // ── Stories ───────────────────────────────────────────────
 
 export const Default: Story = {
-  args: {
-    data: buildGridItemData(),
-  },
+  render: () => <DefaultCard />,
 };
 
-export const Express: Story = {
-  args: {
-    data: buildGridItemData({
-      delivery: { estimatedDate: "Nov 15 – 17", shipsFrom: "New York", isExpress: true },
-    }),
-  },
+export const Minimal: Story = {
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Item" />
+      <PlpGridItemName>A minimal card</PlpGridItemName>
+      <PlpGridItemPrice amount={1999} currency="USD" />
+    </PlpGridItem>
+  ),
+};
+
+export const Selected: Story = {
+  render: () => <DefaultCard selected />,
+};
+
+export const Disabled: Story = {
+  render: () => <DefaultCard disabled />,
+};
+
+export const ExpressDelivery: Story = {
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Express item" />
+      <PlpGridItemName>Same-day shipping stone</PlpGridItemName>
+      <PlpGridItemDelivery
+        variant="express"
+        date="Nov 15 – 17"
+        shipsFrom="New York"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice amount={4599} currency="USD" />
+    </PlpGridItem>
+  ),
 };
 
 export const NonReturnable: Story = {
-  args: {
-    data: buildGridItemData({
-      returns: { isReturnable: false },
-    }),
-  },
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Final sale item" />
+      <PlpGridItemName>Final sale gemstone</PlpGridItemName>
+      <PlpGridItemDelivery
+        variant="regular"
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+      <PlpGridItemReturnable variant="non-returnable" />
+      <PlpGridItemPrice amount={7999} currency="USD" />
+    </PlpGridItem>
+  ),
 };
 
 export const WithDiscount: Story = {
-  args: {
-    data: buildGridItemData({
-      pricing: {
-        amount: 7499.0,
-        currency: "USD",
-        discount: { percentage: 25, originalAmount: 9999.0 },
-      },
-    }),
-  },
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Discounted item" />
+      <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
+      <PlpGridItemDelivery
+        variant="regular"
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice
+        amount={7499}
+        currency="USD"
+        discount={{ percentage: 25, originalAmount: 9999 }}
+      />
+    </PlpGridItem>
+  ),
 };
 
 export const WithPerCarat: Story = {
-  args: {
-    data: buildGridItemData({
-      pricing: {
-        amount: 9999.0,
-        currency: "USD",
-        perCarat: { amount: 1910.7, currency: "USD" },
-      },
-    }),
-  },
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Per-carat item" />
+      <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
+      <PlpGridItemDelivery
+        variant="regular"
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice
+        amount={9999}
+        currency="USD"
+        perCarat={{ amount: 1910.7, currency: "USD" }}
+      />
+    </PlpGridItem>
+  ),
 };
 
 export const WithTariffs: Story = {
-  args: {
-    data: buildGridItemData({
-      pricing: {
-        amount: 9999.0,
-        currency: "USD",
-        includeTariffs: true,
-      },
-    }),
-  },
-  parameters: { appUser: { location: "US" } },
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Tariff-noted item" />
+      <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
+      <PlpGridItemDelivery
+        variant="regular"
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice amount={9999} currency="USD" includeTariffs />
+    </PlpGridItem>
+  ),
 };
 
-export const LegacyPricing: Story = {
-  args: {
-    data: buildGridItemData({
-      pricing: {
-        amount: 9999.0,
-        currency: "USD",
-        legacyDeliveredPrice: { amount: 10499.0, currency: "USD" },
-      },
-    }),
-  },
-  parameters: { appUser: { pricingModel: "legacy" } },
+export const WithLegacyPricing: Story = {
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Legacy-pricing item" />
+      <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
+      <PlpGridItemDelivery
+        variant="regular"
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice
+        amount={9999}
+        currency="USD"
+        legacyDelivered={{ amount: 10499, currency: "USD" }}
+      />
+    </PlpGridItem>
+  ),
 };
 
-export const WithCategoryActions: Story = {
-  args: {
-    data: buildGridItemData({
-      categoryActions: [
-        {
-          id: "findPair",
-          icon: <span className="text-xs">🔗</span>,
-          label: "Find matching pair",
-          onAction: fn(),
-        },
-      ],
-    }),
-  },
-};
-
-export const WithSelection: Story = {
-  args: {
-    data: buildGridItemData({ enableSelection: true }),
-  },
-};
-
-export const WithCategorySlots: Story = {
-  args: {
-    data: buildGridItemData({
-      categorySlotTop: (
-        <div className="text-xs text-muted-foreground">
-          Watermelon · Light color · Heating · Not Included · 5.95 × 5.89 × 2.76mm
-        </div>
-      ),
-      categorySlotBottom: (
-        <div className="flex gap-1">
-          {["⬜", "🟡", "🔵"].map((s, i) => (
-            <span key={i} className="h-4 w-4 rounded-full border text-[10px] flex items-center justify-center">{s}</span>
-          ))}
-        </div>
-      ),
-    }),
-  },
-};
-
-export const AllVariantsActive: Story = {
-  args: {
-    data: buildGridItemData({
-      delivery: { estimatedDate: "Nov 15 – 17", shipsFrom: "New York", isExpress: true },
-      pricing: {
-        amount: 7499.0,
-        currency: "USD",
-        perCarat: { amount: 1910.7, currency: "USD" },
-        discount: { percentage: 25, originalAmount: 9999.0 },
-        legacyDeliveredPrice: { amount: 10499.0, currency: "USD" },
-        includeTariffs: true,
-      },
-      enableSelection: true,
-      categoryActions: [
-        { id: "findPair", icon: <span className="text-xs">🔗</span>, label: "Find matching pair", onAction: fn() },
-      ],
-      categorySlotTop: (
-        <div className="text-xs text-muted-foreground">5.95 × 5.89 × 2.76mm</div>
-      ),
-    }),
-  },
-  parameters: { appUser: { pricingModel: "legacy", location: "US" } },
-};
-
-export const HoverState: Story = {
-  args: {
-    data: buildGridItemData({ enableSelection: true }),
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const article = canvas.getByRole("article");
-    await userEvent.hover(article);
-  },
+export const WithAlternateCurrency: Story = {
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Multi-currency item" />
+      <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
+      <PlpGridItemDelivery
+        variant="regular"
+        date="Nov 18 – 23"
+        shipsFrom="United States"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice
+        amount={9999}
+        currency="USD"
+        alternateCurrency={{ amount: 9250, currency: "EUR" }}
+      />
+    </PlpGridItem>
+  ),
 };
 
 export const With360Media: Story = {
-  args: {
-    data: buildGridItemData({
-      media360: {
-        // Short public sample — hover over the thumbnail to see the crossfade
-        // and scrub behaviour. If this URL becomes unavailable, swap it for
-        // another small MP4 from a stable public bucket.
-        videoUrl:
-          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      },
-    }),
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia
+        image={SAMPLE_IMAGE}
+        imageAlt="360 rotation item"
+        video={SAMPLE_360_VIDEO}
+      >
+        <PlpGridItemMediaToolbar>
+          <PlpGridItemMediaAction
+            icon={IconPhoto}
+            label="View media"
+            onClick={onViewMedia}
+          />
+        </PlpGridItemMediaToolbar>
+      </PlpGridItemMedia>
+      <PlpGridItemName>Hover for 360 rotation</PlpGridItemName>
+      <PlpGridItemPrice amount={3499} currency="USD" />
+    </PlpGridItem>
+  ),
+};
+
+export const WithCheckbox: Story = {
+  render: () => {
+    function Card() {
+      const [selected, setSelected] = useState(false);
+      return (
+        <PlpGridItem selected={selected}>
+          <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Selectable item">
+            <PlpGridItemCheckbox checked={selected} onChange={setSelected} />
+            <PlpGridItemMediaToolbar>
+              <PlpGridItemMediaAction
+                icon={IconHeart}
+                label="Add to shortlist"
+                onClick={onAddToShortlist}
+              />
+            </PlpGridItemMediaToolbar>
+          </PlpGridItemMedia>
+          <PlpGridItemName>Select to compare</PlpGridItemName>
+          <PlpGridItemPrice amount={2899} currency="USD" />
+        </PlpGridItem>
+      );
+    }
+    return <Card />;
   },
 };
+
+export const AllPriceVariants: Story = {
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="All price variants" />
+      <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
+      <PlpGridItemDelivery
+        variant="express"
+        date="Nov 15 – 17"
+        shipsFrom="New York"
+      />
+      <PlpGridItemReturnable variant="returnable" />
+      <PlpGridItemPrice
+        amount={7499}
+        currency="USD"
+        perCarat={{ amount: 1910.7, currency: "USD" }}
+        discount={{ percentage: 25, originalAmount: 9999 }}
+        includeTariffs
+        legacyDelivered={{ amount: 10499, currency: "USD" }}
+        alternateCurrency={{ amount: 6920, currency: "EUR" }}
+      />
+    </PlpGridItem>
+  ),
+};
+

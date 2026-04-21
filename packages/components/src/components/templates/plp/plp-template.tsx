@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { Typography } from "../../atoms/typography/typography";
 import {
   Breadcrumb,
@@ -26,9 +26,8 @@ import {
 } from "../../molecules/pagination/pagination";
 import { PlpStickyFilterBar } from "./toolbar/plp-sticky-filter-bar";
 import { PlpToolbar } from "./toolbar/plp-toolbar";
+import { Skeleton } from "../../atoms/skeleton/skeleton";
 import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
-import { PlpGridItem } from "./grid/plp-grid-item";
-import { PlpGridSkeleton } from "./grid/plp-grid-skeleton";
 import { PlpList } from "./list/plp-list";
 import { PlpListSkeleton } from "./list/plp-list-skeleton";
 import { PlpEmpty } from "./states/plp-empty";
@@ -49,16 +48,12 @@ import type {
 
 /**
  * Props for the PLP template.
+ *
+ * `TListItem` is relevant only when the consumer opts into list view.
+ * Grid view is data-shape-agnostic — consumers pre-render cards and
+ * hand them to the template as an array of nodes.
  */
-export interface PlpTemplateProps<TItem> {
-  /**
-   * Ambient user context (currency, location, pricing model, feature flags)
-   * used by the template for variant rendering. The consuming app supplies
-   * whatever its user session resolves to; Storybook emulates it via
-   * `.storybook/preview.tsx`.
-   */
-  userContext: AppUserContextValue;
-
+export interface PlpTemplateProps<TListItem = never> {
   // Heading
   breadcrumbs: BreadcrumbSegment[];
   title: string;
@@ -106,17 +101,33 @@ export interface PlpTemplateProps<TItem> {
   searchPlaceholder?: string;
   onSearchSubmit?: (query: string) => void;
 
-  // Items
-  items: TItem[];
-  renderGridItem: (item: TItem) => GridItemData;
+  /**
+   * Pre-rendered grid cards. The template is a pure layout for the grid
+   * path — it does not know or care about item shape. Consumers compose
+   * cards from the `PlpGridItem*` primitives and hand them in as an
+   * array of nodes. Each element should carry its own `key`.
+   */
+  gridItems?: ReactNode[];
 
-  // List view (Phase 2) — optional
+  // List view (legacy data-driven API — pending refactor into primitives).
+  /**
+   * Raw items for list view. Rendered via `renderListItem` into the
+   * shared `GridItemData` shape consumed by `PlpListRow`. Scheduled to
+   * be refactored into a primitives-based API alongside the grid work.
+   */
+  listItems?: TListItem[];
+  renderListItem?: (item: TListItem) => GridItemData;
+  /**
+   * Ambient user context forwarded to the list view only (list refactor
+   * pending). Omit for grid-only stories.
+   */
+  userContext?: AppUserContextValue;
   /**
    * Category-configured columns for list view. Presence of a non-empty
    * array enables list view availability (the toggle appears and the
    * consumer can switch modes). Omit or pass empty to keep grid-only.
    */
-  listColumns?: ListColumn<TItem>[];
+  listColumns?: ListColumn<TListItem>[];
   /**
    * Current view mode. Defaults to "grid" when undefined.
    * The template silently falls back to grid at viewports < 1024px,
@@ -128,7 +139,7 @@ export interface PlpTemplateProps<TItem> {
    * Called when the user clicks a list view row.
    * List view only; no effect in grid view.
    */
-  onItemClick?: (item: TItem) => void;
+  onItemClick?: (item: TListItem) => void;
 
   // Pagination
   page: number;
@@ -162,8 +173,7 @@ export interface PlpTemplateProps<TItem> {
  * @see docs/plans/specs/2026-04-16-plp-template-phase1-design.md
  * @see docs/plans/specs/2026-04-16-plp-template-phase2-design.md
  */
-export function PlpTemplate<TItem>({
-  userContext,
+export function PlpTemplate<TListItem = never>({
   breadcrumbs,
   title,
   resultsCount,
@@ -178,8 +188,10 @@ export function PlpTemplate<TItem>({
   onSortChange,
   searchPlaceholder,
   onSearchSubmit,
-  items,
-  renderGridItem,
+  gridItems,
+  listItems,
+  renderListItem,
+  userContext,
   listColumns,
   viewMode = "grid",
   onViewModeChange,
@@ -194,7 +206,7 @@ export function PlpTemplate<TItem>({
   onRetry,
   emptyFilterSuggestions,
   emptyMessage,
-}: PlpTemplateProps<TItem>) {
+}: PlpTemplateProps<TListItem>) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isTabletUp = useIsTabletUp();
 
@@ -285,14 +297,26 @@ export function PlpTemplate<TItem>({
         (effectiveViewMode === "list" && listColumns ? (
           <PlpListSkeleton listColumns={listColumns} count={pageSize} />
         ) : (
-          <PlpGridSkeleton count={pageSize} />
+          <div
+            className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6"
+            data-slot="plp-grid"
+            data-loading
+          >
+            {Array.from({ length: pageSize }, (_, i) => (
+              <GridSkeletonCard key={i} />
+            ))}
+          </div>
         ))}
 
       {status === "success" &&
-        (effectiveViewMode === "list" && listColumns ? (
+        (effectiveViewMode === "list" &&
+        listColumns &&
+        listItems &&
+        renderListItem &&
+        userContext ? (
           <PlpList
-            items={items}
-            renderGridItem={renderGridItem}
+            items={listItems}
+            renderGridItem={renderListItem}
             listColumns={listColumns}
             onItemClick={onItemClick}
             userContext={userContext}
@@ -300,17 +324,9 @@ export function PlpTemplate<TItem>({
         ) : (
           <div
             className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6"
-            role="list"
             data-slot="plp-grid"
           >
-            {items.map((item) => {
-              const data = renderGridItem(item);
-              return (
-                <div key={data.id} role="listitem">
-                  <PlpGridItem data={data} userContext={userContext} />
-                </div>
-              );
-            })}
+            {gridItems}
           </div>
         ))}
 
@@ -351,6 +367,30 @@ export function PlpTemplate<TItem>({
         onDraftFilterStateChange={onDraftFilterStateChange}
       />
     </main>
+  );
+}
+
+/**
+ * Single-slot skeleton card used by the grid's loading state. Matches the
+ * default `PlpGridItem` proportions so a full page of skeletons reads
+ * like the populated grid will.
+ */
+function GridSkeletonCard() {
+  return (
+    <div className="flex flex-col gap-2">
+      <Skeleton className="aspect-square w-full rounded-lg" />
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-3 w-1/2" />
+      <div className="flex gap-1">
+        <Skeleton className="h-5 w-14 rounded-full" />
+        <Skeleton className="h-5 w-16 rounded-full" />
+      </div>
+      <Skeleton className="h-3 w-2/3" />
+      <Skeleton className="h-3 w-1/2" />
+      <Skeleton className="h-3 w-1/3" />
+      <Skeleton className="h-5 w-1/3" />
+      <Skeleton className="h-3 w-1/4" />
+    </div>
   );
 }
 
