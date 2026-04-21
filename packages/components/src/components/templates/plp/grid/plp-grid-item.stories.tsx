@@ -88,7 +88,7 @@ function DefaultCard({
 }
 
 const meta: Meta = {
-  title: "Templates/PLP Grid Item",
+  title: "Templates/PLP/GridItem",
   tags: ["autodocs"],
   decorators: [
     (Story) => (
