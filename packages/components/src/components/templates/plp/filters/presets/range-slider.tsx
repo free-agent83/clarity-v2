@@ -9,6 +9,7 @@ import {
   InputGroupText,
 } from "../../../../atoms/input-group/input-group";
 import { Slider } from "../../../../atoms/slider/slider";
+import { Typography } from "../../../../atoms/typography/typography";
 import type { FilterControlProps } from "../../plp-types";
 
 /**
@@ -116,9 +117,9 @@ export function RangeSliderFilter({
 
       <div className="flex items-center gap-2">
         <div className="flex flex-1 flex-col gap-1">
-          <label className="text-xs text-muted-foreground" htmlFor={`${definition.id}-min`}>
-            Min
-          </label>
+          <Typography asChild variant="caption" className="text-muted-foreground">
+            <label htmlFor={`${definition.id}-min`}>Min</label>
+          </Typography>
           <InputGroup>
             {isCurrencyUnit && definition.unit && (
               <InputGroupAddon align="inline-start">
@@ -142,9 +143,9 @@ export function RangeSliderFilter({
           </InputGroup>
         </div>
         <div className="flex flex-1 flex-col gap-1">
-          <label className="text-xs text-muted-foreground" htmlFor={`${definition.id}-max`}>
-            Max
-          </label>
+          <Typography asChild variant="caption" className="text-muted-foreground">
+            <label htmlFor={`${definition.id}-max`}>Max</label>
+          </Typography>
           <InputGroup>
             {isCurrencyUnit && definition.unit && (
               <InputGroupAddon align="inline-start">

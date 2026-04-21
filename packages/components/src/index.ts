@@ -24,6 +24,8 @@ export { Badge, badgeVariants } from "./components/atoms/badge/badge";
 export type { BadgeProps } from "./components/atoms/badge/badge";
 export { Brand } from "./components/atoms/brand/brand";
 export type { BrandProps } from "./components/atoms/brand/brand";
+export { BrandExpress } from "./components/atoms/brand-express/brand-express";
+export type { BrandExpressProps } from "./components/atoms/brand-express/brand-express";
 export { Button, buttonVariants } from "./components/atoms/button/button";
 export type { ButtonProps } from "./components/atoms/button/button";
 // export { ButtonGroup, ButtonGroupSeparator, ButtonGroupText, buttonGroupVariants } from "./components/atoms/button-group/button-group";

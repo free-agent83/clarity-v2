@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "../../../atoms/button/button";
 import { Input } from "../../../atoms/input/input";
+import { Typography } from "../../../atoms/typography/typography";
 import {
   Select,
   SelectContent,
@@ -148,7 +149,9 @@ export function PlpToolbar({
         <div className="shrink-0">
           <Select value={sortValue} onValueChange={onSortChange}>
             <SelectTrigger className="w-auto min-w-[140px]">
-              <span className="mr-1 text-muted-foreground">Sort by</span>
+              <Typography as="span" variant="body-2" className="mr-1 text-muted-foreground">
+                Sort by
+              </Typography>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

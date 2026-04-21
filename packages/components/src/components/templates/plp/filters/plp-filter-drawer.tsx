@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../../atoms/button/button";
 import { Separator } from "../../../atoms/separator/separator";
+import { Typography } from "../../../atoms/typography/typography";
 import {
   Sheet,
   SheetContent,
@@ -170,9 +171,9 @@ export function PlpFilterDrawer({
               <div key={definition.id}>
                 {index > 0 && <Separator className="my-4" />}
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-foreground">
+                  <Typography as="h3" variant="body-2" emphasis>
                     {definition.label}
-                  </h3>
+                  </Typography>
                   <FilterControl
                     value={draftState[definition.id]}
                     onChange={(value) =>

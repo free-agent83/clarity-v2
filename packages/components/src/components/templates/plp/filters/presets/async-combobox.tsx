@@ -11,6 +11,7 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "../../../../molecules/combobox/combobox";
+import { Typography } from "../../../../atoms/typography/typography";
 import type {
   FilterControlProps,
   FilterOption,
@@ -143,12 +144,14 @@ export function AsyncComboboxFilter({
       <ComboboxContent>
         <ComboboxList>
           {loading && (
-            <div
+            <Typography
+              as="div"
+              variant="body-2"
               aria-live="polite"
-              className="px-3 py-2 text-sm text-muted-foreground"
+              className="px-3 py-2 text-muted-foreground"
             >
               Loading...
-            </div>
+            </Typography>
           )}
           {!loading &&
             itemsWithSelected.map((option) => (

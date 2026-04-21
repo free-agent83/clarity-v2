@@ -75,7 +75,24 @@
       "mcp__685a6fb2-46e7-433b-b8fa-e0ea2fa8b66e__get_variable_defs",
       "mcp__685a6fb2-46e7-433b-b8fa-e0ea2fa8b66e__get_metadata",
       "mcp__685a6fb2-46e7-433b-b8fa-e0ea2fa8b66e__search_design_system",
-      "Bash(git cherry *)"
+      "Bash(git cherry *)",
+      "Bash(git commit *)",
+      "mcp__claude_ai_Figma__get_design_context",
+      "mcp__claude_ai_Figma__get_metadata",
+      "Bash(lsof -iTCP -sTCP:LISTEN -a -p 98976)",
+      "Bash(ps -p 98976 -o command=)",
+      "Bash(grep -oE \"\\\\.text-typography-h1[^}]{0,200}\" packages/components/dist/index.css)",
+      "Bash(node -e ' *)",
+      "Bash(grep -oE \"\\\\.text-\\(8xl|6xl|5xl|4xl|2xl|xl|base|sm|xs\\)\\\\{[^}]{0,80}\" dist/index.css)",
+      "Bash(grep -oE \"\\\\.text-\\(8xl|6xl|5xl|4xl|2xl|xl|base|sm|xs\\)\\\\{[^}]{0,80}\" packages/components/dist/index.css)",
+      "Bash(git mv *)",
+      "Bash(npx vite *)",
+      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template status --short)",
+      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template diff packages/components/src/components/templates/plp/plp-types.ts)",
+      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template log --oneline -10)",
+      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template diff --stat)",
+      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template add -u)",
+      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template add packages/components/src/components/atoms/brand-express/)"
     ]
   }
 }

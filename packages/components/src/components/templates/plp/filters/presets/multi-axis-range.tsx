@@ -8,6 +8,7 @@ import {
   InputGroupText,
 } from "../../../../atoms/input-group/input-group";
 import { Slider } from "../../../../atoms/slider/slider";
+import { Typography } from "../../../../atoms/typography/typography";
 import type {
   FilterControlProps,
   FilterValue,
@@ -127,7 +128,7 @@ function AxisRow({
 
   return (
     <div className="flex flex-col gap-2">
-      <h4 className="text-sm font-medium text-foreground">{axis.label}</h4>
+      <Typography as="h4" variant="body-2" emphasis>{axis.label}</Typography>
       <Slider
         value={[currentMin, currentMax]}
         min={axis.min}
@@ -153,7 +154,7 @@ function AxisRow({
             </InputGroupAddon>
           )}
         </InputGroup>
-        <span className="text-muted-foreground">–</span>
+        <Typography as="span" variant="body-2" className="text-muted-foreground">–</Typography>
         <InputGroup className="flex-1">
           <InputGroupInput
             type="number"

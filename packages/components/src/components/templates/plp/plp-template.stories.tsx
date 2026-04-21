@@ -25,29 +25,27 @@ import { SORT_OPTIONS, mockPreviewCount } from "./mocks/common";
 import { MOCK_LATENCY } from "./mocks/simulate-api-call";
 import {
   GEMSTONE_FILTERS,
-  GEMSTONE_LIST_COLUMNS,
   GemstonePlpGridItem,
+  GemstonePlpListHeader,
+  GemstonePlpListRow,
   generateGemstoneItems,
-  gemstoneRenderGridItem,
-  type GemstoneItem,
 } from "./mocks/gemstone";
 import {
   DIAMOND_FILTERS,
-  DIAMOND_LIST_COLUMNS,
   DiamondPlpGridItem,
-  diamondRenderGridItem,
+  DiamondPlpListHeader,
+  DiamondPlpListRow,
   generateDiamondItems,
-  type DiamondItem,
 } from "./mocks/diamond";
 
 // ── Stateful wrapper for interactive stories ──────────────
 
-function PlpTemplateInteractive<TListItem = never>({
+function PlpTemplateInteractive({
   initialFilterState = {},
   initialViewMode = "grid",
   ...props
 }: Omit<
-  PlpTemplateProps<TListItem>,
+  PlpTemplateProps,
   | "filterState"
   | "onFilterChange"
   | "sortValue"
@@ -71,7 +69,7 @@ function PlpTemplateInteractive<TListItem = never>({
   /** Initial preview count shown on the drawer's primary button. */
   filteredResultsCount?: number;
   /** Baseline status — the wrapper flips this to "loading" during simulated commits. */
-  status?: PlpTemplateProps<TListItem>["status"];
+  status?: PlpTemplateProps["status"];
 }) {
   const baselineStatus = props.status ?? "success";
 
@@ -85,7 +83,7 @@ function PlpTemplateInteractive<TListItem = never>({
   );
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [effectiveStatus, setEffectiveStatus] =
-    useState<PlpTemplateProps<TListItem>["status"]>(baselineStatus);
+    useState<PlpTemplateProps["status"]>(baselineStatus);
 
   // Debounced preview-count fetcher — consumer-side concern in real apps;
   // here we keep it inline so stories are self-contained.
@@ -458,12 +456,23 @@ export const Error: StoryObj = {
   ),
 };
 
-// List-view stories — legacy data-driven API, pending list-view refactor.
-// These stories still exercise the `listItems` + `renderListItem` path.
+// List-view stories — consumers assemble header + rows from primitives.
+
+function buildDiamondRows(count: number): ReactNode[] {
+  return generateDiamondItems(count).map((item) => (
+    <DiamondPlpListRow key={item.id} item={item} onClick={fn()} />
+  ));
+}
+
+function buildGemstoneRows(count: number): ReactNode[] {
+  return generateGemstoneItems(count).map((item) => (
+    <GemstonePlpListRow key={item.id} item={item} onClick={fn()} />
+  ));
+}
 
 export const DiamondListView: StoryObj = {
   render: () => (
-    <PlpTemplateInteractive<DiamondItem>
+    <PlpTemplateInteractive
       breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
       title="Natural Diamonds"
       resultsCount={48291}
@@ -472,11 +481,10 @@ export const DiamondListView: StoryObj = {
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
       gridItems={buildDiamondCards(20)}
-      listItems={generateDiamondItems(20)}
-      renderListItem={diamondRenderGridItem}
-      listColumns={DIAMOND_LIST_COLUMNS}
+      listHeader={<DiamondPlpListHeader />}
+      listRows={buildDiamondRows(20)}
+      listViewAvailable
       initialViewMode="list"
-      onItemClick={fn()}
       page={1}
       pageSize={20}
       totalItems={48291}
@@ -488,7 +496,7 @@ export const DiamondListView: StoryObj = {
 
 export const GemstoneListView: StoryObj = {
   render: () => (
-    <PlpTemplateInteractive<GemstoneItem>
+    <PlpTemplateInteractive
       breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
       title="Sapphire"
       resultsCount={1234567}
@@ -497,11 +505,10 @@ export const GemstoneListView: StoryObj = {
       sortOptions={SORT_OPTIONS}
       sortValue="price-asc"
       gridItems={buildGemstoneCards(20)}
-      listItems={generateGemstoneItems(20)}
-      renderListItem={gemstoneRenderGridItem}
-      listColumns={GEMSTONE_LIST_COLUMNS}
+      listHeader={<GemstonePlpListHeader />}
+      listRows={buildGemstoneRows(20)}
+      listViewAvailable
       initialViewMode="list"
-      onItemClick={fn()}
       page={1}
       pageSize={20}
       totalItems={1234567}

@@ -203,7 +203,7 @@ export function PlpGridItemMediaToolbar({
       data-slot="plp-grid-item-media-toolbar"
       className={cn(
         "absolute inset-x-0 top-0 flex items-center justify-end gap-0.5 p-2",
-        "opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100",
+        "opacity-0 transition-opacity group-hover:opacity-100 group-has-focus-visible:opacity-100",
         "[@media(hover:none)]:opacity-100",
         className
       )}
@@ -273,7 +273,7 @@ export function PlpGridItemCheckbox({
       className={cn(
         "absolute left-2 top-2",
         !checked &&
-          "opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100",
+          "opacity-0 transition-opacity group-hover:opacity-100 group-has-focus-visible:opacity-100 [@media(hover:none)]:opacity-100",
         className
       )}
       onClick={(e) => e.stopPropagation()}
@@ -510,7 +510,7 @@ export function PlpGridItemPrimaryAction({
     <div
       data-slot="plp-grid-item-primary-action"
       className={cn(
-        "invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100",
+        "invisible opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-has-focus-visible:visible group-has-focus-visible:opacity-100",
         "[@media(hover:none)]:visible [@media(hover:none)]:opacity-100",
         className
       )}

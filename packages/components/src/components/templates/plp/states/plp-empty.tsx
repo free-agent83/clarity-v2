@@ -1,4 +1,5 @@
 import { Button } from "../../../atoms/button/button";
+import { Typography } from "../../../atoms/typography/typography";
 
 /**
  * Empty state for the PLP content area.
@@ -22,24 +23,24 @@ export function PlpEmpty({
 }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center" data-slot="plp-empty">
-      <h3 className="mt-4 text-lg font-semibold text-foreground">
+      <Typography as="h3" variant="h5" className="mt-4">
         {variant === "empty-filtered"
           ? "No items match your filters"
           : "No items available"}
-      </h3>
-      <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+      </Typography>
+      <Typography variant="body-2" className="mt-1 max-w-sm text-muted-foreground">
         {variant === "empty-filtered"
           ? "Try adjusting your filters to find what you're looking for."
           : message || "There are no items in this category yet."}
-      </p>
+      </Typography>
 
       {variant === "empty-filtered" && filterSuggestions && filterSuggestions.length > 0 && (
-        <p className="mt-2 text-sm text-muted-foreground">
+        <Typography variant="body-2" className="mt-2 text-muted-foreground">
           Try removing:{" "}
-          <span className="font-medium text-foreground">
+          <Typography as="span" variant="body-2" emphasis className="text-foreground">
             {filterSuggestions.join(", ")}
-          </span>
-        </p>
+          </Typography>
+        </Typography>
       )}
 
       {variant === "empty-filtered" && onClearFilters && (

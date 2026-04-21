@@ -1,7 +1,19 @@
+import { useState } from "react";
 import { fn } from "@storybook/test";
-import { IconHeart, IconPhoto, IconShare } from "@tabler/icons-react";
+import {
+  IconDotsVertical,
+  IconHeart,
+  IconPhoto,
+  IconShare,
+} from "@tabler/icons-react";
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../../molecules/dropdown-menu/dropdown-menu";
 import { Typography } from "../../../atoms/typography/typography";
 import {
   PlpGridItem,
@@ -14,8 +26,22 @@ import {
   PlpGridItemPrice,
   PlpGridItemPrimaryAction,
 } from "../grid/plp-grid-item";
+import {
+  PlpListCell,
+  PlpListHeaderCell,
+  PlpListHeaderRow,
+  PlpListRow,
+  PlpListRowActions,
+  PlpListRowCheckbox,
+  PlpListRowDelivery,
+  PlpListRowMedia,
+  PlpListRowName,
+  PlpListRowPrice,
+  PlpListRowPricePerCarat,
+  PlpListRowReturnable,
+} from "../list/plp-list-row";
 import { useStorybookAppUser } from "../../../../../.storybook/app-user-context";
-import type { FilterDefinition, GridItemData, ListColumn } from "../plp-types";
+import type { FilterDefinition } from "../plp-types";
 import {
   SAMPLE_360_VIDEO_URL,
   buildMockHistogram,
@@ -141,44 +167,6 @@ export function generateDiamondItems(count: number): DiamondItem[] {
   }));
 }
 
-export function diamondRenderGridItem(item: DiamondItem): GridItemData {
-  return {
-    id: item.id,
-    name: item.name,
-    thumbnailSrc: item.image,
-    thumbnailAlt: item.name,
-    lead: <span>{item.stockId}</span>,
-    badges: [
-      <Badge key="lab" variant="outline" size="sm">{item.certLab}</Badge>,
-      <Badge key="origin" variant="outline" size="sm">{item.origin}</Badge>,
-    ],
-    categorySlotTop: (
-      <div className="text-xs text-muted-foreground">
-        {item.carat.toFixed(2)}ct · {item.shape} · {item.color} · {item.clarity}
-      </div>
-    ),
-    delivery: {
-      estimatedDate: "Nov 18 – 23",
-      shipsFrom: item.origin,
-      isExpress: item.isExpress,
-    },
-    returns: { isReturnable: item.isReturnable },
-    pricing: {
-      amount: item.price,
-      currency: "USD",
-      perCarat: { amount: item.pricePerCarat, currency: "USD" },
-    },
-    media360:
-      Number.parseInt(item.id.replace(/\D/g, ""), 10) % 3 === 0
-        ? { videoUrl: SAMPLE_360_VIDEO_URL }
-        : undefined,
-    onAddToCart: fn(),
-    onFavorite: fn(),
-    onShare: fn(),
-    onViewMedia: fn(),
-  };
-}
-
 /**
  * Storybook-only category card assembled from PlpGridItem primitives.
  * Mirrors what a consumer app would build in-situ — the library ships
@@ -262,42 +250,138 @@ export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
   );
 }
 
-export const DIAMOND_LIST_COLUMNS: ListColumn<DiamondItem>[] = [
-  {
-    id: "carat",
-    header: "Carat",
-    cell: (item) => item.carat.toFixed(2),
-    align: "right",
-  },
-  {
-    id: "shape",
-    header: "Shape",
-    cell: (item) => item.shape,
-  },
-  {
-    id: "color",
-    header: "Color",
-    cell: (item) => item.color,
-    align: "center",
-  },
-  {
-    id: "clarity",
-    header: "Clarity",
-    cell: (item) => item.clarity,
-    align: "center",
-  },
-  {
-    id: "origin",
-    header: "Origin",
-    cell: (item) => item.origin,
-  },
-  {
-    id: "cert",
-    header: "Certificate",
-    cell: (item) => (
-      <span className="font-mono text-xs">
-        {item.certLab} {item.certNumber}
-      </span>
-    ),
-  },
-];
+/**
+ * Storybook-only header row for the diamonds list view. Columns align
+ * with the cells inside `DiamondPlpListRow`.
+ */
+export function DiamondPlpListHeader() {
+  return (
+    <PlpListHeaderRow>
+      <PlpListHeaderCell width={44}>
+        <span className="sr-only">Select</span>
+      </PlpListHeaderCell>
+      <PlpListHeaderCell width={72}>
+        <span className="sr-only">Thumbnail</span>
+      </PlpListHeaderCell>
+      <PlpListHeaderCell>Name</PlpListHeaderCell>
+      <PlpListHeaderCell align="right">Carat</PlpListHeaderCell>
+      <PlpListHeaderCell>Shape</PlpListHeaderCell>
+      <PlpListHeaderCell align="center">Color</PlpListHeaderCell>
+      <PlpListHeaderCell align="center">Clarity</PlpListHeaderCell>
+      <PlpListHeaderCell>Origin</PlpListHeaderCell>
+      <PlpListHeaderCell>Certificate</PlpListHeaderCell>
+      <PlpListHeaderCell>Delivery</PlpListHeaderCell>
+      <PlpListHeaderCell>Returns</PlpListHeaderCell>
+      <PlpListHeaderCell>Price</PlpListHeaderCell>
+      <PlpListHeaderCell>Price/ct</PlpListHeaderCell>
+      <PlpListHeaderCell align="right">
+        <span className="sr-only">Actions</span>
+      </PlpListHeaderCell>
+    </PlpListHeaderRow>
+  );
+}
+
+/**
+ * Storybook-only diamond row assembled from PlpListRow primitives. The
+ * consumer owns every business decision — which pricing variants to
+ * pass, which actions to show, what click-through means.
+ */
+export function DiamondPlpListRow({
+  item,
+  onClick,
+}: {
+  item: DiamondItem;
+  onClick?: () => void;
+}) {
+  const userContext = useStorybookAppUser();
+  const [selected, setSelected] = useState(false);
+
+  const alternateCurrency =
+    userContext.currency !== "USD"
+      ? { amount: item.price, currency: userContext.currency }
+      : undefined;
+
+  return (
+    <PlpListRow onClick={onClick} selected={selected}>
+      <PlpListCell>
+        <PlpListRowCheckbox checked={selected} onChange={setSelected} />
+      </PlpListCell>
+      <PlpListCell>
+        <PlpListRowMedia image={item.image} imageAlt={item.name} />
+      </PlpListCell>
+      <PlpListCell>
+        <div className="flex flex-col gap-0.5">
+          <PlpListRowName>{item.name}</PlpListRowName>
+          <Typography as="div" variant="caption" className="text-muted-foreground">
+            {item.stockId}
+          </Typography>
+        </div>
+      </PlpListCell>
+      <PlpListCell align="right">{item.carat.toFixed(2)}</PlpListCell>
+      <PlpListCell>{item.shape}</PlpListCell>
+      <PlpListCell align="center">{item.color}</PlpListCell>
+      <PlpListCell align="center">{item.clarity}</PlpListCell>
+      <PlpListCell>{item.origin}</PlpListCell>
+      <PlpListCell>
+        <span className="font-mono text-xs">
+          {item.certLab} {item.certNumber}
+        </span>
+      </PlpListCell>
+      <PlpListCell>
+        <PlpListRowDelivery
+          variant={item.isExpress ? "express" : "regular"}
+          date="Nov 18 – 23"
+          shipsFrom={item.origin}
+        />
+      </PlpListCell>
+      <PlpListCell>
+        <PlpListRowReturnable
+          variant={item.isReturnable ? "returnable" : "non-returnable"}
+        />
+      </PlpListCell>
+      <PlpListCell>
+        <PlpListRowPrice
+          amount={item.price}
+          currency="USD"
+          alternateCurrency={alternateCurrency}
+        />
+      </PlpListCell>
+      <PlpListCell>
+        <PlpListRowPricePerCarat amount={item.pricePerCarat} currency="USD" />
+      </PlpListCell>
+      <PlpListCell align="right">
+        <PlpListRowActions>
+          <Button size="sm" onClick={onAddToCart}>
+            Add to cart
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="More actions"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <IconDotsVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem onSelect={onAddToShortlist}>
+                <IconHeart className="h-4 w-4" />
+                Add to shortlist
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={onShare}>
+                <IconShare className="h-4 w-4" />
+                Share
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={onViewMedia}>
+                <IconPhoto className="h-4 w-4" />
+                View media
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </PlpListRowActions>
+      </PlpListCell>
+    </PlpListRow>
+  );
+}

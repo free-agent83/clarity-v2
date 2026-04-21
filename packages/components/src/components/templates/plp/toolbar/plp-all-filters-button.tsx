@@ -3,6 +3,7 @@
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
+import { Typography } from "../../../atoms/typography/typography";
 
 /**
  * "All Filters" button — opens the filter drawer and shows an active
@@ -23,7 +24,14 @@ export function PlpAllFiltersButton({
       <IconAdjustmentsHorizontal className="mr-1.5 h-4 w-4" />
       All filters
       {activeFilterCount > 0 && (
-        <span className="bg-accent text-accent-foreground px-1.5 rounded-full text-xs">{activeFilterCount}</span>
+        <Typography
+          asChild
+          variant="caption"
+        >
+          <span className="bg-accent text-accent-foreground px-1.5 rounded-full">
+            {activeFilterCount}
+          </span>
+        </Typography>
       )}
     </Button>
   );

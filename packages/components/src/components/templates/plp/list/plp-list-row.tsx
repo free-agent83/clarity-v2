@@ -1,19 +1,20 @@
 "use client";
 
+import { type ReactNode } from "react";
+import { IconTruckDelivery } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "../../../atoms/badge/badge";
+import { Checkbox } from "../../../atoms/checkbox/checkbox";
 import { Typography } from "../../../atoms/typography/typography";
-import { TableCell, TableRow } from "../../../organisms/table/table";
-import type {
-  AppUserContextValue,
-  GridItemData,
-  ListColumn,
-} from "../plp-types";
-import { PlpListActionsCell } from "./plp-list-actions-cell";
+import {
+  TableCell,
+  TableHead,
+  TableRow,
+} from "../../../organisms/table/table";
+import { BrandExpress } from "@/components/atoms/brand-express/brand-express";
 
-/**
- * Formats a number as a currency string using the en-US locale.
- */
+// ── Helpers ───────────────────────────────────────────────
+
 function formatCurrency(amount: number, currency: string): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -23,54 +24,236 @@ function formatCurrency(amount: number, currency: string): string {
   }).format(amount);
 }
 
+type CellAlign = "left" | "right" | "center";
+
+// ── Structural primitives ─────────────────────────────────
+
 /**
- * Renders the main Price cell with all pricing variants from data + user context.
+ * A single data row in the PLP list view. Provides row-level presentation
+ * (hover, click, selected, disabled) and a `group/plp-row` scope so
+ * descendant primitives (e.g. `PlpListRowActions`) can reveal on hover.
+ *
+ * Purely presentational — no business logic, no data binding. Consumers
+ * compose cells inside from `PlpListCell` and the row content primitives.
  */
-function PriceCell({
-  pricing,
-  userContext,
+export function PlpListRow({
+  children,
+  selected = false,
+  disabled = false,
+  onClick,
+  className,
 }: {
-  pricing: GridItemData["pricing"];
-  userContext: AppUserContextValue;
+  children: ReactNode;
+  selected?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  className?: string;
 }) {
-  const showTariffs =
-    pricing.includeTariffs && userContext.location === "US";
-  const showLegacy =
-    !!pricing.legacyDeliveredPrice && userContext.pricingModel === "legacy";
-  const showMultiCurrency = userContext.currency !== pricing.currency;
+  const clickable = !!onClick && !disabled;
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTableRowElement>) {
+    if (!clickable) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick?.();
+    }
+  }
 
   return (
-    <div className="flex flex-col gap-0.5">
-      {pricing.discount && (
-        <div className="flex items-center gap-1.5">
-          <Typography as="span" variant="caption" emphasis className="text-success">
-            {pricing.discount.percentage}% below
-          </Typography>
-          <Typography as="span" variant="caption" className="text-muted-foreground line-through">
-            {formatCurrency(pricing.discount.originalAmount, pricing.currency)}
-          </Typography>
-        </div>
+    <TableRow
+      data-slot="plp-list-row"
+      data-selected={selected || undefined}
+      data-disabled={disabled || undefined}
+      role={clickable ? "link" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onClick={clickable ? onClick : undefined}
+      onKeyDown={clickable ? handleKeyDown : undefined}
+      className={cn(
+        "group/plp-row [&>td]:py-4 [&>td:first-child]:pl-4 [&>td:last-child]:pr-4",
+        clickable &&
+          "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        selected && "bg-accent/40",
+        disabled && "pointer-events-none opacity-50",
+        className
       )}
-      <Typography as="div" variant="body-2" emphasis>
-        {formatCurrency(pricing.amount, pricing.currency)}
-      </Typography>
-      {showTariffs && (
-        <Typography as="div" variant="caption" className="text-muted-foreground">
-          Incl. US tariffs
+    >
+      {children}
+    </TableRow>
+  );
+}
+
+/**
+ * Standard data cell. Thin wrapper around the shadcn TableCell with
+ * PLP-consistent alignment and width props.
+ */
+export function PlpListCell({
+  children,
+  align = "left",
+  width,
+  className,
+}: {
+  children: ReactNode;
+  align?: CellAlign;
+  width?: number | string;
+  className?: string;
+}) {
+  return (
+    <TableCell
+      data-slot="plp-list-cell"
+      style={{
+        textAlign: align,
+        width: typeof width === "number" ? `${width}px` : width,
+      }}
+      className={className}
+    >
+      {children}
+    </TableCell>
+  );
+}
+
+/**
+ * Header row wrapper. Sticky positioning is applied by the template's
+ * `<thead>`; this component just provides row-level styling.
+ */
+export function PlpListHeaderRow({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <TableRow
+      data-slot="plp-list-header-row"
+      className={cn("[&>th]:px-4", className)}
+    >
+      {children}
+    </TableRow>
+  );
+}
+
+/**
+ * Header cell. Alignment and width props match `PlpListCell` so column
+ * headers align with the data cells beneath them.
+ */
+export function PlpListHeaderCell({
+  children,
+  align = "left",
+  width,
+  className,
+}: {
+  children: ReactNode;
+  align?: CellAlign;
+  width?: number | string;
+  className?: string;
+}) {
+  return (
+    <TableHead
+      data-slot="plp-list-header-cell"
+      style={{
+        textAlign: align,
+        width: typeof width === "number" ? `${width}px` : width,
+      }}
+      className={className}
+    >
+      {children}
+    </TableHead>
+  );
+}
+
+// ── Content primitives ────────────────────────────────────
+
+/**
+ * Compact thumbnail for a list row. Fixed square default; override size
+ * via `className` if a category wants something different.
+ */
+export function PlpListRowMedia({
+  image,
+  imageAlt,
+  className,
+}: {
+  image: string;
+  imageAlt: string;
+  className?: string;
+}) {
+  return (
+    <div
+      data-slot="plp-list-row-media"
+      className={cn(
+        "h-12 w-12 overflow-hidden rounded-md border border-border bg-muted",
+        className
+      )}
+    >
+      <img
+        src={image}
+        alt={imageAlt}
+        loading="lazy"
+        className="h-full w-full object-contain"
+      />
+    </div>
+  );
+}
+
+/**
+ * Product name styled for dense table rows. Single-line body-2
+ * emphasis; consumers add lead/caption lines below using Typography if
+ * needed.
+ */
+export function PlpListRowName({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <Typography
+      as="div"
+      variant="body-2"
+      emphasis
+      data-slot="plp-list-row-name"
+      className={cn("line-clamp-1", className)}
+    >
+      {children}
+    </Typography>
+  );
+}
+
+/**
+ * Delivery indicator for list rows. Express variant uses a Badge +
+ * date; regular variant uses an icon + date. Optional `shipsFrom`
+ * renders a muted secondary line.
+ */
+export function PlpListRowDelivery({
+  variant,
+  date,
+  shipsFrom,
+}: {
+  variant: "express" | "regular";
+  date: ReactNode;
+  shipsFrom?: ReactNode;
+}) {
+  const isExpress = variant === "express";
+  return (
+    <div data-slot="plp-list-row-delivery" className="flex flex-col gap-0.5">
+      <div className="flex items-center gap-1.5">
+        {isExpress ? (
+          <BrandExpress className="h-2.5" aria-label="Express delivery" />
+        ) : (
+          <IconTruckDelivery className="size-3.5 shrink-0" aria-hidden="true" />
+        )}
+        <Typography
+          as="span"
+          variant="caption"
+          emphasis
+          className={isExpress ? "text-express" : undefined}
+        >
+          {date}
         </Typography>
-      )}
-      {showLegacy && pricing.legacyDeliveredPrice && (
+      </div>
+      {shipsFrom && (
         <Typography as="div" variant="caption" className="text-muted-foreground">
-          Delivered:{" "}
-          {formatCurrency(
-            pricing.legacyDeliveredPrice.amount,
-            pricing.legacyDeliveredPrice.currency
-          )}
-        </Typography>
-      )}
-      {showMultiCurrency && (
-        <Typography as="div" variant="caption" className="text-muted-foreground">
-          ~{formatCurrency(pricing.amount, userContext.currency)}
+          from {shipsFrom}
         </Typography>
       )}
     </div>
@@ -78,155 +261,156 @@ function PriceCell({
 }
 
 /**
- * A single row in the PLP list view.
- *
- * Renders fixed core cells (thumbnail, name+lead, delivery, returns, price,
- * price/ct, actions) around the category-configured middle columns.
- * Invokes each category column's `cell` function with the raw item.
- *
- * The row itself is clickable (opens item detail via `onItemClick`), with
- * interactive cells stopping propagation so their own click handlers fire.
+ * Returns indicator for list rows. Shorter copy than the grid variant
+ * since table cells are dense.
  */
-export function PlpListRow<TItem>({
-  item,
-  data,
-  listColumns,
-  showPricePerCarat,
-  onItemClick,
-  userContext,
+export function PlpListRowReturnable({
+  variant,
 }: {
-  item: TItem;
-  data: GridItemData;
-  listColumns: ListColumn<TItem>[];
-  showPricePerCarat: boolean;
-  onItemClick?: (item: TItem) => void;
-  userContext: AppUserContextValue;
+  variant: "returnable" | "non-returnable";
 }) {
-  const clickable = !!onItemClick;
+  return variant === "returnable" ? (
+    <Badge variant="success" size="sm" data-slot="plp-list-row-returnable">
+      Returnable
+    </Badge>
+  ) : (
+    <Badge variant="outline" size="sm" data-slot="plp-list-row-returnable">
+      Non-returnable
+    </Badge>
+  );
+}
 
-  function handleRowClick() {
-    onItemClick?.(item);
-  }
-
-  function handleRowKeyDown(e: React.KeyboardEvent<HTMLTableRowElement>) {
-    if (!clickable) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onItemClick?.(item);
-    }
-  }
-
+/**
+ * Price for list rows. Fat component — renders every supported pricing
+ * variant when its prop is provided. Tuned for cell density: discount
+ * is inline with a percent label, tariff note is a plain caption line
+ * (no hover card), per-carat lives in its own column via
+ * `PlpListRowPricePerCarat`.
+ */
+export function PlpListRowPrice({
+  amount,
+  currency,
+  discount,
+  includeTariffs = false,
+  legacyDelivered,
+  alternateCurrency,
+}: {
+  amount: number;
+  currency: string;
+  discount?: { percentage: number; originalAmount: number };
+  includeTariffs?: boolean;
+  legacyDelivered?: { amount: number; currency: string };
+  alternateCurrency?: { amount: number; currency: string };
+}) {
   return (
-    <TableRow
-      className={cn(
-        "group/plp-row [&>td]:py-4 [&>td:first-child]:pl-4 [&>td:last-child]:pr-4",
-        clickable && "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    <div data-slot="plp-list-row-price" className="flex flex-col gap-0.5">
+      {discount && (
+        <div className="flex items-center gap-1.5">
+          <Typography as="span" variant="caption" emphasis className="text-success">
+            {discount.percentage}% below
+          </Typography>
+          <Typography
+            as="span"
+            variant="caption"
+            className="text-muted-foreground line-through"
+          >
+            {formatCurrency(discount.originalAmount, currency)}
+          </Typography>
+        </div>
       )}
-      role={clickable ? "link" : undefined}
-      tabIndex={clickable ? 0 : undefined}
-      onClick={clickable ? handleRowClick : undefined}
-      onKeyDown={clickable ? handleRowKeyDown : undefined}
+      <Typography as="div" variant="body-2" emphasis>
+        {formatCurrency(amount, currency)}
+      </Typography>
+      {includeTariffs && (
+        <Typography as="div" variant="caption" className="text-muted-foreground">
+          Incl. US tariffs
+        </Typography>
+      )}
+      {legacyDelivered && (
+        <Typography as="div" variant="caption" className="text-muted-foreground">
+          Delivered:{" "}
+          {formatCurrency(legacyDelivered.amount, legacyDelivered.currency)}
+        </Typography>
+      )}
+      {alternateCurrency && (
+        <Typography as="div" variant="caption" className="text-muted-foreground">
+          ~{formatCurrency(alternateCurrency.amount, alternateCurrency.currency)}
+        </Typography>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Per-carat rate for list rows. Typically lives in its own column.
+ */
+export function PlpListRowPricePerCarat({
+  amount,
+  currency,
+}: {
+  amount: number;
+  currency: string;
+}) {
+  return (
+    <Typography
+      as="span"
+      variant="caption"
+      data-slot="plp-list-row-price-per-carat"
     >
-      {/* Thumbnail */}
-      <TableCell>
-        <div className="h-12 w-12 overflow-hidden rounded-md border border-border bg-muted">
-          <img
-            src={data.thumbnailSrc}
-            alt={data.thumbnailAlt}
-            className="h-full w-full object-contain"
-            loading="lazy"
-          />
-        </div>
-      </TableCell>
+      {formatCurrency(amount, currency)}/ct
+    </Typography>
+  );
+}
 
-      {/* Name + lead */}
-      <TableCell>
-        <div className="flex flex-col gap-0.5">
-          <Typography as="div" variant="body-2" emphasis>{data.name}</Typography>
-          {data.lead && (
-            <Typography as="div" variant="caption" className="text-muted-foreground">
-              {data.lead}
-            </Typography>
-          )}
-        </div>
-      </TableCell>
-
-      {/* Category-configured columns */}
-      {listColumns.map((column) => (
-        <TableCell
-          key={column.id}
-          style={{
-            textAlign: column.align ?? "left",
-            width:
-              typeof column.width === "number"
-                ? `${column.width}px`
-                : column.width,
-          }}
-        >
-          {column.cell(item)}
-        </TableCell>
-      ))}
-
-      {/* Delivery */}
-      <TableCell>
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-1">
-            {data.delivery.isExpress && (
-              <Badge variant="success" size="sm">
-                Express
-              </Badge>
-            )}
-            <Typography as="span" variant="caption">
-              {data.delivery.estimatedDate}
-            </Typography>
-          </div>
-          <Typography as="div" variant="caption" className="text-muted-foreground">
-            from {data.delivery.shipsFrom}
-          </Typography>
-        </div>
-      </TableCell>
-
-      {/* Returns */}
-      <TableCell>
-        {data.returns.isReturnable ? (
-          <Typography as="span" variant="caption" className="text-success">
-            Returnable
-          </Typography>
-        ) : (
-          <Typography as="span" variant="caption" className="text-destructive">
-            Non-returnable
-          </Typography>
-        )}
-      </TableCell>
-
-      {/* Price */}
-      <TableCell>
-        <PriceCell pricing={data.pricing} userContext={userContext} />
-      </TableCell>
-
-      {/* Price/ct (conditional) */}
-      {showPricePerCarat && (
-        <TableCell>
-          {data.pricing.perCarat ? (
-            <Typography as="span" variant="caption">
-              {formatCurrency(
-                data.pricing.perCarat.amount,
-                data.pricing.perCarat.currency
-              )}
-              /ct
-            </Typography>
-          ) : (
-            <Typography as="span" variant="caption" className="text-muted-foreground">
-              —
-            </Typography>
-          )}
-        </TableCell>
+/**
+ * Hover-reveal container for row actions. Provides the PLP hover
+ * styling; consumers compose the actual buttons/menus inside.
+ */
+export function PlpListRowActions({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      data-slot="plp-list-row-actions"
+      className={cn(
+        "flex items-center justify-end gap-1",
+        "opacity-0 transition-opacity group-hover/plp-row:opacity-100 group-has-focus-visible/plp-row:opacity-100",
+        "[@media(hover:none)]:opacity-100",
+        className
       )}
+    >
+      {children}
+    </div>
+  );
+}
 
-      {/* Actions */}
-      <TableCell>
-        <PlpListActionsCell data={data} />
-      </TableCell>
-    </TableRow>
+/**
+ * Selection checkbox for list rows. Presentational — consumer owns
+ * the `checked` state and `onChange` handler.
+ */
+export function PlpListRowCheckbox({
+  checked,
+  onChange,
+  label = "Select item",
+}: {
+  checked: boolean;
+  onChange: (next: boolean) => void;
+  label?: string;
+}) {
+  return (
+    <div
+      data-slot="plp-list-row-checkbox"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <Checkbox
+        checked={checked}
+        onCheckedChange={(v) => onChange(v === true)}
+        aria-label={label}
+      />
+    </div>
   );
 }

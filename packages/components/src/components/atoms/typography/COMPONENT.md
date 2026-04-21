@@ -14,8 +14,8 @@ Renders text at one of the design system's role presets.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `"h1" \| "h2" \| "h3" \| "h4" \| "h5" \| "h6" \| "body1" \| "body1Emphasis" \| "body2" \| "body2Emphasis" \| "caption" \| "captionEmphasis"` | `"body2"` | Role preset. Drives font-size, line-height, font-weight and letter-spacing together. |
-| `as` | `"h1" \| "h2" \| "h3" \| "h4" \| "h5" \| "h6" \| "p" \| "span" \| "div"` | resolved from `variant` | Override the rendered HTML element. Headings default to their matching tag; body and caption variants default to `<p>`. |
+| `variant` | `"h1" \| "h2" \| "h3" \| "h4" \| "h5" \| "h6" \| "subtitle1" \| "subtitle2" \| "body1" \| "body1Emphasis" \| "body2" \| "body2Emphasis" \| "caption" \| "captionEmphasis"` | `"body2"` | Role preset. Drives font-size, line-height, font-weight and letter-spacing together. |
+| `as` | `"h1" \| "h2" \| "h3" \| "h4" \| "h5" \| "h6" \| "p" \| "span" \| "div"` | resolved from `variant` | Override the rendered HTML element. Headings default to their matching tag; subtitles default to `<h6>`; body and caption variants default to `<p>`. |
 | `asChild` | `boolean` | `false` | Render via Radix Slot to apply typography styling to a consumer-provided element (e.g. an anchor or a Next.js `<Link>`). Takes precedence over `as`. |
 
 All standard HTML attributes for the rendered element are supported via prop spread.

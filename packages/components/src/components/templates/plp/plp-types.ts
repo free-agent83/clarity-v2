@@ -132,78 +132,6 @@ export interface CustomFilterDefinition {
 /** A filter definition -- either a preset reference or a custom render prop. */
 export type FilterDefinition = PresetFilterDefinition | CustomFilterDefinition;
 
-// -- Grid item model --------------------------------------------------------
-
-/** Pricing data for a grid item. Template handles all variant rendering. */
-export interface PricingData {
-  amount: number;
-  currency: string;
-  perCarat?: { amount: number; currency: string };
-  discount?: { percentage: number; originalAmount: number };
-  legacyDeliveredPrice?: { amount: number; currency: string };
-  includeTariffs?: boolean;
-}
-
-/** A category-specific thumbnail action. */
-export interface CategoryThumbnailAction {
-  id: string;
-  icon: ReactNode;
-  /** Tooltip text and accessible name. */
-  label: string;
-  onAction: (itemId: string) => void;
-}
-
-/** The structured data object returned by the `renderGridItem` mapper. */
-export interface GridItemData {
-  id: string;
-  name: string;
-  thumbnailSrc: string;
-  thumbnailAlt: string;
-  /** Category-owned slot -- can contain text, links, mixed content. */
-  lead?: ReactNode;
-  /** Category-supplied badge nodes. Template renders with consistent spacing. */
-  badges?: ReactNode[];
-  /** Optional category-owned slot between badges and delivery. */
-  categorySlotTop?: ReactNode;
-  /** Optional category-owned slot below pricing. */
-  categorySlotBottom?: ReactNode;
-  delivery: {
-    estimatedDate: string;
-    shipsFrom: string;
-    isExpress?: boolean;
-  };
-  returns: {
-    isReturnable: boolean;
-  };
-  pricing: PricingData;
-  onAddToCart: () => void;
-  /** When true, selection checkbox appears in the thumbnail toolbar. */
-  enableSelection?: boolean;
-  /** Category-specific actions appended after platform actions. */
-  categoryActions?: CategoryThumbnailAction[];
-  /** Platform action callbacks. */
-  onFavorite?: (itemId: string) => void;
-  onShare?: (itemId: string) => void;
-  onViewMedia?: (itemId: string) => void;
-  /**
-   * Optional 360 rotation video. When present and the viewport supports
-   * hover (pointer devices), the grid item's thumbnail crossfades from
-   * the static image into this video on hover, and horizontal cursor
-   * movement scrubs the video's currentTime.
-   *
-   * Touch devices ignore this field entirely — no video element is mounted.
-   * The Lightbox (separate spec) is the touch-side experience for 360 media.
-   *
-   * Encode the source video with dense keyframes (short GOP, e.g. every
-   * 2–3 frames) so seek-based scrubbing is smooth. Sparse-keyframe videos
-   * will stutter when the cursor moves across the thumbnail.
-   */
-  media360?: {
-    /** URL to an MP4 or WebM containing the full rotation sequence. */
-    videoUrl: string;
-  };
-}
-
 // -- Sort -------------------------------------------------------------------
 
 /** A single sort option for the sort dropdown. */
@@ -220,22 +148,6 @@ export interface BreadcrumbSegment {
   href?: string;
 }
 
-// -- App user context -------------------------------------------------------
-
-/**
- * Shape of app-level user context passed into the template. Drives variant
- * rendering (currency display, tariff disclosure, legacy pricing, feature
- * flags). The type is a contract — the library does not ship a Context
- * object or Provider. Consuming apps populate and pass this prop however
- * they want; Storybook emulates it via `.storybook/preview.tsx`.
- */
-export interface AppUserContextValue {
-  currency: string;
-  location: string;
-  pricingModel: "standard" | "legacy";
-  featureFlags?: Record<string, boolean>;
-}
-
 // -- Template status --------------------------------------------------------
 
 /** The current state of the PLP content area. */
@@ -245,25 +157,6 @@ export type PlpStatus =
   | "empty-filtered"
   | "empty-no-items"
   | "error";
-
-// -- List view --------------------------------------------------------------
-
-/**
- * A category-configured column for list view.
- *
- * The `cell` function receives the raw item (not `GridItemData`) so the
- * category has full access to original item data — including fields that
- * don't live on `GridItemData` (e.g., certificate number, carat, clarity).
- */
-export interface ListColumn<TItem> {
-  id: string;
-  header: string;
-  cell: (item: TItem) => ReactNode;
-  /** Optional fixed width (CSS value or number of pixels). */
-  width?: number | string;
-  /** Text alignment for cell and header. Defaults to "left". */
-  align?: "left" | "center" | "right";
-}
 
 /** View mode — grid or list. */
 export type PlpViewMode = "grid" | "list";

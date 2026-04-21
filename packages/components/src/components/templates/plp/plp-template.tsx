@@ -27,20 +27,22 @@ import {
 import { PlpStickyFilterBar } from "./toolbar/plp-sticky-filter-bar";
 import { PlpToolbar } from "./toolbar/plp-toolbar";
 import { Skeleton } from "../../atoms/skeleton/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../../organisms/table/table";
 import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
-import { PlpList } from "./list/plp-list";
-import { PlpListSkeleton } from "./list/plp-list-skeleton";
 import { PlpEmpty } from "./states/plp-empty";
 import { PlpError } from "./states/plp-error";
 import { useIsTabletUp } from "../../../hooks/use-is-tablet-up";
 import type {
-  AppUserContextValue,
   BreadcrumbSegment,
   FilterDefinition,
   FilterState,
   FilterValue,
-  GridItemData,
-  ListColumn,
   PlpStatus,
   PlpViewMode,
   SortOption,
@@ -49,11 +51,13 @@ import type {
 /**
  * Props for the PLP template.
  *
- * `TListItem` is relevant only when the consumer opts into list view.
- * Grid view is data-shape-agnostic — consumers pre-render cards and
- * hand them to the template as an array of nodes.
+ * The template is a pure layout container. Both grid and list paths are
+ * data-shape-agnostic — consumers compose cards / rows in-situ from the
+ * PLP primitives and hand them to the template as ReactNodes. All
+ * business logic (pricing variants, user-context decisions, row
+ * click-through) lives in the consumer.
  */
-export interface PlpTemplateProps<TListItem = never> {
+export interface PlpTemplateProps {
   // Heading
   breadcrumbs: BreadcrumbSegment[];
   title: string;
@@ -102,44 +106,35 @@ export interface PlpTemplateProps<TListItem = never> {
   onSearchSubmit?: (query: string) => void;
 
   /**
-   * Pre-rendered grid cards. The template is a pure layout for the grid
-   * path — it does not know or care about item shape. Consumers compose
-   * cards from the `PlpGridItem*` primitives and hand them in as an
-   * array of nodes. Each element should carry its own `key`.
+   * Pre-rendered grid cards. Consumers compose cards from the
+   * `PlpGridItem*` primitives and hand them in as an array of nodes.
+   * Each element should carry its own `key`.
    */
   gridItems?: ReactNode[];
 
-  // List view (legacy data-driven API — pending refactor into primitives).
   /**
-   * Raw items for list view. Rendered via `renderListItem` into the
-   * shared `GridItemData` shape consumed by `PlpListRow`. Scheduled to
-   * be refactored into a primitives-based API alongside the grid work.
+   * Pre-rendered header row for list view. A single `<PlpListHeaderRow>`
+   * containing `<PlpListHeaderCell>` children. Must align with the cells
+   * inside each `listRows` row; the template doesn't reconcile columns.
    */
-  listItems?: TListItem[];
-  renderListItem?: (item: TListItem) => GridItemData;
+  listHeader?: ReactNode;
   /**
-   * Ambient user context forwarded to the list view only (list refactor
-   * pending). Omit for grid-only stories.
+   * Pre-rendered list rows. Consumers compose rows from `PlpListRow`,
+   * `PlpListCell`, and the list content primitives. Each row should
+   * carry its own `key`.
    */
-  userContext?: AppUserContextValue;
+  listRows?: ReactNode[];
   /**
-   * Category-configured columns for list view. Presence of a non-empty
-   * array enables list view availability (the toggle appears and the
-   * consumer can switch modes). Omit or pass empty to keep grid-only.
+   * List view availability. When true, the toolbar exposes the grid/list
+   * toggle. At viewports < 1024px, the template silently falls back to
+   * grid without calling `onViewModeChange`.
    */
-  listColumns?: ListColumn<TListItem>[];
+  listViewAvailable?: boolean;
   /**
    * Current view mode. Defaults to "grid" when undefined.
-   * The template silently falls back to grid at viewports < 1024px,
-   * without calling `onViewModeChange`.
    */
   viewMode?: PlpViewMode;
   onViewModeChange?: (mode: PlpViewMode) => void;
-  /**
-   * Called when the user clicks a list view row.
-   * List view only; no effect in grid view.
-   */
-  onItemClick?: (item: TListItem) => void;
 
   // Pagination
   page: number;
@@ -173,7 +168,7 @@ export interface PlpTemplateProps<TListItem = never> {
  * @see docs/plans/specs/2026-04-16-plp-template-phase1-design.md
  * @see docs/plans/specs/2026-04-16-plp-template-phase2-design.md
  */
-export function PlpTemplate<TListItem = never>({
+export function PlpTemplate({
   breadcrumbs,
   title,
   resultsCount,
@@ -189,13 +184,11 @@ export function PlpTemplate<TListItem = never>({
   searchPlaceholder,
   onSearchSubmit,
   gridItems,
-  listItems,
-  renderListItem,
-  userContext,
-  listColumns,
+  listHeader,
+  listRows,
+  listViewAvailable = false,
   viewMode = "grid",
   onViewModeChange,
-  onItemClick,
   page,
   pageSize,
   totalItems,
@@ -206,7 +199,7 @@ export function PlpTemplate<TListItem = never>({
   onRetry,
   emptyFilterSuggestions,
   emptyMessage,
-}: PlpTemplateProps<TListItem>) {
+}: PlpTemplateProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isTabletUp = useIsTabletUp();
 
@@ -244,10 +237,9 @@ export function PlpTemplate<TListItem = never>({
   const totalPages = Math.ceil(totalItems / pageSize);
 
   // Resolve the effective view mode:
-  // - Grid if list view is not available (no columns or empty)
+  // - Grid if list view is not available (consumer opt-in)
   // - Grid if viewport is below tablet (silent fallback, consumer intent preserved)
   // - Otherwise, whatever the consumer asked for
-  const listViewAvailable = !!listColumns && listColumns.length > 0;
   const effectiveViewMode: PlpViewMode =
     listViewAvailable && isTabletUp && viewMode === "list" ? "list" : "grid";
 
@@ -294,8 +286,12 @@ export function PlpTemplate<TListItem = never>({
 
       {/* Content area */}
       {status === "loading" &&
-        (effectiveViewMode === "list" && listColumns ? (
-          <PlpListSkeleton listColumns={listColumns} count={pageSize} />
+        (effectiveViewMode === "list" ? (
+          <ListShell header={listHeader}>
+            {Array.from({ length: pageSize }, (_, i) => (
+              <ListSkeletonRow key={i} />
+            ))}
+          </ListShell>
         ) : (
           <div
             className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6"
@@ -309,18 +305,8 @@ export function PlpTemplate<TListItem = never>({
         ))}
 
       {status === "success" &&
-        (effectiveViewMode === "list" &&
-        listColumns &&
-        listItems &&
-        renderListItem &&
-        userContext ? (
-          <PlpList
-            items={listItems}
-            renderGridItem={renderListItem}
-            listColumns={listColumns}
-            onItemClick={onItemClick}
-            userContext={userContext}
-          />
+        (effectiveViewMode === "list" ? (
+          <ListShell header={listHeader}>{listRows}</ListShell>
         ) : (
           <div
             className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6"
@@ -367,6 +353,50 @@ export function PlpTemplate<TListItem = never>({
         onDraftFilterStateChange={onDraftFilterStateChange}
       />
     </main>
+  );
+}
+
+/**
+ * List table shell — owned by the template. Provides the scroll container,
+ * sticky header positioning, and `<thead>`/`<tbody>` scaffolding. Consumer
+ * provides the header row and the body rows as pre-rendered nodes.
+ */
+function ListShell({
+  header,
+  children,
+}: {
+  header: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className="overflow-hidden rounded-lg border border-border"
+      data-slot="plp-list"
+    >
+      <Table>
+        {header && (
+          <TableHeader className="sticky top-0 z-10 bg-background">
+            {header}
+          </TableHeader>
+        )}
+        <TableBody>{children}</TableBody>
+      </Table>
+    </div>
+  );
+}
+
+/**
+ * Generic single-cell skeleton row used by the list's loading state. Spans
+ * the full width regardless of the consumer's column count — the visual
+ * transition into the real rows is brief and harmless.
+ */
+function ListSkeletonRow() {
+  return (
+    <TableRow>
+      <TableCell colSpan={999} className="py-4">
+        <Skeleton className="h-6 w-full" />
+      </TableCell>
+    </TableRow>
   );
 }
 

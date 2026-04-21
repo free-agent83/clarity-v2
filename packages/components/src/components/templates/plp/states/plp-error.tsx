@@ -1,4 +1,5 @@
 import { Button } from "../../../atoms/button/button";
+import { Typography } from "../../../atoms/typography/typography";
 
 /**
  * Error state for the PLP content area.
@@ -8,13 +9,13 @@ import { Button } from "../../../atoms/button/button";
 export function PlpError({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center" data-slot="plp-error">
-      <h3 className="mt-4 text-lg font-semibold text-foreground">
+      <Typography as="h3" variant="h5" className="mt-4">
         Something went wrong
-      </h3>
-      <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+      </Typography>
+      <Typography variant="body-2" className="mt-1 max-w-sm text-muted-foreground">
         We couldn't load the products. Please try again or contact support if
         the problem persists.
-      </p>
+      </Typography>
       <div className="mt-4 flex items-center gap-3">
         {onRetry && (
           <Button onClick={onRetry}>Try again</Button>

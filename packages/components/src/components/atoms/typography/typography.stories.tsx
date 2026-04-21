@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import type { ComponentProps } from "react";
 import { Typography } from "./typography";
 
 const meta: Meta<typeof Typography> = {
@@ -15,14 +16,14 @@ const meta: Meta<typeof Typography> = {
         "h4",
         "h5",
         "h6",
-        "body1",
-        "body1Emphasis",
-        "body2",
-        "body2Emphasis",
+        "subtitle-1",
+        "subtitle-2",
+        "body-1",
+        "body-2",
         "caption",
-        "captionEmphasis",
       ],
     },
+    emphasis: { control: "boolean" },
     as: {
       control: "select",
       options: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "span", "div"],
@@ -38,30 +39,41 @@ export const Default: Story = {
   args: { children: "The quick brown fox jumps over the lazy dog" },
 };
 
-const specimen = [
+type SpecimenRow = {
+  variant: NonNullable<ComponentProps<typeof Typography>["variant"]>;
+  emphasis?: boolean;
+  label: string;
+};
+
+const specimen: SpecimenRow[] = [
   { variant: "h1", label: "Heading 1" },
   { variant: "h2", label: "Heading 2" },
   { variant: "h3", label: "Heading 3" },
   { variant: "h4", label: "Heading 4" },
   { variant: "h5", label: "Heading 5" },
   { variant: "h6", label: "Heading 6" },
-  { variant: "body1", label: "Body 1 Regular" },
-  { variant: "body1Emphasis", label: "Body 1 Emphasis" },
-  { variant: "body2", label: "Body 2 Regular" },
-  { variant: "body2Emphasis", label: "Body 2 Emphasis" },
+  { variant: "subtitle-1", label: "Subtitle 1" },
+  { variant: "subtitle-2", label: "Subtitle 2" },
+  { variant: "body-1", label: "Body 1 Regular" },
+  { variant: "body-1", emphasis: true, label: "Body 1 Emphasis" },
+  { variant: "body-2", label: "Body 2 Regular" },
+  { variant: "body-2", emphasis: true, label: "Body 2 Emphasis" },
   { variant: "caption", label: "Caption Regular" },
-  { variant: "captionEmphasis", label: "Caption Emphasis" },
-] as const;
+  { variant: "caption", emphasis: true, label: "Caption Emphasis" },
+];
 
 export const Specimen: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
-      {specimen.map(({ variant, label }) => (
-        <div key={variant} className="flex flex-col gap-1">
+      {specimen.map(({ variant, emphasis, label }, i) => (
+        <div key={i} className="flex flex-col gap-1">
           <Typography variant="caption" className="text-muted-foreground">
             {variant}
+            {emphasis ? " · emphasis" : ""}
           </Typography>
-          <Typography variant={variant}>{label}</Typography>
+          <Typography variant={variant} emphasis={emphasis}>
+            {label}
+          </Typography>
         </div>
       ))}
     </div>
@@ -83,7 +95,7 @@ export const AsOverride: Story = {
 
 export const AsChildWithLink: Story = {
   render: () => (
-    <Typography variant="body1" asChild>
+    <Typography variant="body-1" asChild>
       <a href="#" className="underline">
         Typography styling applied to an anchor via asChild
       </a>
@@ -101,12 +113,12 @@ export const Article: Story = {
         <Typography variant="h2">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit
         </Typography>
-        <Typography variant="body2" className="text-muted-foreground">
+        <Typography variant="body-2" className="text-muted-foreground">
           By Jane Doe · Published 20 April 2026
         </Typography>
       </header>
 
-      <Typography variant="body1">
+      <Typography variant="body-1">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
         ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -117,7 +129,7 @@ export const Article: Story = {
         Duis aute irure dolor in reprehenderit
       </Typography>
 
-      <Typography variant="body2">
+      <Typography variant="body-2">
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
         dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
         non proident, sunt in culpa qui officia deserunt mollit anim id est
@@ -125,7 +137,7 @@ export const Article: Story = {
         voluptatem accusantium doloremque laudantium.
       </Typography>
 
-      <Typography variant="body2">
+      <Typography variant="body-2">
         Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et
         quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam
         voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
@@ -136,11 +148,11 @@ export const Article: Story = {
         Neque porro quisquam est
       </Typography>
 
-      <Typography variant="body2">
+      <Typography variant="body-2">
         Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,
         consectetur, adipisci velit, sed quia non numquam eius modi tempora
         incidunt ut labore et dolore magnam aliquam quaerat voluptatem.{" "}
-        <Typography variant="body2Emphasis" as="span">
+        <Typography variant="body-2" emphasis as="span">
           Ut enim ad minima veniam, quis nostrum exercitationem
         </Typography>{" "}
         ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi
@@ -149,7 +161,7 @@ export const Article: Story = {
 
       <Typography variant="h5">At vero eos et accusamus</Typography>
 
-      <Typography variant="body2">
+      <Typography variant="body-2">
         At vero eos et accusamus et iusto odio dignissimos ducimus qui
         blanditiis praesentium voluptatum deleniti atque corrupti quos
         dolores et quas molestias excepturi sint occaecati cupiditate non
@@ -157,7 +169,7 @@ export const Article: Story = {
       </Typography>
 
       <footer className="flex flex-col gap-1 border-t border-border pt-4">
-        <Typography variant="captionEmphasis">About the author</Typography>
+        <Typography variant="caption" emphasis>About the author</Typography>
         <Typography variant="caption" className="text-muted-foreground">
           Jane Doe writes about design systems, typography, and the long road
           from Figma to production.
