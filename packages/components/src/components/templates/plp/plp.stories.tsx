@@ -25,8 +25,14 @@ import {
 import { AsyncComboboxFilter } from "../../molecules/async-combobox-filter/async-combobox-filter";
 import type { AsyncComboboxOption } from "../../molecules/async-combobox-filter/async-combobox-filter";
 import { ChipSelectFilter } from "../../molecules/chip-select-filter/chip-select-filter";
-import { FilterDrawer } from "../../molecules/filter-drawer/filter-drawer";
-import { FilterSection } from "../../molecules/filter-drawer/filter-drawer";
+import {
+  FilterSection,
+  FilterToolbar,
+} from "../../organisms/filter-toolbar/filter-toolbar";
+import type {
+  FilterToolbarDrawer,
+  FilterToolbarSortOption,
+} from "../../organisms/filter-toolbar/filter-toolbar";
 import {
   Pagination,
   PaginationContent,
@@ -43,8 +49,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../molecules/select/select";
-import { FilterToolbar } from "../../organisms/filter-toolbar/filter-toolbar";
-import type { FilterToolbarSortOption } from "../../organisms/filter-toolbar/filter-toolbar";
 import { useIsTabletUp } from "../../../hooks/use-is-tablet-up";
 import {
   PlpGridItem,
@@ -897,7 +901,6 @@ function AssemblyShell({
   stickyFilters,
   activeFilterCount,
   hasActiveFilters,
-  onOpenDrawer,
   onClearAll,
   onSearchSubmit,
   searchPlaceholder,
@@ -905,8 +908,8 @@ function AssemblyShell({
   sortValue,
   onSortChange,
   actions,
-  children,
   drawer,
+  children,
   pagination,
 }: {
   breadcrumbs: BreadcrumbSegment[];
@@ -917,7 +920,6 @@ function AssemblyShell({
   stickyFilters?: ReactNode[];
   activeFilterCount: number;
   hasActiveFilters: boolean;
-  onOpenDrawer: () => void;
   onClearAll: () => void;
   onSearchSubmit?: (q: string) => void;
   searchPlaceholder?: string;
@@ -925,8 +927,8 @@ function AssemblyShell({
   sortValue?: string;
   onSortChange?: (value: string) => void;
   actions?: ReactNode;
+  drawer?: FilterToolbarDrawer;
   children: ReactNode;
-  drawer?: ReactNode;
   pagination?: ReactNode;
 }) {
   return (
@@ -942,7 +944,6 @@ function AssemblyShell({
         stickyFilters={stickyFilters}
         activeFilterCount={activeFilterCount}
         hasActiveFilters={hasActiveFilters}
-        onOpenDrawer={onOpenDrawer}
         onClearAll={onClearAll}
         onSearchSubmit={onSearchSubmit}
         searchPlaceholder={searchPlaceholder}
@@ -950,10 +951,10 @@ function AssemblyShell({
         sortValue={sortValue}
         onSortChange={onSortChange}
         actions={actions}
+        drawer={drawer}
       />
       {children}
       {pagination}
-      {drawer}
     </main>
   );
 }
@@ -1221,7 +1222,6 @@ function GemstoneInteractive({
       stickyFilters={stickyFilters}
       activeFilterCount={ctrl.activeCount}
       hasActiveFilters={ctrl.activeCount > 0}
-      onOpenDrawer={ctrl.openDrawer}
       onClearAll={ctrl.clearAll}
       onSearchSubmit={onSearchSubmit}
       searchPlaceholder={searchPlaceholder}
@@ -1257,19 +1257,15 @@ function GemstoneInteractive({
           />
         ) : undefined
       }
-      drawer={
-        <FilterDrawer
-          open={ctrl.drawerOpen}
-          onOpenChange={ctrl.setDrawerOpen}
-          onApply={ctrl.applyDraft}
-          onClearDraft={ctrl.clearDraft}
-          hasActiveDraft={ctrl.hasActiveDraft}
-          resultsCount={preview.count}
-          isCountLoading={preview.loading}
-        >
-          <GemstoneDrawerBody ctrl={ctrl} />
-        </FilterDrawer>
-      }
+      drawer={{
+        content: <GemstoneDrawerBody ctrl={ctrl} />,
+        onOpen: ctrl.openDrawer,
+        onApply: ctrl.applyDraft,
+        onClearDraft: ctrl.clearDraft,
+        hasActiveDraft: ctrl.hasActiveDraft,
+        resultsCount: preview.count,
+        isCountLoading: preview.loading,
+      }}
     >
       {status === "empty-filtered" ||
       status === "empty-no-items" ||
@@ -1352,7 +1348,6 @@ function DiamondInteractive({
       stickyFilters={stickyFilters}
       activeFilterCount={ctrl.activeCount}
       hasActiveFilters={ctrl.activeCount > 0}
-      onOpenDrawer={ctrl.openDrawer}
       onClearAll={ctrl.clearAll}
       onSearchSubmit={onSearchSubmit}
       searchPlaceholder={searchPlaceholder}
@@ -1388,19 +1383,15 @@ function DiamondInteractive({
           />
         ) : undefined
       }
-      drawer={
-        <FilterDrawer
-          open={ctrl.drawerOpen}
-          onOpenChange={ctrl.setDrawerOpen}
-          onApply={ctrl.applyDraft}
-          onClearDraft={ctrl.clearDraft}
-          hasActiveDraft={ctrl.hasActiveDraft}
-          resultsCount={preview.count}
-          isCountLoading={preview.loading}
-        >
-          <DiamondDrawerBody ctrl={ctrl} />
-        </FilterDrawer>
-      }
+      drawer={{
+        content: <DiamondDrawerBody ctrl={ctrl} />,
+        onOpen: ctrl.openDrawer,
+        onApply: ctrl.applyDraft,
+        onClearDraft: ctrl.clearDraft,
+        hasActiveDraft: ctrl.hasActiveDraft,
+        resultsCount: preview.count,
+        isCountLoading: preview.loading,
+      }}
     >
       {status === "empty-filtered" ||
       status === "empty-no-items" ||
@@ -1587,7 +1578,6 @@ function JewelryInteractive() {
       stickyFilters={stickyFilters}
       activeFilterCount={ctrl.activeCount}
       hasActiveFilters={ctrl.activeCount > 0}
-      onOpenDrawer={ctrl.openDrawer}
       onClearAll={ctrl.clearAll}
       sortOptions={[
         { value: "featured", label: "Featured" },
@@ -1606,42 +1596,42 @@ function JewelryInteractive() {
           />
         ) : undefined
       }
-      drawer={
-        <FilterDrawer
-          open={ctrl.drawerOpen}
-          onOpenChange={ctrl.setDrawerOpen}
-          onApply={ctrl.applyDraft}
-          onClearDraft={ctrl.clearDraft}
-          hasActiveDraft={ctrl.hasActiveDraft}
-          resultsCount={preview.count}
-          isCountLoading={preview.loading}
-        >
-          <FilterSection label="Stone shape" separator={false}>
-            <ChipSelectFilter
-              mode="multiple"
-              value={draft["stone-shape"]}
-              onChange={(v) => setDraftFor("stone-shape", v)}
-              options={JEWELRY_STONE_SHAPE_OPTIONS}
-            />
-          </FilterSection>
-          <FilterSection label="Metal">
-            <ChipSelectFilter
-              mode="multiple"
-              value={draft.metal}
-              onChange={(v) => setDraftFor("metal", v)}
-              options={JEWELRY_METAL_OPTIONS}
-            />
-          </FilterSection>
-          <FilterSection label="Style">
-            <ChipSelectFilter
-              mode="multiple"
-              value={draft.style}
-              onChange={(v) => setDraftFor("style", v)}
-              options={JEWELRY_STYLE_OPTIONS}
-            />
-          </FilterSection>
-        </FilterDrawer>
-      }
+      drawer={{
+        content: (
+          <>
+            <FilterSection label="Stone shape" separator={false}>
+              <ChipSelectFilter
+                mode="multiple"
+                value={draft["stone-shape"]}
+                onChange={(v) => setDraftFor("stone-shape", v)}
+                options={JEWELRY_STONE_SHAPE_OPTIONS}
+              />
+            </FilterSection>
+            <FilterSection label="Metal">
+              <ChipSelectFilter
+                mode="multiple"
+                value={draft.metal}
+                onChange={(v) => setDraftFor("metal", v)}
+                options={JEWELRY_METAL_OPTIONS}
+              />
+            </FilterSection>
+            <FilterSection label="Style">
+              <ChipSelectFilter
+                mode="multiple"
+                value={draft.style}
+                onChange={(v) => setDraftFor("style", v)}
+                options={JEWELRY_STYLE_OPTIONS}
+              />
+            </FilterSection>
+          </>
+        ),
+        onOpen: ctrl.openDrawer,
+        onApply: ctrl.applyDraft,
+        onClearDraft: ctrl.clearDraft,
+        hasActiveDraft: ctrl.hasActiveDraft,
+        resultsCount: preview.count,
+        isCountLoading: preview.loading,
+      }}
     >
       <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
         {gridItems}
@@ -1779,7 +1769,6 @@ function CustomRatingInteractive() {
       stickyFilters={stickyFilters}
       activeFilterCount={ctrl.activeCount}
       hasActiveFilters={ctrl.activeCount > 0}
-      onOpenDrawer={ctrl.openDrawer}
       onClearAll={ctrl.clearAll}
       sortOptions={SORT_OPTIONS}
       sortValue={sortValue}
@@ -1795,52 +1784,52 @@ function CustomRatingInteractive() {
           />
         ) : undefined
       }
-      drawer={
-        <FilterDrawer
-          open={ctrl.drawerOpen}
-          onOpenChange={ctrl.setDrawerOpen}
-          onApply={ctrl.applyDraft}
-          onClearDraft={ctrl.clearDraft}
-          hasActiveDraft={ctrl.hasActiveDraft}
-          resultsCount={preview.count}
-          isCountLoading={preview.loading}
-        >
-          <FilterSection label="Color" separator={false}>
-            <ChipSelectFilter
-              mode="multiple"
-              value={draft.color}
-              onChange={(v) => setDraftFor("color", v)}
-              options={GEMSTONE_COLOR_OPTIONS}
-            />
-          </FilterSection>
-          <FilterSection label="Clarity">
-            <ChipSelectFilter
-              mode="multiple"
-              value={draft.clarity}
-              onChange={(v) => setDraftFor("clarity", v)}
-              options={GEMSTONE_CLARITY_OPTIONS}
-            />
-          </FilterSection>
-          <FilterSection label="Quality Rating">
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  className={`text-xl ${
-                    Number(draft["quality-rating"]) >= star
-                      ? "text-warning"
-                      : "text-muted"
-                  }`}
-                  onClick={() => setDraftFor("quality-rating", String(star))}
-                >
-                  ★
-                </button>
-              ))}
-            </div>
-          </FilterSection>
-        </FilterDrawer>
-      }
+      drawer={{
+        content: (
+          <>
+            <FilterSection label="Color" separator={false}>
+              <ChipSelectFilter
+                mode="multiple"
+                value={draft.color}
+                onChange={(v) => setDraftFor("color", v)}
+                options={GEMSTONE_COLOR_OPTIONS}
+              />
+            </FilterSection>
+            <FilterSection label="Clarity">
+              <ChipSelectFilter
+                mode="multiple"
+                value={draft.clarity}
+                onChange={(v) => setDraftFor("clarity", v)}
+                options={GEMSTONE_CLARITY_OPTIONS}
+              />
+            </FilterSection>
+            <FilterSection label="Quality Rating">
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className={`text-xl ${
+                      Number(draft["quality-rating"]) >= star
+                        ? "text-warning"
+                        : "text-muted"
+                    }`}
+                    onClick={() => setDraftFor("quality-rating", String(star))}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+            </FilterSection>
+          </>
+        ),
+        onOpen: ctrl.openDrawer,
+        onApply: ctrl.applyDraft,
+        onClearDraft: ctrl.clearDraft,
+        hasActiveDraft: ctrl.hasActiveDraft,
+        resultsCount: preview.count,
+        isCountLoading: preview.loading,
+      }}
     >
       <PlpGridContainer loading={status === "loading"} skeletonCount={pageSize}>
         {buildGemstoneCards(20)}

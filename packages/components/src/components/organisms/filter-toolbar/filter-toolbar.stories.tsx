@@ -52,13 +52,23 @@ function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }
         stickyFilters={colors ? [colorButton] : []}
         activeFilterCount={activeCount}
         hasActiveFilters={activeCount > 0}
-        onOpenDrawer={fn()}
         onClearAll={() => setColors(undefined)}
         onSearchSubmit={fn()}
         searchPlaceholder="Search..."
         sortOptions={SORT_OPTIONS}
         sortValue={sort}
         onSortChange={setSort}
+        drawer={{
+          content: (
+            <div className="text-sm text-muted-foreground">
+              Drawer body goes here.
+            </div>
+          ),
+          onApply: fn(),
+          onClearDraft: fn(),
+          hasActiveDraft: hasActiveFilters,
+          resultsCount: hasActiveFilters ? 342 : undefined,
+        }}
       />
     </div>
   );
@@ -132,13 +142,23 @@ export const StickyBarBehaviour: Story = {
             stickyFilters={engagedButtons}
             activeFilterCount={activeCount}
             hasActiveFilters={activeCount > 0}
-            onOpenDrawer={fn()}
             onClearAll={clearAll}
             onSearchSubmit={fn()}
             searchPlaceholder="Search..."
             sortOptions={SORT_OPTIONS}
             sortValue={sort}
             onSortChange={setSort}
+            drawer={{
+              content: (
+                <div className="text-sm text-muted-foreground">
+                  Drawer body goes here.
+                </div>
+              ),
+              onApply: fn(),
+              onClearDraft: clearAll,
+              hasActiveDraft: activeCount > 0,
+              resultsCount: 342,
+            }}
           />
 
           {/* Long scrollable wireframe so the sticky bar has distance to
