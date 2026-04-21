@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useState } from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import { IconChevronDown, IconX } from "@tabler/icons-react";
 
 import { cn } from "@/lib/utils";
@@ -17,7 +17,7 @@ import {
  * FilterButton variants.
  *
  * Active axis = whether the filter has a value applied. In the active state
- *   the button shows `label: valueSummary` and an inline dismiss X; in the
+ *   the button shows `label: chipSummary` and an inline dismiss X; in the
  *   inactive state the button shows just `label`.
  *
  * Only one visual variant is supported (outline, styled to match Button's
@@ -45,103 +45,116 @@ const filterButtonVariants = cva(
   }
 );
 
-interface FilterButtonProps extends VariantProps<typeof filterButtonVariants> {
+interface FilterButtonProps<V> {
   /** Filter label, always shown (e.g. "Color"). */
   label: string;
   /**
    * Formatted display of the current filter value (e.g. "Blue, Green +3").
-   * When provided, the button renders in the active state showing
-   * `label: valueSummary` with an inline dismiss X. Omit for the empty
-   * / inactive state showing just `label`.
+   * Shown in the active-state chip as `label: chipSummary`. Omit when
+   * the filter is inactive.
    */
-  valueSummary?: string;
+  chipSummary?: string;
+  /**
+   * Whether the filter currently has an applied value. When `true`, renders
+   * the active-state split button showing `label: chipSummary` with an
+   * inline dismiss X. When `false`, renders the inactive single-button.
+   */
+  isActive: boolean;
+  /**
+   * Seeds the internal draft each time the popover opens. Typically the
+   * consumer's currently-applied value for this filter so that opening the
+   * popover starts from the committed state rather than a blank slate.
+   */
+  initialValue: V | undefined;
   /** Optional fixed width for the popover (CSS value or pixel number). */
   popoverWidth?: number | string;
   /**
-   * Called when the user clicks the dismiss X on an active filter
-   * button. Required in the active state; ignored in the inactive state.
+   * Called with the current draft value when the user clicks Apply inside
+   * the popover. The popover closes automatically after this fires.
+   */
+  onApply: (value: V | undefined) => void;
+  /**
+   * Called when the user clicks Clear inside the popover. The popover
+   * closes automatically after this fires. Internally also resets the
+   * draft to `undefined`.
+   */
+  onClear: () => void;
+  /**
+   * Called when the user clicks the dismiss X on an active filter chip.
+   * Only rendered when `isActive` is `true`; no popover interaction.
    */
   onDismiss?: () => void;
   /**
-   * Called when the user clicks Apply inside the popover. The popover
-   * closes automatically after this fires.
+   * Render prop for the filter control rendered inside the popover body,
+   * above Apply / Clear. Receives the current draft value and a setter so
+   * the consumer writes a controlled filter component against `draft` /
+   * `setDraft` without owning the draft lifecycle.
    */
-  onApply: () => void;
-  /**
-   * Called when the user clicks Clear inside the popover. The popover
-   * closes automatically after this fires.
-   */
-  onClear: () => void;
-  /** Controlled popover open state. */
-  open?: boolean;
-  /**
-   * Called when the popover open state changes. Useful for resetting
-   * a draft value when the popover opens (fires with `true`).
-   */
-  onOpenChange?: (open: boolean) => void;
-  /** Filter control rendered inside the popover body, above Apply/Clear. */
-  children: React.ReactNode;
+  children: (draft: V | undefined, setDraft: (v: V | undefined) => void) => React.ReactNode;
   /** Extra classes on the outer control element. */
   className?: string;
 }
 
 /**
- * FilterButton — a two-state control for applied filters.
+ * FilterButton — a generic two-state control for applied filters with
+ * internal per-popover draft state.
  *
- * **Inactive state** (no `valueSummary`): renders a single outline button
+ * **Inactive state** (`isActive: false`): renders a single outline button
  * showing the filter label with a trailing chevron-down icon indicating
  * that the button opens a popover. Clicking opens the popover.
  *
- * **Active state** (with `valueSummary`): renders a split control with a
- * main clickable area showing `label: valueSummary` (opens the popover
- * for editing) and an inline dismiss X (clears the filter via
- * `onDismiss`). The two regions share a single rounded outline and a
- * unified focus ring, so the control reads as one unit while exposing
- * two distinct keyboard / click targets.
+ * **Active state** (`isActive: true`): renders a split control with a
+ * main clickable area showing `label: chipSummary` (opens the popover
+ * for editing) and an inline dismiss X (calls `onDismiss`). The two
+ * regions share a single rounded outline and a unified focus ring so the
+ * control reads as one unit while exposing two distinct keyboard / click
+ * targets.
  *
- * The popover always includes Apply / Clear actions below the consumer's
- * filter control (passed as `children`). Both close the popover
- * automatically after calling their respective callbacks. Consumers own
- * draft state externally — typically reset it on the `onOpenChange(true)`
- * callback.
+ * The popover always includes Apply / Clear actions below the render-prop
+ * `children`. Both close the popover automatically. Draft state is owned
+ * internally — seeded from `initialValue` each time the popover opens,
+ * committed via `onApply(draft)` on Apply, and reset to `undefined` on
+ * Clear. Consumers only write a controlled filter component against the
+ * `draft` / `setDraft` args supplied by the render prop.
  *
  * Styling is modelled on Button's `outline` variant; the active state
- * uses a filled `bg-muted` tint to indicate engagement.
+ * uses a filled `bg-accent` tint to indicate engagement.
  *
  * @see {@link filterButtonVariants} for the full variant matrix.
  */
-function FilterButton({
+function FilterButton<V>({
   label,
-  valueSummary,
+  chipSummary,
+  isActive,
+  initialValue,
   popoverWidth,
-  onDismiss,
   onApply,
   onClear,
-  open: openProp,
-  onOpenChange,
+  onDismiss,
   children,
   className,
-}: FilterButtonProps) {
-  const [openInternal, setOpenInternal] = useState(false);
-  const isControlled = openProp !== undefined;
-  const open = isControlled ? openProp : openInternal;
+}: FilterButtonProps<V>) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<V | undefined>(initialValue);
 
-  function setOpen(next: boolean) {
-    if (!isControlled) setOpenInternal(next);
-    onOpenChange?.(next);
+  function handleOpenChange(next: boolean) {
+    if (next) {
+      setDraft(initialValue);
+    }
+    setOpen(next);
   }
 
   function handleApply() {
-    onApply();
+    onApply(draft);
     setOpen(false);
   }
 
   function handleClear() {
+    setDraft(undefined);
     onClear();
     setOpen(false);
   }
 
-  const isActive = valueSummary !== undefined;
   const popoverStyle: React.CSSProperties | undefined = popoverWidth
     ? {
         width:
@@ -152,7 +165,7 @@ function FilterButton({
     : undefined;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       {isActive ? (
         <div
           data-slot="filter-button"
@@ -168,7 +181,7 @@ function FilterButton({
               className="relative flex items-center gap-1.5 rounded-l-[calc(var(--radius-md)-1px)] px-3 outline-none transition-colors hover:bg-accent/40 focus-visible:z-10 focus-visible:ring-3 focus-visible:ring-ring/50"
             >
               <span className="text-muted-foreground">{label}:</span>
-              <span>{valueSummary}</span>
+              <span>{chipSummary}</span>
             </button>
           </PopoverTrigger>
           <button
@@ -207,7 +220,7 @@ function FilterButton({
         aria-label={`Filter: ${label}`}
       >
         <div className="space-y-4">
-          {children}
+          {children(draft, setDraft)}
           <div className="flex items-center justify-between gap-2">
             <Button variant="ghost" onClick={handleClear}>
               Clear

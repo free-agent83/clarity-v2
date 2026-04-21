@@ -24,7 +24,7 @@ import {
 import { Typography } from "../../atoms/typography/typography";
 import { PlpFilterDrawer } from "./filters/plp-filter-drawer";
 import { PlpFilterSection } from "./filters/plp-filter-section";
-import { PlpQuickFilter } from "./toolbar/plp-quick-filter";
+import { FilterButton } from "../../atoms/filter-button/filter-button";
 import { BooleanChipFilter } from "./filters/presets/boolean-chip";
 import { SingleSelectChipsFilter } from "./filters/presets/single-select-chips";
 import { MultiSelectChipsFilter } from "./filters/presets/multi-select-chips";
@@ -68,7 +68,7 @@ import {
   type DiamondFilterState,
 } from "./mocks/diamond";
 import type { PlpStatus, PlpViewMode } from "./plp-types";
-import type { PlpQuickFilterProps } from "./toolbar/plp-quick-filter";
+import type { FilterButtonProps } from "../../atoms/filter-button/filter-button";
 
 // ── Reference wiring: useFilterController ─────────────────────────────
 //
@@ -247,12 +247,12 @@ function useGemstoneFilterButtons(
   const { applied, setAppliedFor } = ctrl;
 
   // Keyed builders so each filter button is a discrete ReactNode the
-  // story can route into the right slot. Each button uses PlpQuickFilter
+  // story can route into the right slot. Each button uses FilterButton
   // with a render-prop child choosing its preset component.
   return useMemo<Record<string, ReactNode>>(
     () => ({
       "nivoda-curated": (
-        <PlpQuickFilter<true>
+        <FilterButton<true>
           key="nivoda-curated"
           label="Nivoda Curated"
           chipSummary="Only Nivoda Curated items"
@@ -269,10 +269,10 @@ function useGemstoneFilterButtons(
               label="Only Nivoda Curated items"
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       color: (
-        <PlpQuickFilter<string[]>
+        <FilterButton<string[]>
           key="color"
           label="Color"
           chipSummary={formatMultiSelectChip(
@@ -294,10 +294,10 @@ function useGemstoneFilterButtons(
               options={GEMSTONE_COLOR_OPTIONS}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       clarity: (
-        <PlpQuickFilter<string[]>
+        <FilterButton<string[]>
           key="clarity"
           label="Clarity"
           chipSummary={formatMultiSelectChip(
@@ -318,10 +318,10 @@ function useGemstoneFilterButtons(
               options={GEMSTONE_CLARITY_OPTIONS}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       treatment: (
-        <PlpQuickFilter<string>
+        <FilterButton<string>
           key="treatment"
           label="Treatment"
           chipSummary={
@@ -342,10 +342,10 @@ function useGemstoneFilterButtons(
               options={GEMSTONE_TREATMENT_OPTIONS}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       location: (
-        <PlpQuickFilter<string>
+        <FilterButton<string>
           key="location"
           label="Location"
           chipSummary={
@@ -366,10 +366,10 @@ function useGemstoneFilterButtons(
               options={GEMSTONE_LOCATION_OPTIONS}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       price: (
-        <PlpQuickFilter<{ min: number; max: number }>
+        <FilterButton<{ min: number; max: number }>
           key="price"
           label="Price"
           chipSummary={formatRangeChip(
@@ -393,10 +393,10 @@ function useGemstoneFilterButtons(
               histogram={GEMSTONE_PRICE_CONFIG.histogram}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       carat: (
-        <PlpQuickFilter<{ min: number; max: number }>
+        <FilterButton<{ min: number; max: number }>
           key="carat"
           label="Carat"
           chipSummary={formatRangeChip(
@@ -420,10 +420,10 @@ function useGemstoneFilterButtons(
               histogram={GEMSTONE_CARAT_CONFIG.histogram}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       size: (
-        <PlpQuickFilter<Record<string, { min: number; max: number }>>
+        <FilterButton<Record<string, { min: number; max: number }>>
           key="size"
           label="Size (mm)"
           chipSummary={formatMultiAxisChip(applied.size, GEMSTONE_SIZE_AXES)}
@@ -440,10 +440,10 @@ function useGemstoneFilterButtons(
               axes={GEMSTONE_SIZE_AXES}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       supplier: (
-        <PlpQuickFilter<AsyncComboboxOption[]>
+        <FilterButton<AsyncComboboxOption[]>
           key="supplier"
           label="Supplier"
           chipSummary={formatMultiSelectChip(
@@ -463,7 +463,7 @@ function useGemstoneFilterButtons(
               searchPlaceholder="Search suppliers..."
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
     }),
     [applied, setAppliedFor]
@@ -570,7 +570,7 @@ function useDiamondFilterButtons(
   return useMemo<Record<string, ReactNode>>(
     () => ({
       shape: (
-        <PlpQuickFilter<string[]>
+        <FilterButton<string[]>
           key="shape"
           label="Shape"
           chipSummary={formatMultiSelectChip(
@@ -591,10 +591,10 @@ function useDiamondFilterButtons(
               options={DIAMOND_SHAPE_OPTIONS}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       color: (
-        <PlpQuickFilter<string[]>
+        <FilterButton<string[]>
           key="color"
           label="Color"
           chipSummary={formatMultiSelectChip(applied.color ?? [])}
@@ -611,10 +611,10 @@ function useDiamondFilterButtons(
               options={DIAMOND_COLOR_OPTIONS}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       clarity: (
-        <PlpQuickFilter<string[]>
+        <FilterButton<string[]>
           key="clarity"
           label="Clarity"
           chipSummary={formatMultiSelectChip(applied.clarity ?? [])}
@@ -631,10 +631,10 @@ function useDiamondFilterButtons(
               options={DIAMOND_CLARITY_OPTIONS}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       price: (
-        <PlpQuickFilter<{ min: number; max: number }>
+        <FilterButton<{ min: number; max: number }>
           key="price"
           label="Price"
           chipSummary={formatRangeChip(
@@ -658,10 +658,10 @@ function useDiamondFilterButtons(
               histogram={DIAMOND_PRICE_CONFIG.histogram}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       carat: (
-        <PlpQuickFilter<{ min: number; max: number }>
+        <FilterButton<{ min: number; max: number }>
           key="carat"
           label="Carat"
           chipSummary={formatRangeChip(
@@ -685,10 +685,10 @@ function useDiamondFilterButtons(
               histogram={DIAMOND_CARAT_CONFIG.histogram}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       size: (
-        <PlpQuickFilter<Record<string, { min: number; max: number }>>
+        <FilterButton<Record<string, { min: number; max: number }>>
           key="size"
           label="Size (mm)"
           chipSummary={formatMultiAxisChip(applied.size, DIAMOND_SIZE_AXES)}
@@ -705,10 +705,10 @@ function useDiamondFilterButtons(
               axes={DIAMOND_SIZE_AXES}
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
       supplier: (
-        <PlpQuickFilter<AsyncComboboxOption[]>
+        <FilterButton<AsyncComboboxOption[]>
           key="supplier"
           label="Supplier"
           chipSummary={formatMultiSelectChip(
@@ -728,7 +728,7 @@ function useDiamondFilterButtons(
               searchPlaceholder="Search suppliers..."
             />
           )}
-        </PlpQuickFilter>
+        </FilterButton>
       ),
     }),
     [applied, setAppliedFor]
@@ -1140,7 +1140,7 @@ function JewelryInteractive() {
 
   const buttons: Record<string, ReactNode> = {
     "stone-shape": (
-      <PlpQuickFilter<string[]>
+      <FilterButton<string[]>
         key="stone-shape"
         label="Stone shape"
         chipSummary={formatMultiSelectChip(
@@ -1161,10 +1161,10 @@ function JewelryInteractive() {
             options={JEWELRY_STONE_SHAPE_OPTIONS}
           />
         )}
-      </PlpQuickFilter>
+      </FilterButton>
     ),
     metal: (
-      <PlpQuickFilter<string[]>
+      <FilterButton<string[]>
         key="metal"
         label="Metal"
         chipSummary={formatMultiSelectChip(
@@ -1185,10 +1185,10 @@ function JewelryInteractive() {
             options={JEWELRY_METAL_OPTIONS}
           />
         )}
-      </PlpQuickFilter>
+      </FilterButton>
     ),
     style: (
-      <PlpQuickFilter<string[]>
+      <FilterButton<string[]>
         key="style"
         label="Style"
         chipSummary={formatMultiSelectChip(
@@ -1209,7 +1209,7 @@ function JewelryInteractive() {
             options={JEWELRY_STYLE_OPTIONS}
           />
         )}
-      </PlpQuickFilter>
+      </FilterButton>
     ),
   };
 
@@ -1317,7 +1317,7 @@ export const JewelryCategory: StoryObj = {
 
 // ── Custom filter inside a quick filter ───────────────────
 //
-// Demonstrates that any React node can sit inside a PlpQuickFilter's
+// Demonstrates that any React node can sit inside a FilterButton's
 // children — not just the shipped presets. Here, a star-rating control
 // is composed inline.
 
@@ -1332,7 +1332,7 @@ function CustomRatingInteractive() {
   const { applied, setAppliedFor, draft, setDraftFor } = ctrl;
 
   const colorButton = (
-    <PlpQuickFilter<string[]>
+    <FilterButton<string[]>
       key="color"
       label="Color"
       chipSummary={formatMultiSelectChip(
@@ -1354,11 +1354,11 @@ function CustomRatingInteractive() {
           options={GEMSTONE_COLOR_OPTIONS}
         />
       )}
-    </PlpQuickFilter>
+    </FilterButton>
   );
 
   const clarityButton = (
-    <PlpQuickFilter<string[]>
+    <FilterButton<string[]>
       key="clarity"
       label="Clarity"
       chipSummary={formatMultiSelectChip(
@@ -1379,11 +1379,11 @@ function CustomRatingInteractive() {
           options={GEMSTONE_CLARITY_OPTIONS}
         />
       )}
-    </PlpQuickFilter>
+    </FilterButton>
   );
 
   const ratingButton: ReactNode = (() => {
-    const props: PlpQuickFilterProps<string> = {
+    const props: FilterButtonProps<string> = {
       label: "Quality Rating",
       chipSummary: applied["quality-rating"]
         ? `${applied["quality-rating"]}+ stars`
@@ -1408,7 +1408,7 @@ function CustomRatingInteractive() {
         </div>
       ),
     };
-    return <PlpQuickFilter key="quality-rating" {...props} />;
+    return <FilterButton key="quality-rating" {...props} />;
   })();
 
   const buttons: Record<string, ReactNode> = {

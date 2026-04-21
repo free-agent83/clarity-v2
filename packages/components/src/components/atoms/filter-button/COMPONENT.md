@@ -1,31 +1,37 @@
 ---
 name: FilterButton
 slug: filter-button
-version: 0.1.0
+version: 0.2.0
 status: unstable
-lastUpdated: 2026-04-16
+lastUpdated: 2026-04-21
 ---
 
 # FilterButton
 
-Two-state control for applied filters. Combines a Popover trigger and (when active) an inline dismiss action into a single rounded outline unit. Styled on Button's outline variant.
+Generic two-state control for applied filters. Owns per-popover draft state internally and exposes a render-prop `children` API so consumers write a controlled filter component without managing the draft lifecycle themselves.
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `label` | `string` | — | Filter name, always visible (e.g. "Color"). |
-| `valueSummary` | `string \| undefined` | `undefined` | Formatted display of the current value (e.g. "Blue, Green +3 more"). When provided, the button renders in the active state with inline dismiss. Omit for the inactive/empty state. |
-| `popoverContent` | `ReactNode` | — | Content rendered inside the popover when the main click area is activated. Typically the filter's control UI plus Apply / Clear actions. |
+| `chipSummary` | `string \| undefined` | `undefined` | Formatted display of the current applied value (e.g. "Blue, Green +3 more"). Shown in the active chip as `label: chipSummary`. Omit when inactive. |
+| `isActive` | `boolean` | — | When `true`, renders the active-state split button with `label: chipSummary` and an inline dismiss X. When `false`, renders the inactive single button with a trailing chevron. |
+| `initialValue` | `V \| undefined` | — | Seeds the internal draft each time the popover opens. Typically the consumer's currently-applied value so that reopening the popover starts from the committed state. |
 | `popoverWidth` | `number \| string` | — | Optional fixed width for the popover content (pixels or CSS length). |
-| `onDismiss` | `() => void` | — | Called when the user clicks the inline dismiss X on an active filter. Required in the active state; ignored when inactive. |
-| `open` | `boolean` | — | Controlled open state of the popover. |
-| `onOpenChange` | `(open: boolean) => void` | — | Called when the popover open state changes. |
+| `onApply` | `(value: V \| undefined) => void` | — | Called with the current draft value when the user clicks Apply. The popover closes automatically. |
+| `onClear` | `() => void` | — | Called when the user clicks Clear. Internally resets draft to `undefined`. The popover closes automatically. |
+| `onDismiss` | `() => void` | — | Called when the user clicks the inline dismiss X on an active chip. No popover interaction. Only rendered when `isActive` is `true`. |
+| `children` | `(draft: V \| undefined, setDraft: (v: V \| undefined) => void) => ReactNode` | — | Render prop for the filter control rendered inside the popover body, above Apply / Clear. Receives the current draft value and setter. |
 | `className` | `string` | — | Extra classes on the outer element. |
 
 ## Usage guidelines
 
 FilterButton is the standard surface for any filter whose value can be applied from a popover — quick filters in a toolbar, engaged filters rendered inline, and any other context where a user edits or dismisses a filter without navigating away.
+
+The component is generic over the filter value type `V`. Consumers declare the type at the call site: `<FilterButton<string[]> ...>`.
+
+**Draft lifecycle:** each time the popover opens, `draft` is reseeded from `initialValue`. The draft mutates as the user interacts with the inner control. Clicking Apply commits `draft` via `onApply`; clicking Clear resets to `undefined` via `onClear`. Neither action survives a popover-open without an explicit Apply — reopening reseeds from `initialValue` again.
 
 **When to use:** anywhere a filter's label + applied value + edit popover need to live in a single toolbar-height control.
 
@@ -33,13 +39,13 @@ FilterButton is the standard surface for any filter whose value can be applied f
 
 ## Best practices
 
-**Do:** Pass a concise, comma-joined `valueSummary` for multi-value filters. Truncate at two or three values with `+N more` rather than listing everything — long value summaries make the toolbar feel cluttered.
+**Do:** Pass a concise, comma-joined `chipSummary` for multi-value filters. Truncate at two or three values with `+N more` rather than listing everything — long value summaries make the toolbar feel cluttered.
 
-**Do:** Reset the popover's draft state whenever it closes, so reopening starts fresh from the applied value.
+**Do:** Pass the currently-applied value as `initialValue` so the popover always opens from the committed state rather than stale or blank state.
 
-**Do:** Provide `onDismiss` whenever `valueSummary` is present. Consumers should be able to clear the filter without opening the popover.
+**Do:** Provide `onDismiss` whenever `isActive` is `true`. Consumers should be able to clear the filter without opening the popover.
 
-**Don't:** Mix inline icon adornments into the label — the label is plain text. If you need iconography, put it inside the popover content.
+**Don't:** Mix inline icon adornments into the label — the label is plain text. If you need iconography, put it inside the render-prop content.
 
 **Don't:** Use FilterButton for things that aren't filters. The `label: value` framing is specific to applied filter state.
 
@@ -47,8 +53,8 @@ FilterButton is the standard surface for any filter whose value can be applied f
 
 | State | Visual | Interaction |
 |-------|--------|-------------|
-| Inactive (`valueSummary` omitted) | Outline button with the label followed by a trailing chevron-down icon, matching `Button variant="outline"`. The chevron signals that the button opens a popover. | Click opens the popover. No dismiss affordance. |
-| Active (`valueSummary` provided) | Filled muted background. Split into two regions: `label: value` on the left (click to edit) and an X on the right (click to dismiss). No chevron — the dismiss X is the trailing affordance. | Clicking the left region opens the popover; clicking the X calls `onDismiss`. Both share a unified focus ring. |
+| Inactive (`isActive: false`) | Outline button with the label followed by a trailing chevron-down icon, matching `Button variant="outline"`. The chevron signals that the button opens a popover. | Click opens the popover. No dismiss affordance. |
+| Active (`isActive: true`) | Filled accent background. Split into two regions: `label: value` on the left (click to edit) and an X on the right (click to dismiss). No chevron — the dismiss X is the trailing affordance. | Clicking the left region opens the popover; clicking the X calls `onDismiss`. Both share a unified focus ring. |
 
 ## Quality checklist
 
