@@ -198,7 +198,6 @@ Outline button with an adjustments icon and optional active-count badge. Opens a
 ## Quality checklist
 
 - [x] Accessibility: keyboard-operable button
-- [ ] Figma parity: matches DSW-Web-Components Figma source
 - [x] Tokens only: no hardcoded visual values
 ```
 
@@ -608,7 +607,6 @@ The drawer holds no draft state itself — consumers own applied and draft filte
 ## Quality checklist
 
 - [x] Accessibility: delegates to the Sheet molecule's focus trap and aria-label
-- [ ] Figma parity: matches DSW-Web-Components Figma source
 - [x] Tokens only: no hardcoded visual values
 ```
 
@@ -921,7 +919,6 @@ Discriminated union on `mode`:
 ## Quality checklist
 
 - [x] Accessibility: keyboard-operable toggles, aria-label
-- [ ] Figma parity: matches DSW-Web-Components Figma source
 - [x] Tokens only: no hardcoded visual values
 ```
 
@@ -1390,7 +1387,6 @@ Multi-axis use: pass multiple axes each with a `label`. Per-axis heading replace
 ## Quality checklist
 
 - [x] Accessibility: labelled inputs, keyboard-operable slider
-- [ ] Figma parity: matches DSW-Web-Components Figma source
 - [x] Tokens only: no hardcoded visual values
 ```
 
@@ -1909,7 +1905,6 @@ IntersectionObserver watches the main toolbar element with `rootMargin: "-${stic
 ## Quality checklist
 
 - [x] Accessibility: keyboard navigable, semantic search input, aria-hidden on hidden sticky
-- [ ] Figma parity: matches DSW-Web-Components Figma source
 - [x] Responsive: mobile condenses to All Filters + Sort
 - [x] Tokens only: no hardcoded visual values
 ```
@@ -2251,7 +2246,6 @@ Heading region for a PLP page — breadcrumbs, category title (H1), and results 
 ## Quality checklist
 
 - [x] Accessibility: semantic H1, aria-live on count, breadcrumb semantics
-- [ ] Figma parity: matches DSW-Web-Components Figma source
 - [x] Tokens only: no hardcoded visual values
 ```
 

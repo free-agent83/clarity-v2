@@ -20,5 +20,4 @@ Outline button with an adjustments icon and optional active-count badge. Opens a
 ## Quality checklist
 
 - [x] Accessibility: keyboard-operable button
-- [ ] Figma parity: matches DSW-Web-Components Figma source
 - [x] Tokens only: no hardcoded visual values
