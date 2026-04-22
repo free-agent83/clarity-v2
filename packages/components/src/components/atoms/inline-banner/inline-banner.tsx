@@ -112,15 +112,15 @@ function InlineBannerDescription({
   )
 }
 
-function InlineBannerActions({
+function InlineBannerAction({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   return (
     <div
-      data-slot="inline-banner-actions"
+      data-slot="inline-banner-action"
       className={cn(
-        "[grid-area:actions] flex shrink-0 items-center gap-2 self-center justify-self-end",
+        "[grid-area:actions] flex shrink-0 items-center self-center justify-self-end",
         className
       )}
       {...props}
@@ -132,7 +132,7 @@ export {
   InlineBanner,
   InlineBannerTitle,
   InlineBannerDescription,
-  InlineBannerActions,
+  InlineBannerAction,
   inlineBannerVariants,
 }
 export type { InlineBannerProps }

@@ -26,7 +26,7 @@ All standard `<div>` HTML attributes are supported via prop spread.
 
 - `InlineBannerTitle` — required heading slot.
 - `InlineBannerDescription` — optional body slot.
-- `InlineBannerActions` — right-aligned actions slot. Holds one or two `Button`s.
+- `InlineBannerAction` — right-aligned action slot. Holds exactly one CTA (typically an inline link).
 
 An optional leading icon is passed as a direct `<svg>` child of `InlineBanner` (typically from `@tabler/icons-react`). The component detects it and places it in a vertically-centred icon column.
 

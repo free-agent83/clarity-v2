@@ -11,7 +11,7 @@ import {
   InlineBanner,
   InlineBannerTitle,
   InlineBannerDescription,
-  InlineBannerActions,
+  InlineBannerAction,
 } from "./inline-banner";
 
 const meta: Meta<typeof InlineBanner> = {
@@ -57,11 +57,11 @@ export const WithAction: Story = {
       <InlineBannerDescription>
         Find inventory faster with natural-language queries.
       </InlineBannerDescription>
-      <InlineBannerActions>
+      <InlineBannerAction>
         <a href="#" className="underline underline-offset-4">
           Try it
         </a>
-      </InlineBannerActions>
+      </InlineBannerAction>
     </InlineBanner>
   ),
 };
@@ -125,14 +125,11 @@ export const Sizes: Story = {
         <InlineBannerDescription>
           More generous padding for substantive messages, with a bigger icon.
         </InlineBannerDescription>
-        <InlineBannerActions>
-          <a href="#" className="underline underline-offset-4">
-            Later
-          </a>
+        <InlineBannerAction>
           <a href="#" className="underline underline-offset-4">
             Try it
           </a>
-        </InlineBannerActions>
+        </InlineBannerAction>
       </InlineBanner>
     </div>
   ),
