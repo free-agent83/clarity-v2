@@ -2,7 +2,7 @@
 
 ---
 
-### PLP list view stories + row primitives polish
+### PLP list view stories + row primitives polish ([#123](https://github.com/free-agent83/clarity-v2/pull/123))
 Introduces a dedicated ListRow stories file mirroring GridItem, evolves the list-row primitives with a few small props and bug fixes surfaced while exercising them, and reorders the Storybook sidebar from simpler to more complex. No breaking changes.
 
 - **PLP list row primitives.** Added `ListRow` stories file with a shared `StoryRow` helper and full variant coverage (states, delivery, returns, price variants, all-price kitchen sink). Added `hug` prop on `PlpListBodyCell` / `PlpListHeaderCell` so icon-only columns (checkbox, thumbnail) stop stretching. Added `shipsFrom` tooltip on `PlpListRowDelivery` (reads "Express delivery from X" / "Ships from X"). Wrapped the "Incl. US tariffs" caption in the same `HoverCard` the grid uses. Fixed an issue where opening a row's actions menu broke the sticky-cell background (now uses `group-has-data-[state=open]/plp-row` to hold the hover look while any descendant popover is open). Centered the returnable icon vertically + horizontally in its column and tightened the tooltip anchor to the icon. (`c71f813`, `50b588e`, `f970851`, `a4290e2`, `25080fb`, `368f16f`, `36bf2e7`, `a752633`, `c8c46f7`, `e715cd7`)
