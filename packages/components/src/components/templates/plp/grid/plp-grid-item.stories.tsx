@@ -18,7 +18,7 @@ import {
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
 import { Typography } from "../../../atoms/typography/typography";
-import diamondImg from "../__stories__/images/diamond.png";
+import diamondImg from "../../__stories__/images/diamond.png";
 
 // Stable module-level handlers so every story shares action identity.
 const onAddToShortlist = fn();
