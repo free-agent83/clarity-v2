@@ -36,7 +36,7 @@ import {
   TableHead,
   TableHeader,
 } from "../../../organisms/table/table";
-import diamondImg from "../__stories__/images/diamond.png";
+import diamondImg from "../../__stories__/images/diamond.png";
 
 // Stable module-level handlers so every story shares action identity.
 const onAddToCart = fn();

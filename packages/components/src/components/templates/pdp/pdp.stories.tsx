@@ -16,6 +16,7 @@ import { PdpReturns } from "./pdp-returns";
 import { PdpSpecifications } from "./pdp-specifications";
 import { PdpVariantSelector } from "./pdp-variant-selector";
 import type { PdpDeliveryProps, PdpPriceProps, PdpReturnsProps, ProductMedia } from "./pdp-types";
+import ringImg from "../__stories__/images/ring.jpg";
 import { Separator } from "@/components/atoms/separator/separator";
 
 const onAddToCart = fn();
@@ -86,19 +87,17 @@ const RETURNS_PRESETS: Record<ReturnsPreset, PdpReturnsProps> = {
   "non-returnable": { variant: "non-returnable" },
 };
 
-const RING_IMAGE = "https://images.unsplash.com/photo-1605100804763-247f67b3557e";
-
 const MEDIA: ProductMedia[] = [
-  { type: "image", src: `${RING_IMAGE}?w=800`, alt: "Halo diamond engagement ring — front", thumbnailSrc: `${RING_IMAGE}?w=120` },
-  { type: "image", src: `${RING_IMAGE}?w=800`, alt: "Halo diamond engagement ring — angle", thumbnailSrc: `${RING_IMAGE}?w=120` },
-  { type: "video360", src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", poster: `${RING_IMAGE}?w=120` },
+  { type: "image", src: ringImg, alt: "Halo diamond engagement ring — front", thumbnailSrc: ringImg },
+  { type: "image", src: ringImg, alt: "Halo diamond engagement ring — angle", thumbnailSrc: ringImg },
+  { type: "video360", src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", poster: ringImg },
 ];
 
 const SPEC_ROWS = [
   { label: "Style", value: "Halo with split shank" },
   { label: "Metal", value: "14k Rose Gold" },
   { label: "Metal weight", value: "3.8g" },
-  { label: "Center stone", value: <Badge variant="outline">Lab-grown</Badge> },
+  { label: "Center stone type", value: "Lab-grown" },
   { label: "Center carat weight", value: "1.00ct" },
   { label: "Side stone count", value: "42" },
   { label: "Stone quality", value: "F–G, VS, Excellent" },
@@ -145,14 +144,14 @@ function EngagementRingPDP({ pricing, delivery, returns }: EngagementRingArgs) {
                   </div>
                 </div>
                 <PdpVariantSelector label="Metal">
-                  <ToggleGroup variant="outline" spacing={2} type="single" value={metal} onValueChange={(v) => v && setMetal(v as Metal)}>
+                  <ToggleGroup className="w-full flex-wrap" variant="outline" spacing={2} type="single" value={metal} onValueChange={(v) => v && setMetal(v as Metal)}>
                     {METALS.map((m) => (
                       <ToggleGroupItem key={m} value={m} disabled={m === "Platinum"}>{m}</ToggleGroupItem>
                     ))}
                   </ToggleGroup>
                 </PdpVariantSelector>
                 <PdpVariantSelector label="Finger size">
-                  <ToggleGroup variant="outline" spacing={2} type="single" value={size} onValueChange={(v) => v && setSize(v)}>
+                  <ToggleGroup className="w-full flex-wrap" variant="outline" spacing={2} type="single" value={size} onValueChange={(v) => v && setSize(v)}>
                     {SIZES.map((s) => (
                       <ToggleGroupItem className="w-12" key={s} value={s} disabled={s === '8'}>{s}</ToggleGroupItem>
                     ))}

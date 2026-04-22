@@ -92,8 +92,8 @@ function MainView({ item, onClick }: { item: ProductMedia; onClick: () => void }
 export function PdpMediaGallery({ media, onMediaClick, className }: PdpMediaGalleryProps) {
   const [selected, setSelected] = useState(0);
   return (
-    <div className={cn("flex gap-3", className)} data-slot="pdp-media-gallery">
-      <div className="flex flex-col gap-2" data-slot="pdp-media-gallery-strip">
+    <div className={cn("flex flex-col-reverse gap-3 md:flex-row", className)} data-slot="pdp-media-gallery">
+      <div className="flex flex-row justify-center gap-2 md:flex-col md:justify-start" data-slot="pdp-media-gallery-strip">
         {media.map((item, i) => (
           <Thumbnail key={i} item={item} selected={i === selected} onClick={() => setSelected(i)} />
         ))}

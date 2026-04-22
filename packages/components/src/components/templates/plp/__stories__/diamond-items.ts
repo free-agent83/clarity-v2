@@ -1,4 +1,4 @@
-import diamondImg from "./images/diamond.png";
+import diamondImg from "../../__stories__/images/diamond.png";
 
 export interface DiamondItem {
   id: string;
