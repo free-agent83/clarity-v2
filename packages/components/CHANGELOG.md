@@ -2,6 +2,13 @@
 
 ---
 
+### SegmentedControl ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
+Introduces a new `SegmentedControl` atom for switching between mutually-exclusive UI modes. Wraps `Radix ToggleGroup` with `type="single"` hard-coded and a non-empty selection guarantee.
+
+- **SegmentedControl.** Inset pill design with a 2px track padding and `bg-background` + `shadow-xs` active pill. Sizes `sm` / `default` / `lg` mirror Button. Supports text, icon + text, and icon-only items. Lands as `unstable`.
+
+---
+
 ### Progress variants and sizes ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
 Adds semantic colour variants and a `lg` size to the existing `Progress` atom. Replaces the placeholder `COMPONENT.md` with full documentation. No breaking changes — existing call sites keep today's appearance.
 

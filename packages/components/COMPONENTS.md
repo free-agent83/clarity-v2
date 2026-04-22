@@ -181,6 +181,10 @@ Form controls and their supporting scaffolding.
 - For: picking one or many from a few short, visual options.
 - Not for: long lists, verbose labels, or page navigation.
 
+**SegmentedControl** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/segmented-control/COMPONENT.md)
+- For: switching between two to four mutually-exclusive UI modes (list/grid view, daily/weekly/monthly).
+- Not for: toolbar multi-select (use `ToggleGroup`), panel navigation (use `Tabs`), or long option lists (use `Select` or `RadioGroup`).
+
 **Slider** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/slider/COMPONENT.md)
 - For: picking an approximate value or range along a continuous scale.
 - Not for: precise numeric entry or small discrete option sets.
