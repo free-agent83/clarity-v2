@@ -1,30 +1,43 @@
 ---
 name: Progress
 slug: progress
-version: 0.0.0
+version: 0.1.0
 status: unstable
-lastUpdated: 2026-04-13
+lastUpdated: 2026-04-22
 ---
 
 # Progress
 
-[WIP]
+Linear bar that communicates the completion state of an ongoing task.
 
 ## Props
 
-[WIP]
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | — | Completion percentage, 0 to 100. |
+| `variant` | `"default" \| "success" \| "info" \| "warning" \| "destructive"` | `"default"` | Semantic colour of the indicator bar. The track is always `bg-muted`. |
+| `size` | `"default" \| "lg"` | `"default"` | Track height — `h-1.5` (default) or `h-3` (lg). |
+
+All standard Radix `Progress.Root` HTML attributes are supported via prop spread.
 
 ## Usage guidelines
 
-[WIP]
+Use Progress when a task has a determinate percentage of completion — uploads, imports, batch actions, profile completeness.
+
+**Don't use Progress** for indeterminate work where no percentage is available — use `Spinner`. **Don't use Progress** as a data visualisation of categorical values — use a bar chart from `Chart`.
 
 ## Best practices
 
-[WIP]
+**Do:** Match `variant` to the state being communicated — `success` once the task completes, `destructive` if it fails mid-flight, `warning` when approaching a limit, `default` for neutral progress.
+
+**Do:** Pair the bar with a text label (e.g. "12 of 20 uploaded" or "60%") — a bar without a number leaves the user guessing about the actual magnitude.
+
+**Don't:** Animate the indicator independently of `value` — Radix handles the transition, the consumer only updates `value`.
+
+**Don't:** Stack multiple Progress bars to represent multi-stage work — use `Stepper` for ordered steps.
 
 ## Quality checklist
 
-- [ ] Accessibility: passes axe-core, keyboard navigable, screen reader tested
-- [ ] Figma parity: matches DSW-Web-Components Figma source
-- [ ] Responsive: works at all breakpoints
-- [ ] Tokens only: no hardcoded visual values
+- [x] Accessibility: Radix `Progress.Root` exposes `role="progressbar"` and the appropriate `aria-valuenow` / `aria-valuemin` / `aria-valuemax`; passes axe-core via `@storybook/addon-a11y`.
+- [x] Responsive: the track is 100% width of its container; no breakpoint-specific behaviour by design.
+- [x] Tokens only: no raw literals inside arbitrary value syntax.

@@ -1,15 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { userEvent, within, expect, waitFor } from "@storybook/test";
+import { fn, userEvent, within, expect, waitFor } from "@storybook/test";
 import {
+  IconAlertTriangle,
   IconCalculator,
   IconCurrencyEuro,
   IconHeart,
   IconHelp,
   IconShoppingCart,
+  IconSparkles,
 } from "@tabler/icons-react";
 import * as React from "react";
 
 import { Button } from "@/components/atoms/button/button";
+import {
+  PageBanner,
+  PageBannerAction,
+  PageBannerTitle,
+} from "@/components/atoms/page-banner/page-banner";
 import {
   Tooltip,
   TooltipContent,
@@ -383,5 +390,65 @@ export const TrailingControls: Story = {
         </AppShellMain>
       </AppShell>
     </TooltipProvider>
+  ),
+};
+
+export const WithBanner: Story = {
+  render: (args) => (
+    <AppShell
+      {...args}
+      banner={
+        <PageBanner variant="default">
+          <IconSparkles />
+          <PageBannerTitle>
+            New: AI-assisted search is now available on all accounts.
+          </PageBannerTitle>
+          <PageBannerAction>
+            <a href="#" className="underline underline-offset-4">
+              Learn more
+            </a>
+          </PageBannerAction>
+        </PageBanner>
+      }
+    >
+      <AppShellHeader onSearch={fn()} />
+      <AppShellMain>
+        <div className="py-8">
+          <h1 className="text-2xl font-heading font-medium">Page content</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Both the PageBanner and header are sticky — scroll down and they remain pinned at the top while page content flows underneath.
+          </p>
+          <div className="h-[200vh]" />
+        </div>
+      </AppShellMain>
+    </AppShell>
+  ),
+};
+
+export const WithDismissibleBanner: Story = {
+  render: (args) => (
+    <AppShell
+      {...args}
+      banner={
+        <PageBanner variant="warning" onDismiss={fn()}>
+          <IconAlertTriangle />
+          <PageBannerTitle>
+            Scheduled maintenance this Sunday 02:00–04:00 UTC.
+          </PageBannerTitle>
+          <PageBannerAction>
+            <a href="#" className="underline underline-offset-4">
+              Read more
+            </a>
+          </PageBannerAction>
+        </PageBanner>
+      }
+    >
+      <AppShellHeader onSearch={fn()} />
+      <AppShellMain>
+        <div className="py-8">
+          <h1 className="text-2xl font-heading font-medium">Page content</h1>
+        </div>
+      </AppShellMain>
+    </AppShell>
   ),
 };

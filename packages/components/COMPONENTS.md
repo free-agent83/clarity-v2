@@ -181,6 +181,10 @@ Form controls and their supporting scaffolding.
 - For: picking one or many from a few short, visual options.
 - Not for: long lists, verbose labels, or page navigation.
 
+**SegmentedControl** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/segmented-control/COMPONENT.md)
+- For: switching between two to four mutually-exclusive UI modes (list/grid view, daily/weekly/monthly).
+- Not for: toolbar multi-select (use `ToggleGroup`), panel navigation (use `Tabs`), or long option lists (use `Select` or `RadioGroup`).
+
 **Slider** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/slider/COMPONENT.md)
 - For: picking an approximate value or range along a continuous scale.
 - Not for: precise numeric entry or small discrete option sets.
@@ -248,6 +252,14 @@ Communicating state, progress, and outcomes.
 **Alert** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/alert/COMPONENT.md)
 - For: persistent, in-context status or validation messages within the page flow.
 - Not for: transient toasts, modal interruptions, or form field-level errors.
+
+**InlineBanner** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/inline-banner/COMPONENT.md)
+- For: page-level callouts under a page heading — promotional content, feature announcements, advisory notices that apply to the whole view.
+- Not for: section-level messages (use `Alert`), app-wide banners above the nav (use `PageBanner`), or transient confirmations (use `Sonner`).
+
+**PageBanner** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/page-banner/COMPONENT.md)
+- For: full-bleed, app-level callouts above the navigation — new features, promotions, downtime, holidays. Consumed only by `AppShell` via its `banner` prop.
+- Not for: page-level callouts (use `InlineBanner`), section-level messages (use `Alert`), or toasts (use `Sonner`).
 
 **Toaster** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/sonner/COMPONENT.md)
 - For: transient, non-blocking notifications and background confirmations.
@@ -356,6 +368,10 @@ Wayfinding and page-level chrome.
 **Pagination** · `molecule` · `unstable` — [COMPONENT.md](./src/components/molecules/pagination/COMPONENT.md)
 - For: navigating across pages of a long paged list.
 - Not for: infinite-scroll lists or small fully-visible sets.
+
+**Stepper** · `molecule` · `unstable` — [COMPONENT.md](./src/components/molecules/stepper/COMPONENT.md)
+- For: displaying progress through an ordered multi-step flow (checkout, returns, onboarding) inside a Dialog or modal surface.
+- Not for: general page navigation (use `Tabs` or `Breadcrumb`), single-metric progress (use `Progress`), or non-sequential task lists.
 
 ### Templates
 

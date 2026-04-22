@@ -2,6 +2,17 @@
 
 ---
 
+### Components pass 3: new atoms + Stepper + AppShell banner slot ([#125](https://github.com/free-agent83/clarity-v2/pull/125))
+Adds four new components (`SegmentedControl`, `InlineBanner`, `PageBanner`, `Stepper`), variant/size additions to `Progress`, and an optional sticky banner slot on `AppShell`. All new components land as `unstable`.
+
+- **Progress.** Added `variant` prop (`default | success | info | warning | destructive`) controlling the indicator bar colour and a `size` prop (`default` = `h-1.5`, `lg` = `h-3`). Track stays `bg-muted` across variants. Replaced the placeholder `COMPONENT.md` with full documentation. No breaking changes. (`78a0863`)
+- **SegmentedControl.** New atom for switching between mutually-exclusive UI modes. Wraps `Radix ToggleGroup` with `type="single"` hard-coded and a non-empty selection guarantee. Inset-pill design with `bg-muted` track + 2px padding and `bg-background` / `shadow-xs` active pill; sizes `sm | default | lg` mirror Button. Hover and active foreground use `accent-foreground`. (`c1ad2e4`, `ad12c99`)
+- **InlineBanner.** New atom for block-level, page-level callouts. Solid semantic fills (not tinted — distinct from `Alert`'s quieter treatment), sizes `default | lg`, compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerAction` (single CTA). Icon is passed as a direct `<svg>` child and sits in a dedicated vertically-centred column via `grid-template-areas`. Optional `onDismiss` renders a stateless top-right close button. (`87e5a9b`, `440b416`, `316ba20`, `b05c9a0`, `812fba7`)
+- **PageBanner + AppShell banner slot.** New atom for full-bleed, app-level callouts (new features, promotions, downtime). Solid semantic fills across variants. `AppShell` gains an optional `banner` prop that wraps the `PageBanner` in a `sticky top-0` container; `AppShellHeader` offsets its own sticky `top` to sit just below the banner so both remain pinned while content scrolls. Two new stories demonstrate the integration (`WithBanner`, `WithDismissibleBanner`). (`bbcdf49`, `ad12c99`)
+- **Stepper.** New molecule for ordered multi-step flows (checkout, returns). Controlled via `activeStep`; errored steps flagged via `errorSteps`; `completed` and `error` steps become clickable when `onStepClick` is supplied. Compound API: `Stepper`, `StepperItem`, `StepperItemIndicator`, `StepperItemLabel`. Horizontal only in v0.1 — vertical, compact mode, and disabled state deferred. (`088fcae`)
+
+---
+
 ### PLP list view stories + row primitives polish ([#123](https://github.com/free-agent83/clarity-v2/pull/123))
 Introduces a dedicated ListRow stories file mirroring GridItem, evolves the list-row primitives with a few small props and bug fixes surfaced while exercising them, and reorders the Storybook sidebar from simpler to more complex. No breaking changes.
 
