@@ -402,7 +402,25 @@ export function PlpListRowPrice({
       </div>
       {includeTariffs && (
         <div className="text-muted-foreground text-[0.65rem]">
-          Incl. US tariffs
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <span
+                tabIndex={0}
+                className="cursor-help rounded-sm underline decoration-dotted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                Incl. US tariffs
+              </span>
+            </HoverCardTrigger>
+            <HoverCardContent className="max-w-xs">
+              <div className="font-medium text-foreground">
+                🇺🇸 About US Tariffs
+              </div>
+              <div className="mt-1">
+                All Nivoda prices already include US tariffs. No additional
+                charges will be applied at checkout.
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
       )}
       {legacyDelivered && (
