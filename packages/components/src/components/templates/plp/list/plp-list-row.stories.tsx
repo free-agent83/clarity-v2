@@ -1,4 +1,5 @@
 // plp/list/plp-list-row.stories.tsx
+import type { ComponentProps, ReactNode } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { useState } from "react";
@@ -42,11 +43,16 @@ const onAddToShortlist = fn();
 const onShare = fn();
 const onViewMedia = fn();
 const onRowClick = fn();
+const onSelectNoop = fn();
 
 const SAMPLE_IMAGE = "https://placehold.co/80x80/f5f5f4/a3a3a3?text=Gem";
 
-// Shared header used by most stories — represents a typical
-// Diamond-shaped row layout.
+// ── Shared scaffolding ────────────────────────────────────
+
+// Shared header. The `PlpListBodyRow` auto-injects a checkbox cell
+// whenever `onSelectedChange` is provided, so the header must include a
+// matching "Select" column and every story row must pass
+// `onSelectedChange` to keep cell counts aligned.
 function DefaultHeader() {
   return (
     <PlpListHeaderRow>
@@ -72,19 +78,84 @@ function DefaultHeader() {
   );
 }
 
-// Shared composition used by most stories — represents a typical
-// Diamond-shaped row with every primitive filled in.
-function DefaultRow({
-  selected,
-  onSelectedChange,
-  disabled,
-  onClick,
-}: {
+type PriceProps = ComponentProps<typeof PlpListRowPrice>;
+type DeliveryProps = ComponentProps<typeof PlpListRowDelivery>;
+type ReturnableProps = ComponentProps<typeof PlpListRowReturnable>;
+
+interface StoryRowProps {
+  shape?: string;
+  carat?: string;
+  color?: string;
+  clarity?: string;
+  cert?: { lab: string; number: string };
+  price?: PriceProps;
+  pricePerCarat?: ComponentProps<typeof PlpListRowPricePerCarat>;
+  returnable?: ReturnableProps["variant"];
+  delivery?: DeliveryProps;
+  actions?: ReactNode;
+  imageAlt?: string;
+  // PlpListBodyRow passthroughs
   selected?: boolean;
   onSelectedChange?: (next: boolean) => void;
   disabled?: boolean;
   onClick?: () => void;
-}) {
+}
+
+const DEFAULT_ACTIONS = (
+  <PlpListRowActions>
+    <Button size="sm" variant="outline" onClick={onAddToCart}>
+      Add
+      <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
+    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon-sm"
+          aria-label="More actions"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <IconDotsVertical className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+        <DropdownMenuItem onSelect={onAddToShortlist}>
+          <IconHeart className="h-4 w-4" />
+          Add to shortlist
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={onShare}>
+          <IconShare className="h-4 w-4" />
+          Share
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={onViewMedia}>
+          <IconPhoto className="h-4 w-4" />
+          View media
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </PlpListRowActions>
+);
+
+// Single row renderer used by every story. Always wires up
+// `onSelectedChange` (defaulting to a noop) so the checkbox cell is
+// always rendered and column counts match the header.
+function StoryRow({
+  shape = "Round",
+  carat = "1.20",
+  color = "F",
+  clarity = "VS1",
+  cert = { lab: "GIA", number: "2141438291" },
+  price = { amount: 5400, currency: "USD" },
+  pricePerCarat = { amount: 4500, currency: "USD" },
+  returnable = "returnable",
+  delivery = { variant: "regular", date: "Nov 18 – 23", origin: "🇧🇼" },
+  actions = DEFAULT_ACTIONS,
+  imageAlt = "Diamond",
+  selected,
+  onSelectedChange = onSelectNoop,
+  disabled,
+  onClick,
+}: StoryRowProps) {
   return (
     <PlpListBodyRow
       selected={selected}
@@ -93,64 +164,28 @@ function DefaultRow({
       onClick={onClick}
     >
       <PlpListBodyCell>
-        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt="1.20ct Round Diamond" />
+        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt={imageAlt} />
       </PlpListBodyCell>
-      <PlpListBodyCell>Round</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">1.20</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">F</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">VS1</PlpListBodyCell>
+      <PlpListBodyCell>{shape}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{carat}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{color}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{clarity}</PlpListBodyCell>
       <PlpListBodyCell>
-        <PlpListRowCert lab="GIA" number="2141438291" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPrice amount={5400} currency="USD" />
+        <PlpListRowCert lab={cert.lab} number={cert.number} />
       </PlpListBodyCell>
       <PlpListBodyCell>
-        <PlpListRowPricePerCarat amount={4500} currency="USD" />
+        <PlpListRowPrice {...price} />
       </PlpListBodyCell>
       <PlpListBodyCell>
-        <PlpListRowReturnable variant="returnable" />
+        <PlpListRowPricePerCarat {...pricePerCarat} />
       </PlpListBodyCell>
       <PlpListBodyCell>
-        <PlpListRowDelivery variant="regular" date="Nov 18 – 23" origin="🇧🇼" />
+        <PlpListRowReturnable variant={returnable} />
       </PlpListBodyCell>
-      <PlpListBodyCell sticky="right">
-        <PlpListRowActions>
-          <Button size="sm" variant="outline" onClick={onAddToCart}>
-            Add
-            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon-sm"
-                aria-label="More actions"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <IconDotsVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <DropdownMenuItem onSelect={onAddToShortlist}>
-                <IconHeart className="h-4 w-4" />
-                Add to shortlist
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={onShare}>
-                <IconShare className="h-4 w-4" />
-                Share
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={onViewMedia}>
-                <IconPhoto className="h-4 w-4" />
-                View media
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </PlpListRowActions>
+      <PlpListBodyCell>
+        <PlpListRowDelivery {...delivery} />
       </PlpListBodyCell>
+      <PlpListBodyCell sticky="right">{actions}</PlpListBodyCell>
     </PlpListBodyRow>
   );
 }
@@ -183,18 +218,18 @@ type Story = StoryObj;
 // ── Stories ───────────────────────────────────────────────
 
 export const Default: Story = {
-  render: () => <DefaultRow />,
+  render: () => <StoryRow />,
 };
 
 export const Clickable: Story = {
-  render: () => <DefaultRow onClick={onRowClick} />,
+  render: () => <StoryRow onClick={onRowClick} />,
 };
 
 export const Selected: Story = {
   render: () => {
     function Row() {
       const [selected, setSelected] = useState(true);
-      return <DefaultRow selected={selected} onSelectedChange={setSelected} />;
+      return <StoryRow selected={selected} onSelectedChange={setSelected} />;
     }
     return <Row />;
   },
@@ -204,290 +239,144 @@ export const Selectable: Story = {
   render: () => {
     function Row() {
       const [selected, setSelected] = useState(false);
-      return <DefaultRow selected={selected} onSelectedChange={setSelected} />;
+      return <StoryRow selected={selected} onSelectedChange={setSelected} />;
     }
     return <Row />;
   },
 };
 
 export const Disabled: Story = {
-  render: () => <DefaultRow disabled />,
+  render: () => <StoryRow disabled />,
 };
 
 export const ExpressDelivery: Story = {
   render: () => (
-    <PlpListBodyRow>
-      <PlpListBodyCell>
-        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt="Express item" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>Oval</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">0.90</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">D</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">IF</PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowCert lab="IGI" number="635321884" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPrice amount={4599} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPricePerCarat amount={5110} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowReturnable variant="returnable" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowDelivery variant="express" date="Nov 15 – 17" origin="🇺🇸" />
-      </PlpListBodyCell>
-      <PlpListBodyCell sticky="right">
-        <PlpListRowActions>
-          <Button size="sm" variant="outline" onClick={onAddToCart}>
-            Add
-            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
-          </Button>
-        </PlpListRowActions>
-      </PlpListBodyCell>
-    </PlpListBodyRow>
+    <StoryRow
+      shape="Oval"
+      carat="0.90"
+      color="D"
+      clarity="IF"
+      cert={{ lab: "IGI", number: "635321884" }}
+      price={{ amount: 4599, currency: "USD" }}
+      pricePerCarat={{ amount: 5110, currency: "USD" }}
+      delivery={{ variant: "express", date: "Nov 15 – 17", origin: "🇺🇸" }}
+      imageAlt="Express item"
+    />
   ),
 };
 
 export const NonReturnable: Story = {
   render: () => (
-    <PlpListBodyRow>
-      <PlpListBodyCell>
-        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt="Final sale item" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>Cushion</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">2.05</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">H</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">SI1</PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowCert lab="GIA" number="7428891102" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPrice amount={7999} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPricePerCarat amount={3902} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowReturnable variant="non-returnable" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowDelivery variant="regular" date="Nov 18 – 23" origin="🇷🇺" />
-      </PlpListBodyCell>
-      <PlpListBodyCell sticky="right">
-        <PlpListRowActions>
-          <Button size="sm" variant="outline" onClick={onAddToCart}>
-            Add
-            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
-          </Button>
-        </PlpListRowActions>
-      </PlpListBodyCell>
-    </PlpListBodyRow>
+    <StoryRow
+      shape="Cushion"
+      carat="2.05"
+      color="H"
+      clarity="SI1"
+      cert={{ lab: "GIA", number: "7428891102" }}
+      price={{ amount: 7999, currency: "USD" }}
+      pricePerCarat={{ amount: 3902, currency: "USD" }}
+      returnable="non-returnable"
+      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇷🇺" }}
+      imageAlt="Final sale item"
+    />
   ),
 };
 
 export const WithDiscount: Story = {
   render: () => (
-    <PlpListBodyRow>
-      <PlpListBodyCell>
-        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt="Discounted item" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>Princess</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">1.50</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">G</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">VVS2</PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowCert lab="GIA" number="5121330028" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPrice
-          amount={7499}
-          currency="USD"
-          discount={{ percentage: 25, originalAmount: 9999 }}
-        />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPricePerCarat amount={4999} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowReturnable variant="returnable" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowDelivery variant="regular" date="Nov 18 – 23" origin="🇨🇦" />
-      </PlpListBodyCell>
-      <PlpListBodyCell sticky="right">
-        <PlpListRowActions>
-          <Button size="sm" variant="outline" onClick={onAddToCart}>
-            Add
-            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
-          </Button>
-        </PlpListRowActions>
-      </PlpListBodyCell>
-    </PlpListBodyRow>
+    <StoryRow
+      shape="Princess"
+      carat="1.50"
+      color="G"
+      clarity="VVS2"
+      cert={{ lab: "GIA", number: "5121330028" }}
+      price={{
+        amount: 7499,
+        currency: "USD",
+        discount: { percentage: 25, originalAmount: 9999 },
+      }}
+      pricePerCarat={{ amount: 4999, currency: "USD" }}
+      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇨🇦" }}
+      imageAlt="Discounted item"
+    />
   ),
 };
 
 export const WithTariffs: Story = {
   render: () => (
-    <PlpListBodyRow>
-      <PlpListBodyCell>
-        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt="Tariff-noted item" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>Emerald</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">1.80</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">E</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">VS2</PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowCert lab="AGS" number="104088441" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPrice amount={9999} currency="USD" includeTariffs />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPricePerCarat amount={5555} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowReturnable variant="returnable" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowDelivery variant="regular" date="Nov 18 – 23" origin="🇦🇺" />
-      </PlpListBodyCell>
-      <PlpListBodyCell sticky="right">
-        <PlpListRowActions>
-          <Button size="sm" variant="outline" onClick={onAddToCart}>
-            Add
-            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
-          </Button>
-        </PlpListRowActions>
-      </PlpListBodyCell>
-    </PlpListBodyRow>
+    <StoryRow
+      shape="Emerald"
+      carat="1.80"
+      color="E"
+      clarity="VS2"
+      cert={{ lab: "AGS", number: "104088441" }}
+      price={{ amount: 9999, currency: "USD", includeTariffs: true }}
+      pricePerCarat={{ amount: 5555, currency: "USD" }}
+      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇦🇺" }}
+      imageAlt="Tariff-noted item"
+    />
   ),
 };
 
 export const WithLegacyPricing: Story = {
   render: () => (
-    <PlpListBodyRow>
-      <PlpListBodyCell>
-        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt="Legacy-pricing item" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>Pear</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">1.10</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">F</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">VS1</PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowCert lab="GIA" number="2298110765" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPrice
-          amount={9999}
-          currency="USD"
-          legacyDelivered={{ amount: 10499, currency: "USD" }}
-        />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPricePerCarat amount={9090} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowReturnable variant="returnable" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowDelivery variant="regular" date="Nov 18 – 23" origin="🇿🇦" />
-      </PlpListBodyCell>
-      <PlpListBodyCell sticky="right">
-        <PlpListRowActions>
-          <Button size="sm" variant="outline" onClick={onAddToCart}>
-            Add
-            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
-          </Button>
-        </PlpListRowActions>
-      </PlpListBodyCell>
-    </PlpListBodyRow>
+    <StoryRow
+      shape="Pear"
+      carat="1.10"
+      color="F"
+      clarity="VS1"
+      cert={{ lab: "GIA", number: "2298110765" }}
+      price={{
+        amount: 9999,
+        currency: "USD",
+        legacyDelivered: { amount: 10499, currency: "USD" },
+      }}
+      pricePerCarat={{ amount: 9090, currency: "USD" }}
+      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇿🇦" }}
+      imageAlt="Legacy-pricing item"
+    />
   ),
 };
 
 export const WithAlternateCurrency: Story = {
   render: () => (
-    <PlpListBodyRow>
-      <PlpListBodyCell>
-        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt="Multi-currency item" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>Round</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">1.00</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">D</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">VVS1</PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowCert lab="IGI" number="489012223" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPrice
-          amount={9999}
-          currency="USD"
-          alternateCurrency={{ amount: 9250, currency: "EUR" }}
-        />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPricePerCarat amount={9999} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowReturnable variant="returnable" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowDelivery variant="regular" date="Nov 18 – 23" origin="🇧🇼" />
-      </PlpListBodyCell>
-      <PlpListBodyCell sticky="right">
-        <PlpListRowActions>
-          <Button size="sm" variant="outline" onClick={onAddToCart}>
-            Add
-            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
-          </Button>
-        </PlpListRowActions>
-      </PlpListBodyCell>
-    </PlpListBodyRow>
+    <StoryRow
+      shape="Round"
+      carat="1.00"
+      color="D"
+      clarity="VVS1"
+      cert={{ lab: "IGI", number: "489012223" }}
+      price={{
+        amount: 9999,
+        currency: "USD",
+        alternateCurrency: { amount: 9250, currency: "EUR" },
+      }}
+      pricePerCarat={{ amount: 9999, currency: "USD" }}
+      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇧🇼" }}
+      imageAlt="Multi-currency item"
+    />
   ),
 };
 
 export const AllPriceVariants: Story = {
   render: () => (
-    <PlpListBodyRow>
-      <PlpListBodyCell>
-        <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt="All price variants" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>Round</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">1.00</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">D</PlpListBodyCell>
-      <PlpListBodyCell className="text-center">IF</PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowCert lab="GIA" number="2141438291" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPrice
-          amount={7499}
-          currency="USD"
-          discount={{ percentage: 25, originalAmount: 9999 }}
-          includeTariffs
-          legacyDelivered={{ amount: 10499, currency: "USD" }}
-          alternateCurrency={{ amount: 6920, currency: "EUR" }}
-        />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowPricePerCarat amount={7499} currency="USD" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowReturnable variant="returnable" />
-      </PlpListBodyCell>
-      <PlpListBodyCell>
-        <PlpListRowDelivery variant="express" date="Nov 15 – 17" origin="🇺🇸" />
-      </PlpListBodyCell>
-      <PlpListBodyCell sticky="right">
-        <PlpListRowActions>
-          <Button size="sm" variant="outline" onClick={onAddToCart}>
-            Add
-            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
-          </Button>
-        </PlpListRowActions>
-      </PlpListBodyCell>
-    </PlpListBodyRow>
+    <StoryRow
+      shape="Round"
+      carat="1.00"
+      color="D"
+      clarity="IF"
+      cert={{ lab: "GIA", number: "2141438291" }}
+      price={{
+        amount: 7499,
+        currency: "USD",
+        discount: { percentage: 25, originalAmount: 9999 },
+        includeTariffs: true,
+        legacyDelivered: { amount: 10499, currency: "USD" },
+        alternateCurrency: { amount: 6920, currency: "EUR" },
+      }}
+      pricePerCarat={{ amount: 7499, currency: "USD" }}
+      delivery={{ variant: "express", date: "Nov 15 – 17", origin: "🇺🇸" }}
+      imageAlt="All price variants"
+    />
   ),
 };
