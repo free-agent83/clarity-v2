@@ -143,7 +143,7 @@ export function DiamondPlpListHeader() {
       <TableHead>Cert</TableHead>
       <TableHead className="text-end">Price</TableHead>
       <TableHead className="text-end">Price/ct</TableHead>
-      <TableHead>Ret</TableHead>
+      <TableHead className="text-center">Ret</TableHead>
       <TableHead>Delivery</TableHead>
       <PlpListHeaderCell sticky="right">
         <span className="sr-only">Actions</span>
