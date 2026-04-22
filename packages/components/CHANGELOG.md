@@ -2,7 +2,7 @@
 
 ---
 
-### Components pass 3: new atoms + Stepper + AppShell banner slot ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
+### Components pass 3: new atoms + Stepper + AppShell banner slot ([#125](https://github.com/free-agent83/clarity-v2/pull/125))
 Adds four new components (`SegmentedControl`, `InlineBanner`, `PageBanner`, `Stepper`), variant/size additions to `Progress`, and an optional sticky banner slot on `AppShell`. All new components land as `unstable`.
 
 - **Progress.** Added `variant` prop (`default | success | info | warning | destructive`) controlling the indicator bar colour and a `size` prop (`default` = `h-1.5`, `lg` = `h-3`). Track stays `bg-muted` across variants. Replaced the placeholder `COMPONENT.md` with full documentation. No breaking changes. (`78a0863`)
