@@ -1,37 +1,103 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn } from "@storybook/test";
+import { IconArrowRight, IconLayoutGrid, IconList } from "@tabler/icons-react";
 import { Button } from "../../atoms/button/button";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "../../atoms/toggle-group/toggle-group";
 import { Typography } from "../../atoms/typography/typography";
 import {
   AppShell,
   AppShellHeader,
   AppShellMain,
 } from "../../organisms/app-shell/app-shell";
-import { SORT_OPTIONS } from "./mocks/common";
 import {
-  GemstonePlpListHeader,
-  GEMSTONE_PRESELECTED_SUPPLIERS,
-} from "./mocks/gemstone";
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../../molecules/pagination/pagination";
+import { PlpGridContainer } from "./plp-grid-container";
+import { PlpListContainer } from "./plp-list-container";
+import { DiamondPage } from "./__stories__/diamond-page";
 import {
+  DiamondPlpGridItem,
   DiamondPlpListHeader,
-} from "./mocks/diamond";
-import {
-  GemstoneInteractive,
-  buildGemstoneCards,
-  buildGemstoneRows,
-} from "./plp-stories/gemstone-interactive";
-import {
-  DiamondInteractive,
-  buildDiamondCards,
-  buildDiamondRows,
-} from "./plp-stories/diamond-interactive";
-import {
-  JewelryInteractive,
-  JewelryPlpListHeader,
-  buildJewelryListRows,
-} from "./plp-stories/jewelry-interactive";
+  DiamondPlpListRow,
+} from "./__stories__/diamond-renderers";
+import { generateDiamondItems } from "./__stories__/diamond-items";
 
-// ── Story meta ────────────────────────────────────────────────────────
+const items = generateDiamondItems(20);
+
+function GridListToggle({ initial = "grid" }: { initial?: "grid" | "list" }) {
+  return (
+    <ToggleGroup variant="outline" type="single" defaultValue={initial}>
+      <ToggleGroupItem value="grid" aria-label="Grid view">
+        <IconLayoutGrid className="h-4 w-4" />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="list" aria-label="List view">
+        <IconList className="h-4 w-4" />
+      </ToggleGroupItem>
+    </ToggleGroup>
+  );
+}
+
+const PromoBanner = (
+  <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg bg-linear-to-r from-slate-900 via-violet-950 to-slate-900 px-6 py-6 text-primary-foreground">
+    <div className="min-w-0">
+      <Typography
+        as="h2"
+        variant="body-1"
+        emphasis
+        className="text-primary-foreground"
+      >
+        Boost your sales. Get started with Showroom today.
+      </Typography>
+      <Typography variant="body-2" className="text-primary-foreground/70">
+        Incididunt sint fugiat pariatur cupidatat consectetur sit cillum anim.
+      </Typography>
+    </div>
+    <div className="flex items-center gap-2">
+      <Button className="bg-violet-600 hover:bg-violet-500">
+        Learn more
+        <IconArrowRight className="h-4 w-4" />
+      </Button>
+    </div>
+  </div>
+);
+
+const StaticPagination = (
+  <Pagination className="mt-4">
+    <PaginationContent>
+      <PaginationItem>
+        <PaginationPrevious href="#" />
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationLink href="#">1</PaginationLink>
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationLink href="#" isActive>
+          2
+        </PaginationLink>
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationLink href="#">3</PaginationLink>
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationEllipsis />
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationLink href="#">24</PaginationLink>
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationNext href="#" />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
+);
 
 const meta: Meta = {
   title: "Templates/PLP",
@@ -39,7 +105,7 @@ const meta: Meta = {
   decorators: [
     (Story) => (
       <AppShell>
-        <AppShellHeader onSearch={fn()} />
+        <AppShellHeader onSearch={() => {}} />
         <AppShellMain>
           <Story />
         </AppShellMain>
@@ -50,254 +116,104 @@ const meta: Meta = {
 
 export default meta;
 
-// ── Story exports ─────────────────────────────────────────────────────
-
-type CategoryArg = "diamonds" | "gemstones" | "jewellery";
-type DefaultStoryArgs = { category: CategoryArg };
-
-const CATEGORY_OPTIONS: CategoryArg[] = ["diamonds", "gemstones", "jewellery"];
-
-/**
- * The canonical "healthy PLP" — tweak `category` to switch between
- * diamonds / gemstones / jewellery. The grid/list toggle lives in the
- * toolbar itself, so readers flip between views there rather than via
- * a story arg.
- */
-export const Default: StoryObj<DefaultStoryArgs> = {
-  args: { category: "diamonds" },
-  argTypes: {
-    category: {
-      control: { type: "radio" },
-      options: CATEGORY_OPTIONS,
-    },
-  },
-  render: ({ category }) => {
-    if (category === "jewellery") {
-      return (
-        <JewelryInteractive
-          listHeader={<JewelryPlpListHeader />}
-          listRows={buildJewelryListRows(20)}
-          listViewAvailable
-        />
-      );
-    }
-    if (category === "gemstones") {
-      return (
-        <GemstoneInteractive
-          breadcrumbs={[
-            { label: "Gemstones", href: "#" },
-            { label: "Sapphire" },
-          ]}
-          title="Sapphire"
-          resultsCount={1234567}
-          sortOptions={SORT_OPTIONS}
-          searchPlaceholder="Search by certificate number or stock ID..."
-          onSearchSubmit={fn()}
-          gridItems={buildGemstoneCards(20)}
-          listHeader={<GemstonePlpListHeader />}
-          listRows={buildGemstoneRows(20)}
-          listViewAvailable
-          totalItems={1234567}
-          onRetry={fn()}
-        />
-      );
-    }
-    return (
-      <DiamondInteractive
-        breadcrumbs={[{ label: "Diamonds", href: "#" }, { label: "Natural" }]}
-        title="Natural Diamonds"
-        resultsCount={48291}
-        sortOptions={SORT_OPTIONS}
-        searchPlaceholder="Search by certificate number or stock ID..."
-        onSearchSubmit={fn()}
-        gridItems={buildDiamondCards(20)}
-        listHeader={<DiamondPlpListHeader />}
-        listRows={buildDiamondRows(20)}
-        listViewAvailable
-        totalItems={48291}
-        onRetry={fn()}
-      />
-    );
-  },
-};
-
-export const WithActiveFilters: StoryObj = {
+export const GridView: StoryObj = {
   render: () => (
-    <GemstoneInteractive
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-      title="Sapphire"
-      resultsCount={342}
-      initialFilterState={{
-        color: ["blue", "green"],
-        treatment: "heated",
-        price: { price: { min: 1000, max: 5000 } },
-        supplier: GEMSTONE_PRESELECTED_SUPPLIERS,
-      }}
-      sortOptions={SORT_OPTIONS}
-      gridItems={buildGemstoneCards(20)}
-      totalItems={342}
-      onRetry={fn()}
-    />
+    <DiamondPage actions={<GridListToggle initial="grid" />}>
+      <PlpGridContainer>
+        {items.map((item) => (
+          <DiamondPlpGridItem key={item.id} item={item} />
+        ))}
+      </PlpGridContainer>
+      {StaticPagination}
+    </DiamondPage>
   ),
 };
 
-export const EmptyFiltered: StoryObj = {
+export const ListView: StoryObj = {
   render: () => (
-    <GemstoneInteractive
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-      title="Sapphire"
-      resultsCount={0}
-      initialFilterState={{ color: ["pink"], clarity: ["eye-clean"] }}
-      sortOptions={SORT_OPTIONS}
-      totalItems={0}
-      baselineStatus="empty-filtered"
-    />
-  ),
-};
-
-export const EmptyNoItems: StoryObj = {
-  render: () => (
-    <GemstoneInteractive
-      breadcrumbs={[
-        { label: "Gemstones", href: "#" },
-        { label: "Alexandrite" },
-      ]}
-      title="Alexandrite"
-      resultsCount={0}
-      sortOptions={SORT_OPTIONS}
-      totalItems={0}
-      baselineStatus="empty-no-items"
-      emptyMessage="No alexandrite available at the moment."
-    />
-  ),
-};
-
-export const Error: StoryObj = {
-  render: () => (
-    <GemstoneInteractive
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-      title="Sapphire"
-      resultsCount={0}
-      sortOptions={SORT_OPTIONS}
-      totalItems={0}
-      baselineStatus="error"
-      onRetry={fn()}
-    />
+    <DiamondPage actions={<GridListToggle initial="list" />}>
+      <PlpListContainer header={<DiamondPlpListHeader />}>
+        {items.map((item) => (
+          <DiamondPlpListRow key={item.id} item={item} />
+        ))}
+      </PlpListContainer>
+      {StaticPagination}
+    </DiamondPage>
   ),
 };
 
 /**
- * Demonstrates how consumers can drop arbitrary content between the
- * PLP heading and the filter toolbar. The kit doesn't bake banners
- * into any template prop — `AssemblyShell` just flows a consumer-
- * provided `banner` node into the layout, full width.
+ * Demonstrates a promotional banner slotted in between the PLP heading
+ * and the filter toolbar. The library doesn't bake a banner prop into
+ * any component — `PlpPageShell` flows whatever node the consumer hands
+ * in through its `banner` slot.
  */
 export const WithBanner: StoryObj = {
   render: () => (
-    <GemstoneInteractive
-      breadcrumbs={[{ label: "Gemstones", href: "#" }, { label: "Sapphire" }]}
-      title="Sapphire"
-      resultsCount={1234567}
-      sortOptions={SORT_OPTIONS}
-      searchPlaceholder="Search by certificate number or stock ID..."
-      onSearchSubmit={fn()}
-      gridItems={buildGemstoneCards(20)}
-      totalItems={1234567}
-      onRetry={fn()}
-      banner={
-        <div className="flex items-center justify-between gap-4 rounded-lg bg-linear-to-r from-violet-600 to-indigo-600 px-6 py-5 text-primary-foreground">
-          <div>
-            <Typography as="h2" variant="body-1" emphasis className="text-primary-foreground">
-              Spring Sale — up to 20% off select gemstones
-            </Typography>
-            <Typography variant="body-2" className="text-primary-foreground/90">
-              Applies automatically at checkout. Ends 2026-05-15.
-            </Typography>
-          </div>
-          <Button variant="outline" className="bg-background text-foreground">
-            Browse deals
-          </Button>
-        </div>
-      }
-    />
+    <DiamondPage
+      banner={PromoBanner}
+      actions={<GridListToggle initial="grid" />}
+    >
+      <PlpGridContainer>
+        {items.map((item) => (
+          <DiamondPlpGridItem key={item.id} item={item} />
+        ))}
+      </PlpGridContainer>
+      {StaticPagination}
+    </DiamondPage>
   ),
 };
 
 /**
- * Demonstrates how consumers can freely mix non-item content into the
- * grid — promo tiles, ad slots, recommendation cards, anything. The
- * `gridItems` prop is a plain `ReactNode[]`; the `PlpGridContainer`
- * doesn't reason about what a "product card" is, it just flows its
- * children into the responsive grid. Here, positions 4 and 11 in a
- * grid of 20 are swapped out for promo tiles.
+ * Demonstrates a banner dropped into the grid as a regular item. The
+ * `PlpGridContainer` doesn't reason about what a cell contains — the
+ * banner is just the first node in the `gridItems` array. The grid
+ * stretches every cell to the row's tallest intrinsic height, so the
+ * banner naturally matches its row without needing a fixed height.
+ *
+ * Here the banner occupies a single column and is pinned to the last
+ * column of the first row via explicit grid placement. The grid's
+ * default stretch pulls it up to the full row height regardless of
+ * how tall the tallest card in the row happens to be. Auto-placement
+ * fills the remaining cells in DOM order.
  */
-export const WithPromoItems: StoryObj = {
+export const WithInGridBanner: StoryObj = {
   render: () => {
-    const cards = buildGemstoneCards(20);
-
-    function PromoTile({
-      headline,
-      subline,
-      className,
-    }: {
-      headline: string;
-      subline: string;
-      className?: string;
-    }) {
-      return (
-        <div
-          className={`flex aspect-square flex-col items-center justify-center gap-2 rounded-lg p-6 text-center ${className}`}
-        >
+    const GridBanner = (
+      <div
+        key="in-grid-banner"
+        className="col-start-2 row-start-1 flex flex-col justify-center items-center text-center gap-3 rounded-lg bg-linear-to-br from-slate-900 via-violet-950 to-slate-900 p-6 text-primary-foreground sm:col-start-3 lg:col-start-4"
+      >
+        <div>
           <Typography
-            as="h3"
+            as="h2"
             variant="body-1"
             emphasis
             className="text-primary-foreground"
           >
-            {headline}
+            Boost your sales. Get started with Showroom today.
           </Typography>
-          <Typography variant="body-2" className="text-primary-foreground/90">
-            {subline}
+          <Typography variant="body-2" className="text-primary-foreground/70">
+            Incididunt sint fugiat pariatur cupidatat consectetur sit cillum
+            anim.
           </Typography>
-          <Button variant="outline" className="mt-2 bg-background text-foreground">
-            Shop now
-          </Button>
         </div>
-      );
-    }
-
-    cards[3] = (
-      <PromoTile
-        key="promo-1"
-        headline="Free shipping on orders over $1,000"
-        subline="Applies automatically at checkout."
-        className="bg-linear-to-br from-emerald-600 to-teal-600"
-      />
+        <Button className="w-fit bg-violet-600 hover:bg-violet-500">
+          Learn more
+          <IconArrowRight className="h-4 w-4" />
+        </Button>
+      </div>
     );
-    cards[10] = (
-      <PromoTile
-        key="promo-2"
-        headline="New: Sapphire from Kashmir"
-        subline="Limited-release certified parcels."
-        className="bg-linear-to-br from-indigo-600 to-violet-600"
-      />
-    );
-
     return (
-      <GemstoneInteractive
-        breadcrumbs={[
-          { label: "Gemstones", href: "#" },
-          { label: "Sapphire" },
-        ]}
-        title="Sapphire"
-        resultsCount={1234567}
-        sortOptions={SORT_OPTIONS}
-        searchPlaceholder="Search by certificate number or stock ID..."
-        onSearchSubmit={fn()}
-        gridItems={cards}
-        totalItems={1234567}
-        onRetry={fn()}
-      />
+      <DiamondPage actions={<GridListToggle initial="grid" />}>
+        <PlpGridContainer>
+          {GridBanner}
+          {items.map((item) => (
+            <DiamondPlpGridItem key={item.id} item={item} />
+          ))}
+        </PlpGridContainer>
+        {StaticPagination}
+      </DiamondPage>
     );
   },
 };

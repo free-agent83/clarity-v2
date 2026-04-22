@@ -2,6 +2,17 @@
 
 ---
 
+### PLP list view stories + row primitives polish ([#123](https://github.com/free-agent83/clarity-v2/pull/123))
+Introduces a dedicated ListRow stories file mirroring GridItem, evolves the list-row primitives with a few small props and bug fixes surfaced while exercising them, and reorders the Storybook sidebar from simpler to more complex. No breaking changes.
+
+- **PLP list row primitives.** Added `ListRow` stories file with a shared `StoryRow` helper and full variant coverage (states, delivery, returns, price variants, all-price kitchen sink). Added `hug` prop on `PlpListBodyCell` / `PlpListHeaderCell` so icon-only columns (checkbox, thumbnail) stop stretching. Added `shipsFrom` tooltip on `PlpListRowDelivery` (reads "Express delivery from X" / "Ships from X"). Wrapped the "Incl. US tariffs" caption in the same `HoverCard` the grid uses. Fixed an issue where opening a row's actions menu broke the sticky-cell background (now uses `group-has-data-[state=open]/plp-row` to hold the hover look while any descendant popover is open). Centered the returnable icon vertically + horizontally in its column and tightened the tooltip anchor to the icon. (`c71f813`, `50b588e`, `f970851`, `a4290e2`, `25080fb`, `368f16f`, `36bf2e7`, `a752633`, `c8c46f7`, `e715cd7`)
+- **PLP stories architecture.** Split diamond / gemstone / jewelry stories into `api / renderers / filters / interactive` modules and introduced `__stories__/shared` with a mock API client. Collapsed the mini-app into a static presentation harness, reduced the rendered stories to just the diamond grid + list, and added static pagination, `WithBanner`, `WithInGridBanner`, and a static grid/list toggle. Renamed the long-standing `__fixtures__` folder to `__stories__` for consistency with Storybook terminology and swapped the story placeholder image for the real diamond asset. (`4c1d659`, `8f7cff9`, `b4e491a`, `221344d`, `189a4e9`, `adf7685`, `8294dea`, `056e412`, `efcb11f`, `82fd3c6`, `36a7625`, `09cffaf`, `0dde4c7`, `3591bc0`, `d4e4027`, `2698624`, `c2529e7`)
+- **Storybook sidebar order.** Top-level groups now run simpler → more complex (Foundations → Display → Feedback → Actions → Forms → Overlays → Navigation → Data → Filtering → Templates). Within `Templates/PLP`, stories run full-page compositions → structural pieces → item primitives. (`ed19c93`, `425b324`)
+- **DropdownMenu.** Removed the `w-(--radix-dropdown-menu-trigger-width)` class so content no longer stretches to the trigger width; the existing `min-w-32` keeps small menus readable while content sizes naturally.
+- **Chore.** Removed a dead `Badge` import from `plp-list-row.tsx`; gitignored accidentally-emitted `.d.ts` artefacts under `.storybook/`.
+
+---
+
 ### PLP polish: FilterToolbar consolidation + story quality ([#122](https://github.com/free-agent83/clarity-v2/pull/122))
 Second-wave consolidation after the filter-subsystem extraction: several thin modules folded into their owners, two unused PLP-specific empty/error wrappers deleted, and a thorough story quality pass.
 

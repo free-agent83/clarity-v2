@@ -1,12 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { PlpListContainer } from "./plp-list-container";
 import {
-  PlpListHeaderCell,
+  PlpListBodyCell,
+  PlpListBodyRow,
   PlpListHeaderRow,
-  PlpListCell,
-  PlpListRow,
-  PlpListRowName,
 } from "./list/plp-list-row";
+import { TableHead } from "../../organisms/table/table";
 
 const meta: Meta<typeof PlpListContainer> = {
   title: "Templates/PLP/ListContainer",
@@ -20,8 +19,8 @@ type Story = StoryObj<typeof PlpListContainer>;
 
 const header = (
   <PlpListHeaderRow>
-    <PlpListHeaderCell>Name</PlpListHeaderCell>
-    <PlpListHeaderCell>Description</PlpListHeaderCell>
+    <TableHead>Name</TableHead>
+    <TableHead>Description</TableHead>
   </PlpListHeaderRow>
 );
 
@@ -38,12 +37,10 @@ export const WithRows: Story = {
     <div className="p-6">
       <PlpListContainer header={header}>
         {Array.from({ length: 6 }, (_, i) => (
-          <PlpListRow key={i}>
-            <PlpListCell>
-              <PlpListRowName>Item {i + 1}</PlpListRowName>
-            </PlpListCell>
-            <PlpListCell>Description of item {i + 1}</PlpListCell>
-          </PlpListRow>
+          <PlpListBodyRow key={i}>
+            <PlpListBodyCell>Item {i + 1}</PlpListBodyCell>
+            <PlpListBodyCell>Description of item {i + 1}</PlpListBodyCell>
+          </PlpListBodyRow>
         ))}
       </PlpListContainer>
     </div>

@@ -52,7 +52,7 @@ export function PlpHeading({ breadcrumbs, title, resultsCount }: PlpHeadingProps
         </Breadcrumb>
       )}
 
-      <Typography as="h1" variant="h3" className="mt-2">
+      <Typography as="h1" variant="h3" className="mt-6">
         {title}
       </Typography>
 

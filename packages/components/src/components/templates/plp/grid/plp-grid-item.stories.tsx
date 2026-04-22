@@ -18,6 +18,7 @@ import {
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
 import { Typography } from "../../../atoms/typography/typography";
+import diamondImg from "../__stories__/images/diamond.png";
 
 // Stable module-level handlers so every story shares action identity.
 const onAddToShortlist = fn();
@@ -25,7 +26,7 @@ const onShare = fn();
 const onViewMedia = fn();
 const onAddToCart = fn();
 
-const SAMPLE_IMAGE = "https://placehold.co/400x400/f5f5f4/a3a3a3?text=Gem";
+const SAMPLE_IMAGE = diamondImg;
 const SAMPLE_360_VIDEO =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
@@ -104,6 +105,8 @@ type Story = StoryObj;
 
 // ── Stories ───────────────────────────────────────────────
 
+// Baseline
+
 export const Default: Story = {
   render: () => <DefaultCard />,
 };
@@ -118,12 +121,63 @@ export const Minimal: Story = {
   ),
 };
 
+// States & interaction
+
 export const Selected: Story = {
   render: () => <DefaultCard selected />,
 };
 
 export const Disabled: Story = {
   render: () => <DefaultCard disabled />,
+};
+
+export const WithCheckbox: Story = {
+  render: () => {
+    function Card() {
+      const [selected, setSelected] = useState(false);
+      return (
+        <PlpGridItem selected={selected}>
+          <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Selectable item">
+            <PlpGridItemCheckbox checked={selected} onChange={setSelected} />
+            <PlpGridItemMediaToolbar>
+              <PlpGridItemMediaAction
+                icon={IconHeart}
+                label="Add to shortlist"
+                onClick={onAddToShortlist}
+              />
+            </PlpGridItemMediaToolbar>
+          </PlpGridItemMedia>
+          <PlpGridItemName>Select to compare</PlpGridItemName>
+          <PlpGridItemPrice amount={2899} currency="USD" />
+        </PlpGridItem>
+      );
+    }
+    return <Card />;
+  },
+};
+
+// Content variants
+
+export const With360Media: Story = {
+  render: () => (
+    <PlpGridItem>
+      <PlpGridItemMedia
+        image={SAMPLE_IMAGE}
+        imageAlt="360 rotation item"
+        video={SAMPLE_360_VIDEO}
+      >
+        <PlpGridItemMediaToolbar>
+          <PlpGridItemMediaAction
+            icon={IconPhoto}
+            label="View media"
+            onClick={onViewMedia}
+          />
+        </PlpGridItemMediaToolbar>
+      </PlpGridItemMedia>
+      <PlpGridItemName>Hover for 360 rotation</PlpGridItemName>
+      <PlpGridItemPrice amount={3499} currency="USD" />
+    </PlpGridItem>
+  ),
 };
 
 export const ExpressDelivery: Story = {
@@ -157,6 +211,8 @@ export const NonReturnable: Story = {
     </PlpGridItem>
   ),
 };
+
+// Price variants
 
 export const WithDiscount: Story = {
   render: () => (
@@ -252,53 +308,6 @@ export const WithAlternateCurrency: Story = {
       />
     </PlpGridItem>
   ),
-};
-
-export const With360Media: Story = {
-  render: () => (
-    <PlpGridItem>
-      <PlpGridItemMedia
-        image={SAMPLE_IMAGE}
-        imageAlt="360 rotation item"
-        video={SAMPLE_360_VIDEO}
-      >
-        <PlpGridItemMediaToolbar>
-          <PlpGridItemMediaAction
-            icon={IconPhoto}
-            label="View media"
-            onClick={onViewMedia}
-          />
-        </PlpGridItemMediaToolbar>
-      </PlpGridItemMedia>
-      <PlpGridItemName>Hover for 360 rotation</PlpGridItemName>
-      <PlpGridItemPrice amount={3499} currency="USD" />
-    </PlpGridItem>
-  ),
-};
-
-export const WithCheckbox: Story = {
-  render: () => {
-    function Card() {
-      const [selected, setSelected] = useState(false);
-      return (
-        <PlpGridItem selected={selected}>
-          <PlpGridItemMedia image={SAMPLE_IMAGE} imageAlt="Selectable item">
-            <PlpGridItemCheckbox checked={selected} onChange={setSelected} />
-            <PlpGridItemMediaToolbar>
-              <PlpGridItemMediaAction
-                icon={IconHeart}
-                label="Add to shortlist"
-                onClick={onAddToShortlist}
-              />
-            </PlpGridItemMediaToolbar>
-          </PlpGridItemMedia>
-          <PlpGridItemName>Select to compare</PlpGridItemName>
-          <PlpGridItemPrice amount={2899} currency="USD" />
-        </PlpGridItem>
-      );
-    }
-    return <Card />;
-  },
 };
 
 export const AllPriceVariants: Story = {

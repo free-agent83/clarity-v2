@@ -6,7 +6,22 @@ import {
   type RangeHistogram,
   type RangeValue,
 } from "./range-filter";
-import { buildMockHistogram } from "../../templates/plp/mocks/common";
+
+function buildMockHistogram(
+  min: number,
+  max: number,
+  bucketCount: number,
+  peakAt: number
+): RangeHistogram {
+  const buckets = Array.from({ length: bucketCount }, (_, i) => {
+    const bucketCenter = min + ((i + 0.5) * (max - min)) / bucketCount;
+    const distanceFromPeak = Math.abs(bucketCenter - peakAt);
+    const peakWidth = (max - min) / 4;
+    const normalized = Math.max(0, 1 - distanceFromPeak / peakWidth);
+    return Math.round(normalized * 40 + Math.random() * 10);
+  });
+  return { buckets, min, max };
+}
 
 const meta: Meta<typeof RangeFilter> = {
   title: "Filtering/RangeFilter",

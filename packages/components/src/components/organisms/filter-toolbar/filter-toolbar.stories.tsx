@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { fn, userEvent, within } from "@storybook/test";
-import { useState, type ReactNode } from "react";
+import { userEvent, within } from "@storybook/test";
+import type { ReactNode } from "react";
 import { FilterToolbar, FilterSection } from "./filter-toolbar";
 import {
   AppShell,
   AppShellHeader,
   AppShellMain,
-} from "../../organisms/app-shell/app-shell";
+} from "../app-shell/app-shell";
 import { FilterButton } from "../../atoms/filter-button/filter-button";
 import {
   ToggleGroup,
@@ -24,6 +24,10 @@ const meta: Meta<typeof FilterToolbar> = {
 
 export default meta;
 type Story = StoryObj<typeof FilterToolbar>;
+
+// ── Static fixtures ───────────────────────────────────────────────────
+
+const noop = () => {};
 
 type Option = { value: string; label: string };
 
@@ -50,45 +54,38 @@ const PRICE_AXIS: RangeAxis = {
   unit: "$",
 };
 
-function formatMultiSelectChip(labels: string[]): string {
-  if (labels.length === 0) return "";
-  if (labels.length === 1) return labels[0];
-  if (labels.length === 2) return `${labels[0]}, ${labels[1]}`;
-  return `${labels[0]}, ${labels[1]} +${labels.length - 2} more`;
-}
-
-function labelForValue(options: Option[], v: string) {
-  return options.find((o) => o.value === v)?.label ?? v;
-}
-
 type PriceValue = Record<string, { min: number; max: number }> | undefined;
 
-function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }) {
-  const [sort, setSort] = useState("price-asc");
-  const [colors, setColors] = useState<string[] | undefined>(
-    hasActiveFilters ? ["blue", "green"] : undefined
-  );
-  const [draftColors, setDraftColors] = useState<string[] | undefined>(colors);
+// ── Static filter button factories ────────────────────────────────────
+//
+// Each factory returns a FilterButton with real popover content and an
+// internal draft, but `onApply` / `onClear` are no-ops. Readers can
+// open the popover and toggle chips or drag sliders, but committing
+// never flips the toolbar chip's visual state — stories illustrate one
+// fixed snapshot.
 
-  const colorButton: ReactNode = (
+function buildColorButton(
+  selected: string[] | undefined,
+  chipSummary: string | undefined
+): ReactNode {
+  return (
     <FilterButton<string[]>
       key="color"
       label="Color"
-      chipSummary={formatMultiSelectChip(
-        (colors ?? []).map((v) => labelForValue(COLOR_OPTIONS, v))
-      )}
-      isActive={(colors ?? []).length > 0}
-      initialValue={colors}
+      chipSummary={chipSummary}
+      isActive={(selected ?? []).length > 0}
+      initialValue={selected}
       popoverWidth={320}
-      onApply={(v) => setColors(v)}
-      onClear={() => setColors(undefined)}
-      onDismiss={() => setColors(undefined)}
+      onApply={noop}
+      onClear={noop}
+      onDismiss={noop}
     >
       {(draft, setDraft) => (
         <ToggleGroup
           type="multiple"
           variant="outline"
           spacing={2}
+          className="flex-wrap"
           value={draft ?? []}
           onValueChange={(next: string[]) =>
             setDraft(next.length > 0 ? next : undefined)
@@ -103,110 +100,115 @@ function Controlled({ hasActiveFilters = false }: { hasActiveFilters?: boolean }
       )}
     </FilterButton>
   );
+}
 
-  const activeCount = colors ? 1 : 0;
-
+function buildPriceButton(
+  selected: PriceValue,
+  chipSummary: string | undefined
+): ReactNode {
   return (
-    <div className="p-4">
-      <FilterToolbar
-        filters={[colorButton]}
-        stickyFilters={colors ? [colorButton] : []}
-        activeFilterCount={activeCount}
-        hasActiveFilters={activeCount > 0}
-        onClearAll={() => setColors(undefined)}
-        onSearchSubmit={fn()}
-        searchPlaceholder="Search..."
-        sortOptions={SORT_OPTIONS}
-        sortValue={sort}
-        onSortChange={setSort}
-        drawer={{
-          content: (
-            <FilterSection label="Color" separator={false}>
-              <ToggleGroup
-                type="multiple"
-                variant="outline"
-                spacing={2}
-                value={draftColors ?? []}
-                onValueChange={(next: string[]) =>
-                  setDraftColors(next.length > 0 ? next : undefined)
-                }
-              >
-                {COLOR_OPTIONS.map((o) => (
-                  <ToggleGroupItem
-                    key={o.value}
-                    value={o.value}
-                    aria-label={o.label}
-                  >
-                    {o.label}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </FilterSection>
-          ),
-          onOpen: () => setDraftColors(colors),
-          onApply: () => setColors(draftColors),
-          onClearDraft: () => setDraftColors(undefined),
-          hasActiveDraft: (draftColors ?? []).length > 0,
-          resultsCount: hasActiveFilters ? 342 : undefined,
-        }}
-      />
-    </div>
+    <FilterButton<PriceValue>
+      key="price"
+      label="Price"
+      chipSummary={chipSummary}
+      isActive={!!selected}
+      initialValue={selected}
+      onApply={noop}
+      onClear={noop}
+      onDismiss={noop}
+    >
+      {(draft, setDraft) => (
+        <RangeFilter value={draft} onChange={setDraft} axes={[PRICE_AXIS]} />
+      )}
+    </FilterButton>
   );
 }
 
-export const Default: Story = { render: () => <Controlled /> };
-export const WithActiveFilters: Story = {
-  render: () => <Controlled hasActiveFilters />,
+function buildSimpleChipButton(
+  key: string,
+  label: string,
+  chipSummary: string
+): ReactNode {
+  return (
+    <FilterButton<string[]>
+      key={key}
+      label={label}
+      chipSummary={chipSummary}
+      isActive
+      initialValue={["placeholder"]}
+      popoverWidth={280}
+      onApply={noop}
+      onClear={noop}
+      onDismiss={noop}
+    >
+      {() => (
+        <div className="text-sm text-muted-foreground">
+          Illustrative only — this filter's popover body is elided.
+        </div>
+      )}
+    </FilterButton>
+  );
+}
+
+// ── Static drawer sections ────────────────────────────────────────────
+
+const colorDrawerSection: ReactNode = (
+  <FilterSection label="Color" separator={false}>
+    <ToggleGroup
+      type="multiple"
+      variant="outline"
+      spacing={2}
+      className="flex-wrap"
+    >
+      {COLOR_OPTIONS.map((o) => (
+        <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
+          {o.label}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
+  </FilterSection>
+);
+
+const priceDrawerSection: ReactNode = (
+  <FilterSection label="Price">
+    <RangeFilter value={undefined} onChange={noop} axes={[PRICE_AXIS]} />
+  </FilterSection>
+);
+
+// ── Stories ───────────────────────────────────────────────────────────
+
+export const Default: Story = {
+  render: () => (
+    <div className="p-4">
+      <FilterToolbar
+        filters={[buildColorButton(undefined, undefined)]}
+        activeFilterCount={0}
+        hasActiveFilters={false}
+        onClearAll={noop}
+        onSearchSubmit={noop}
+        searchPlaceholder="Search..."
+        sortOptions={SORT_OPTIONS}
+        sortValue="price-asc"
+        onSortChange={noop}
+        drawer={{
+          content: colorDrawerSection,
+          onApply: noop,
+          hasActiveDraft: false,
+        }}
+      />
+    </div>
+  ),
 };
 
 /**
- * Drawer loading state — the "Show X results" Apply button renders a
- * spinner and is disabled while a preview-count fetch is in flight.
- *
- * The story auto-opens the drawer via a `play` function (click on the
- * All Filters button) so the loading state is immediately visible
- * without manual interaction.
+ * Shows the toolbar with a single filter in its active state. Opening
+ * the quick-filter popover or the drawer lets readers manipulate the
+ * draft, but Apply is a no-op — the toolbar chip stays fixed.
  */
-export const DrawerLoadingState: Story = {
+export const WithActiveFilters: Story = {
   render: () => {
-    const [sort, setSort] = useState("price-asc");
-    const [colors, setColors] = useState<string[] | undefined>(["blue", "green"]);
-    const [draftColors, setDraftColors] = useState<string[] | undefined>(colors);
-
-    const colorButton: ReactNode = (
-      <FilterButton<string[]>
-        key="color"
-        label="Color"
-        chipSummary={formatMultiSelectChip(
-          (colors ?? []).map((v) => labelForValue(COLOR_OPTIONS, v))
-        )}
-        isActive={(colors ?? []).length > 0}
-        initialValue={colors}
-        popoverWidth={320}
-        onApply={(v) => setColors(v)}
-        onClear={() => setColors(undefined)}
-        onDismiss={() => setColors(undefined)}
-      >
-        {(draft, setDraft) => (
-          <ToggleGroup
-            type="multiple"
-            variant="outline"
-            spacing={2}
-            value={draft ?? []}
-            onValueChange={(next: string[]) =>
-              setDraft(next.length > 0 ? next : undefined)
-            }
-          >
-            {COLOR_OPTIONS.map((o) => (
-              <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
-                {o.label}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        )}
-      </FilterButton>
-    );
-
+    const selectedColors = ["blue", "green"];
+    const colorButton = buildColorButton(selectedColors, "Blue, Green");
     return (
       <div className="p-4">
         <FilterToolbar
@@ -214,42 +216,52 @@ export const DrawerLoadingState: Story = {
           stickyFilters={[colorButton]}
           activeFilterCount={1}
           hasActiveFilters
-          onClearAll={() => setColors(undefined)}
+          onClearAll={noop}
+          onSearchSubmit={noop}
+          searchPlaceholder="Search..."
           sortOptions={SORT_OPTIONS}
-          sortValue={sort}
-          onSortChange={setSort}
+          sortValue="price-asc"
+          onSortChange={noop}
           drawer={{
-            content: (
-              <FilterSection label="Color" separator={false}>
-                <ToggleGroup
-                  type="multiple"
-                  variant="outline"
-                  spacing={2}
-                  value={draftColors ?? []}
-                  onValueChange={(next: string[]) =>
-                    setDraftColors(next.length > 0 ? next : undefined)
-                  }
-                >
-                  {COLOR_OPTIONS.map((o) => (
-                    <ToggleGroupItem
-                      key={o.value}
-                      value={o.value}
-                      aria-label={o.label}
-                    >
-                      {o.label}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
-              </FilterSection>
-            ),
-            onOpen: () => setDraftColors(colors),
-            onApply: () => setColors(draftColors),
-            onClearDraft: () => setDraftColors(undefined),
-            hasActiveDraft: (draftColors ?? []).length > 0,
+            content: colorDrawerSection,
+            onApply: noop,
+            onClearDraft: noop,
+            hasActiveDraft: true,
+            resultsCount: 342,
+          }}
+        />
+      </div>
+    );
+  },
+};
+
+/**
+ * Drawer loading state — the "Show X results" Apply button renders a
+ * spinner and is disabled while a preview-count fetch is in flight.
+ *
+ * Auto-opens the drawer via a `play` function so the loading state is
+ * immediately visible without manual interaction.
+ */
+export const DrawerLoadingState: Story = {
+  render: () => {
+    const colorButton = buildColorButton(["blue", "green"], "Blue, Green");
+    return (
+      <div className="p-4">
+        <FilterToolbar
+          filters={[colorButton]}
+          stickyFilters={[colorButton]}
+          activeFilterCount={1}
+          hasActiveFilters
+          onClearAll={noop}
+          sortOptions={SORT_OPTIONS}
+          sortValue="price-asc"
+          onSortChange={noop}
+          drawer={{
+            content: colorDrawerSection,
+            onApply: noop,
+            onClearDraft: noop,
+            hasActiveDraft: true,
             resultsCount: 1234,
-            // Frozen loading state for the demo — real consumers flip this
-            // during a debounced preview-count fetch triggered by draft
-            // state changes.
             isCountLoading: true,
           }}
         />
@@ -268,153 +280,44 @@ export const DrawerLoadingState: Story = {
  * toolbar fall off the top of the viewport and the compact sticky bar
  * fade in under the `AppShellHeader` (offset: 72px by default).
  *
- * The sticky bar only appears when `hasActiveFilters` is true — so this
+ * The sticky bar only appears when `hasActiveFilters` is true, so this
  * story seeds two active filters. A long grid wireframe below provides
  * enough scroll distance to trigger the IntersectionObserver.
  */
 export const StickyBarBehaviour: Story = {
   parameters: { layout: "fullscreen" },
   render: () => {
-    const [sort, setSort] = useState("price-asc");
-    const [colors, setColors] = useState<string[] | undefined>([
-      "blue",
-      "green",
-    ]);
-    const [price, setPrice] = useState<PriceValue>({
-      price: { min: 500, max: 5000 },
-    });
-    const [draftColors, setDraftColors] = useState<string[] | undefined>(colors);
-    const [draftPrice, setDraftPrice] = useState<PriceValue>(price);
-
-    const colorButton: ReactNode = (
-      <FilterButton<string[]>
-        key="color"
-        label="Color"
-        chipSummary={formatMultiSelectChip(
-          (colors ?? []).map((v) => labelForValue(COLOR_OPTIONS, v))
-        )}
-        isActive={(colors ?? []).length > 0}
-        initialValue={colors}
-        popoverWidth={320}
-        onApply={(v) => setColors(v)}
-        onClear={() => setColors(undefined)}
-        onDismiss={() => setColors(undefined)}
-      >
-        {(draft, setDraft) => (
-          <ToggleGroup
-            type="multiple"
-            variant="outline"
-            spacing={2}
-            value={draft ?? []}
-            onValueChange={(next: string[]) =>
-              setDraft(next.length > 0 ? next : undefined)
-            }
-          >
-            {COLOR_OPTIONS.map((o) => (
-              <ToggleGroupItem key={o.value} value={o.value} aria-label={o.label}>
-                {o.label}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        )}
-      </FilterButton>
+    const colorButton = buildColorButton(["blue", "green"], "Blue, Green");
+    const priceButton = buildPriceButton(
+      { price: { min: 500, max: 5000 } },
+      "$500–$5000"
     );
-
-    const priceButton: ReactNode = (
-      <FilterButton<PriceValue>
-        key="price"
-        label="Price"
-        chipSummary={
-          price?.price
-            ? `$${price.price.min}\u2013$${price.price.max}`
-            : undefined
-        }
-        isActive={!!price}
-        initialValue={price}
-        onApply={(v) => setPrice(v)}
-        onClear={() => setPrice(undefined)}
-        onDismiss={() => setPrice(undefined)}
-      >
-        {(draft, setDraft) => (
-          <RangeFilter value={draft} onChange={setDraft} axes={[PRICE_AXIS]} />
-        )}
-      </FilterButton>
-    );
-
-    const engagedButtons = [
-      ...(colors ? [colorButton] : []),
-      ...(price ? [priceButton] : []),
-    ];
-
-    const activeCount = (colors ? 1 : 0) + (price ? 1 : 0);
-
-    function clearAll() {
-      setColors(undefined);
-      setPrice(undefined);
-    }
-
+    const engagedButtons = [colorButton, priceButton];
     return (
       <AppShell>
-        <AppShellHeader onSearch={fn()} />
+        <AppShellHeader onSearch={noop} />
         <AppShellMain>
           <FilterToolbar
             filters={engagedButtons}
             stickyFilters={engagedButtons}
-            activeFilterCount={activeCount}
-            hasActiveFilters={activeCount > 0}
-            onClearAll={clearAll}
-            onSearchSubmit={fn()}
+            activeFilterCount={2}
+            hasActiveFilters
+            onClearAll={noop}
+            onSearchSubmit={noop}
             searchPlaceholder="Search..."
             sortOptions={SORT_OPTIONS}
-            sortValue={sort}
-            onSortChange={setSort}
+            sortValue="price-asc"
+            onSortChange={noop}
             drawer={{
               content: (
                 <>
-                  <FilterSection label="Color" separator={false}>
-                    <ToggleGroup
-                      type="multiple"
-                      variant="outline"
-                      spacing={2}
-                      value={draftColors ?? []}
-                      onValueChange={(next: string[]) =>
-                        setDraftColors(next.length > 0 ? next : undefined)
-                      }
-                    >
-                      {COLOR_OPTIONS.map((o) => (
-                        <ToggleGroupItem
-                          key={o.value}
-                          value={o.value}
-                          aria-label={o.label}
-                        >
-                          {o.label}
-                        </ToggleGroupItem>
-                      ))}
-                    </ToggleGroup>
-                  </FilterSection>
-                  <FilterSection label="Price">
-                    <RangeFilter
-                      value={draftPrice}
-                      onChange={setDraftPrice}
-                      axes={[PRICE_AXIS]}
-                    />
-                  </FilterSection>
+                  {colorDrawerSection}
+                  {priceDrawerSection}
                 </>
               ),
-              onOpen: () => {
-                setDraftColors(colors);
-                setDraftPrice(price);
-              },
-              onApply: () => {
-                setColors(draftColors);
-                setPrice(draftPrice);
-              },
-              onClearDraft: () => {
-                setDraftColors(undefined);
-                setDraftPrice(undefined);
-              },
-              hasActiveDraft:
-                (draftColors ?? []).length > 0 || draftPrice !== undefined,
+              onApply: noop,
+              onClearDraft: noop,
+              hasActiveDraft: true,
               resultsCount: 342,
             }}
           />
@@ -422,6 +325,76 @@ export const StickyBarBehaviour: Story = {
           {/* Long scrollable wireframe so the sticky bar has distance to
               activate. Forty placeholder tiles, 4 columns, ~10 rows of
               content. */}
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+            {Array.from({ length: 40 }, (_, i) => (
+              <div
+                key={i}
+                className="flex aspect-square items-center justify-center rounded-lg border bg-muted/40 text-sm text-muted-foreground"
+              >
+                Item {i + 1}
+              </div>
+            ))}
+          </div>
+        </AppShellMain>
+      </AppShell>
+    );
+  },
+};
+
+/**
+ * Stress-test of the sticky bar with many active filters. Useful to
+ * eyeball the chip row's wrapping behaviour, the "+N more" overflow on
+ * narrow viewports, and the clear-all / active-count affordances when
+ * the chip set is dense. Same structure as `StickyBarBehaviour` — only
+ * the engaged-filters list differs.
+ */
+export const StickyBarManyFilters: Story = {
+  parameters: { layout: "fullscreen" },
+  render: () => {
+    const engagedButtons = [
+      buildColorButton(["blue", "green", "red"], "Blue, Green +1 more"),
+      buildPriceButton(
+        { price: { min: 500, max: 5000 } },
+        "$500–$5000"
+      ),
+      buildSimpleChipButton("shape", "Shape", "Round, Oval +2 more"),
+      buildSimpleChipButton("clarity", "Clarity", "VVS1, VVS2 +1 more"),
+      buildSimpleChipButton("carat", "Carat", "1.5–3.0ct"),
+      buildSimpleChipButton("origin", "Origin", "Botswana"),
+      buildSimpleChipButton("lab", "Lab", "GIA, IGI"),
+      buildSimpleChipButton("treatment", "Treatment", "None"),
+      buildSimpleChipButton("fluorescence", "Fluorescence", "None, Faint"),
+      buildSimpleChipButton("polish", "Polish", "Excellent"),
+    ];
+    return (
+      <AppShell>
+        <AppShellHeader onSearch={noop} />
+        <AppShellMain>
+          <FilterToolbar
+            filters={engagedButtons}
+            stickyFilters={engagedButtons}
+            activeFilterCount={engagedButtons.length}
+            hasActiveFilters
+            onClearAll={noop}
+            onSearchSubmit={noop}
+            searchPlaceholder="Search..."
+            sortOptions={SORT_OPTIONS}
+            sortValue="price-asc"
+            onSortChange={noop}
+            drawer={{
+              content: (
+                <>
+                  {colorDrawerSection}
+                  {priceDrawerSection}
+                </>
+              ),
+              onApply: noop,
+              onClearDraft: noop,
+              hasActiveDraft: true,
+              resultsCount: 342,
+            }}
+          />
+
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 lg:gap-6">
             {Array.from({ length: 40 }, (_, i) => (
               <div
@@ -463,10 +436,10 @@ export const DrawerMultipleSections: Story = {
           filters={[]}
           activeFilterCount={0}
           hasActiveFilters={false}
-          onClearAll={fn()}
+          onClearAll={noop}
           sortOptions={SORT_OPTIONS}
           sortValue="price-asc"
-          onSortChange={fn()}
+          onSortChange={noop}
           drawer={{
             content: (
               <>
@@ -512,17 +485,13 @@ export const DrawerMultipleSections: Story = {
                   <Wireframe label="Chip group control" />
                 </FilterSection>
 
-                <FilterSection label="Supplier">
-                  <Wireframe label="Async combobox" />
-                </FilterSection>
-
                 <FilterSection label="Certification">
                   <Wireframe label="Chip group control" />
                 </FilterSection>
               </>
             ),
-            onApply: fn(),
-            onClearDraft: fn(),
+            onApply: noop,
+            onClearDraft: noop,
             hasActiveDraft: false,
           }}
         />

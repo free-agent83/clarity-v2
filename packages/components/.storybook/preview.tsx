@@ -61,6 +61,43 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    options: {
+      storySort: {
+        // Groups are ordered from simpler to more complex — conceptual
+        // primitives first, then interactive atoms, then compositions,
+        // ending with full-page templates. Within each group the default
+        // alphabetical order applies (unless nested overrides exist).
+        order: [
+          "Foundations", // brand, typography — conceptual primitives
+          "Display",     // static visual atoms (badge, avatar, separator…)
+          "Feedback",    // status (alert, skeleton, spinner…)
+          "Actions",     // interactive atoms (button, dropdown, command)
+          "Forms",       // data entry atoms (input, select, toggle…)
+          "Overlays",    // layered UI (tooltip, popover, dialog…)
+          "Navigation",  // structural navigation (breadcrumb, tabs, sidebar…)
+          "Data",        // complex data display (table, chart)
+          "Filtering",   // composed filtering controls
+          "Templates",
+          [
+            "PLP",
+            [
+              // Full-page compositions first — show the template end-to-end.
+              "GridView",
+              "ListView",
+              "WithBanner",
+              "WithInGridBanner",
+              // Structural building blocks of the page.
+              "Heading",
+              "GridContainer",
+              "ListContainer",
+              // Item-level primitives that live inside the containers.
+              "GridItem",
+              "ListRow",
+            ],
+          ],
+        ],
+      },
+    },
     a11y: {
       // "off" is the default on @storybook/addon-a11y@8.6.x — set explicitly
       // to document intent: violations appear in the Storybook dev UI but do

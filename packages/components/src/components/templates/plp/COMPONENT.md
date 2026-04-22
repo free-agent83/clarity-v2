@@ -1,9 +1,9 @@
 ---
 name: PLP (Product Listing Page)
 slug: plp
-version: 0.6.0
+version: 0.6.1
 status: unstable
-lastUpdated: 2026-04-21
+lastUpdated: 2026-04-22
 ---
 
 # PLP (Product Listing Page)
@@ -20,7 +20,7 @@ The refactor that produced this shape was deliberate. A fixed PlpTemplate couldn
 | [`PlpGridContainer`](./plp-grid-container.tsx) | Responsive 2/3/4-col grid + internal loading skeletons |
 | [`PlpListContainer`](./plp-list-container.tsx) | Table shell + internal loading skeletons |
 | [`PlpGridItem` primitives](./grid/plp-grid-item.tsx) | Card composition primitives (media, name, price, etc.) |
-| [`PlpListRow` primitives](./list/plp-list-row.tsx) | Row composition primitives (cells, media, price, etc.) |
+| [`PlpListBodyRow` primitives](./list/plp-list-row.tsx) | Row composition primitives (cells, media, price, etc.) |
 
 ### PlpHeading
 
@@ -48,12 +48,12 @@ Table shell for PLP list view. Provides the scroll container, sticky header posi
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `header` | `ReactNode` | — | A single `PlpListHeaderRow` with `PlpListHeaderCell` children |
+| `header` | `ReactNode` | — | A single `PlpListHeaderRow` with shadcn `TableHead` children |
 | `children` | `ReactNode` | — | List rows (when not loading) |
 | `loading` | `boolean` | `false` | Switch to skeleton mode |
 | `skeletonCount` | `number` | `20` | Skeleton row count |
 
-### PlpGridItem and PlpListRow primitives
+### PlpGridItem and PlpListBodyRow primitives
 
 Composition primitives for individual product cards (grid view) and rows (list view). See the respective stories files for the full primitive menu and composition examples.
 

@@ -19,6 +19,10 @@ build-storybook.log
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 
+# Emitted declaration files outside dist/
+packages/components/.storybook/*.d.ts
+packages/components/.storybook/*.d.ts.map
+
 # Environment
 .env
 .env.local
