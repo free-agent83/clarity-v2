@@ -63,7 +63,20 @@ const preview: Preview = {
     },
     options: {
       storySort: {
+        // Groups are ordered from simpler to more complex — conceptual
+        // primitives first, then interactive atoms, then compositions,
+        // ending with full-page templates. Within each group the default
+        // alphabetical order applies (unless nested overrides exist).
         order: [
+          "Foundations", // brand, typography — conceptual primitives
+          "Display",     // static visual atoms (badge, avatar, separator…)
+          "Feedback",    // status (alert, skeleton, spinner…)
+          "Actions",     // interactive atoms (button, dropdown, command)
+          "Forms",       // data entry atoms (input, select, toggle…)
+          "Overlays",    // layered UI (tooltip, popover, dialog…)
+          "Navigation",  // structural navigation (breadcrumb, tabs, sidebar…)
+          "Data",        // complex data display (table, chart)
+          "Filtering",   // composed filtering controls
           "Templates",
           [
             "PLP",
