@@ -8,7 +8,6 @@ import {
   IconForbid2,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
 import { Checkbox } from "../../../atoms/checkbox/checkbox";
 import {
