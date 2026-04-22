@@ -61,6 +61,30 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    options: {
+      storySort: {
+        order: [
+          "Templates",
+          [
+            "PLP",
+            [
+              // Full-page compositions first — show the template end-to-end.
+              "GridView",
+              "ListView",
+              "WithBanner",
+              "WithInGridBanner",
+              // Structural building blocks of the page.
+              "Heading",
+              "GridContainer",
+              "ListContainer",
+              // Item-level primitives that live inside the containers.
+              "GridItem",
+              "ListRow",
+            ],
+          ],
+        ],
+      },
+    },
     a11y: {
       // "off" is the default on @storybook/addon-a11y@8.6.x — set explicitly
       // to document intent: violations appear in the Storybook dev UI but do
