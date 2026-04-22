@@ -248,16 +248,16 @@ export function PlpListRowDelivery({
 }) {
   const isExpress = variant === "express";
   const content = (
-    <div
+    <span
       data-slot="plp-list-row-delivery"
       className={cn(
-        "flex items-center gap-1.5",
+        "inline-flex items-center gap-1.5",
         isExpress && "text-express"
       )}
     >
       {origin && <span className="text-lg">{origin}</span>}
       <span>{date}</span>
-    </div>
+    </span>
   );
 
   if (!shipsFrom) return content;
@@ -266,7 +266,9 @@ export function PlpListRowDelivery({
     <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger asChild>{content}</TooltipTrigger>
-        <TooltipContent side="top">Ships from {shipsFrom}</TooltipContent>
+        <TooltipContent side="top">
+          {isExpress ? "Express delivery" : "Ships"} from {shipsFrom}
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
@@ -287,23 +289,25 @@ export function PlpListRowReturnable({
   return (
     <TooltipProvider delayDuration={300}>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            data-slot="plp-list-row-returnable"
-            role="img"
-            aria-label={label}
-            tabIndex={0}
-            className="flex w-full items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <Icon
-              className={cn(
-                "size-4",
-                isReturnable ? "text-success" : "text-muted-foreground/50"
-              )}
-              aria-hidden="true"
-            />
-          </div>
-        </TooltipTrigger>
+        <div className="text-center">
+          <TooltipTrigger asChild>
+            <span
+              data-slot="plp-list-row-returnable"
+              role="img"
+              aria-label={label}
+              tabIndex={0}
+              className="inline-flex align-middle rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Icon
+                className={cn(
+                  "size-4",
+                  isReturnable ? "text-success" : "text-muted-foreground/50"
+                )}
+                aria-hidden="true"
+              />
+            </span>
+          </TooltipTrigger>
+        </div>
         <TooltipContent side="top">{label}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -424,7 +428,7 @@ export function PlpListRowPrice({
         </div>
       )}
       {legacyDelivered && (
-        <div className="text-muted-foreground">
+        <div className="text-muted-foreground text-[0.65rem]">
           Delivered:{" "}
           {formatCurrency(legacyDelivered.amount, legacyDelivered.currency)}
         </div>
