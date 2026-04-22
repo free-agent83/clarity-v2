@@ -68,7 +68,20 @@ const preview: Preview = {
         // ending with full-page templates. Within each group the default
         // alphabetical order applies (unless nested overrides exist).
         order: [
-          "Foundations", // brand, typography — conceptual primitives
+          "Foundations", // conceptual primitives
+          [
+            // Ordered least → most complex: the one-dimensional spacing
+            // ramp first, then the theme page (raw colour decisions and
+            // semantic pairs), then the brand marks, then the typographic
+            // role system, and finally the invisible context primitive
+            // that affects descendants.
+            "Spacing",
+            "Theme",
+            "Brand",
+            "Brand Express",
+            "Typography",
+            "Direction",
+          ],
           "Display",     // static visual atoms (badge, avatar, separator…)
           "Feedback",    // status (alert, skeleton, spinner…)
           "Actions",     // interactive atoms (button, dropdown, command)
