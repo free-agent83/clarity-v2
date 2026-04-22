@@ -89,6 +89,37 @@ Filled-in checklist for this specific component:
 
 ---
 
+## COMPONENTS.md: the library-level map
+
+[`COMPONENTS.md`](./COMPONENTS.md) is the package's high-level entry point — a thin index of every component plus a summary of the Tailwind v4 `@theme` semantic utilities, intended primarily for AI-agent consumption when *using* the library. `COMPONENT.md` is per-component and authoritative; `COMPONENTS.md` is cross-cutting and introductory. It exists so a consumer can pick the right component and the right token without opening every `COMPONENT.md` in the tree.
+
+Because it is a summary, it drifts faster than any single `COMPONENT.md`. The rules below exist to keep it honest.
+
+### Maintenance triggers
+
+Update `COMPONENTS.md` in the **same PR** as any of the following:
+
+- **A new component lands.** Add its entry under the appropriate taxonomy section with atomic classification, status, and "for / not for" one-liners distilled from its `COMPONENT.md`.
+- **A component is promoted from `unstable` to `stable` (or demoted).** Update its status tag.
+- **A component is deprecated or removed.** Mark it `deprecated` or delete the entry, matching the action taken in `COMPONENT.md` and `src/index.ts`.
+- **A component's "what it's for" scope changes meaningfully.** If a component's usage section is rewritten such that the one-liner no longer reflects its purpose, update both bullets.
+- **The `@theme` block in `globals.css` changes meaningfully.** New semantic token families, renamed utilities, removed tokens, or changes to the radius / typography scales all require the corresponding table in §2 of `COMPONENTS.md` to be updated. Purely additive hex value tweaks inside `:root` / `.dark` do not — those are theme-internal and the utility surface is unchanged.
+
+A stale `COMPONENTS.md` is a broken one — treat it with the same rigour as a stale `COMPONENT.md`. If you're unsure whether a change qualifies, assume it does and update the file.
+
+### What NOT to put in COMPONENTS.md
+
+`COMPONENTS.md` is an index, not a spec. Keep it thin.
+
+- No prop tables, no code examples, no variant matrices — those live in `COMPONENT.md`.
+- No exhaustive token value listings — those live in `globals.css`.
+- No build / test / publishing rules — those live in this file.
+- No rationale or decision records — those live in `ADRS.md` or `COMPONENT.md`.
+
+When a change would require more than a one-line tweak to an existing entry, the real change belongs in `COMPONENT.md` or `globals.css`; the `COMPONENTS.md` entry should follow, not lead.
+
+---
+
 ## Folder structure
 
 Components are organised using atomic design taxonomy:
@@ -463,6 +494,7 @@ A component is considered done when all of the following are true:
 - [ ] `COMPONENT.md` has frontmatter (name, slug, version, status, lastUpdated)
 - [ ] `COMPONENT.md` content sections are complete (props, usage, best practices, quality checklist)
 - [ ] Quality checklist in COMPONENT.md is filled in and passing
+- [ ] `COMPONENTS.md` reflects the change — entry added, status updated, one-liners re-distilled, or theme tables refreshed per the triggers in §COMPONENTS.md above
 - [ ] Component and variants exported from `src/index.ts`
 - [ ] Storybook renders all stories without errors
 - [ ] TypeScript compiles with no errors (`tsc --noEmit`)
