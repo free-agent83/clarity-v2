@@ -8,7 +8,7 @@ lastUpdated: 2026-04-22
 
 # InlineBanner
 
-Block-level, page-level callout that communicates persistent page-level information or promotional content. Hierarchically above `Alert`.
+Block-level, page-level callout that communicates persistent page-level information or promotional content. Uses solid semantic fills to declare itself boldly within page content — distinct from `Alert`, which uses tinted backgrounds for quieter section-level messages.
 
 ## Props
 
@@ -16,7 +16,7 @@ Block-level, page-level callout that communicates persistent page-level informat
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `"default" \| "success" \| "info" \| "warning" \| "destructive"` | `"default"` | Semantic tonality. Tinted background; does NOT change with size. |
+| `variant` | `"default" \| "success" \| "info" \| "warning" \| "destructive"` | `"default"` | Semantic colour. Solid fill; `default` uses brand primary. |
 | `size` | `"default" \| "lg"` | `"default"` | Overall banner size. |
 | `onDismiss` | `() => void` | — | If provided, renders a close (X) button in the top-right. Stateless — the consumer removes the banner from the tree. |
 

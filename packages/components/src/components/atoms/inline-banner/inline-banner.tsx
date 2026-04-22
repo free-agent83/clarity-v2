@@ -7,16 +7,15 @@ import { cn } from "@/lib/utils"
 /**
  * InlineBanner — block-level, page-level callout.
  *
- * Hierarchically above `Alert`. Use under a page heading to surface
- * persistent page-level information or promotional content.
- *
- * Variants use the same tinted tonality as `Alert`; hierarchy over
- * `Alert` comes from size, position, and icon prominence — not from
- * background intensity.
+ * Use under a page heading to surface persistent page-level
+ * information or promotional content. Distinct from `Alert`
+ * (which uses tinted backgrounds for section-level messages):
+ * InlineBanner uses solid semantic fills to declare itself
+ * boldly within the page content.
  */
 const inlineBannerVariants = cva(
   [
-    "relative grid w-full items-center rounded-lg border",
+    "relative grid w-full items-center rounded-lg",
     "grid-cols-[auto_1fr_auto]",
     "[grid-template-areas:'icon_title_actions'_'icon_description_actions']",
     "[&>svg]:[grid-area:icon] [&>svg]:my-auto",
@@ -24,11 +23,11 @@ const inlineBannerVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-border bg-card text-card-foreground",
-        success: "border-transparent bg-success/5 text-success dark:bg-success/10",
-        info: "border-transparent bg-info/5 text-info dark:bg-info/10",
-        warning: "border-transparent bg-warning/5 text-warning dark:bg-warning/10",
-        destructive: "border-transparent bg-destructive/5 text-destructive dark:bg-destructive/10",
+        default: "bg-primary text-primary-foreground",
+        success: "bg-success text-success-foreground",
+        info: "bg-info text-info-foreground",
+        warning: "bg-warning text-warning-foreground",
+        destructive: "bg-destructive text-destructive-foreground",
       },
       size: {
         default: "gap-x-3 px-4 py-3 [&>svg]:size-5",
@@ -75,7 +74,7 @@ function InlineBanner({
           aria-label="Dismiss"
           onClick={onDismiss}
           data-slot="inline-banner-dismiss"
-          className="absolute top-3 right-3 inline-flex h-6 w-6 items-center justify-center rounded-md text-current/70 outline-none transition-colors hover:bg-foreground/5 hover:text-current focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="absolute top-3 right-3 inline-flex h-6 w-6 items-center justify-center rounded-md text-current/80 outline-none transition-colors hover:bg-current/10 hover:text-current focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <IconX className="size-4" />
         </button>
@@ -105,7 +104,7 @@ function InlineBannerDescription({
     <div
       data-slot="inline-banner-description"
       className={cn(
-        "[grid-area:description] text-sm text-muted-foreground [&_a]:underline [&_a]:underline-offset-3",
+        "[grid-area:description] text-sm text-current/80 [&_a]:underline [&_a]:underline-offset-3",
         className
       )}
       {...props}

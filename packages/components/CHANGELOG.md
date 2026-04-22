@@ -18,9 +18,9 @@ Introduces a new `PageBanner` atom for full-bleed, app-level callouts and wires 
 ---
 
 ### InlineBanner ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
-Introduces a new `InlineBanner` atom for block-level, page-level callouts. Hierarchically above `Alert`; visually tinted like Alert but with a larger footprint and a vertically-centred leading icon.
+Introduces a new `InlineBanner` atom for block-level, page-level callouts. Uses solid semantic fills (`default` maps to brand primary) to declare itself boldly within page content — distinct from `Alert`, which keeps tinted backgrounds for quieter section-level messages.
 
-- **InlineBanner.** Variants `default | success | info | warning | destructive`, sizes `default | lg`. Compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerActions`. Optional `onDismiss` prop renders a top-right close button; stateless. Lands as `unstable`.
+- **InlineBanner.** Variants `default | success | info | warning | destructive`, sizes `default | lg`. Compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerActions`. Description text uses `text-current/80` for hierarchy against the filled background. Optional `onDismiss` prop renders a top-right close button; stateless. Lands as `unstable`.
 
 ---
 
