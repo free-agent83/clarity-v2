@@ -3,7 +3,7 @@ name: DropdownMenu
 slug: dropdown-menu
 version: 0.1.0
 status: stable
-lastUpdated: 2026-04-14
+lastUpdated: 2026-04-22
 ---
 
 # Dropdown Menu
