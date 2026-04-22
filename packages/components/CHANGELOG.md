@@ -2,6 +2,13 @@
 
 ---
 
+### Stepper ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
+Introduces a new `Stepper` molecule for ordered, multi-step flows such as checkout and returns. Controlled via `activeStep`; errored steps flagged via `errorSteps`; steps become clickable when an `onStepClick` callback is provided.
+
+- **Stepper.** Compound API: `Stepper`, `StepperItem`, `StepperItemIndicator`, `StepperItemLabel`. Four derived states (`upcoming`, `current`, `completed`, `error`); only `completed` and `error` become clickable when `onStepClick` is supplied. Horizontal only in v0.1 (vertical, compact mode, and disabled state deferred). Lands as `unstable`.
+
+---
+
 ### PageBanner + AppShell banner slot ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
 Introduces a new `PageBanner` atom for full-bleed, app-level callouts and wires an optional `banner` prop into `AppShell`. PageBanner uses solid fills across all variants — distinct from Alert/InlineBanner's tinted style — to declare itself at the application level.
 

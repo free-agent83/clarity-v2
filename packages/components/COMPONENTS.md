@@ -369,6 +369,10 @@ Wayfinding and page-level chrome.
 - For: navigating across pages of a long paged list.
 - Not for: infinite-scroll lists or small fully-visible sets.
 
+**Stepper** · `molecule` · `unstable` — [COMPONENT.md](./src/components/molecules/stepper/COMPONENT.md)
+- For: displaying progress through an ordered multi-step flow (checkout, returns, onboarding) inside a Dialog or modal surface.
+- Not for: general page navigation (use `Tabs` or `Breadcrumb`), single-metric progress (use `Progress`), or non-sequential task lists.
+
 ### Templates
 
 Page-level systems that orchestrate organisms, molecules, and atoms into a complete user experience.
