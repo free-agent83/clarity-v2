@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useHasHover } from "../../../../hooks/use-has-hover";
+import { useHasHover } from "../../../hooks/use-has-hover";
 import type { PdpMediaGalleryProps, ProductMedia } from "./pdp-types";
 
 function Thumbnail({ item, selected, onClick }: { item: ProductMedia; selected: boolean; onClick: () => void }) {
@@ -25,7 +25,7 @@ function Thumbnail({ item, selected, onClick }: { item: ProductMedia; selected: 
   );
 }
 
-function ScrubBar({ videoRef }: { videoRef: React.RefObject<HTMLVideoElement> }) {
+function ScrubBar({ videoRef }: { videoRef: React.RefObject<HTMLVideoElement | null> }) {
   const [position, setPosition] = useState(0);
   const barRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);

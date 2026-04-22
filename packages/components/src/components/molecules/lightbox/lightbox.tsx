@@ -5,7 +5,7 @@ import { IconChevronLeft, IconChevronRight, IconX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import type { LightboxProps, ProductMedia } from "../../templates/pdp/pdp-types";
 
-function ScrubBar({ videoRef }: { videoRef: React.RefObject<HTMLVideoElement> }) {
+function ScrubBar({ videoRef }: { videoRef: React.RefObject<HTMLVideoElement | null> }) {
   const [position, setPosition] = useState(0);
   const barRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
