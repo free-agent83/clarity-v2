@@ -36,16 +36,16 @@ import {
   TableHead,
   TableHeader,
 } from "../../../organisms/table/table";
+import diamondImg from "../__stories__/images/diamond.png";
 
 // Stable module-level handlers so every story shares action identity.
 const onAddToCart = fn();
 const onAddToShortlist = fn();
 const onShare = fn();
 const onViewMedia = fn();
-const onRowClick = fn();
 const onSelectNoop = fn();
 
-const SAMPLE_IMAGE = "https://placehold.co/80x80/f5f5f4/a3a3a3?text=Gem";
+const SAMPLE_IMAGE = diamondImg;
 
 // ── Shared scaffolding ────────────────────────────────────
 
@@ -217,13 +217,13 @@ type Story = StoryObj;
 
 // ── Stories ───────────────────────────────────────────────
 
+// Baseline
+
 export const Default: Story = {
   render: () => <StoryRow />,
 };
 
-export const Clickable: Story = {
-  render: () => <StoryRow onClick={onRowClick} />,
-};
+// States & interaction
 
 export const Selected: Story = {
   render: () => {
@@ -248,6 +248,8 @@ export const Selectable: Story = {
 export const Disabled: Story = {
   render: () => <StoryRow disabled />,
 };
+
+// Content variants
 
 export const ExpressDelivery: Story = {
   render: () => (
@@ -281,6 +283,8 @@ export const NonReturnable: Story = {
     />
   ),
 };
+
+// Price variants
 
 export const WithDiscount: Story = {
   render: () => (
