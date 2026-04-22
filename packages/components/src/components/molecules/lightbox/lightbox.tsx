@@ -5,7 +5,7 @@ import { IconChevronLeft, IconChevronRight, IconX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import type { LightboxProps, ProductMedia } from "../../templates/pdp/pdp-types";
 
-function ScrubBar({ videoRef }: { videoRef: React.RefObject<HTMLVideoElement | null> }) {
+function ScrubBar({ videoRef }: { videoRef: React.RefObject<HTMLVideoElement> }) {
   const [position, setPosition] = useState(0);
   const barRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
@@ -70,9 +70,14 @@ function MediaView({ item }: { item: ProductMedia }) {
  */
 export function Lightbox({ media, initialIndex = 0, onClose }: LightboxProps) {
   const [index, setIndex] = useState(Math.max(0, Math.min(initialIndex, media.length - 1)));
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const prev = useCallback(() => setIndex((i) => (i - 1 + media.length) % media.length), [media.length]);
   const next = useCallback(() => setIndex((i) => (i + 1) % media.length), [media.length]);
+
+  useEffect(() => {
+    dialogRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -85,7 +90,15 @@ export function Lightbox({ media, initialIndex = 0, onClose }: LightboxProps) {
   }, [onClose, prev, next]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black/90" role="dialog" aria-modal="true" aria-label="Media lightbox" data-slot="lightbox">
+    <div
+      ref={dialogRef}
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex flex-col bg-black/90 outline-none"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Media lightbox"
+      data-slot="lightbox"
+    >
       <div className="flex shrink-0 items-center justify-between px-4 py-3">
         <span className="text-sm text-white/60">{index + 1} / {media.length}</span>
         <button className="rounded p-1 text-white hover:bg-white/10" onClick={onClose} aria-label="Close lightbox">
