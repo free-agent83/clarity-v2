@@ -2,39 +2,14 @@
 
 ---
 
-### Stepper ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
-Introduces a new `Stepper` molecule for ordered, multi-step flows such as checkout and returns. Controlled via `activeStep`; errored steps flagged via `errorSteps`; steps become clickable when an `onStepClick` callback is provided.
+### Components pass 3: new atoms + Stepper + AppShell banner slot ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
+Adds four new components (`SegmentedControl`, `InlineBanner`, `PageBanner`, `Stepper`), variant/size additions to `Progress`, and an optional sticky banner slot on `AppShell`. All new components land as `unstable`.
 
-- **Stepper.** Compound API: `Stepper`, `StepperItem`, `StepperItemIndicator`, `StepperItemLabel`. Four derived states (`upcoming`, `current`, `completed`, `error`); only `completed` and `error` become clickable when `onStepClick` is supplied. Horizontal only in v0.1 (vertical, compact mode, and disabled state deferred). Lands as `unstable`.
-
----
-
-### PageBanner + AppShell banner slot ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
-Introduces a new `PageBanner` atom for full-bleed, app-level callouts and wires an optional `banner` prop into `AppShell`. PageBanner uses solid fills across all variants — distinct from Alert/InlineBanner's tinted style — to declare itself at the application level.
-
-- **PageBanner.** Variants `default | success | info | warning | destructive` with solid semantic fills (`default` uses brand primary). Compound API with `PageBannerTitle` and `PageBannerAction`. Optional `onDismiss` renders a right-edge close button. Lands as `unstable`.
-- **AppShell.** New `banner` prop accepts a `PageBanner` node. The shell wraps the banner in a sticky container pinned to the top, and the `AppShellHeader`'s sticky `top` offsets automatically so the header sits just below the banner. Both remain visible while page content scrolls. Two new stories demonstrate the integration (`WithBanner`, `WithDismissibleBanner`).
-
----
-
-### InlineBanner ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
-Introduces a new `InlineBanner` atom for block-level, page-level callouts. Uses solid semantic fills (`default` maps to brand primary) to declare itself boldly within page content — distinct from `Alert`, which keeps tinted backgrounds for quieter section-level messages.
-
-- **InlineBanner.** Variants `default | success | info | warning | destructive`, sizes `default | lg`. Compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerAction` (holds a single CTA). Description text uses `text-current/80` for hierarchy against the filled background. Optional `onDismiss` prop renders a top-right close button; stateless. Lands as `unstable`.
-
----
-
-### SegmentedControl ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
-Introduces a new `SegmentedControl` atom for switching between mutually-exclusive UI modes. Wraps `Radix ToggleGroup` with `type="single"` hard-coded and a non-empty selection guarantee.
-
-- **SegmentedControl.** Inset pill design with a 2px track padding and `bg-background` + `shadow-xs` active pill. Sizes `sm` / `default` / `lg` mirror Button. Supports text, icon + text, and icon-only items. Lands as `unstable`.
-
----
-
-### Progress variants and sizes ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
-Adds semantic colour variants and a `lg` size to the existing `Progress` atom. Replaces the placeholder `COMPONENT.md` with full documentation. No breaking changes — existing call sites keep today's appearance.
-
-- **Progress.** Added `variant` prop (`default | success | info | warning | destructive`) controlling the indicator bar colour; the track remains `bg-muted` across all variants. Added `size` prop (`default` = `h-1.5`, `lg` = `h-3`). Promoted component to version `0.1.0`.
+- **Progress.** Added `variant` prop (`default | success | info | warning | destructive`) controlling the indicator bar colour and a `size` prop (`default` = `h-1.5`, `lg` = `h-3`). Track stays `bg-muted` across variants. Replaced the placeholder `COMPONENT.md` with full documentation. No breaking changes. (`78a0863`)
+- **SegmentedControl.** New atom for switching between mutually-exclusive UI modes. Wraps `Radix ToggleGroup` with `type="single"` hard-coded and a non-empty selection guarantee. Inset-pill design with `bg-muted` track + 2px padding and `bg-background` / `shadow-xs` active pill; sizes `sm | default | lg` mirror Button. Hover and active foreground use `accent-foreground`. (`c1ad2e4`, `ad12c99`)
+- **InlineBanner.** New atom for block-level, page-level callouts. Solid semantic fills (not tinted — distinct from `Alert`'s quieter treatment), sizes `default | lg`, compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerAction` (single CTA). Icon is passed as a direct `<svg>` child and sits in a dedicated vertically-centred column via `grid-template-areas`. Optional `onDismiss` renders a stateless top-right close button. (`87e5a9b`, `440b416`, `316ba20`, `b05c9a0`, `812fba7`)
+- **PageBanner + AppShell banner slot.** New atom for full-bleed, app-level callouts (new features, promotions, downtime). Solid semantic fills across variants. `AppShell` gains an optional `banner` prop that wraps the `PageBanner` in a `sticky top-0` container; `AppShellHeader` offsets its own sticky `top` to sit just below the banner so both remain pinned while content scrolls. Two new stories demonstrate the integration (`WithBanner`, `WithDismissibleBanner`). (`bbcdf49`, `ad12c99`)
+- **Stepper.** New molecule for ordered multi-step flows (checkout, returns). Controlled via `activeStep`; errored steps flagged via `errorSteps`; `completed` and `error` steps become clickable when `onStepClick` is supplied. Compound API: `Stepper`, `StepperItem`, `StepperItemIndicator`, `StepperItemLabel`. Horizontal only in v0.1 — vertical, compact mode, and disabled state deferred. (`088fcae`)
 
 ---
 
