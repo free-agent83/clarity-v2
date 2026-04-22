@@ -2,6 +2,13 @@
 
 ---
 
+### Progress variants and sizes ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
+Adds semantic colour variants and a `lg` size to the existing `Progress` atom. Replaces the placeholder `COMPONENT.md` with full documentation. No breaking changes — existing call sites keep today's appearance.
+
+- **Progress.** Added `variant` prop (`default | success | info | warning | destructive`) controlling the indicator bar colour; the track remains `bg-muted` across all variants. Added `size` prop (`default` = `h-1.5`, `lg` = `h-3`). Promoted component to version `0.1.0`.
+
+---
+
 ### PLP list view stories + row primitives polish ([#123](https://github.com/free-agent83/clarity-v2/pull/123))
 Introduces a dedicated ListRow stories file mirroring GridItem, evolves the list-row primitives with a few small props and bug fixes surfaced while exercising them, and reorders the Storybook sidebar from simpler to more complex. No breaking changes.
 
