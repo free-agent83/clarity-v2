@@ -39,69 +39,72 @@ export function PdpPrice({
   const showAlt = showAlternateCurrency && !!alternateCurrency;
 
   return (
-    <div className={cn("flex flex-col gap-1", className)} data-slot="pdp-price">
-      {/* Tariffs note */}
-      {includeTariffs && (
+    <div className={cn("flex flex-col", className)} data-slot="pdp-price">
+      {/* Price label slot. The tariffs callout is a variant of the "Final
+          delivered price" label — when tariffs are included, it replaces the
+          plain label; the two never render together. Legacy mode omits both. */}
+      {!legacy && (includeTariffs ? (
         <div className="flex items-center gap-1">
-          <Typography variant="caption" className="text-muted-foreground">
+          <Typography variant="body-2" className="text-muted-foreground">
             {/* eslint-disable-next-line jsx-a11y/no-aria-hidden-on-focusable */}
-            <span role="img" aria-label="United States flag">🇺🇸</span>{" "}
-            Stone price incl. tariffs
+            Final price{" "}
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <span className="underline decoration-dotted cursor-help">incl. tariffs</span>
+              </HoverCardTrigger>
+              <HoverCardContent className="max-w-xs">
+                <Typography variant="subtitle-1" className="text-foreground">
+                  🇺🇸 About US Tariffs
+                </Typography>
+                <Typography variant="caption" className="text-muted-foreground">
+                  All Nivoda prices already include US tariffs. No additional
+                  charges will be applied at checkout.
+                </Typography>
+              </HoverCardContent>
+            </HoverCard>
           </Typography>
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <button type="button" aria-label="About US tariffs">
-                <IconInfoCircle size={14} className="text-muted-foreground" />
-              </button>
-            </HoverCardTrigger>
-            <HoverCardContent className="max-w-64 text-sm">
-              This price already includes US import tariffs. No additional charges at checkout.
-            </HoverCardContent>
-          </HoverCard>
-        </div>
-      )}
 
-      {/* Label (e.g. "Final delivered price") — omitted in legacy mode */}
-      {label && !legacy && (
-        <Typography variant="caption" className="text-muted-foreground">
+        </div>
+      ) : label ? (
+        <Typography variant="body-2" className="text-muted-foreground">
           {label}
         </Typography>
-      )}
-
-      {/* Discount row */}
-      {discount && (
-        <div className="flex items-center gap-2">
-          <span className="rounded bg-destructive px-1.5 py-0.5 text-xs font-bold text-destructive-foreground">
-            -{discount.percentage}%
-          </span>
-          <Typography variant="body-2" className="text-muted-foreground line-through">
-            {fmt(discount.originalAmount, currency)}
-          </Typography>
-        </div>
-      )}
+      ) : null)}
 
       {/* Main amount */}
-      <Typography as="p" variant="h3" className="font-bold">
+      <Typography as="p" variant="h5">
         {fmt(amount, currency)}
       </Typography>
 
+      {/* Discount row */}
+      {discount && (
+        <div className="flex items-center gap-1">
+          <Typography variant="body-2" className="text-muted-foreground line-through">
+            {fmt(discount.originalAmount, currency)}
+          </Typography>
+          <Typography as="span" variant="body-2" className="text-info ">
+            -{discount.percentage}%
+          </Typography>
+        </div>
+      )}
+
       {/* Per-carat rate */}
       {perCarat && (
-        <Typography variant="caption" className="text-muted-foreground">
-          {fmt(perCarat.amount, perCarat.currency)} / ct
+        <Typography variant="body-2" className="text-muted-foreground">
+          {fmt(perCarat.amount, perCarat.currency)}/ct
         </Typography>
       )}
 
       {/* Legacy delivered price */}
       {legacy && (
-        <Typography variant="caption" className="text-muted-foreground">
+        <Typography variant="body-2" className="text-muted-foreground">
           Delivered: {fmt(legacy.deliveredAmount, legacy.deliveredCurrency)}
         </Typography>
       )}
 
       {/* Alternate currency */}
       {showAlt && (
-        <Typography variant="caption" className="text-muted-foreground">
+        <Typography variant="body-2" className="text-muted-foreground">
           ≈ {fmt(alternateCurrency!.amount, alternateCurrency!.currency)}
         </Typography>
       )}

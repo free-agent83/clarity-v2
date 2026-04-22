@@ -8,13 +8,13 @@ import type { PdpHeadingProps } from "./pdp-types";
  */
 export function PdpHeading({ name, sku, className }: PdpHeadingProps) {
   return (
-    <div className={cn("flex flex-col gap-1", className)} data-slot="pdp-heading">
-      <Typography variant="h3" as="h1">{name}</Typography>
+    <div className={cn("flex flex-col", className)} data-slot="pdp-heading">
       {sku && (
-        <Typography variant="caption" className="text-muted-foreground">
+        <Typography variant="body-2" className="text-muted-foreground">
           {sku}
         </Typography>
       )}
+      <Typography variant="h4" as="h1" className="text-balance">{name}</Typography>
     </div>
   );
 }

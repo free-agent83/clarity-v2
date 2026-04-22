@@ -13,9 +13,11 @@ export function PdpVariantSelector({ label, children, className }: PdpVariantSel
   return (
     <fieldset className={cn("flex flex-col gap-2 border-none p-0 m-0", className)} data-slot="pdp-variant-selector">
       <legend>
-        <Typography variant="subtitle-2">{label}</Typography>
+        <Typography variant="subtitle-1">{label}</Typography>
       </legend>
-      {children}
+      <div className="mt-1">
+        {children}
+      </div>
     </fieldset>
   );
 }

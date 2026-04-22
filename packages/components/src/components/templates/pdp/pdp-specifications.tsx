@@ -8,13 +8,22 @@ import type { PdpSpecificationsProps } from "./pdp-types";
  *
  * `heading` defaults to "Specifications" but can be overridden for
  * category-specific sections (e.g. "Stone details").
+ *
+ * `description` renders freeform copy below the spec table. Pass a string
+ * for the default body typography treatment, or a ReactNode for custom
+ * markup (rich HTML, CMS output, etc.).
  */
-export function PdpSpecifications({ rows, heading = "Specifications", className }: PdpSpecificationsProps) {
+export function PdpSpecifications({ rows, heading = "Specifications", description, className }: PdpSpecificationsProps) {
   return (
     <div className={cn("flex flex-col gap-4", className)} data-slot="pdp-specifications">
-      <Typography as="h2" variant="h4">
+      <Typography as="h2" variant="h5">
         {heading}
       </Typography>
+      {description ? (
+        <div className="text-muted-foreground" data-slot="pdp-specifications-description">
+          {typeof description === "string" ? <Typography variant="body-1">{description}</Typography> : description}
+        </div>
+      ) : null}
       <dl className="divide-y divide-border">
         {rows.map(({ label, value }) => (
           <div key={label} className="flex items-baseline justify-between gap-4 py-3 last:border-0">

@@ -92,7 +92,9 @@
       "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template log --oneline -10)",
       "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template diff --stat)",
       "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template add -u)",
-      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template add packages/components/src/components/atoms/brand-express/)"
+      "Bash(git -C /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/feat-plp-template add packages/components/src/components/atoms/brand-express/)",
+      "Bash(bash .claude/skills/brainstorming/scripts/start-server.sh --project-dir /Users/jlfgms/Desktop/Code/clarity-v2/.claude/worktrees/romantic-hamilton-b46939)",
+      "Bash(lsof -iTCP -sTCP:LISTEN -P -n)"
     ]
   }
 }

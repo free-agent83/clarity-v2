@@ -24,8 +24,7 @@ Each primitive has its own props interface defined in [`pdp-types.ts`](./pdp-typ
 | [`PdpPrimaryAction`](./pdp-primary-action.tsx) | `children` (CTA), `secondaryActions?` |
 | [`PdpDelivery`](./pdp-delivery.tsx) | `variant: "express" \| "regular"`, `date`, `shipsFrom?` |
 | [`PdpReturns`](./pdp-returns.tsx) | `variant: "returnable" \| "non-returnable"`, `returnsWindow?`, `policyLink?` |
-| [`PdpSpecifications`](./pdp-specifications.tsx) | `rows: PdpSpecificationRow[]`, `heading?` |
-| [`PdpDescription`](./pdp-description.tsx) | `children` |
+| [`PdpSpecifications`](./pdp-specifications.tsx) | `rows: PdpSpecificationRow[]`, `heading?`, `description?` |
 
 **System-wide:** [`Lightbox`](../../molecules/lightbox/lightbox.tsx) — `media: ProductMedia[]`, `initialIndex?`, `onClose`
 
@@ -54,8 +53,7 @@ function TennisBraceletPDP() {
           {/* ... more primitives */}
         </div>}
       >
-        <PdpSpecifications rows={product.specs} />
-        <PdpDescription>{product.description}</PdpDescription>
+        <PdpSpecifications rows={product.specs} description={product.description} />
       </PdpLayout>
       {lightboxIndex !== null && (
         <Lightbox media={product.media} initialIndex={lightboxIndex} onClose={() => setLightboxIndex(null)} />

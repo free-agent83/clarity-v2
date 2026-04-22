@@ -12,4 +12,3 @@ type Story = StoryObj<typeof PdpDelivery>;
 export const Regular: Story = { args: { variant: "regular", date: "15 business days" } };
 export const Express: Story = { args: { variant: "express", date: "Nov 18–23" } };
 export const RegularWithShipsFrom: Story = { args: { variant: "regular", date: "15 business days", shipsFrom: "Botswana" } };
-export const ExpressWithShipsFrom: Story = { args: { variant: "express", date: "Nov 18–23", shipsFrom: "United States" } };

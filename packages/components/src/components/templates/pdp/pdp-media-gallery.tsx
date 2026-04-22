@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useHasHover } from "../../../hooks/use-has-hover";
+import { Slider } from "../../atoms/slider/slider";
 import type { PdpMediaGalleryProps, ProductMedia } from "./pdp-types";
 
 function Thumbnail({ item, selected, onClick }: { item: ProductMedia; selected: boolean; onClick: () => void }) {
@@ -12,8 +13,10 @@ function Thumbnail({ item, selected, onClick }: { item: ProductMedia; selected: 
       type="button"
       onClick={onClick}
       className={cn(
-        "relative h-16 w-16 shrink-0 overflow-hidden rounded border-2 transition-colors",
-        selected ? "border-primary" : "border-transparent hover:border-muted-foreground/40"
+        "relative h-16 w-16 shrink-0 rounded-md overflow-hidden border transition-[border-color,box-shadow]",
+        selected
+          ? "border-transparent ring-2 ring-offset-1 ring-accent-foreground"
+          : "border-transparent hover:border-muted-foreground/40"
       )}
       aria-pressed={selected}
     >
@@ -26,35 +29,22 @@ function Thumbnail({ item, selected, onClick }: { item: ProductMedia; selected: 
 }
 
 function ScrubBar({ videoRef }: { videoRef: React.RefObject<HTMLVideoElement | null> }) {
-  const [position, setPosition] = useState(0);
-  const barRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-
-  const seekTo = useCallback((clientX: number) => {
-    const bar = barRef.current;
+  const handleValueChange = (values: number[]) => {
     const video = videoRef.current;
-    if (!bar || !video || !video.duration) return;
-    const rect = bar.getBoundingClientRect();
-    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    setPosition(ratio);
-    video.currentTime = ratio * video.duration;
-  }, [videoRef]);
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => { if (dragging.current) seekTo(e.clientX); };
-    const onUp = () => { dragging.current = false; };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-    return () => { window.removeEventListener("mousemove", onMove); window.removeEventListener("mouseup", onUp); };
-  }, [seekTo]);
+    const ratio = (values[0] ?? 0) / 100;
+    if (video && video.duration) {
+      video.currentTime = ratio * video.duration;
+    }
+  };
 
   return (
-    <div className="absolute inset-x-0 bottom-0 bg-black/70 px-4 pb-3 pt-2">
-      <p className="mb-1.5 text-[10px] uppercase tracking-widest text-white/60">Rotate</p>
-      <div ref={barRef} className="relative h-1 cursor-ew-resize rounded-full bg-white/30" onMouseDown={(e) => { dragging.current = true; seekTo(e.clientX); }}>
-        <div className="absolute inset-y-0 left-0 rounded-full bg-white/80" style={{ width: `${position * 100}%` }} />
-        <div className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow" style={{ left: `${position * 100}%` }} />
-      </div>
+    <div
+      className="absolute inset-x-3 bottom-3 flex flex-col gap-2 rounded-2xl bg-black/60 px-4 py-3"
+      onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
+    >
+      <span className="text-center text-xs font-medium text-white/80">Drag to rotate</span>
+      <Slider defaultValue={[0]} min={0} max={100} step={0.1} onValueChange={handleValueChange} aria-label="Scrub 360° view" />
     </div>
   );
 }

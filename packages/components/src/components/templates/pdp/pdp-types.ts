@@ -66,21 +66,36 @@ export interface PdpPrimaryActionProps {
 
 // ── Delivery ──────────────────────────────────────────────
 
-export interface PdpDeliveryProps {
-  variant: "express" | "regular";
-  date: ReactNode;
-  shipsFrom?: ReactNode;
-  className?: string;
-}
+export type PdpDeliveryProps =
+  | {
+      variant: "express";
+      date: ReactNode;
+      /** Not supported on express — express never surfaces a ships-from origin. */
+      shipsFrom?: never;
+      className?: string;
+    }
+  | {
+      variant: "regular";
+      date: ReactNode;
+      shipsFrom?: ReactNode;
+      className?: string;
+    };
 
 // ── Returns ───────────────────────────────────────────────
 
-export interface PdpReturnsProps {
-  variant: "returnable" | "non-returnable";
-  returnsWindow?: string;
-  policyLink?: ReactNode;
-  className?: string;
-}
+export type PdpReturnsProps =
+  | {
+      variant: "returnable";
+      /** Optional window copy (e.g. "14 days"); renders "Returnable" when omitted. */
+      returnsWindow?: string;
+      /** Required for returnable items — every returnable product links to its policy. */
+      policyLink: ReactNode;
+      className?: string;
+    }
+  | {
+      variant: "non-returnable";
+      className?: string;
+    };
 
 // ── Specifications ────────────────────────────────────────
 
@@ -92,13 +107,8 @@ export interface PdpSpecificationRow {
 export interface PdpSpecificationsProps {
   rows: PdpSpecificationRow[];
   heading?: string;
-  className?: string;
-}
-
-// ── Description ───────────────────────────────────────────
-
-export interface PdpDescriptionProps {
-  children: ReactNode;
+  /** Freeform description rendered below the spec table. String children are wrapped in body typography; ReactNode passes through untouched. */
+  description?: ReactNode;
   className?: string;
 }
 

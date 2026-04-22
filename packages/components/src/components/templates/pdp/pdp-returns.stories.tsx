@@ -9,8 +9,7 @@ const meta: Meta<typeof PdpReturns> = {
 export default meta;
 type Story = StoryObj<typeof PdpReturns>;
 
-export const Returnable: Story = { args: { variant: "returnable", returnsWindow: "14 days" } };
-export const ReturnableWithPolicyLink: Story = {
+export const Returnable: Story = {
   render: () => <PdpReturns variant="returnable" returnsWindow="14 days" policyLink={<a href="#">Returns Policy</a>} />,
 };
 export const NonReturnable: Story = { args: { variant: "non-returnable" } };
