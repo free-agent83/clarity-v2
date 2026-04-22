@@ -149,12 +149,21 @@ export function PlpListBodyCell({
     <TableCell
       data-slot="plp-list-body-cell"
       className={cn(
-        "text-xs group-hover/plp-row:bg-muted/50 group-data-selected/plp-row:bg-accent/40",
+        // The `group-has-data-[state=open]` variant keeps the row in
+        // its hover-look while any descendant Radix popover/menu is
+        // open — otherwise clicking an Actions dropdown pulls hover
+        // onto the portaled menu and the row background snaps back.
+        "text-xs",
+        "group-hover/plp-row:bg-muted/50 group-has-data-[state=open]/plp-row:bg-muted/50",
+        "group-data-selected/plp-row:bg-accent/40",
         // Sticky cells need an opaque bg so scrolled content can't
         // bleed through. The alpha tints above are replaced with
         // `color-mix` blends that visually match over the background.
-        sticky === "right" &&
-          "sticky right-0 bg-background group-hover/plp-row:bg-[color-mix(in_oklch,var(--muted)_50%,var(--background))] group-data-selected/plp-row:bg-[color-mix(in_oklch,var(--accent)_40%,var(--background))]",
+        sticky === "right" && [
+          "sticky right-0 bg-background",
+          "group-hover/plp-row:bg-[color-mix(in_oklch,var(--muted)_50%,var(--background))] group-has-data-[state=open]/plp-row:bg-[color-mix(in_oklch,var(--muted)_50%,var(--background))]",
+          "group-data-selected/plp-row:bg-[color-mix(in_oklch,var(--accent)_40%,var(--background))]",
+        ],
         hug && "w-px whitespace-nowrap",
         className
       )}
