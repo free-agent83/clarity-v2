@@ -7,7 +7,6 @@ import {
   IconPhoto,
   IconCircleCheck,
 } from "@tabler/icons-react";
-import { Button } from "../button/button";
 import {
   InlineBanner,
   InlineBannerTitle,
@@ -59,7 +58,9 @@ export const WithAction: Story = {
         Find inventory faster with natural-language queries.
       </InlineBannerDescription>
       <InlineBannerActions>
-        <Button size="sm">Try it</Button>
+        <a href="#" className="underline underline-offset-4">
+          Try it
+        </a>
       </InlineBannerActions>
     </InlineBanner>
   ),
@@ -125,8 +126,12 @@ export const Sizes: Story = {
           More generous padding for substantive messages, with a bigger icon.
         </InlineBannerDescription>
         <InlineBannerActions>
-          <Button size="sm" variant="outline">Later</Button>
-          <Button size="sm">Try it</Button>
+          <a href="#" className="underline underline-offset-4">
+            Later
+          </a>
+          <a href="#" className="underline underline-offset-4">
+            Try it
+          </a>
         </InlineBannerActions>
       </InlineBanner>
     </div>
