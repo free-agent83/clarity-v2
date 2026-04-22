@@ -202,6 +202,7 @@ export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
           variant={item.isExpress ? "express" : "regular"}
           date="Nov 18 – 23"
           origin={item.originFlag}
+          shipsFrom={item.origin}
         />
       </PlpListBodyCell>
       <PlpListBodyCell sticky="right">

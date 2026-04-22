@@ -5,7 +5,7 @@ import {
   IconCheck,
   IconCheckFilled,
   IconCopy,
-  IconX,
+  IconForbid2,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "../../../atoms/badge/badge";
@@ -230,29 +230,45 @@ export function PlpListRowMedia({
  * Delivery indicator for list rows. The `express` variant colors the
  * date in the express accent; the regular variant uses body text.
  * Optional `origin` renders inline before the date — typically a
- * flag emoji indicating country of origin.
+ * flag emoji indicating country of origin. When `shipsFrom` is
+ * provided, the whole cell becomes a tooltip trigger showing
+ * "Ships from {shipsFrom}" — useful when `origin` is a flag emoji
+ * without the country name spelled out.
  */
 export function PlpListRowDelivery({
   variant,
   date,
   origin,
+  shipsFrom,
 }: {
   variant: "express" | "regular";
   date: ReactNode;
   origin?: ReactNode;
+  shipsFrom?: ReactNode;
 }) {
   const isExpress = variant === "express";
-  return (
+  const content = (
     <div
       data-slot="plp-list-row-delivery"
       className={cn(
-        "flex items-center gap-1.5 font-medium",
+        "flex items-center gap-1.5",
         isExpress && "text-express"
       )}
     >
       {origin && <span className="text-lg">{origin}</span>}
       <span>{date}</span>
     </div>
+  );
+
+  if (!shipsFrom) return content;
+
+  return (
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>{content}</TooltipTrigger>
+        <TooltipContent side="top">Ships from {shipsFrom}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
@@ -266,7 +282,7 @@ export function PlpListRowReturnable({
   variant: "returnable" | "non-returnable";
 }) {
   const isReturnable = variant === "returnable";
-  const Icon = isReturnable ? IconCheckFilled : IconX;
+  const Icon = isReturnable ? IconCheckFilled : IconForbid2;
   const label = isReturnable ? "Returnable" : "Non-returnable";
   return (
     <TooltipProvider delayDuration={300}>

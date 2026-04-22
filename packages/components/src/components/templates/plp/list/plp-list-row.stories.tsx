@@ -148,7 +148,12 @@ function StoryRow({
   price = { amount: 5400, currency: "USD" },
   pricePerCarat = { amount: 4500, currency: "USD" },
   returnable = "returnable",
-  delivery = { variant: "regular", date: "Nov 18 – 23", origin: "🇧🇼" },
+  delivery = {
+    variant: "regular",
+    date: "Nov 18 – 23",
+    origin: "🇧🇼",
+    shipsFrom: "Botswana",
+  },
   actions = DEFAULT_ACTIONS,
   imageAlt = "Diamond",
   selected,
@@ -261,7 +266,12 @@ export const ExpressDelivery: Story = {
       cert={{ lab: "IGI", number: "635321884" }}
       price={{ amount: 4599, currency: "USD" }}
       pricePerCarat={{ amount: 5110, currency: "USD" }}
-      delivery={{ variant: "express", date: "Nov 15 – 17", origin: "🇺🇸" }}
+      delivery={{
+        variant: "express",
+        date: "Nov 15 – 17",
+        origin: "🇺🇸",
+        shipsFrom: "United States",
+      }}
       imageAlt="Express item"
     />
   ),
@@ -278,7 +288,12 @@ export const NonReturnable: Story = {
       price={{ amount: 7999, currency: "USD" }}
       pricePerCarat={{ amount: 3902, currency: "USD" }}
       returnable="non-returnable"
-      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇷🇺" }}
+      delivery={{
+        variant: "regular",
+        date: "Nov 18 – 23",
+        origin: "🇷🇺",
+        shipsFrom: "Russia",
+      }}
       imageAlt="Final sale item"
     />
   ),
@@ -300,7 +315,12 @@ export const WithDiscount: Story = {
         discount: { percentage: 25, originalAmount: 9999 },
       }}
       pricePerCarat={{ amount: 4999, currency: "USD" }}
-      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇨🇦" }}
+      delivery={{
+        variant: "regular",
+        date: "Nov 18 – 23",
+        origin: "🇨🇦",
+        shipsFrom: "Canada",
+      }}
       imageAlt="Discounted item"
     />
   ),
@@ -316,7 +336,12 @@ export const WithTariffs: Story = {
       cert={{ lab: "AGS", number: "104088441" }}
       price={{ amount: 9999, currency: "USD", includeTariffs: true }}
       pricePerCarat={{ amount: 5555, currency: "USD" }}
-      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇦🇺" }}
+      delivery={{
+        variant: "regular",
+        date: "Nov 18 – 23",
+        origin: "🇦🇺",
+        shipsFrom: "Australia",
+      }}
       imageAlt="Tariff-noted item"
     />
   ),
@@ -336,7 +361,12 @@ export const WithLegacyPricing: Story = {
         legacyDelivered: { amount: 10499, currency: "USD" },
       }}
       pricePerCarat={{ amount: 9090, currency: "USD" }}
-      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇿🇦" }}
+      delivery={{
+        variant: "regular",
+        date: "Nov 18 – 23",
+        origin: "🇿🇦",
+        shipsFrom: "South Africa",
+      }}
       imageAlt="Legacy-pricing item"
     />
   ),
@@ -356,7 +386,12 @@ export const WithAlternateCurrency: Story = {
         alternateCurrency: { amount: 9250, currency: "EUR" },
       }}
       pricePerCarat={{ amount: 9999, currency: "USD" }}
-      delivery={{ variant: "regular", date: "Nov 18 – 23", origin: "🇧🇼" }}
+      delivery={{
+        variant: "regular",
+        date: "Nov 18 – 23",
+        origin: "🇧🇼",
+        shipsFrom: "Botswana",
+      }}
       imageAlt="Multi-currency item"
     />
   ),
@@ -379,7 +414,12 @@ export const AllPriceVariants: Story = {
         alternateCurrency: { amount: 6920, currency: "EUR" },
       }}
       pricePerCarat={{ amount: 7499, currency: "USD" }}
-      delivery={{ variant: "express", date: "Nov 15 – 17", origin: "🇺🇸" }}
+      delivery={{
+        variant: "express",
+        date: "Nov 15 – 17",
+        origin: "🇺🇸",
+        shipsFrom: "United States",
+      }}
       imageAlt="All price variants"
     />
   ),
