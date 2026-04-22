@@ -1,11 +1,10 @@
-import * as React from "react"
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import {
   IconAlertCircle,
   IconAlertTriangle,
   IconInfoCircle,
-  IconSparkles,
+  IconPhoto,
   IconCircleCheck,
 } from "@tabler/icons-react";
 import { Button } from "../button/button";
@@ -14,7 +13,6 @@ import {
   InlineBannerTitle,
   InlineBannerDescription,
   InlineBannerActions,
-  InlineBannerMedia,
 } from "./inline-banner";
 
 const meta: Meta<typeof InlineBanner> = {
@@ -28,7 +26,7 @@ const meta: Meta<typeof InlineBanner> = {
     },
     size: {
       control: "select",
-      options: ["default", "lg", "xl"],
+      options: ["default", "lg"],
     },
   },
   args: {
@@ -55,7 +53,7 @@ export const Default: Story = {
 export const WithAction: Story = {
   render: (args) => (
     <InlineBanner {...args} size="lg">
-      <IconSparkles />
+      <IconPhoto />
       <InlineBannerTitle>New: AI-assisted search</InlineBannerTitle>
       <InlineBannerDescription>
         Find inventory faster with natural-language queries.
@@ -116,12 +114,12 @@ export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-col gap-4">
       <InlineBanner {...args} size="default">
-        <IconSparkles />
+        <IconPhoto />
         <InlineBannerTitle>Default size</InlineBannerTitle>
         <InlineBannerDescription>Compact page-level callout.</InlineBannerDescription>
       </InlineBanner>
       <InlineBanner {...args} size="lg">
-        <IconSparkles />
+        <IconPhoto />
         <InlineBannerTitle>Large size</InlineBannerTitle>
         <InlineBannerDescription>
           More generous padding for substantive messages, with a bigger icon.
@@ -129,18 +127,6 @@ export const Sizes: Story = {
         <InlineBannerActions>
           <Button size="sm" variant="outline">Later</Button>
           <Button size="sm">Try it</Button>
-        </InlineBannerActions>
-      </InlineBanner>
-      <InlineBanner {...args} size="xl">
-        <InlineBannerMedia>
-          <IconSparkles />
-        </InlineBannerMedia>
-        <InlineBannerTitle>XL size with media slot</InlineBannerTitle>
-        <InlineBannerDescription>
-          At xl, the media slot replaces the icon and supports an illustration up to ~160×160px.
-        </InlineBannerDescription>
-        <InlineBannerActions>
-          <Button size="sm">Get started</Button>
         </InlineBannerActions>
       </InlineBanner>
     </div>

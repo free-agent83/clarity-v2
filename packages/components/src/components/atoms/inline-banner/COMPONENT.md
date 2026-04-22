@@ -17,7 +17,7 @@ Block-level, page-level callout that communicates persistent page-level informat
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `variant` | `"default" \| "success" \| "info" \| "warning" \| "destructive"` | `"default"` | Semantic tonality. Tinted background; does NOT change with size. |
-| `size` | `"default" \| "lg" \| "xl"` | `"default"` | Overall banner size. `xl` unlocks the `InlineBannerMedia` slot. |
+| `size` | `"default" \| "lg"` | `"default"` | Overall banner size. |
 | `onDismiss` | `() => void` | — | If provided, renders a close (X) button in the top-right. Stateless — the consumer removes the banner from the tree. |
 
 All standard `<div>` HTML attributes are supported via prop spread.
@@ -27,9 +27,8 @@ All standard `<div>` HTML attributes are supported via prop spread.
 - `InlineBannerTitle` — required heading slot.
 - `InlineBannerDescription` — optional body slot.
 - `InlineBannerActions` — right-aligned actions slot. Holds one or two `Button`s.
-- `InlineBannerMedia` — illustration slot. Only meaningful at `size="xl"`; replaces the icon column.
 
-An optional leading icon is passed as a direct `<svg>` child of `InlineBanner` (typically from `@tabler/icons-react`). The component detects it and lays out a two-column grid.
+An optional leading icon is passed as a direct `<svg>` child of `InlineBanner` (typically from `@tabler/icons-react`). The component detects it and places it in a vertically-centred icon column.
 
 ## Usage guidelines
 
@@ -39,13 +38,11 @@ Use InlineBanner under a page heading to surface persistent, page-level informat
 
 ## Best practices
 
-**Do:** Use `default` size for most page callouts. Reach for `lg` when the message warrants more visual weight, and `xl` only when you have a genuine illustration or image to show.
+**Do:** Use `default` size for most page callouts. Reach for `lg` when the message warrants more visual weight.
 
 **Do:** Pair `variant` with a matching Tabler icon — `IconCircleCheck` for success, `IconAlertTriangle` for warning, `IconAlertCircle` for destructive, `IconInfoCircle` for info.
 
 **Don't:** Stack multiple InlineBanners in the same region. If the page has multiple conditions to surface, consolidate or rank and show the highest-priority one.
-
-**Don't:** Use `InlineBannerMedia` at sizes other than `xl` — the layout is not designed for it.
 
 ## Writing
 

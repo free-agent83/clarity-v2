@@ -18,7 +18,8 @@ const inlineBannerVariants = cva(
   [
     "relative grid w-full items-center rounded-lg border",
     "grid-cols-[auto_1fr_auto]",
-    "[&>svg]:col-start-1 [&>svg]:row-span-full [&>svg]:self-center",
+    "[grid-template-areas:'icon_title_actions'_'icon_description_actions']",
+    "[&>svg]:[grid-area:icon] [&>svg]:my-auto",
   ],
   {
     variants: {
@@ -32,7 +33,6 @@ const inlineBannerVariants = cva(
       size: {
         default: "gap-x-3 px-4 py-3 [&>svg]:size-5",
         lg: "gap-x-4 px-6 py-4 [&>svg]:size-8",
-        xl: "gap-x-6 px-8 py-6 [&>svg]:size-10",
       },
     },
     defaultVariants: {
@@ -89,7 +89,7 @@ function InlineBannerTitle({ className, ...props }: React.ComponentProps<"div">)
     <div
       data-slot="inline-banner-title"
       className={cn(
-        "col-start-2 row-start-1 font-heading font-medium",
+        "[grid-area:title] font-heading font-medium",
         className
       )}
       {...props}
@@ -105,7 +105,7 @@ function InlineBannerDescription({
     <div
       data-slot="inline-banner-description"
       className={cn(
-        "col-start-2 row-start-2 text-sm text-muted-foreground [&_a]:underline [&_a]:underline-offset-3",
+        "[grid-area:description] text-sm text-muted-foreground [&_a]:underline [&_a]:underline-offset-3",
         className
       )}
       {...props}
@@ -121,23 +121,7 @@ function InlineBannerActions({
     <div
       data-slot="inline-banner-actions"
       className={cn(
-        "col-start-3 row-span-full flex shrink-0 items-center gap-2 self-center justify-self-end",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function InlineBannerMedia({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="inline-banner-media"
-      className={cn(
-        "col-start-1 row-span-full flex shrink-0 items-center justify-center self-center [&>img]:max-h-40 [&>img]:max-w-40 [&>svg]:size-10",
+        "[grid-area:actions] flex shrink-0 items-center gap-2 self-center justify-self-end",
         className
       )}
       {...props}
@@ -150,7 +134,6 @@ export {
   InlineBannerTitle,
   InlineBannerDescription,
   InlineBannerActions,
-  InlineBannerMedia,
   inlineBannerVariants,
 }
 export type { InlineBannerProps }
