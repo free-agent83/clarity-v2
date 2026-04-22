@@ -288,12 +288,12 @@ export function PlpListRowReturnable({
     <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span
+          <div
             data-slot="plp-list-row-returnable"
             role="img"
             aria-label={label}
             tabIndex={0}
-            className="inline-flex align-middle rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex w-full items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Icon
               className={cn(
@@ -302,7 +302,7 @@ export function PlpListRowReturnable({
               )}
               aria-hidden="true"
             />
-          </span>
+          </div>
         </TooltipTrigger>
         <TooltipContent side="top">{label}</TooltipContent>
       </Tooltip>
@@ -401,7 +401,9 @@ export function PlpListRowPrice({
         {formatCurrency(amount, currency)}
       </div>
       {includeTariffs && (
-        <div className="text-muted-foreground">Incl. US tariffs</div>
+        <div className="text-muted-foreground text-[0.65rem]">
+          Incl. US tariffs
+        </div>
       )}
       {legacyDelivered && (
         <div className="text-muted-foreground">
