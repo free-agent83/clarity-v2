@@ -77,7 +77,7 @@ export interface PdpDeliveryProps {
 
 export interface PdpReturnsProps {
   variant: "returnable" | "non-returnable";
-  returnsWindow?: ReactNode;
+  returnsWindow?: string;
   policyLink?: ReactNode;
   className?: string;
 }
