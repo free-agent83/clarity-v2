@@ -1,9 +1,9 @@
 ---
 name: PLP (Product Listing Page)
 slug: plp
-version: 0.6.0
+version: 0.6.1
 status: unstable
-lastUpdated: 2026-04-21
+lastUpdated: 2026-04-22
 ---
 
 # PLP (Product Listing Page)
