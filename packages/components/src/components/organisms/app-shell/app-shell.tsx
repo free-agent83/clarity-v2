@@ -21,6 +21,14 @@ import {
 interface AppShellProps extends Omit<React.ComponentProps<"div">, "className"> {
   full?: boolean
   defaultNavigationOpen?: boolean
+  /**
+   * Optional page-level banner rendered above the header.
+   *
+   * Pass a `PageBanner` node. The stripe is non-sticky — it scrolls
+   * out of view as the user scrolls down, after which the sticky
+   * `AppShellHeader` becomes the top of the viewport.
+   */
+  banner?: React.ReactNode
 }
 
 /**
@@ -59,6 +67,7 @@ interface AppShellProps extends Omit<React.ComponentProps<"div">, "className"> {
 function AppShell({
   full = false,
   defaultNavigationOpen,
+  banner,
   children,
   ...props
 }: AppShellProps) {
@@ -70,6 +79,7 @@ function AppShell({
         className="group/app-shell flex min-h-svh flex-col bg-background text-foreground"
         {...props}
       >
+        {banner}
         {children}
       </div>
     </Sheet>
