@@ -56,12 +56,12 @@ const SAMPLE_IMAGE = diamondImg;
 function DefaultHeader() {
   return (
     <PlpListHeaderRow>
-      <TableHead style={{ width: 44 }}>
+      <PlpListHeaderCell hug>
         <span className="sr-only">Select</span>
-      </TableHead>
-      <TableHead style={{ width: 73 }}>
+      </PlpListHeaderCell>
+      <PlpListHeaderCell hug>
         <span className="sr-only">Thumbnail</span>
-      </TableHead>
+      </PlpListHeaderCell>
       <TableHead>Shape</TableHead>
       <TableHead className="text-center">Ct</TableHead>
       <TableHead className="text-center">Col</TableHead>
@@ -163,7 +163,7 @@ function StoryRow({
       disabled={disabled}
       onClick={onClick}
     >
-      <PlpListBodyCell>
+      <PlpListBodyCell hug>
         <PlpListRowMedia image={SAMPLE_IMAGE} imageAlt={imageAlt} />
       </PlpListBodyCell>
       <PlpListBodyCell>{shape}</PlpListBodyCell>

@@ -4,6 +4,7 @@ import {
   IconHeart,
   IconPhoto,
   IconShare,
+  IconShoppingCart,
 } from "@tabler/icons-react";
 import { Badge } from "../../../atoms/badge/badge";
 import { Button } from "../../../atoms/button/button";
@@ -28,12 +29,14 @@ import {
 import {
   PlpListBodyCell,
   PlpListBodyRow,
+  PlpListHeaderCell,
   PlpListHeaderRow,
   PlpListRowActions,
   PlpListRowCert,
   PlpListRowDelivery,
   PlpListRowMedia,
   PlpListRowPrice,
+  PlpListRowPricePerCarat,
   PlpListRowReturnable,
 } from "../list/plp-list-row";
 import { TableHead } from "../../../organisms/table/table";
@@ -119,31 +122,32 @@ export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
 export function DiamondPlpListHeader() {
   return (
     <PlpListHeaderRow>
-      <TableHead style={{ width: 44 }}>
+      <PlpListHeaderCell hug>
         <span className="sr-only">Select</span>
-      </TableHead>
-      <TableHead style={{ width: 73 }}>
+      </PlpListHeaderCell>
+      <PlpListHeaderCell hug>
         <span className="sr-only">Thumbnail</span>
-      </TableHead>
+      </PlpListHeaderCell>
       <TableHead>Shape</TableHead>
-      <TableHead>Ct</TableHead>
-      <TableHead>Col</TableHead>
-      <TableHead>Cla</TableHead>
-      <TableHead>Cut</TableHead>
-      <TableHead>Pol</TableHead>
-      <TableHead>Sym</TableHead>
-      <TableHead>Fluor</TableHead>
-      <TableHead>Table</TableHead>
-      <TableHead>Depth</TableHead>
-      <TableHead>Ratio</TableHead>
+      <TableHead className="text-center">Ct</TableHead>
+      <TableHead className="text-center">Col</TableHead>
+      <TableHead className="text-center">Cla</TableHead>
+      <TableHead className="text-center">Cut</TableHead>
+      <TableHead className="text-center">Pol</TableHead>
+      <TableHead className="text-center">Sym</TableHead>
+      <TableHead className="text-center">Fluor</TableHead>
+      <TableHead className="text-center">Table</TableHead>
+      <TableHead className="text-center">Depth</TableHead>
+      <TableHead className="text-center">Ratio</TableHead>
       <TableHead>Measurements</TableHead>
       <TableHead>Cert</TableHead>
-      <TableHead>Price</TableHead>
+      <TableHead className="text-end">Price</TableHead>
+      <TableHead className="text-end">Price/ct</TableHead>
       <TableHead>Ret</TableHead>
       <TableHead>Delivery</TableHead>
-      <TableHead>
+      <PlpListHeaderCell sticky="right">
         <span className="sr-only">Actions</span>
-      </TableHead>
+      </PlpListHeaderCell>
     </PlpListHeaderRow>
   );
 }
@@ -159,20 +163,20 @@ export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
 
   return (
     <PlpListBodyRow selected={selected} onSelectedChange={setSelected}>
-      <PlpListBodyCell>
+      <PlpListBodyCell hug>
         <PlpListRowMedia image={item.image} imageAlt={item.name} />
       </PlpListBodyCell>
       <PlpListBodyCell>{item.shape}</PlpListBodyCell>
-      <PlpListBodyCell>{item.carat.toFixed(2)}</PlpListBodyCell>
-      <PlpListBodyCell>{item.color}</PlpListBodyCell>
-      <PlpListBodyCell>{item.clarity}</PlpListBodyCell>
-      <PlpListBodyCell>{item.cut}</PlpListBodyCell>
-      <PlpListBodyCell>{item.polish}</PlpListBodyCell>
-      <PlpListBodyCell>{item.symmetry}</PlpListBodyCell>
-      <PlpListBodyCell>{item.fluorescence}</PlpListBodyCell>
-      <PlpListBodyCell>{item.tablePct}</PlpListBodyCell>
-      <PlpListBodyCell>{item.depthPct.toFixed(1)}</PlpListBodyCell>
-      <PlpListBodyCell>{item.ratio.toFixed(2)}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.carat.toFixed(2)}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.color}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.clarity}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.cut}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.polish}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.symmetry}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.fluorescence}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.tablePct}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.depthPct.toFixed(1)}</PlpListBodyCell>
+      <PlpListBodyCell className="text-center">{item.ratio.toFixed(2)}</PlpListBodyCell>
       <PlpListBodyCell>{item.measurements}</PlpListBodyCell>
       <PlpListBodyCell>
         <PlpListRowCert lab={item.certLab} number={item.certNumber} />
@@ -181,9 +185,12 @@ export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
         <PlpListRowPrice
           amount={item.price}
           currency="USD"
-          perCarat={{ amount: item.pricePerCarat, currency: "USD" }}
+          discount={item.discount}
           alternateCurrency={alternateCurrency}
         />
+      </PlpListBodyCell>
+      <PlpListBodyCell>
+        <PlpListRowPricePerCarat amount={item.pricePerCarat} currency="USD" />
       </PlpListBodyCell>
       <PlpListBodyCell>
         <PlpListRowReturnable
@@ -194,19 +201,20 @@ export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
         <PlpListRowDelivery
           variant={item.isExpress ? "express" : "regular"}
           date="Nov 18 – 23"
-          shipsFrom={item.origin}
+          origin={item.originFlag}
         />
       </PlpListBodyCell>
-      <PlpListBodyCell>
+      <PlpListBodyCell sticky="right">
         <PlpListRowActions>
-          <Button size="sm" onClick={noop}>
-            Add to cart
+          <Button size="sm" variant="outline" onClick={noop}>
+            Add
+            <IconShoppingCart className="h-4 w-4" data-icon="inline-end" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                variant="ghost"
-                size="icon"
+                variant="outline"
+                size="icon-sm"
                 aria-label="More actions"
                 onClick={(e) => e.stopPropagation()}
               >

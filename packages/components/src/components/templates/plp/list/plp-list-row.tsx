@@ -3,10 +3,9 @@
 import { useState, type ComponentProps, type ReactNode } from "react";
 import {
   IconCheck,
-  IconCircleCheckFilled,
-  IconCircleX,
+  IconCheckFilled,
   IconCopy,
-  IconTruckDelivery,
+  IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "../../../atoms/badge/badge";
@@ -23,9 +22,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../../../atoms/tooltip/tooltip";
-import { Typography } from "../../../atoms/typography/typography";
-import { TableCell, TableRow } from "../../../organisms/table/table";
-import { BrandExpress } from "@/components/atoms/brand-express/brand-express";
+import {
+  TableCell,
+  TableHead,
+  TableRow,
+} from "../../../organisms/table/table";
 
 // ── Helpers ───────────────────────────────────────────────
 
@@ -86,22 +87,23 @@ export function PlpListBodyRow({
       onClick={clickable ? onClick : undefined}
       onKeyDown={clickable ? handleKeyDown : undefined}
       className={cn(
-        "group/plp-row",
+        "group/plp-row hover:bg-transparent",
         clickable &&
-          "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        selected && "bg-accent/40",
-        disabled && "pointer-events-none opacity-50",
+        "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        disabled && "pointer-events-none opacity-40",
         className
       )}
     >
       {onSelectedChange && (
-        <PlpListBodyCell onClick={(e) => e.stopPropagation()}>
-          <Checkbox
-            checked={selected}
-            disabled={disabled}
-            onCheckedChange={(v) => onSelectedChange(v === true)}
-            aria-label={selectLabel}
-          />
+        <PlpListBodyCell hug onClick={(e) => e.stopPropagation()}>
+          <div className="pl-1 pr-2">
+            <Checkbox
+              checked={selected}
+              disabled={disabled}
+              onCheckedChange={(v) => onSelectedChange(v === true)}
+              aria-label={selectLabel}
+            />
+          </div>
         </PlpListBodyCell>
       )}
       {children}
@@ -121,19 +123,74 @@ export function PlpListHeaderRow({
   className?: string;
 }) {
   return (
-    <TableRow data-slot="plp-list-header-row" className={className}>
+    <TableRow
+      data-slot="plp-list-header-row"
+      className={cn("bg-muted text-xs hover:bg-muted", className)}
+    >
       {children}
     </TableRow>
   );
 }
 
 /**
- * Thin passthrough over the shadcn `TableCell`. Exists as a single
- * extension point so future list-wide cell styling can land here
- * without touching every consumer.
+ * Thin preset over the shadcn `TableCell`. Pass `sticky="right"` to
+ * pin the cell to the right edge during horizontal overflow. Pass
+ * `hug` to shrink the column to the width of its content (useful for
+ * icon-only columns like select checkboxes or thumbnails).
  */
-export function PlpListBodyCell(props: ComponentProps<typeof TableCell>) {
-  return <TableCell data-slot="plp-list-body-cell" {...props} />;
+export function PlpListBodyCell({
+  children,
+  className,
+  sticky,
+  hug,
+  ...props
+}: ComponentProps<typeof TableCell> & { sticky?: "right"; hug?: boolean }) {
+  return (
+    <TableCell
+      data-slot="plp-list-body-cell"
+      className={cn(
+        "text-xs group-hover/plp-row:bg-muted/50 group-data-selected/plp-row:bg-accent/40",
+        // Sticky cells need an opaque bg so scrolled content can't
+        // bleed through. The alpha tints above are replaced with
+        // `color-mix` blends that visually match over the background.
+        sticky === "right" &&
+          "sticky right-0 bg-background group-hover/plp-row:bg-[color-mix(in_oklch,var(--muted)_50%,var(--background))] group-data-selected/plp-row:bg-[color-mix(in_oklch,var(--accent)_40%,var(--background))]",
+        hug && "w-px whitespace-nowrap",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </TableCell>
+  );
+}
+
+/**
+ * Thin preset over the shadcn `TableHead`. Pass `sticky="right"` to
+ * pin the cell to the right edge during horizontal overflow. Pass
+ * `hug` to shrink the column to the width of its content (useful for
+ * icon-only columns like select checkboxes or thumbnails).
+ */
+export function PlpListHeaderCell({
+  children,
+  className,
+  sticky,
+  hug,
+  ...props
+}: ComponentProps<typeof TableHead> & { sticky?: "right"; hug?: boolean }) {
+  return (
+    <TableHead
+      data-slot="plp-list-header-cell"
+      className={cn(
+        sticky === "right" && "sticky right-0 bg-muted",
+        hug && "w-px whitespace-nowrap",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </TableHead>
+  );
 }
 
 // ── Content primitives ────────────────────────────────────
@@ -155,7 +212,7 @@ export function PlpListRowMedia({
     <div
       data-slot="plp-list-row-media"
       className={cn(
-        "h-12 w-12 overflow-hidden rounded-md border border-border bg-muted",
+        "h-10 w-10 overflow-hidden rounded-md border border-border bg-muted",
         className
       )}
     >
@@ -170,42 +227,31 @@ export function PlpListRowMedia({
 }
 
 /**
- * Delivery indicator for list rows. Express variant uses a Badge +
- * date; regular variant uses an icon + date. Optional `shipsFrom`
- * renders a muted secondary line.
+ * Delivery indicator for list rows. The `express` variant colors the
+ * date in the express accent; the regular variant uses body text.
+ * Optional `origin` renders inline before the date — typically a
+ * flag emoji indicating country of origin.
  */
 export function PlpListRowDelivery({
   variant,
   date,
-  shipsFrom,
+  origin,
 }: {
   variant: "express" | "regular";
   date: ReactNode;
-  shipsFrom?: ReactNode;
+  origin?: ReactNode;
 }) {
   const isExpress = variant === "express";
   return (
-    <div data-slot="plp-list-row-delivery" className="flex flex-col gap-0.5">
-      <div className="flex items-center gap-1.5">
-        {isExpress ? (
-          <BrandExpress className="h-2.5" aria-label="Express delivery" />
-        ) : (
-          <IconTruckDelivery className="size-3.5 shrink-0" aria-hidden="true" />
-        )}
-        <Typography
-          as="span"
-          variant="caption"
-          emphasis
-          className={isExpress ? "text-express" : undefined}
-        >
-          {date}
-        </Typography>
-      </div>
-      {shipsFrom && (
-        <Typography as="div" variant="caption" className="text-muted-foreground">
-          from {shipsFrom}
-        </Typography>
+    <div
+      data-slot="plp-list-row-delivery"
+      className={cn(
+        "flex items-center gap-1.5 font-medium",
+        isExpress && "text-express"
       )}
+    >
+      {origin && <span className="text-lg">{origin}</span>}
+      <span>{date}</span>
     </div>
   );
 }
@@ -220,7 +266,7 @@ export function PlpListRowReturnable({
   variant: "returnable" | "non-returnable";
 }) {
   const isReturnable = variant === "returnable";
-  const Icon = isReturnable ? IconCircleCheckFilled : IconCircleX;
+  const Icon = isReturnable ? IconCheckFilled : IconX;
   const label = isReturnable ? "Returnable" : "Non-returnable";
   return (
     <TooltipProvider delayDuration={300}>
@@ -236,7 +282,7 @@ export function PlpListRowReturnable({
             <Icon
               className={cn(
                 "size-4",
-                isReturnable ? "text-success" : "text-muted-foreground"
+                isReturnable ? "text-success" : "text-muted-foreground/50"
               )}
               aria-hidden="true"
             />
@@ -273,17 +319,15 @@ export function PlpListRowCert({
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <span className="font-mono underline decoration-dotted text-xs">{lab}</span>
+        <span className="font-mono underline decoration-dotted">{lab}</span>
       </HoverCardTrigger>
       <HoverCardContent className="w-auto">
         <div className="flex items-center gap-3">
           <div className="flex flex-col gap-0.5">
-            <Typography as="div" variant="caption" className="text-muted-foreground">
+            <div className="text-xs text-muted-foreground">
               {lab} certificate
-            </Typography>
-            <Typography as="span" variant="body-2" className="font-mono">
-              {number}
-            </Typography>
+            </div>
+            <span className="font-mono text-sm">{number}</span>
           </div>
           <Button
             variant="ghost"
@@ -307,12 +351,12 @@ export function PlpListRowCert({
  * Price for list rows. Fat component — renders every supported pricing
  * variant when its prop is provided. Tuned for cell density: discount
  * is inline with a percent label, tariff note is a plain caption line
- * (no hover card).
+ * (no hover card). Per-carat rate lives in its own column via
+ * `PlpListRowPricePerCarat`.
  */
 export function PlpListRowPrice({
   amount,
   currency,
-  perCarat,
   discount,
   includeTariffs = false,
   legacyDelivered,
@@ -320,59 +364,67 @@ export function PlpListRowPrice({
 }: {
   amount: number;
   currency: string;
-  perCarat?: { amount: number; currency: string };
   discount?: { percentage: number; originalAmount: number };
   includeTariffs?: boolean;
   legacyDelivered?: { amount: number; currency: string };
   alternateCurrency?: { amount: number; currency: string };
 }) {
   return (
-    <div data-slot="plp-list-row-price" className="flex flex-col gap-0.5">
+    <div data-slot="plp-list-row-price" className="flex flex-col gap-0.5 text-end">
       {discount && (
-        <div className="flex items-center gap-1.5">
-          <Typography as="span" variant="caption" emphasis className="text-success">
-            {discount.percentage}% below
-          </Typography>
-          <Typography
-            as="span"
-            variant="caption"
-            className="text-muted-foreground line-through"
-          >
+        <div className="flex justify-end gap-1 text-[0.65rem]">
+          <span className="font-medium text-info">
+            -{discount.percentage}%
+          </span>
+          <span className="text-muted-foreground line-through">
             {formatCurrency(discount.originalAmount, currency)}
-          </Typography>
+          </span>
         </div>
       )}
-      <Typography as="div" variant="body-2" emphasis>
+      <div className="font-medium">
         {formatCurrency(amount, currency)}
-      </Typography>
-      {perCarat && (
-        <Typography as="div" variant="caption" className="text-muted-foreground">
-          {formatCurrency(perCarat.amount, perCarat.currency)}/ct
-        </Typography>
-      )}
+      </div>
       {includeTariffs && (
-        <Typography as="div" variant="caption" className="text-muted-foreground">
-          Incl. US tariffs
-        </Typography>
+        <div className="text-muted-foreground">Incl. US tariffs</div>
       )}
       {legacyDelivered && (
-        <Typography as="div" variant="caption" className="text-muted-foreground">
+        <div className="text-muted-foreground">
           Delivered:{" "}
           {formatCurrency(legacyDelivered.amount, legacyDelivered.currency)}
-        </Typography>
+        </div>
       )}
       {alternateCurrency && (
-        <Typography as="div" variant="caption" className="text-muted-foreground">
+        <div className="text-muted-foreground text-[0.65rem]">
           ~{formatCurrency(alternateCurrency.amount, alternateCurrency.currency)}
-        </Typography>
+        </div>
       )}
     </div>
   );
 }
 
 /**
- * Hover-reveal container for row actions. Provides the PLP hover
- * styling; consumers compose the actual buttons/menus inside.
+ * Per-carat rate for list rows. Sits in its own column next to the
+ * main price column.
+ */
+export function PlpListRowPricePerCarat({
+  amount,
+  currency,
+}: {
+  amount: number;
+  currency: string;
+}) {
+  return (
+    <p data-slot="plp-list-row-price-per-carat" className="text-end">
+      {formatCurrency(amount, currency)}/ct
+    </p>
+  );
+}
+
+/**
+ * Right-aligned flex container for row actions. Always visible;
+ * consumers compose the actual buttons/menus inside. Sticky
+ * positioning (to keep the actions column in view during horizontal
+ * overflow) lives on the wrapping `PlpListBodyCell`, not here.
  */
 export function PlpListRowActions({
   children,
@@ -384,12 +436,7 @@ export function PlpListRowActions({
   return (
     <div
       data-slot="plp-list-row-actions"
-      className={cn(
-        "flex items-center justify-end gap-1",
-        "opacity-0 transition-opacity group-hover/plp-row:opacity-100 group-has-focus-visible/plp-row:opacity-100",
-        "[@media(hover:none)]:opacity-100",
-        className
-      )}
+      className={cn("flex items-center justify-end gap-2 pr-2", className)}
     >
       {children}
     </div>
