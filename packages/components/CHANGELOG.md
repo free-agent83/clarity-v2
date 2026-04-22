@@ -2,6 +2,13 @@
 
 ---
 
+### InlineBanner ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
+Introduces a new `InlineBanner` atom for block-level, page-level callouts. Hierarchically above `Alert`; visually tinted like Alert but with a larger footprint, larger icon, and an optional illustration slot at `xl`.
+
+- **InlineBanner.** Variants `default | success | info | warning | destructive`, sizes `default | lg | xl`. Compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerActions`, `InlineBannerMedia` (xl only). Optional `onDismiss` prop renders a top-right close button; stateless. Lands as `unstable`.
+
+---
+
 ### SegmentedControl ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
 Introduces a new `SegmentedControl` atom for switching between mutually-exclusive UI modes. Wraps `Radix ToggleGroup` with `type="single"` hard-coded and a non-empty selection guarantee.
 

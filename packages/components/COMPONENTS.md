@@ -253,6 +253,10 @@ Communicating state, progress, and outcomes.
 - For: persistent, in-context status or validation messages within the page flow.
 - Not for: transient toasts, modal interruptions, or form field-level errors.
 
+**InlineBanner** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/inline-banner/COMPONENT.md)
+- For: page-level callouts under a page heading — promotional content, feature announcements, advisory notices that apply to the whole view.
+- Not for: section-level messages (use `Alert`), app-wide banners above the nav (use `PageBanner`), or transient confirmations (use `Sonner`).
+
 **Toaster** · `atom` · `unstable` — [COMPONENT.md](./src/components/atoms/sonner/COMPONENT.md)
 - For: transient, non-blocking notifications and background confirmations.
 - Not for: persistent messages, validation errors, or modal interruptions.
