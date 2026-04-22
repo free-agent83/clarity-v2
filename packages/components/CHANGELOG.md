@@ -13,14 +13,14 @@ Introduces a new `Stepper` molecule for ordered, multi-step flows such as checko
 Introduces a new `PageBanner` atom for full-bleed, app-level callouts and wires an optional `banner` prop into `AppShell`. PageBanner uses solid fills across all variants — distinct from Alert/InlineBanner's tinted style — to declare itself at the application level.
 
 - **PageBanner.** Variants `default | success | info | warning | destructive` with solid semantic fills (`default` uses brand primary). Compound API with `PageBannerTitle` and `PageBannerAction`. Optional `onDismiss` renders a right-edge close button. Lands as `unstable`.
-- **AppShell.** New `banner` prop accepts a `PageBanner` node. The banner renders above the sticky header — non-sticky itself, so it scrolls out of view as the page scrolls down. Two new stories demonstrate the integration (`WithBanner`, `WithDismissibleBanner`).
+- **AppShell.** New `banner` prop accepts a `PageBanner` node. The shell wraps the banner in a sticky container pinned to the top, and the `AppShellHeader`'s sticky `top` offsets automatically so the header sits just below the banner. Both remain visible while page content scrolls. Two new stories demonstrate the integration (`WithBanner`, `WithDismissibleBanner`).
 
 ---
 
 ### InlineBanner ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
-Introduces a new `InlineBanner` atom for block-level, page-level callouts. Hierarchically above `Alert`; visually tinted like Alert but with a larger footprint, larger icon, and an optional illustration slot at `xl`.
+Introduces a new `InlineBanner` atom for block-level, page-level callouts. Hierarchically above `Alert`; visually tinted like Alert but with a larger footprint and a vertically-centred leading icon.
 
-- **InlineBanner.** Variants `default | success | info | warning | destructive`, sizes `default | lg | xl`. Compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerActions`, `InlineBannerMedia` (xl only). Optional `onDismiss` prop renders a top-right close button; stateless. Lands as `unstable`.
+- **InlineBanner.** Variants `default | success | info | warning | destructive`, sizes `default | lg`. Compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerActions`. Optional `onDismiss` prop renders a top-right close button; stateless. Lands as `unstable`.
 
 ---
 

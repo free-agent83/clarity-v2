@@ -5,7 +5,6 @@ import {
   IconInfoCircle,
   IconSparkles,
 } from "@tabler/icons-react";
-import { Button } from "../button/button";
 import { PageBanner, PageBannerAction, PageBannerTitle } from "./page-banner";
 
 const meta: Meta<typeof PageBanner> = {
@@ -34,9 +33,9 @@ export const Default: Story = {
         New: AI-assisted search is now available on all accounts.
       </PageBannerTitle>
       <PageBannerAction>
-        <Button variant="link" size="sm" className="text-current">
+        <a href="#" className="underline underline-offset-4">
           Learn more
-        </Button>
+        </a>
       </PageBannerAction>
     </PageBanner>
   ),
@@ -51,9 +50,9 @@ export const Dismissible: Story = {
         Scheduled maintenance this Sunday 02:00–04:00 UTC.
       </PageBannerTitle>
       <PageBannerAction>
-        <Button variant="link" size="sm" className="text-current">
+        <a href="#" className="underline underline-offset-4">
           Read more
-        </Button>
+        </a>
       </PageBannerAction>
     </PageBanner>
   ),

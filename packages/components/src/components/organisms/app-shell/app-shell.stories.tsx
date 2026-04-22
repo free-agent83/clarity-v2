@@ -404,9 +404,9 @@ export const WithBanner: Story = {
             New: AI-assisted search is now available on all accounts.
           </PageBannerTitle>
           <PageBannerAction>
-            <Button variant="link" size="sm" className="text-current">
+            <a href="#" className="underline underline-offset-4">
               Learn more
-            </Button>
+            </a>
           </PageBannerAction>
         </PageBanner>
       }
@@ -416,7 +416,7 @@ export const WithBanner: Story = {
         <div className="py-8">
           <h1 className="text-2xl font-heading font-medium">Page content</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            The PageBanner above is non-sticky — scroll down to see it leave the viewport while the header stays fixed.
+            Both the PageBanner and header are sticky — scroll down and they remain pinned at the top while page content flows underneath.
           </p>
           <div className="h-[200vh]" />
         </div>
@@ -436,9 +436,9 @@ export const WithDismissibleBanner: Story = {
             Scheduled maintenance this Sunday 02:00–04:00 UTC.
           </PageBannerTitle>
           <PageBannerAction>
-            <Button variant="link" size="sm" className="text-current">
+            <a href="#" className="underline underline-offset-4">
               Read more
-            </Button>
+            </a>
           </PageBannerAction>
         </PageBanner>
       }

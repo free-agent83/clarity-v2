@@ -36,10 +36,10 @@ const segmentedControlVariants = cva(
 const segmentedControlItemVariants = cva(
   [
     "relative inline-flex h-full shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-[calc(var(--radius)-2px)] px-3 text-sm font-medium text-muted-foreground transition-all outline-none",
-    "hover:text-foreground",
+    "hover:text-accent-foreground",
     "focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:z-10",
     "disabled:pointer-events-none disabled:opacity-50",
-    "data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-xs",
+    "data-[state=on]:bg-background data-[state=on]:text-accent-foreground data-[state=on]:shadow-xs",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ],
   {

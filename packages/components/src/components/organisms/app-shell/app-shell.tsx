@@ -24,9 +24,11 @@ interface AppShellProps extends Omit<React.ComponentProps<"div">, "className"> {
   /**
    * Optional page-level banner rendered above the header.
    *
-   * Pass a `PageBanner` node. The stripe is non-sticky — it scrolls
-   * out of view as the user scrolls down, after which the sticky
-   * `AppShellHeader` becomes the top of the viewport.
+   * Pass a `PageBanner` node. The shell wraps it in a sticky container
+   * so the banner pins to the top of the viewport while the page
+   * scrolls; the `AppShellHeader` automatically offsets its own
+   * sticky `top` so it sits just below the banner (banner first,
+   * header second, page content third).
    */
   banner?: React.ReactNode
 }
@@ -76,10 +78,18 @@ function AppShell({
       <div
         data-slot="app-shell"
         data-full={full || undefined}
+        data-has-banner={banner ? "" : undefined}
         className="group/app-shell flex min-h-svh flex-col bg-background text-foreground"
         {...props}
       >
-        {banner}
+        {banner ? (
+          <div
+            data-slot="app-shell-banner"
+            className="sticky top-0 z-40"
+          >
+            {banner}
+          </div>
+        ) : null}
         {children}
       </div>
     </Sheet>
@@ -124,7 +134,7 @@ function AppShellHeader({
     <header
       data-slot="app-shell-header"
       className={cn(
-        "sticky top-0 z-40 flex h-18 w-full items-center gap-4 border-b border-border bg-background px-4 md:px-6",
+        "sticky top-0 z-40 flex h-18 w-full items-center gap-4 border-b border-border bg-background px-4 group-data-has-banner/app-shell:top-11 md:px-6",
         className,
       )}
       {...props}
