@@ -22,13 +22,13 @@ import {
 } from "../../molecules/pagination/pagination";
 import { PlpGridContainer } from "./plp-grid-container";
 import { PlpListContainer } from "./plp-list-container";
-import { DiamondPage } from "./__fixtures__/diamond-page";
+import { DiamondPage } from "./__stories__/diamond-page";
 import {
   DiamondPlpGridItem,
   DiamondPlpListHeader,
   DiamondPlpListRow,
-} from "./__fixtures__/diamond-renderers";
-import { generateDiamondItems } from "./__fixtures__/diamond-items";
+} from "./__stories__/diamond-renderers";
+import { generateDiamondItems } from "./__stories__/diamond-items";
 
 const items = generateDiamondItems(20);
 
