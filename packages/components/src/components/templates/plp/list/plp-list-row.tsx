@@ -277,7 +277,7 @@ export function PlpListRowReturnable({
             role="img"
             aria-label={label}
             tabIndex={0}
-            className="inline-flex rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex align-middle rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Icon
               className={cn(
