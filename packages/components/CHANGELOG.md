@@ -2,7 +2,7 @@
 
 ---
 
-### Build refactor: per-file output, portable theme, peer-dep cleanup ([#TBD](https://github.com/free-agent83/clarity-v2/pull/TBD))
+### Build refactor: per-file output, portable theme, peer-dep cleanup ([#126](https://github.com/free-agent83/clarity-v2/pull/126))
 
 Reshapes the library's build output so it behaves like a real publishable package for pure-React, Next.js App Router, and any other consumer. No component API changes. See [`docs/plans/2026-04-23-components-build-refactor-plan.md`](../../docs/plans/2026-04-23-components-build-refactor-plan.md) for the full design.
 
