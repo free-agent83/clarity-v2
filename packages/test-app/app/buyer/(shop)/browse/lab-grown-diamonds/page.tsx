@@ -1,10 +1,10 @@
-import { fetchDiamondList } from "@/lib/api/diamonds";
-import { formatUSD } from "@/lib/utils";
 import {
-  LayoutPlp,
-  PER_PAGE_OPTIONS,
-  DEFAULT_PER_PAGE,
-} from "@/components/layouts/layout-plp/layout-plp";
+  DIAMOND_FILTERS,
+  fetchDiamondListFiltered,
+} from "@/lib/api/diamonds";
+import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
+import { formatUSD } from "@/lib/utils";
+import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
 import { ProductListItem } from "@/components/products/product-list-item";
 
 import { LabGrownDiamondsFilters } from "./filters";
@@ -12,23 +12,18 @@ import { LabGrownDiamondsFilters } from "./filters";
 export default async function LabGrownDiamondsListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; perPage?: string }>;
+  searchParams: Promise<PageSearchParams>;
 }) {
-  const params = await searchParams;
-
-  const {
-    items: paginatedItems,
-    totalItems,
-    totalPages,
-    currentPage,
-    perPage,
-  } = await fetchDiamondList(
-    {
-      page: Number(params.page) || 1,
-      perPage: Number(params.perPage) || DEFAULT_PER_PAGE,
-      perPageOptions: PER_PAGE_OPTIONS,
-    },
+  const parsed = parsePageListParams(await searchParams, DIAMOND_FILTERS);
+  const { items, totalItems } = await fetchDiamondListFiltered(
+    parsed.filters,
+    parsed.sort,
+    parsed.pagination,
     true,
+  );
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalItems / parsed.pagination.perPage),
   );
 
   const breadcrumbs = [
@@ -41,28 +36,32 @@ export default async function LabGrownDiamondsListPage({
       categoryName="Lab Grown Diamonds"
       resultCount={totalItems}
       toolbar={<LabGrownDiamondsFilters />}
-      currentPage={currentPage}
+      currentPage={parsed.pagination.page}
       totalPages={totalPages}
-      perPage={perPage}
+      perPage={parsed.pagination.perPage}
     >
-      {paginatedItems.map((item) => (
+      {items.map((item) => (
         <ProductListItem
           key={item.id}
           id={item.id}
           href={`/buyer/browse/lab-grown-diamonds/${item.id}`}
-          imageSrc={item.images.main}
+          imageSrc={item.image}
           imageAlt={item.description}
           title={item.description}
-          subtitle={`${item.certification.lab} ${item.certification.number} · ${item.stockId}`}
+          subtitle={`${item.certLab} ${item.certNumber} · ${item.stockId}`}
           priceLabel="Price"
           formattedPrice={formatUSD(item.price)}
-          tags={[
-            {
-              key: "cert",
-              label: item.certification.lab,
-              title: `Certified by ${item.certification.lab}`,
-            },
-          ]}
+          tags={
+            item.certLab
+              ? [
+                  {
+                    key: "cert",
+                    label: item.certLab,
+                    title: `Certified by ${item.certLab}`,
+                  },
+                ]
+              : []
+          }
         />
       ))}
     </LayoutPlp>

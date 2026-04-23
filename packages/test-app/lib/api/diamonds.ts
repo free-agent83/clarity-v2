@@ -182,6 +182,7 @@ export const DIAMOND_FILTERS: FilterDefinition = {
 
 export interface DiamondListItem {
   id: string;
+  stockId: string;
   shape: string;
   carat: number;
   color: string;
@@ -191,6 +192,8 @@ export interface DiamondListItem {
   pricePerCarat: number;
   image: string;
   description: string;
+  certLab: string;
+  certNumber: string;
 }
 
 /** Helper: extract array filter values for a given key */
@@ -375,10 +378,12 @@ export async function fetchDiamondListFiltered(
 
   const whereClause = and(...conditions);
 
-  // Base query shape: products → diamonds, with left join to thumbnail image
+  // Base query shape: products → diamonds, with left joins to thumbnail
+  // image + certification + certification lab (all optional on the product).
   const baseFrom = db
     .select({
       id: products.id,
+      stockId: products.stockId,
       priceUsd: products.priceUsd,
       pricePerCaratUsd: diamonds.pricePerCaratUsd,
       description: products.description,
@@ -389,6 +394,8 @@ export async function fetchDiamondListFiltered(
       clarityValue: diamondClarityGrades.value,
       cutValue: diamondCutGrades.value,
       mainImage: productImages.url,
+      certNumber: certifications.certificateNumber,
+      certLabValue: certificationLabs.value,
     })
     .from(products)
     .innerJoin(diamonds, eq(diamonds.productId, products.id))
@@ -406,6 +413,8 @@ export async function fetchDiamondListFiltered(
         eq(productImages.isThumbnail, true),
       ),
     )
+    .leftJoin(certifications, eq(certifications.productId, products.id))
+    .leftJoin(certificationLabs, eq(certificationLabs.id, certifications.labId))
     .where(whereClause);
 
   // Count query (same joins + where, no limit/offset)
@@ -450,6 +459,7 @@ export async function fetchDiamondListFiltered(
 
   const items: DiamondListItem[] = rows.map((row) => ({
     id: row.id,
+    stockId: row.stockId,
     shape: row.shapeValue ?? "Unknown",
     carat: Number(row.carat),
     color: row.colorValue ?? "Unknown",
@@ -459,6 +469,8 @@ export async function fetchDiamondListFiltered(
     pricePerCarat: Number(row.pricePerCaratUsd ?? 0),
     image: row.mainImage ?? "",
     description: row.description,
+    certLab: row.certLabValue ?? "",
+    certNumber: row.certNumber ?? "",
   }));
 
   return { items, totalItems };

@@ -9,6 +9,8 @@ import {
   gemstoneTreatments,
   gemstoneOrigins,
   productImages,
+  certifications,
+  certificationLabs,
 } from "@/db/schema";
 import {
   eq,
@@ -157,16 +159,20 @@ export const GEMSTONE_FILTERS: FilterDefinition = {
 
 export interface GemstoneListItem {
   id: string;
+  stockId: string;
   type: string;
   shape: string;
   carat: number;
   color: string;
   clarity: string;
   cut: string;
+  origin: string;
   price: number;
   pricePerCarat: number;
   image: string;
   description: string;
+  certLab: string;
+  certNumber: string;
 }
 
 /** Helper: extract array filter values for a given key */
@@ -318,10 +324,13 @@ export async function fetchGemstoneListFiltered(
 
   const whereClause = and(...conditions);
 
-  // Base query shape: products → gemstones, with left join to thumbnail image
+  // Base query shape: products → gemstones, with left joins to thumbnail
+  // image + origin (optional) + certification + certification lab (all
+  // optional on the product).
   const baseFrom = db
     .select({
       id: products.id,
+      stockId: products.stockId,
       priceUsd: products.priceUsd,
       pricePerCaratUsd: gemstones.pricePerCaratUsd,
       description: products.description,
@@ -332,13 +341,17 @@ export async function fetchGemstoneListFiltered(
       typeValue: gemstoneTypes.value,
       shapeValue: shapes.value,
       cutValue: gemstoneCutGrades.value,
+      originValue: gemstoneOrigins.value,
       mainImage: productImages.url,
+      certNumber: certifications.certificateNumber,
+      certLabValue: certificationLabs.value,
     })
     .from(products)
     .innerJoin(gemstones, eq(gemstones.productId, products.id))
     .innerJoin(gemstoneTypes, eq(gemstones.gemstoneTypeId, gemstoneTypes.id))
     .innerJoin(shapes, eq(gemstones.shapeId, shapes.id))
     .innerJoin(gemstoneCutGrades, eq(gemstones.cutId, gemstoneCutGrades.id))
+    .leftJoin(gemstoneOrigins, eq(gemstones.originId, gemstoneOrigins.id))
     .leftJoin(
       productImages,
       and(
@@ -346,6 +359,8 @@ export async function fetchGemstoneListFiltered(
         eq(productImages.isThumbnail, true),
       ),
     )
+    .leftJoin(certifications, eq(certifications.productId, products.id))
+    .leftJoin(certificationLabs, eq(certificationLabs.id, certifications.labId))
     .where(whereClause);
 
   // Count query (same joins + where, no limit/offset)
@@ -386,16 +401,20 @@ export async function fetchGemstoneListFiltered(
 
   const items: GemstoneListItem[] = rows.map((row) => ({
     id: row.id,
+    stockId: row.stockId,
     type: row.typeValue ?? "Unknown",
     shape: row.shapeValue ?? "Unknown",
     carat: Number(row.carat),
     color: row.color ?? "Unknown",
     clarity: row.clarity ?? "Unknown",
     cut: row.cutValue ?? "Unknown",
+    origin: row.originValue ?? "",
     price: Number(row.priceUsd),
     pricePerCarat: Number(row.pricePerCaratUsd ?? 0),
     image: row.mainImage ?? "",
     description: row.description,
+    certLab: row.certLabValue ?? "",
+    certNumber: row.certNumber ?? "",
   }));
 
   return { items, totalItems };

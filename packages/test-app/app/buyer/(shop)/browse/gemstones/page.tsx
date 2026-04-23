@@ -1,10 +1,10 @@
-import { fetchGemstoneList } from "@/lib/api/gemstones";
-import { formatUSD } from "@/lib/utils";
 import {
-  LayoutPlp,
-  PER_PAGE_OPTIONS,
-  DEFAULT_PER_PAGE,
-} from "@/components/layouts/layout-plp/layout-plp";
+  GEMSTONE_FILTERS,
+  fetchGemstoneListFiltered,
+} from "@/lib/api/gemstones";
+import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
+import { formatUSD } from "@/lib/utils";
+import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
 import { ProductListItem } from "@/components/products/product-list-item";
 
 import { GemstonesFilters } from "./filters";
@@ -12,21 +12,18 @@ import { GemstonesFilters } from "./filters";
 export default async function GemstonesListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; perPage?: string }>;
+  searchParams: Promise<PageSearchParams>;
 }) {
-  const params = await searchParams;
-
-  const {
-    items: paginatedItems,
-    totalItems,
-    totalPages,
-    currentPage,
-    perPage,
-  } = await fetchGemstoneList({
-    page: Number(params.page) || 1,
-    perPage: Number(params.perPage) || DEFAULT_PER_PAGE,
-    perPageOptions: PER_PAGE_OPTIONS,
-  });
+  const parsed = parsePageListParams(await searchParams, GEMSTONE_FILTERS);
+  const { items, totalItems } = await fetchGemstoneListFiltered(
+    parsed.filters,
+    parsed.sort,
+    parsed.pagination,
+  );
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalItems / parsed.pagination.perPage),
+  );
 
   const breadcrumbs = [{ label: "Gemstones", href: "/buyer/browse/gemstones" }];
 
@@ -36,24 +33,26 @@ export default async function GemstonesListPage({
       categoryName="Gemstones"
       resultCount={totalItems}
       toolbar={<GemstonesFilters />}
-      currentPage={currentPage}
+      currentPage={parsed.pagination.page}
       totalPages={totalPages}
-      perPage={perPage}
+      perPage={parsed.pagination.perPage}
     >
-      {paginatedItems.map((item) => (
+      {items.map((item) => (
         <ProductListItem
           key={item.id}
           id={item.id}
           href={`/buyer/browse/gemstones/${item.id}`}
-          imageSrc={item.images.main}
+          imageSrc={item.image}
           imageAlt={item.description}
           title={item.description}
-          subtitle={`${item.certification.lab} ${item.certification.number} · ${item.stockId}`}
+          subtitle={`${item.certLab} ${item.certNumber} · ${item.stockId}`}
           priceLabel="Price"
           formattedPrice={formatUSD(item.price)}
           tags={[
             { key: "type", label: item.type, title: item.type },
-            { key: "origin", label: item.origin, title: item.origin },
+            ...(item.origin
+              ? [{ key: "origin", label: item.origin, title: item.origin }]
+              : []),
           ]}
         />
       ))}

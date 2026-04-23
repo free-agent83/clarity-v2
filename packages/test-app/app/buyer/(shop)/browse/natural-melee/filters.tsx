@@ -17,17 +17,17 @@ const FILTERS: FilterDef[] = [
     options: ["Round", "Princess", "Baguette", "Tapered baguette"],
   },
   {
-    key: "size",
+    key: "sizeRange",
     label: "Size",
     options: ["Under 1mm", "1–1.5mm", "1.5–2mm", "2–2.5mm", "2.5–3mm", "3mm+"],
   },
   {
-    key: "color_range",
+    key: "colorRange",
     label: "Color range",
     options: ["DEF", "GHI", "JKL", "MNO"],
   },
   {
-    key: "clarity_range",
+    key: "clarityRange",
     label: "Clarity range",
     options: ["VVS", "VS", "SI", "I"],
   },
@@ -39,17 +39,16 @@ const FILTERS: FilterDef[] = [
 ];
 
 const SORT_OPTIONS: FilterToolbarSortOption[] = [
-  { value: "featured", label: "Featured" },
+  { value: "newest", label: "Newest" },
   { value: "price_asc", label: "Price: Low → High" },
   { value: "price_desc", label: "Price: High → Low" },
-  { value: "newest", label: "Newest" },
-  { value: "carat", label: "Carat" },
 ];
 
 export function NaturalMeleeFilters() {
   const toolbarProps = usePlpFilterController({
     filterDefs: FILTERS,
     sortOptions: SORT_OPTIONS,
+    defaultSort: "newest",
   });
 
   return <FilterToolbar {...toolbarProps} onSearchSubmit={() => {}} />;

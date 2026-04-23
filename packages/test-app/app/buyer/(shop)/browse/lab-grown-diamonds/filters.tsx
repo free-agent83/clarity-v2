@@ -28,9 +28,10 @@ const FILTERS: FilterDef[] = [
     ],
   },
   {
+    kind: "range",
     key: "carat",
     label: "Carat",
-    options: ["Under 0.5ct", "0.5–1ct", "1–2ct", "2–3ct", "3–5ct", "5ct+"],
+    axis: { id: "carat", min: 0, max: 10, step: 0.01, unit: "ct" },
   },
   {
     key: "color",
@@ -55,17 +56,18 @@ const FILTERS: FilterDef[] = [
 ];
 
 const SORT_OPTIONS: FilterToolbarSortOption[] = [
-  { value: "featured", label: "Featured" },
+  { value: "newest", label: "Newest" },
   { value: "price_asc", label: "Price: Low → High" },
   { value: "price_desc", label: "Price: High → Low" },
-  { value: "newest", label: "Newest" },
-  { value: "carat", label: "Carat" },
+  { value: "carat_asc", label: "Carat: Low → High" },
+  { value: "carat_desc", label: "Carat: High → Low" },
 ];
 
 export function LabGrownDiamondsFilters() {
   const toolbarProps = usePlpFilterController({
     filterDefs: FILTERS,
     sortOptions: SORT_OPTIONS,
+    defaultSort: "newest",
   });
 
   return <FilterToolbar {...toolbarProps} onSearchSubmit={() => {}} />;

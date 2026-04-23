@@ -1,10 +1,7 @@
-import { fetchMeleeList } from "@/lib/api/melee";
+import { MELEE_FILTERS, fetchMeleeListFiltered } from "@/lib/api/melee";
+import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
 import { formatUSD } from "@/lib/utils";
-import {
-  LayoutPlp,
-  PER_PAGE_OPTIONS,
-  DEFAULT_PER_PAGE,
-} from "@/components/layouts/layout-plp/layout-plp";
+import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
 import { ProductListItem } from "@/components/products/product-list-item";
 
 import { LabGrownMeleeFilters } from "./filters";
@@ -12,23 +9,18 @@ import { LabGrownMeleeFilters } from "./filters";
 export default async function LabGrownMeleeListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; perPage?: string }>;
+  searchParams: Promise<PageSearchParams>;
 }) {
-  const params = await searchParams;
-
-  const {
-    items: paginatedItems,
-    totalItems,
-    totalPages,
-    currentPage,
-    perPage,
-  } = await fetchMeleeList(
-    {
-      page: Number(params.page) || 1,
-      perPage: Number(params.perPage) || DEFAULT_PER_PAGE,
-      perPageOptions: PER_PAGE_OPTIONS,
-    },
+  const parsed = parsePageListParams(await searchParams, MELEE_FILTERS);
+  const { items, totalItems } = await fetchMeleeListFiltered(
+    parsed.filters,
+    parsed.sort,
+    parsed.pagination,
     true,
+  );
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalItems / parsed.pagination.perPage),
   );
 
   const breadcrumbs = [
@@ -41,16 +33,16 @@ export default async function LabGrownMeleeListPage({
       categoryName="Lab Grown Melee"
       resultCount={totalItems}
       toolbar={<LabGrownMeleeFilters />}
-      currentPage={currentPage}
+      currentPage={parsed.pagination.page}
       totalPages={totalPages}
-      perPage={perPage}
+      perPage={parsed.pagination.perPage}
     >
-      {paginatedItems.map((item) => (
+      {items.map((item) => (
         <ProductListItem
           key={item.id}
           id={item.id}
           href={`/buyer/browse/lab-grown-melee/${item.id}`}
-          imageSrc={item.images.main}
+          imageSrc={item.image}
           imageAlt={item.description}
           title={item.description}
           subtitle={item.stockId}
