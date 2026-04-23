@@ -1,11 +1,11 @@
 import { fetchDiamondList } from "@/lib/api/diamonds";
 import { formatUSD } from "@/lib/utils";
 import {
-  LayoutProductList,
+  LayoutPlp,
   PER_PAGE_OPTIONS,
   DEFAULT_PER_PAGE,
   type SortOption,
-} from "@/components/layouts/layout-product-list/layout-product-list";
+} from "@/components/layouts/layout-plp/layout-plp";
 import { ProductListItem } from "@/components/products/product-list-item";
 import { UncontrolledFilterBar as FilterBar } from "@/components/filters/uncontrolled-filter-bar";
 
@@ -85,7 +85,7 @@ export default async function NaturalDiamondsListPage({
   ];
 
   return (
-    <LayoutProductList
+    <LayoutPlp
       breadcrumbs={breadcrumbs}
       categoryName="Natural Diamonds"
       resultCount={totalItems}
@@ -115,6 +115,6 @@ export default async function NaturalDiamondsListPage({
           ]}
         />
       ))}
-    </LayoutProductList>
+    </LayoutPlp>
   );
 }

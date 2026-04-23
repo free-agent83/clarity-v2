@@ -1,11 +1,11 @@
 import { fetchGemstoneList } from "@/lib/api/gemstones";
 import { formatUSD } from "@/lib/utils";
 import {
-  LayoutProductList,
+  LayoutPlp,
   PER_PAGE_OPTIONS,
   DEFAULT_PER_PAGE,
   type SortOption,
-} from "@/components/layouts/layout-product-list/layout-product-list";
+} from "@/components/layouts/layout-plp/layout-plp";
 import { ProductListItem } from "@/components/products/product-list-item";
 import { UncontrolledFilterBar as FilterBar } from "@/components/filters/uncontrolled-filter-bar";
 
@@ -106,7 +106,7 @@ export default async function GemstonesListPage({
   const breadcrumbs = [{ label: "Gemstones", href: "/buyer/browse/gemstones" }];
 
   return (
-    <LayoutProductList
+    <LayoutPlp
       breadcrumbs={breadcrumbs}
       categoryName="Gemstones"
       resultCount={totalItems}
@@ -133,6 +133,6 @@ export default async function GemstonesListPage({
           ]}
         />
       ))}
-    </LayoutProductList>
+    </LayoutPlp>
   );
 }

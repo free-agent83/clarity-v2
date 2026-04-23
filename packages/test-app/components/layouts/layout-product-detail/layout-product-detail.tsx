@@ -2,10 +2,19 @@
 
 import * as React from "react";
 import { useState } from "react";
+import Link from "next/link";
+
+import {
+  Breadcrumb,
+  BreadcrumbItem as DsBreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@nivoda/components";
 
 import { cn } from "@/lib/utils";
 import { ProductListItem } from "@/components/products/product-list-item";
-import { LayoutBrowse } from "../layout-browse/layout-browse";
 import type { ProductListItemProps } from "@/components/products/product-list-item";
 import type { BreadcrumbItem, ProductImage, SpecRow } from "../types";
 
@@ -50,7 +59,28 @@ export function LayoutProductDetail({
   const currentImage = images[activeImageIdx] ?? images[0];
 
   return (
-    <LayoutBrowse breadcrumbs={breadcrumbs} className={className}>
+    <div className={cn("flex flex-col gap-12 pb-32", className)}>
+      <Breadcrumb>
+        <BreadcrumbList className="gap-3 text-base">
+          {breadcrumbs.map((item, i) => (
+            <React.Fragment key={item.href}>
+              {i > 0 && <BreadcrumbSeparator className="[&>svg]:size-4" />}
+              <DsBreadcrumbItem>
+                {i < breadcrumbs.length - 1 ? (
+                  <BreadcrumbLink asChild>
+                    <Link href={item.href}>{item.label}</Link>
+                  </BreadcrumbLink>
+                ) : (
+                  <BreadcrumbPage className="truncate">
+                    {item.label}
+                  </BreadcrumbPage>
+                )}
+              </DsBreadcrumbItem>
+            </React.Fragment>
+          ))}
+        </BreadcrumbList>
+      </Breadcrumb>
+
       {/* Two-column grid */}
       <div className="grid grid-cols-[1fr_480px] items-start gap-12">
         {/* LEFT: Sticky gallery */}
@@ -183,6 +213,6 @@ export function LayoutProductDetail({
           </div>
         </div>
       ) : null}
-    </LayoutBrowse>
+    </div>
   );
 }
