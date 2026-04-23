@@ -20,6 +20,7 @@
     "vite": "^6.4.1"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ]
 }
