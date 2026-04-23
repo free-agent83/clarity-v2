@@ -68,6 +68,11 @@
 @custom-variant dark (&:is(.dark *));
 @custom-variant data-open (&[data-state="open"]);
 @custom-variant data-closed (&[data-state="closed"]);
+@custom-variant data-checked (&[data-state="checked"]);
+@custom-variant data-unchecked (&[data-state="unchecked"]);
+@custom-variant data-indeterminate (&[data-state="indeterminate"]);
+@custom-variant data-horizontal (&[data-orientation="horizontal"]);
+@custom-variant data-vertical (&[data-orientation="vertical"]);
 
 /* ─── Tailwind v4 token mapping ─────────────────────────────────────── */
 /* Tells Tailwind how token names map to utility classes. `inline` emits
