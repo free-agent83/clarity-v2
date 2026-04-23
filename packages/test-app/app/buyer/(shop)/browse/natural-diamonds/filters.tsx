@@ -1,15 +1,16 @@
 "use client";
 
-import * as React from "react";
-
 import {
   FilterToolbar,
   type FilterToolbarSortOption,
 } from "@nivoda/components";
 
-import { MultiSelectFilterButton } from "@/components/filters/multi-select-filter-button";
+import {
+  usePlpFilterController,
+  type FilterDef,
+} from "@/hooks/use-plp-filter-controller";
 
-const FILTERS = [
+const FILTERS: FilterDef[] = [
   {
     key: "shape",
     label: "Shape",
@@ -62,34 +63,10 @@ const SORT_OPTIONS: FilterToolbarSortOption[] = [
 ];
 
 export function NaturalDiamondsFilters() {
-  const [values, setValues] = React.useState<Record<string, string[]>>({});
-  const [sortValue, setSortValue] = React.useState(SORT_OPTIONS[0].value);
+  const toolbarProps = usePlpFilterController({
+    filterDefs: FILTERS,
+    sortOptions: SORT_OPTIONS,
+  });
 
-  const activeFilterCount = Object.values(values).reduce(
-    (n, v) => n + v.length,
-    0,
-  );
-  const hasActiveFilters = activeFilterCount > 0;
-
-  const filters = FILTERS.map((f) => (
-    <MultiSelectFilterButton
-      key={f.key}
-      label={f.label}
-      options={f.options}
-      value={values[f.key] ?? []}
-      onChange={(next) => setValues((prev) => ({ ...prev, [f.key]: next }))}
-    />
-  ));
-
-  return (
-    <FilterToolbar
-      filters={filters}
-      activeFilterCount={activeFilterCount}
-      hasActiveFilters={hasActiveFilters}
-      onClearAll={() => setValues({})}
-      sortOptions={SORT_OPTIONS}
-      sortValue={sortValue}
-      onSortChange={setSortValue}
-    />
-  );
+  return <FilterToolbar {...toolbarProps} onSearchSubmit={() => {}} />;
 }
