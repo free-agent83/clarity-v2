@@ -10,6 +10,7 @@ dist/
 # Build outputs
 storybook-static/
 build-storybook.log
+.next/
 
 # Nx cache
 .nx/cache
@@ -26,6 +27,7 @@ packages/components/.storybook/*.d.ts.map
 # Environment
 .env
 .env.local
+.env.*.local
 
 # Compiled Java class files
 *.class
@@ -71,8 +73,8 @@ Thumbs.db
 # Superpowers brainstorming session artefacts (transient)
 .superpowers/
 
-# User's local settings for Claude
-.claude/settings.local.json
+# User's local settings for Claude (matches at any depth)
+**/.claude/settings.local.json
 
 # Claude Code worktree checkouts (local-only)
 .claude/worktrees/

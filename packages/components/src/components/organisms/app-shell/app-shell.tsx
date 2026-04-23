@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { IconMenu2, IconSearch } from "@tabler/icons-react"
 
