@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@nivoda/components";
 import { UserSwitcher } from "@/components/admin/user-switcher";
 import type { AdminUserItem } from "@/lib/api/admin/users";
 

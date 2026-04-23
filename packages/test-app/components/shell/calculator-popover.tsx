@@ -9,9 +9,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@nivoda/components";
+import { Input } from "@nivoda/components";
+import { Label } from "@nivoda/components";
 import { cn } from "@/lib/utils";
 
 const SHAPES = [

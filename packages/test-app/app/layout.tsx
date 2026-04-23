@@ -1,17 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Inter } from "next/font/google";
 
-import "./globals.css";
+import "@nivoda/components/styles.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-import { cn } from "@/lib/utils";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-});
+import { Toaster } from "@nivoda/components";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.minivoda.com"),
@@ -46,16 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn(
-        "antialiased",
-        fontMono.variable,
-        "font-sans",
-        inter.variable,
-      )}
-    >
+    <html lang="en" suppressHydrationWarning className="antialiased">
       <body>
         <ThemeProvider>
           {children}

@@ -2,26 +2,26 @@
 
 import * as React from "react";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@nivoda/components";
+import { Input } from "@nivoda/components";
+import { Label } from "@nivoda/components";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+} from "@nivoda/components";
+import { Separator } from "@nivoda/components";
+import { Switch } from "@nivoda/components";
+import { Textarea } from "@nivoda/components";
 import type { CreateProductInput } from "@/lib/api/admin/products";
 import type { AdminSupplierItem } from "@/lib/api/admin/products";
 import type { LookupItem } from "@/lib/api/admin/lookups";

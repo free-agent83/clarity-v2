@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/lib/api/users";
 import { fetchAllOrders } from "@/lib/api/orders";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import { IconUpload } from "@tabler/icons-react";
 import { OrdersRealtimeWrapper } from "@/components/orders/orders-realtime-wrapper";
 

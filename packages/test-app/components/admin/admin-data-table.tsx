@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@nivoda/components";
+import { Checkbox } from "@nivoda/components";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@nivoda/components";
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@nivoda/components";
 
 interface Column<T> {
   header: string;

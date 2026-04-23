@@ -2,9 +2,9 @@
 
 import { useActionState } from "react";
 import { login } from "./actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@nivoda/components";
+import { Input } from "@nivoda/components";
+import { Label } from "@nivoda/components";
 
 export function LoginForm({ next }: { next: string | null }) {
   const [state, formAction, isPending] = useActionState(login, null);

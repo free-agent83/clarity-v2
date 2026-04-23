@@ -8,7 +8,7 @@ import {
   CommandInput,
   CommandList,
   CommandGroup,
-} from "@/components/ui/command";
+} from "@nivoda/components";
 import { useSearch } from "@/hooks/use-search";
 import { SearchResultItem } from "@/components/shell/search-result-item";
 import { IconLoader2 } from "@tabler/icons-react";

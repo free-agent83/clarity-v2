@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@nivoda/components";
+import { Input } from "@nivoda/components";
 import { IconPlus, IconHeart, IconDiamond } from "@tabler/icons-react";
 import { useShortlistsState } from "@/hooks/use-shortlists-state";
 import type { Shortlist } from "@/hooks/use-shortlists-state";

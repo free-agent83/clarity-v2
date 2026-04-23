@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@nivoda/components";
+import { Checkbox } from "@nivoda/components";
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@nivoda/components";
 import { PaginationControls } from "@/components/layouts/pagination-controls";
 import { FilterBar, type FilterOption } from "@/components/filters/filter-bar";
 import { SortButton, type SortOption } from "@/components/filters/sort-button";

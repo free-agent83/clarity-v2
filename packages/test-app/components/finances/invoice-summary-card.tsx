@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@nivoda/components";
+import { Separator } from "@nivoda/components";
+import { Button } from "@nivoda/components";
 import { IconDownload } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import {

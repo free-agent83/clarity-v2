@@ -5,7 +5,7 @@ import { AdminListPage } from "@/components/admin/admin-list-page";
 import { AdminDataTable } from "@/components/admin/admin-data-table";
 import { DeleteDialog } from "@/components/admin/delete-dialog";
 import { OrderModal } from "@/components/admin/orders/order-modal";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@nivoda/components";
 import {
   getAdminOrders,
   getAdminOrder,

@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
+import { Button } from "@nivoda/components";
+import { Input } from "@nivoda/components";
+import { Label } from "@nivoda/components";
+import { Separator } from "@nivoda/components";
+import { Switch } from "@nivoda/components";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@nivoda/components";
 
 function SettingsCard({
   title,

@@ -6,15 +6,15 @@ import {
   useCheckoutStore,
   type LocalAddress,
 } from "@/hooks/use-checkout-store";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@nivoda/components";
+import { Input } from "@nivoda/components";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@nivoda/components";
 
 type AddAddressModalProps = {
   open: boolean;

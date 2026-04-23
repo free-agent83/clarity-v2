@@ -11,10 +11,10 @@ import { toast } from "sonner";
 import { cn, formatUSD } from "@/lib/utils";
 import { useCartStore, type CartItem } from "@/hooks/use-cart-store";
 import { useCheckoutStore } from "@/hooks/use-checkout-store";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@nivoda/components";
+import { Textarea } from "@nivoda/components";
+import { Button } from "@nivoda/components";
+import { Separator } from "@nivoda/components";
 
 const CATEGORY_ICONS: Record<
   string,

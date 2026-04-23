@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { IconLogout } from "@tabler/icons-react";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@nivoda/components";
 
 export function SignOutButton() {
   const [isLoading, setIsLoading] = useState(false);

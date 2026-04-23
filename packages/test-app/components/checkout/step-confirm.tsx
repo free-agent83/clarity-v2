@@ -11,7 +11,7 @@ import {
   useCheckoutPaymentTerm,
   type LocalAddress,
 } from "@/hooks/use-checkout-store";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@nivoda/components";
 
 const CATEGORY_ICONS: Record<
   string,

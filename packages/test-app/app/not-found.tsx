@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import { IconHome, IconSearch } from "@tabler/icons-react";
 
 const FACETS = Array.from({ length: 12 }, (_, i) => ({

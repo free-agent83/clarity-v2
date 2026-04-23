@@ -15,7 +15,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@nivoda/components";
 
 export function RealtimeStatus() {
   const { isConnected, isSyncing } = useContext(RealtimeContext);

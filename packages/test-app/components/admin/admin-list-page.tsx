@@ -2,15 +2,15 @@
 
 import * as React from "react";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@nivoda/components";
+import { Input } from "@nivoda/components";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@nivoda/components";
 import { cn } from "@/lib/utils";
 
 interface FilterConfig {

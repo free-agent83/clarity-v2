@@ -5,7 +5,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@nivoda/components";
 import { formatUSD } from "@/lib/utils";
 import type { FinanceLineItem } from "@/lib/api/finances";
 

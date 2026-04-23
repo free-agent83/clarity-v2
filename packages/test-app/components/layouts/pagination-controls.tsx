@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@nivoda/components";
 
 type PaginationControlsProps = {
   currentPage: number;

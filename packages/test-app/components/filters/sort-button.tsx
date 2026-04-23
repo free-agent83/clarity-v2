@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@nivoda/components";
 import { IconChevronDown } from "@tabler/icons-react";
 
 export type SortOption = {

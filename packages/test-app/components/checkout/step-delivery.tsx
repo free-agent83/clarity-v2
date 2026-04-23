@@ -14,8 +14,14 @@ import {
   useCheckoutStore,
   type LocalAddress,
 } from "@/hooks/use-checkout-store";
-import { NativeSelect } from "@/components/ui/native-select";
-import { Button } from "@/components/ui/button";
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@nivoda/components";
 import { AddAddressModal } from "@/components/checkout/add-address-modal";
 
 /* ── Normalised address type used by this component ────────── */
@@ -369,21 +375,23 @@ export function StepDelivery() {
                   <label className="text-xs text-muted-foreground">
                     Deliver this item to
                   </label>
-                  <NativeSelect
+                  <Select
                     value={perItemAddressId[item.productId] ?? ""}
-                    onChange={(e) =>
-                      setPerItemAddressId(item.productId, e.target.value)
+                    onValueChange={(v) =>
+                      setPerItemAddressId(item.productId, v)
                     }
                   >
-                    <option value="" disabled>
-                      Select an address
-                    </option>
-                    {allAddresses.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.name} — {a.line}
-                      </option>
-                    ))}
-                  </NativeSelect>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an address" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allAddresses.map((a) => (
+                        <SelectItem key={a.id} value={a.id}>
+                          {a.name} — {a.line}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             ))}

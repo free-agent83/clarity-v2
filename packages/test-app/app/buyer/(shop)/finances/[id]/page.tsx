@@ -6,7 +6,7 @@ import {
   STATUS_DOT_COLORS,
   formatStatus,
 } from "@/lib/api/finances";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@nivoda/components";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { InvoicedItemsTable } from "@/components/finances/invoiced-items-table";

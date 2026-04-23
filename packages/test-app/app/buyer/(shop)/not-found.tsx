@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import { IconHome, IconSearch } from "@tabler/icons-react";
 
 const FACETS = Array.from({ length: 12 }, (_, i) => ({

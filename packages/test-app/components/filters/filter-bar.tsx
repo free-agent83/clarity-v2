@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@nivoda/components";
+import { Checkbox } from "@nivoda/components";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@nivoda/components";
 import {
   Sheet,
   SheetContent,
@@ -15,7 +15,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@nivoda/components";
 import {
   IconAdjustmentsHorizontal,
   IconChevronDown,

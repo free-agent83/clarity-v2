@@ -15,11 +15,11 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Spinner } from "@/components/ui/spinner";
+} from "@nivoda/components";
+import { Button } from "@nivoda/components";
+import { Switch } from "@nivoda/components";
+import { Separator } from "@nivoda/components";
+import { Spinner } from "@nivoda/components";
 import { cn, formatUSD } from "@/lib/utils";
 
 export type ShareableProduct = {

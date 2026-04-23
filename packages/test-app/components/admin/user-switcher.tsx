@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@nivoda/components";
 import type { AdminUserItem } from "@/lib/api/admin/users";
 
 interface UserSwitcherProps {

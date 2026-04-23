@@ -22,6 +22,9 @@ export default defineConfig({
         "react/jsx-runtime",
         "@radix-ui/react-slot",
       ],
+      output: {
+        banner: '"use client";',
+      },
     },
     outDir: "dist",
     emptyOutDir: true,

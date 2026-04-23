@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { IconCheck, IconSelector } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import {
   Command,
   CommandEmpty,
@@ -10,12 +10,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from "@nivoda/components";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@nivoda/components";
 import { formatUSD } from "@/lib/utils";
 
 export interface ProductOption {

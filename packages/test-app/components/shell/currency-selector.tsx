@@ -8,7 +8,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@nivoda/components";
 
 const CURRENCIES = [
   { code: "EUR", label: "Euro", symbol: "€", flag: "🇪🇺" },

@@ -14,22 +14,22 @@ import {
   IconCheck,
 } from "@tabler/icons-react";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
+import { Button } from "@nivoda/components";
+import { Badge } from "@nivoda/components";
+import { Input } from "@nivoda/components";
+import { Textarea } from "@nivoda/components";
+import { Label } from "@nivoda/components";
+import { Checkbox } from "@nivoda/components";
+import { RadioGroup, RadioGroupItem } from "@nivoda/components";
+import { Switch } from "@nivoda/components";
+import { Slider } from "@nivoda/components";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@nivoda/components";
 import {
   Card,
   CardContent,
@@ -37,19 +37,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from "@nivoda/components";
+import { Alert, AlertDescription, AlertTitle } from "@nivoda/components";
 import {
   Avatar,
   AvatarBadge,
   AvatarFallback,
   AvatarGroup,
   AvatarGroupCount,
-} from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Spinner } from "@/components/ui/spinner";
-import { Separator } from "@/components/ui/separator";
+} from "@nivoda/components";
+import { Progress } from "@nivoda/components";
+import { Skeleton } from "@nivoda/components";
+import { Spinner } from "@nivoda/components";
+import { Separator } from "@nivoda/components";
 import {
   Table,
   TableBody,
@@ -57,8 +57,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@nivoda/components";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@nivoda/components";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -66,7 +66,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from "@nivoda/components";
 import {
   Pagination,
   PaginationContent,
@@ -75,13 +75,13 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from "@nivoda/components";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@nivoda/components";
 import {
   Dialog,
   DialogContent,
@@ -90,7 +90,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@nivoda/components";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -101,7 +101,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@nivoda/components";
 import {
   Sheet,
   SheetContent,
@@ -109,13 +109,13 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@nivoda/components";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@nivoda/components";
 import {
   Popover,
   PopoverContent,
@@ -123,7 +123,7 @@ import {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@nivoda/components";
 
 // ─── Layout helpers ────────────────────────────────────────────────────────────
 
@@ -570,7 +570,7 @@ export default function KitchenSinkPage() {
 
           <Sub title="Sizes">
             <div className="flex flex-wrap items-center gap-2">
-              <Button size="xs">Extra Small</Button>
+              <Button size="sm">Extra Small</Button>
               <Button size="sm">Small</Button>
               <Button size="default">Default</Button>
               <Button size="lg">Large</Button>
@@ -588,7 +588,7 @@ export default function KitchenSinkPage() {
               <Button size="icon" variant="outline" aria-label="Settings">
                 <IconSettings />
               </Button>
-              <Button size="icon-lg" variant="outline" aria-label="Settings LG">
+              <Button size="icon" variant="outline" aria-label="Settings LG">
                 <IconSettings />
               </Button>
             </div>

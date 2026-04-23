@@ -13,9 +13,9 @@ import {
   CREDIT_USED_BEFORE,
   type PaymentTerm,
 } from "@/hooks/use-checkout-store";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@nivoda/components";
+import { Button } from "@nivoda/components";
+import { Separator } from "@nivoda/components";
 
 /* ── Credit bar ────────────────────────────────────────────── */
 

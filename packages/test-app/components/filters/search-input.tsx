@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@nivoda/components";
 import { IconSearch, IconX } from "@tabler/icons-react";
 
 type SearchInputProps = {

@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
   CarouselNext,
   useCarousel,
-} from "@/components/ui/carousel";
+} from "@nivoda/components";
 
 const HERO_SLIDES = [
   { label: "Slide 1", className: "bg-violet-100 text-violet-500" },

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import { IconArrowLeft } from "@tabler/icons-react";
 
 const DUST_PARTICLES = Array.from({ length: 8 }, (_, i) => ({

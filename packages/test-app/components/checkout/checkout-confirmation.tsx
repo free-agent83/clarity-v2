@@ -14,7 +14,7 @@ import {
 import { toast } from "sonner";
 
 import { useCheckoutStore } from "@/hooks/use-checkout-store";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 
 const MOCK_ORDER_NUMBER = "MN-1234-56789";
 const MOCK_EMAIL = "jo******@gmail.com";

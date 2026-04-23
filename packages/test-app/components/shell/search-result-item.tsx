@@ -1,6 +1,6 @@
 "use client";
 
-import { CommandItem } from "@/components/ui/command";
+import { CommandItem } from "@nivoda/components";
 import {
   IconDiamond,
   IconPackage,

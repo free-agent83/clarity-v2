@@ -19,17 +19,17 @@ import {
 } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "@/components/sign-out-button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback } from "@nivoda/components";
+import { Badge } from "@nivoda/components";
+import { Button } from "@nivoda/components";
+import { ScrollArea } from "@nivoda/components";
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@nivoda/components";
 
 function NavLink({
   item,

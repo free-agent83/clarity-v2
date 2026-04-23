@@ -17,8 +17,8 @@ import { toast } from "sonner";
 
 import { useCartStore, type CartItem } from "@/hooks/use-cart-store";
 import { cn, formatUSD } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@nivoda/components";
+import { Sheet, SheetContent, SheetTitle } from "@nivoda/components";
 
 const CATEGORY_ICONS: Record<
   string,
@@ -119,7 +119,7 @@ function CartItemRow({
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
-            size="xs"
+            size="sm"
             onClick={() => onShortlist(item.id)}
           >
             {isShortlisted ? (
@@ -129,7 +129,7 @@ function CartItemRow({
             )}
             {isShortlisted ? "Shortlisted" : "Add to shortlist"}
           </Button>
-          <Button variant="ghost" size="xs" onClick={() => onRemove(item.id)}>
+          <Button variant="ghost" size="sm" onClick={() => onRemove(item.id)}>
             <IconTrash size={16} />
             Remove
           </Button>

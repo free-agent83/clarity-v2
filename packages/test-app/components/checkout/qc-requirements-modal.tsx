@@ -3,15 +3,15 @@
 import { useState } from "react";
 
 import { useCheckoutStore } from "@/hooks/use-checkout-store";
-import { Button } from "@/components/ui/button";
+import { Button } from "@nivoda/components";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+} from "@nivoda/components";
+import { Textarea } from "@nivoda/components";
 
 type QcRequirementsModalProps = {
   open: boolean;

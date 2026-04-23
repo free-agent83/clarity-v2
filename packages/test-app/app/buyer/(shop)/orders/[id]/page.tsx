@@ -4,9 +4,9 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/api/users";
 import { fetchOrder } from "@/lib/api/orders";
 import type { Order } from "@/lib/api/orders";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@nivoda/components";
+import { Separator } from "@nivoda/components";
+import { Card, CardContent, CardHeader, CardTitle } from "@nivoda/components";
 import {
   IconArrowLeft,
   IconChecklist,

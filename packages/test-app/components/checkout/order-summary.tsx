@@ -8,10 +8,10 @@ import {
   useCheckoutSubtotal,
   useCheckoutPaymentTerm,
 } from "@/hooks/use-checkout-store";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@nivoda/components";
+import { Input } from "@nivoda/components";
+import { Card, CardContent, CardHeader, CardTitle } from "@nivoda/components";
+import { Separator } from "@nivoda/components";
 import { QcRequirementsModal } from "@/components/checkout/qc-requirements-modal";
 
 const MOCK_EUR_RATE = 0.92;

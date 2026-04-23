@@ -9,7 +9,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from "@nivoda/components";
 import type { BreadcrumbItem as BreadcrumbItemType } from "../types";
 
 type LayoutBrowseProps = {
