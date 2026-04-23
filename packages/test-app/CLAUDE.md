@@ -24,7 +24,7 @@ Read these, in order, before touching this package:
 Everything else lives in the docs above. These three are the rules most often violated:
 
 - **No design-system primitives in this package.** Do not create a `components/ui/` folder. Do not run `npx shadcn add`. Primitives are imported from `@nivoda/components`; missing ones are contributed upstream. Components under `components/` here are application compositions only — shell, layouts, admin, product views, etc.
-- **Tokens and theme come from the library.** `app/globals.css` is intentionally three lines — it imports Tailwind and `@nivoda/components/theme.css`. Do not inline tokens, raw colours, or bespoke `@theme` blocks here.
+- **Tokens and theme come from the library.** `app/globals.css` is intentionally three lines — it imports Tailwind and `@nivoda/components/web-theme.css`. Do not inline tokens, raw colours, or bespoke `@theme` blocks here.
 - **Branding: "Minivoda", not "Nivoda"** — in user-facing text. URLs (S3 buckets, API hosts, etc.) stay as-is. Sharing flows must strip Minivoda branding entirely so shared artefacts never reveal our identity to end customers.
 
 ## Agent behaviour

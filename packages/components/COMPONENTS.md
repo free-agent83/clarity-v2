@@ -8,7 +8,7 @@ If you read only one thing before generating UI in this project, read this.
 > - [CLAUDE.md](./CLAUDE.md) — session orientation for this package.
 > - [CONTRIBUTING.md](./CONTRIBUTING.md) — how to build, test, document, and ship.
 > - Each component's own `COMPONENT.md` — props, usage, best practices, deviations.
-> - [`src/styles/theme.css`](./src/styles/theme.css) — the authoritative theme.
+> - [`src/styles/web-theme.css`](./src/styles/web-theme.css) — the authoritative shadcn/Tailwind theme (layer 2). Reads [`src/styles/primitives.css`](./src/styles/primitives.css) for raw token values (layer 1).
 
 ## 1. Operating principles
 
@@ -16,13 +16,13 @@ A handful of non-negotiable rules shape everything in this package. They are cov
 
 - **The components ARE the design.** Whoever builds UI — engineer, designer, AI agent — should produce design-correct output by using these components unmodified. Extending, restyling, or recreating a component bypasses the guarantee. Reach for the system first; flag gaps rather than route around them.
 - **Tokens only, via the theme.** Components never import from `packages/tokens/` and never contain raw literal values (`p-[14px]`, `text-[#222]`). They consume tokens through Tailwind semantic utilities (`bg-primary`, `text-foreground`) or `var(--token)` inside arbitrary syntax. If the token you need doesn't exist, stop and flag it — do not invent one.
-- **Top-down token flow.** `packages/tokens/` → `theme.css` (shadcn theme) → components. Each layer reads only from the one above. Component needs never flow back up into the theme.
+- **Top-down token flow.** `packages/tokens/` → `primitives.css` (raw values) → `web-theme.css` (shadcn theme) → components. Each layer reads only from the one above. Component needs never flow back up.
 - **Stories compose from library components.** Storybook stories must never inline a bespoke `<input>`, `<button>`, ad-hoc Tailwind class, or reimplementation of something the library already provides. The story is a small worked example; it is only honest if it uses real components.
 - **Agents propose, humans ratify.** New components, new token mappings, changes to the shadcn theme layer, and anything CONTRIBUTING.md doesn't explicitly cover are design-lead decisions. Flag and wait — do not improvise.
 
 ## 2. Theme at a glance
 
-The theme is defined in `@theme` inside [`src/styles/theme.css`](./src/styles/theme.css) and exposed to components as Tailwind utility classes. These tables are a *map* of what exists; the CSS file is authoritative for exact values, dark-mode overrides, and recent additions.
+The theme is defined in `@theme` inside [`src/styles/web-theme.css`](./src/styles/web-theme.css) and exposed to components as Tailwind utility classes. Raw token values live one layer down in [`src/styles/primitives.css`](./src/styles/primitives.css). These tables are a *map* of what exists; the CSS files are authoritative for exact values, dark-mode overrides, and recent additions.
 
 Two conventions worth internalising:
 
@@ -384,6 +384,6 @@ Page-level systems that orchestrate organisms, molecules, and atoms into a compl
 ## 4. When in doubt
 
 - **Picking a component.** Scan the index above by intent, open the `COMPONENT.md`, read its Usage Guidelines before writing code.
-- **Picking a token.** Use the semantic utility tables in §2. If nothing fits, read [`src/styles/theme.css`](./src/styles/theme.css). If it still doesn't fit, flag it — do not invent.
+- **Picking a token.** Use the semantic utility tables in §2. If nothing fits, read [`src/styles/web-theme.css`](./src/styles/web-theme.css) (mapping + utilities) and [`src/styles/primitives.css`](./src/styles/primitives.css) (raw values). If it still doesn't fit, flag it — do not invent.
 - **Writing or changing a component.** Read [CONTRIBUTING.md](./CONTRIBUTING.md) first.
 - **Anything outside the rules above.** Flag and wait for a ruling from design leadership. Do not improvise.

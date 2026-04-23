@@ -87,7 +87,7 @@ Buyer routes are organised into four route groups — `(shop)`, `(admin)`, `(che
 | UI library | React 19 |
 | Styling | Tailwind CSS v4 |
 | UI primitives | `@nivoda/components` — see [`packages/components/`](../components/) |
-| Design tokens | `@nivoda/components/theme.css` — sourced from [`packages/tokens/`](../tokens/) |
+| Design tokens | `@nivoda/components/web-theme.css` — sourced from [`packages/tokens/`](../tokens/) |
 | Client state | Zustand (cart, checkout, shortlists) |
 | Validation | Zod |
 | Icons | Tabler Icons |
@@ -331,7 +331,7 @@ Formatting is enforced by Prettier (`npm run format`):
 
 ### Theme
 
-Theme tokens and dark-mode styling come from `@nivoda/components/theme.css`, imported by `app/globals.css` (three lines total — Tailwind plus the theme import). Dark mode is the `.dark` class on `<html>`, toggled by `next-themes` — press `d` to toggle. See [`packages/components/`](../components/) and [`packages/tokens/`](../tokens/) for the design-system sources.
+Theme tokens and dark-mode styling come from `@nivoda/components/web-theme.css`, imported by `app/globals.css` (three lines total — Tailwind plus the theme import). Dark mode is the `.dark` class on `<html>`, toggled by `next-themes` — press `d` to toggle. See [`packages/components/`](../components/) and [`packages/tokens/`](../tokens/) for the design-system sources.
 
 ### Path alias
 

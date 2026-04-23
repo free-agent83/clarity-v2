@@ -10,7 +10,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["^build"],
       "options": {
-        "command": "npx vite build && cp src/styles/theme.css dist/theme.css && npx tsc --project tsconfig.lib.json && npx tsc-alias --project tsconfig.lib.json",
+        "command": "npx vite build && cp src/styles/primitives.css src/styles/web-theme.css dist/ && npx tsc --project tsconfig.lib.json && npx tsc-alias --project tsconfig.lib.json",
         "cwd": "packages/components"
       },
       "inputs": ["default", "{workspaceRoot}/packages/tokens/dist/**/*"],

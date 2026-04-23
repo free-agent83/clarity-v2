@@ -3,9 +3,9 @@
  *
  * This file is NOT consumed by real consumers of @nivoda/components. It exists
  * only so Storybook and vitest-browser can run Tailwind locally over the
- * library's own source. Real consumers import @nivoda/components/theme.css
- * into their own Tailwind-enabled CSS entry — see theme.css for details.
+ * library's own source. Real consumers import @nivoda/components/web-theme.css
+ * into their own Tailwind-enabled CSS entry — see web-theme.css for details.
  */
 
 @import "tailwindcss";
-@import "./theme.css";
+@import "./web-theme.css";

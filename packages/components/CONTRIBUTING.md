@@ -103,7 +103,7 @@ Update `COMPONENTS.md` in the **same PR** as any of the following:
 - **A component is promoted from `unstable` to `stable` (or demoted).** Update its status tag.
 - **A component is deprecated or removed.** Mark it `deprecated` or delete the entry, matching the action taken in `COMPONENT.md` and `src/index.ts`.
 - **A component's "what it's for" scope changes meaningfully.** If a component's usage section is rewritten such that the one-liner no longer reflects its purpose, update both bullets.
-- **The `@theme` block in `theme.css` changes meaningfully.** New semantic token families, renamed utilities, removed tokens, or changes to the radius / typography scales all require the corresponding table in §2 of `COMPONENTS.md` to be updated. Purely additive hex value tweaks inside `:root` / `.dark` do not — those are theme-internal and the utility surface is unchanged.
+- **The `@theme` block in `web-theme.css` changes meaningfully.** New semantic token families, renamed utilities, removed tokens, or changes to the radius / typography scales all require the corresponding table in §2 of `COMPONENTS.md` to be updated. Purely additive value tweaks inside `:root` / `.dark` in `primitives.css` do not — those are theme-internal and the utility surface is unchanged.
 
 A stale `COMPONENTS.md` is a broken one — treat it with the same rigour as a stale `COMPONENT.md`. If you're unsure whether a change qualifies, assume it does and update the file.
 
@@ -112,11 +112,11 @@ A stale `COMPONENTS.md` is a broken one — treat it with the same rigour as a s
 `COMPONENTS.md` is an index, not a spec. Keep it thin.
 
 - No prop tables, no code examples, no variant matrices — those live in `COMPONENT.md`.
-- No exhaustive token value listings — those live in `theme.css`.
+- No exhaustive token value listings — those live in `primitives.css` (values) and `web-theme.css` (utility mappings).
 - No build / test / publishing rules — those live in this file.
 - No rationale or decision records — those live in `ADRS.md` or `COMPONENT.md`.
 
-When a change would require more than a one-line tweak to an existing entry, the real change belongs in `COMPONENT.md` or `theme.css`; the `COMPONENTS.md` entry should follow, not lead.
+When a change would require more than a one-line tweak to an existing entry, the real change belongs in `COMPONENT.md` or one of the theme files (`primitives.css` / `web-theme.css`); the `COMPONENTS.md` entry should follow, not lead.
 
 ---
 
@@ -130,12 +130,12 @@ In the consumer's global CSS entry:
 
 ```css
 @import "tailwindcss";
-@import "@nivoda/components/theme.css";
+@import "@nivoda/components/web-theme.css";
 @source "../node_modules/@nivoda/components/dist";
 ```
 
 - `@import "tailwindcss"` — consumer's Tailwind runtime.
-- `@import "@nivoda/components/theme.css"` — pulls the library's `@theme` tokens, `:root`/`.dark` values, `@custom-variant dark`, base resets, and the fonts/animations imports into the consumer's Tailwind context.
+- `@import "@nivoda/components/web-theme.css"` — the shadcn/Tailwind theme layer. It in turn imports `primitives.css` (raw `:root`/`.dark` tokens) and layers on `@theme inline` utility mappings, Tailwind `@custom-variant`s (`dark`, `data-open`, `data-closed`), base resets, and the fonts / animations runtime dependencies. `primitives.css` is an internal layer — consumers should not import it directly.
 - `@source "..."` — tells the consumer's Tailwind to scan the library's built `dist/` for class names when deciding which utilities to generate. Adjust the relative path to match where `node_modules/@nivoda/components/` resolves in the consumer's tree (workspace-hoisted monorepos usually need `../../../node_modules/...`).
 
 ### What the consumer gets
@@ -152,15 +152,20 @@ In the consumer's global CSS entry:
 - No Tailwind preflight assumptions beyond what Tailwind's own base layer provides.
 - No font files beyond Inter Variable. Consumers wanting a different font set it via `--font-sans` / `--font-mono` themselves.
 
-### Portability of `theme.css`
+### Theme layering and portability
 
-`theme.css` is authored to be portable across three consumer tiers:
+The theme is split across two files:
 
-1. **Tailwind v4 consumer** (Next, Vite, Remix, etc.) — full fidelity.
-2. **Non-Tailwind bundler consumer** (raw React + Vite, esbuild) — `@theme` and `@custom-variant` directives are silently ignored; tokens, dark mode, and base resets still work.
-3. **Literal `<link rel="stylesheet">`** — the two `@import` lines fail (browsers don't resolve package paths), but tokens/dark/base resets still apply. Consumer loads fonts and animations themselves if they want them.
+- **`primitives.css` (layer 1)** — raw design tokens as CSS custom properties. No imports, no Tailwind directives, no shadcn-specific mappings. Works in any CSS pipeline or plain browser, wherever `:root` / `.dark` selectors resolve. Internal only — not a public export.
+- **`web-theme.css` (layer 2)** — imports `primitives.css`, then composes the shadcn/Tailwind-v4 surface on top: `@theme inline` utility mappings, `@custom-variant` registrations (`dark`, `data-open`, `data-closed`), base resets, and the runtime dependency imports (fonts, `tw-animate-css`). This is the consumer entry point.
 
-Do not introduce constructs into `theme.css` that only work under a specific pipeline (e.g. `@apply` in `@layer base` — we specifically use plain CSS there to preserve portability).
+`web-theme.css` is authored to be portable across three consumer tiers:
+
+1. **Tailwind v4 consumer** (Next, Vite, Remix, etc.) — full fidelity. All `@theme` and `@custom-variant` directives resolve, utilities generate against the tokens.
+2. **Non-Tailwind bundler consumer** (raw React + Vite, esbuild) — `@theme`, `@custom-variant`, and `@layer` directives are silently ignored; tokens (from `primitives.css`), dark mode, and base resets still work.
+3. **Literal `<link rel="stylesheet">`** — the three `@import` lines fail (browsers don't resolve package paths), but any inlined tokens and base resets still apply. Consumer loads fonts and animations themselves if they want them.
+
+Do not introduce constructs into `web-theme.css` that only work under a specific pipeline (e.g. `@apply` in `@layer base` — we specifically use plain CSS there to preserve portability). Do not add imports, directives, or shadcn-specific mappings to `primitives.css` — that file is the boundary layer the tokens pipeline will eventually generate into.
 
 ---
 
@@ -357,10 +362,10 @@ Flagged violations are revisited per-component in later design-lead-led passes. 
 #### Rule 2 — The token flow is always top-down
 
 ```
-packages/tokens/  →  theme.css (shadcn theme)  →  components
+packages/tokens/  →  primitives.css  →  web-theme.css  →  components
 ```
 
-Each layer reads only from the one above it. The components layer never feeds into the shadcn theme; the shadcn theme never feeds into `packages/tokens/`. If you catch yourself wanting to flow information upward — a component-specific value leaking into the theme, a theme-specific assumption leaking into tokens — stop and rethink the design.
+Each layer reads only from the one above it. The components layer never feeds into the shadcn theme; the shadcn theme never feeds into the primitives; the primitives never feed into `packages/tokens/`. If you catch yourself wanting to flow information upward — a component-specific value leaking into `web-theme.css`, a shadcn-specific assumption leaking into `primitives.css`, a primitives-specific value leaking into `packages/tokens/` — stop and rethink the design.
 
 #### Rule 3 — Always ask before changing the shadcn theme
 
