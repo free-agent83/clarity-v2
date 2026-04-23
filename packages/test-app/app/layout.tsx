@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
-import "@nivoda/components/styles.css";
+import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@nivoda/components";
 
