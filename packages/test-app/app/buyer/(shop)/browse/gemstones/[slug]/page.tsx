@@ -12,7 +12,6 @@ import type {
   ProductMedia,
 } from "@nivoda/components/components/templates/pdp/pdp-types";
 
-import { AddToCartButton } from "@/components/products/add-to-cart-button";
 import { GemstonePlpItem } from "@/components/products/gemstone-plp-item";
 import { PdpBreadcrumbs } from "@/components/products/pdp-breadcrumbs";
 import { PdpMediaWithLightbox } from "@/components/products/pdp-media-with-lightbox";
@@ -20,8 +19,8 @@ import {
   getMockStockId,
   getPlpItemMock,
 } from "@/components/products/plp-item-mocks";
-import { ProductActions } from "@/components/product-actions";
-import { GemstoneCertificateInfo } from "@/components/layouts/layout-product-detail/gemstone-certificate-info";
+import { StonePdpCta } from "@/components/products/stone-pdp-cta";
+import { StonePdpSecondaryActions } from "@/components/products/stone-pdp-secondary-actions";
 
 import { fetchGemstoneItem, fetchRelatedGemstones } from "@/lib/api/gemstones";
 
@@ -37,11 +36,6 @@ export default async function GemstoneDetailPage({ params }: Props) {
 
   const mockStockId = getMockStockId(item.id);
   const mock = getPlpItemMock(item.id);
-
-  const breadcrumbs = [
-    { label: "Gemstones", href: "/buyer/browse/gemstones" },
-    { label: item.description, href: `/buyer/browse/gemstones/${item.id}` },
-  ];
 
   const media: ProductMedia[] = [item.images.main, ...item.images.additional]
     .filter((src) => src && src.length > 0)
@@ -67,11 +61,19 @@ export default async function GemstoneDetailPage({ params }: Props) {
   ];
 
   return (
-    <div className="flex flex-col gap-12 pb-32">
-      <PdpBreadcrumbs segments={breadcrumbs} />
+    <div className="mx-auto flex max-w-5xl flex-col gap-12 pb-32">
+      <PdpBreadcrumbs
+        segments={[
+          { label: "Gemstones", href: "/buyer/browse/gemstones" },
+          {
+            label: item.description,
+            href: `/buyer/browse/gemstones/${item.id}`,
+          },
+        ]}
+      />
 
       <PdpLayout
-        stickyTop="24px"
+        stickyTop="96px"
         media={<PdpMediaWithLightbox media={media} />}
         body={
           <div className="flex flex-col gap-6">
@@ -102,21 +104,9 @@ export default async function GemstoneDetailPage({ params }: Props) {
                     })}
               />
             </div>
-            <GemstoneCertificateInfo
-              lab={item.certification.lab}
-              certificateNumber={item.certification.number}
-              type={item.type}
-              origin={item.origin}
-              treatment={item.treatment}
-              shape={item.shape}
-              carat={item.carat}
-              color={item.color}
-              clarity={item.clarity}
-              cut={item.cut}
-            />
             <PdpPrimaryAction
               secondaryActions={
-                <ProductActions
+                <StonePdpSecondaryActions
                   product={{
                     title: item.description,
                     subtitle: item.type,
@@ -130,7 +120,7 @@ export default async function GemstoneDetailPage({ params }: Props) {
                 />
               }
             >
-              <AddToCartButton
+              <StonePdpCta
                 product={{
                   productId: item.id,
                   name: item.description,
@@ -145,19 +135,20 @@ export default async function GemstoneDetailPage({ params }: Props) {
                 }}
               />
             </PdpPrimaryAction>
+            <Separator />
+            <PdpSpecifications rows={specs} />
           </div>
         }
-      >
-        <Separator />
-        <PdpSpecifications rows={specs} />
-      </PdpLayout>
+      />
 
       {relatedRaw.length > 0 && (
-        <div className="flex flex-col gap-6">
-          <h2 className="text-2xl font-semibold text-foreground">
-            You may also like
-          </h2>
-          <PlpGridContainer>
+        <>
+          <Separator />
+          <div className="flex flex-col gap-6">
+            <h2 className="text-2xl font-semibold text-foreground">
+              You may also like
+            </h2>
+            <PlpGridContainer>
             {relatedRaw.map((related) => (
               <GemstonePlpItem
                 key={related.id}
@@ -181,8 +172,9 @@ export default async function GemstoneDetailPage({ params }: Props) {
                 }}
               />
             ))}
-          </PlpGridContainer>
-        </div>
+            </PlpGridContainer>
+          </div>
+        </>
       )}
     </div>
   );

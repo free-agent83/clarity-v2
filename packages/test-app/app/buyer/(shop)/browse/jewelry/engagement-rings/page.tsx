@@ -1,45 +1,13 @@
 import {
-  fetchEngagementRingList,
-  type EngagementRingItem,
-} from "@/lib/api/jewelry";
-import { formatUSD } from "@/lib/utils";
-import {
   LayoutPlp,
   PER_PAGE_OPTIONS,
   DEFAULT_PER_PAGE,
 } from "@/components/layouts/layout-plp/layout-plp";
-import { ProductListItem } from "@/components/products/product-list-item";
+import { EngagementRingPlpItem } from "@/components/products/engagement-ring-plp-item";
+
+import { fetchEngagementRingList } from "@/lib/api/jewelry";
 
 import { EngagementRingsFilters } from "./filters";
-
-const METAL_SWATCH_COLORS: Record<string, string> = {
-  "14k_yellow_gold": "#e6c24b",
-  "18k_yellow_gold": "#e6c24b",
-  "14k_rose_gold": "#e8b4a8",
-  "18k_rose_gold": "#e8b4a8",
-  "10k_white_gold": "#e0e0e0",
-  "14k_white_gold": "#e0e0e0",
-  "18k_white_gold": "#e0e0e0",
-  "950_platinum": "#9ba0a8",
-};
-
-function getMetalSwatches(
-  item: EngagementRingItem,
-): { value: string; swatch: string }[] {
-  const seen = new Set<string>();
-  const swatches: { value: string; swatch: string }[] = [];
-  for (const am of item.availableMetals) {
-    const metalValue = am.metal.value;
-    if (!seen.has(metalValue) && METAL_SWATCH_COLORS[metalValue]) {
-      seen.add(metalValue);
-      swatches.push({
-        value: metalValue,
-        swatch: METAL_SWATCH_COLORS[metalValue],
-      });
-    }
-  }
-  return swatches;
-}
 
 export default async function JewelryListPage({
   searchParams,
@@ -78,44 +46,13 @@ export default async function JewelryListPage({
       totalPages={totalPages}
       perPage={perPage}
     >
-      {paginatedItems.map((item) => {
-        const metals = getMetalSwatches(item);
-        const stoneShapes = item.compatibleStones.map((cs) => cs.shape);
-        // Use the minimum available metal price as the starting price
-        const minPrice =
-          item.availableMetals.length > 0
-            ? Math.min(...item.availableMetals.map((am) => am.priceUsd))
-            : 0;
-
-        const thumbnail =
-          item.images.find((img) => img.isThumbnail)?.url ??
-          item.images[0]?.url ??
-          "";
-
-        return (
-          <ProductListItem
-            key={item.id}
-            id={item.id}
-            href={`/buyer/browse/jewelry/engagement-rings/${item.id}`}
-            imageSrc={thumbnail}
-            imageAlt={item.description}
-            title={item.description}
-            subtitle={`${item.bandStyle.value} · SKU ${item.sku}`}
-            priceLabel="Starting from"
-            formattedPrice={formatUSD(minPrice)}
-            tags={stoneShapes.map((s: { id: string; value: string }) => ({
-              key: s.id,
-              label: s.value.charAt(0),
-              title: s.value,
-            }))}
-            swatches={metals.map((m) => ({
-              key: m.value,
-              hex: m.swatch,
-              title: m.value,
-            }))}
-          />
-        );
-      })}
+      {paginatedItems.map((item) => (
+        <EngagementRingPlpItem
+          key={item.id}
+          item={item}
+          href={`/buyer/browse/jewelry/engagement-rings/${item.id}`}
+        />
+      ))}
     </LayoutPlp>
   );
 }

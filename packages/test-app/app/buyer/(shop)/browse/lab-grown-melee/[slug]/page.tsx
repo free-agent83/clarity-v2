@@ -12,7 +12,6 @@ import type {
   ProductMedia,
 } from "@nivoda/components/components/templates/pdp/pdp-types";
 
-import { AddToCartButton } from "@/components/products/add-to-cart-button";
 import { MeleePlpItem } from "@/components/products/melee-plp-item";
 import { PdpBreadcrumbs } from "@/components/products/pdp-breadcrumbs";
 import { PdpMediaWithLightbox } from "@/components/products/pdp-media-with-lightbox";
@@ -20,8 +19,8 @@ import {
   getMockStockId,
   getPlpItemMock,
 } from "@/components/products/plp-item-mocks";
-import { ProductActions } from "@/components/product-actions";
-import { MeleeParcelInfo } from "@/components/layouts/layout-product-detail/melee-parcel-info";
+import { StonePdpCta } from "@/components/products/stone-pdp-cta";
+import { StonePdpSecondaryActions } from "@/components/products/stone-pdp-secondary-actions";
 
 import { fetchMeleeItem, fetchRelatedMelee } from "@/lib/api/melee";
 import { formatUSD } from "@/lib/utils";
@@ -38,14 +37,6 @@ export default async function LabGrownMeleeDetailPage({ params }: Props) {
 
   const mockStockId = getMockStockId(item.id);
   const mock = getPlpItemMock(item.id);
-
-  const breadcrumbs = [
-    { label: "Lab-grown melee", href: "/buyer/browse/lab-grown-melee" },
-    {
-      label: item.description,
-      href: `/buyer/browse/lab-grown-melee/${item.id}`,
-    },
-  ];
 
   const media: ProductMedia[] = [item.images.main, ...item.images.additional]
     .filter((src) => src && src.length > 0)
@@ -66,11 +57,19 @@ export default async function LabGrownMeleeDetailPage({ params }: Props) {
   ];
 
   return (
-    <div className="flex flex-col gap-12 pb-32">
-      <PdpBreadcrumbs segments={breadcrumbs} />
+    <div className="mx-auto flex max-w-5xl flex-col gap-12 pb-32">
+      <PdpBreadcrumbs
+        segments={[
+          { label: "Lab-grown melee", href: "/buyer/browse/lab-grown-melee" },
+          {
+            label: item.description,
+            href: `/buyer/browse/lab-grown-melee/${item.id}`,
+          },
+        ]}
+      />
 
       <PdpLayout
-        stickyTop="24px"
+        stickyTop="96px"
         media={<PdpMediaWithLightbox media={media} />}
         body={
           <div className="flex flex-col gap-6">
@@ -101,20 +100,9 @@ export default async function LabGrownMeleeDetailPage({ params }: Props) {
                     })}
               />
             </div>
-            <MeleeParcelInfo
-              stockId={mockStockId}
-              shape={item.shape}
-              sizeRange={item.sizeRange}
-              colorRange={item.colorRange}
-              clarityRange={item.clarityRange}
-              cut={item.cut}
-              quantity={item.quantity}
-              totalCaratWeight={item.totalCaratWeight}
-              pricePerCarat={item.pricePerCarat}
-            />
             <PdpPrimaryAction
               secondaryActions={
-                <ProductActions
+                <StonePdpSecondaryActions
                   product={{
                     title: item.description,
                     subtitle: "Lab-grown melee",
@@ -128,7 +116,7 @@ export default async function LabGrownMeleeDetailPage({ params }: Props) {
                 />
               }
             >
-              <AddToCartButton
+              <StonePdpCta
                 product={{
                   productId: item.id,
                   name: item.description,
@@ -143,19 +131,20 @@ export default async function LabGrownMeleeDetailPage({ params }: Props) {
                 }}
               />
             </PdpPrimaryAction>
+            <Separator />
+            <PdpSpecifications rows={specs} />
           </div>
         }
-      >
-        <Separator />
-        <PdpSpecifications rows={specs} />
-      </PdpLayout>
+      />
 
       {relatedRaw.length > 0 && (
-        <div className="flex flex-col gap-6">
-          <h2 className="text-2xl font-semibold text-foreground">
-            You may also like
-          </h2>
-          <PlpGridContainer>
+        <>
+          <Separator />
+          <div className="flex flex-col gap-6">
+            <h2 className="text-2xl font-semibold text-foreground">
+              You may also like
+            </h2>
+            <PlpGridContainer>
             {relatedRaw.map((related) => (
               <MeleePlpItem
                 key={related.id}
@@ -178,8 +167,9 @@ export default async function LabGrownMeleeDetailPage({ params }: Props) {
                 }}
               />
             ))}
-          </PlpGridContainer>
-        </div>
+            </PlpGridContainer>
+          </div>
+        </>
       )}
     </div>
   );

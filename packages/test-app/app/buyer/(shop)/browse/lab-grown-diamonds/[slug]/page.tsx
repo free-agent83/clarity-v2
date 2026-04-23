@@ -12,7 +12,6 @@ import type {
   ProductMedia,
 } from "@nivoda/components/components/templates/pdp/pdp-types";
 
-import { AddToCartButton } from "@/components/products/add-to-cart-button";
 import { DiamondPlpItem } from "@/components/products/diamond-plp-item";
 import { PdpBreadcrumbs } from "@/components/products/pdp-breadcrumbs";
 import { PdpMediaWithLightbox } from "@/components/products/pdp-media-with-lightbox";
@@ -20,8 +19,8 @@ import {
   getMockStockId,
   getPlpItemMock,
 } from "@/components/products/plp-item-mocks";
-import { ProductActions } from "@/components/product-actions";
-import { DiamondCertificateInfo } from "@/components/layouts/layout-product-detail/diamond-certificate-info";
+import { StonePdpCta } from "@/components/products/stone-pdp-cta";
+import { StonePdpSecondaryActions } from "@/components/products/stone-pdp-secondary-actions";
 
 import { fetchDiamondItem, fetchRelatedDiamonds } from "@/lib/api/diamonds";
 
@@ -37,14 +36,6 @@ export default async function LabGrownDiamondDetailPage({ params }: Props) {
 
   const mockStockId = getMockStockId(item.id);
   const mock = getPlpItemMock(item.id);
-
-  const breadcrumbs = [
-    { label: "Lab grown diamonds", href: "/buyer/browse/lab-grown-diamonds" },
-    {
-      label: item.description,
-      href: `/buyer/browse/lab-grown-diamonds/${item.id}`,
-    },
-  ];
 
   const media: ProductMedia[] = [item.images.main, ...item.images.additional]
     .filter((src) => src && src.length > 0)
@@ -72,11 +63,22 @@ export default async function LabGrownDiamondDetailPage({ params }: Props) {
   ];
 
   return (
-    <div className="flex flex-col gap-12 pb-32">
-      <PdpBreadcrumbs segments={breadcrumbs} />
+    <div className="mx-auto flex max-w-5xl flex-col gap-12 pb-32">
+      <PdpBreadcrumbs
+        segments={[
+          {
+            label: "Lab grown diamonds",
+            href: "/buyer/browse/lab-grown-diamonds",
+          },
+          {
+            label: item.description,
+            href: `/buyer/browse/lab-grown-diamonds/${item.id}`,
+          },
+        ]}
+      />
 
       <PdpLayout
-        stickyTop="24px"
+        stickyTop="96px"
         media={<PdpMediaWithLightbox media={media} />}
         body={
           <div className="flex flex-col gap-6">
@@ -107,18 +109,9 @@ export default async function LabGrownDiamondDetailPage({ params }: Props) {
                     })}
               />
             </div>
-            <DiamondCertificateInfo
-              lab={item.certification.lab}
-              certificateNumber={item.certification.number}
-              shape={item.shape}
-              carat={item.carat}
-              color={item.color}
-              clarity={item.clarity}
-              cut={item.cut}
-            />
             <PdpPrimaryAction
               secondaryActions={
-                <ProductActions
+                <StonePdpSecondaryActions
                   product={{
                     title: item.description,
                     subtitle: "Lab-grown diamond",
@@ -132,7 +125,7 @@ export default async function LabGrownDiamondDetailPage({ params }: Props) {
                 />
               }
             >
-              <AddToCartButton
+              <StonePdpCta
                 product={{
                   productId: item.id,
                   name: item.description,
@@ -147,19 +140,20 @@ export default async function LabGrownDiamondDetailPage({ params }: Props) {
                 }}
               />
             </PdpPrimaryAction>
+            <Separator />
+            <PdpSpecifications rows={specs} />
           </div>
         }
-      >
-        <Separator />
-        <PdpSpecifications rows={specs} />
-      </PdpLayout>
+      />
 
       {relatedRaw.length > 0 && (
-        <div className="flex flex-col gap-6">
-          <h2 className="text-2xl font-semibold text-foreground">
-            You may also like
-          </h2>
-          <PlpGridContainer>
+        <>
+          <Separator />
+          <div className="flex flex-col gap-6">
+            <h2 className="text-2xl font-semibold text-foreground">
+              You may also like
+            </h2>
+            <PlpGridContainer>
             {relatedRaw.map((related) => (
               <DiamondPlpItem
                 key={related.id}
@@ -182,8 +176,9 @@ export default async function LabGrownDiamondDetailPage({ params }: Props) {
                 }}
               />
             ))}
-          </PlpGridContainer>
-        </div>
+            </PlpGridContainer>
+          </div>
+        </>
       )}
     </div>
   );
