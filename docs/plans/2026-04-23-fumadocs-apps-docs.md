@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Stand up a Fumadocs-UI documentation site as a first-class Nx project at `apps/docs/`, consuming existing per-component `COMPONENT.md` files and the repo's `docs/` markdown as content sources, deployed empty (no live component demos yet) to Vercel behind access protection.
+**Goal:** Stand up a Fumadocs-UI documentation site as a first-class Nx project at `apps/docs/`, with a 7-section IA (Get started / Foundations / Components / Patterns / Content / Brand / Resources), Nivoda-branded dark-first chrome, and a hero landing page — demo-ready for leadership presentation. Content sources are existing per-component `COMPONENT.md` files (52+) and repo markdown (`docs/`, `ROADMAP.md`, `VISION.md`, `CHANGELOG.md`). Deployed to Vercel behind access protection.
 
-**Architecture:** Next.js 16.1.6 App Router + Fumadocs-UI + Fumadocs-MDX, scaffolded via `create-fumadocs-app` to avoid reinventing the current Fumadocs boilerplate. Registered as an Nx project under a new `apps/` top-level directory. Content sources point at `packages/components/src/components/**/COMPONENT.md` (52+ files, auto-ingested) and `docs/**/*.md`. The docs site itself imports `@nivoda/components`' compiled stylesheet so the chrome is visibly branded with Clarity V2 tokens — a live dogfooding signal even without embedded component demos. Live MDX component embeds deferred to PR 2 (separate plan). Engineering conversation + experience-framework cross-repo content deferred to Distribution-complete territory.
+**Architecture:** Next.js 16.1.6 App Router + Fumadocs-UI + Fumadocs-MDX, scaffolded via `create-fumadocs-app` to avoid reinventing the current Fumadocs boilerplate. Registered as an Nx project under a new `apps/` top-level directory. Content sources: `packages/components/src/components/**/COMPONENT.md` (functionally regrouped via `meta.json` from atomic to Actions/Forms/Display/etc.), `docs/**/*.md`, and repo-root markdown. The docs site imports `@nivoda/components`' compiled stylesheet, overrides Fumadocs theme CSS vars to soft-black dark-first per brand direction, and uses the Nivoda wordmark in the nav. Live MDX component demos deferred to PR 2 — Storybook is the live-demo surface for the leadership presentation (shown separately). Engineering conversation, experience-framework cross-repo content, and onboarding prose deferred to Distribution-complete territory.
 
 **Tech Stack:** Next.js 16.1.6, React 19.2+, Fumadocs v16+ (UI + MDX), Tailwind v4, ESM-only config, Nx 22.6, npm workspaces, Vercel.
 
@@ -22,13 +22,24 @@
 apps/
   docs/
     app/
-      (home)/page.tsx                    # landing page
+      (home)/page.tsx                    # hero landing (Task 8)
       docs/[[...slug]]/page.tsx          # Fumadocs catch-all route
       api/search/route.ts                # Fumadocs search endpoint
-      layout.tsx                         # root layout with RootProvider
-      global.css                         # Tailwind + @nivoda/components styles
+      layout.tsx                         # root layout, dark-first theme
+      layout.config.tsx                  # Fumadocs nav config (logo, brand)
+      global.css                         # Tailwind + @nivoda/components styles + brand overrides
     content/
-      meta.json                          # top-level nav metadata
+      meta.json                          # top-level: 7-section ordering
+      get-started.mdx                    # Task 7 Step 10
+      foundations/                       # 1 real + 5 stub (Task 7 Step 3)
+      components/                        # functional grouping of 52 COMPONENT.md (Task 7 Step 4-5)
+      patterns/                          # 1 real (PLP) + 3 stub (Task 7 Step 6)
+      content/                           # 3 stubs (Task 7 Step 7)
+      brand/                             # 2 real + 1 stub (Task 7 Step 8)
+      resources/                         # all real, renders repo-root markdown (Task 7 Step 9)
+    public/
+      brand/                             # wordmark-white.svg, wordmark-black.svg, icon-*.svg
+      favicon.svg
     lib/
       source.ts                          # Fumadocs source loader
     mdx-components.tsx                   # MDX component overrides
@@ -36,9 +47,9 @@ apps/
     next.config.mjs
     package.json
     project.json                         # Nx project descriptor
-    tsconfig.json
+    tsconfig.json                        # extends ../../tsconfig.base.json
     .gitignore                           # .next/, .env.*.local
-    README.md                            # brief — how to run, what it is
+    README.md                            # Task 8 Step 6
 ```
 
 **Modified at repo root:**
@@ -55,11 +66,13 @@ apps/
 ## Decisions made upfront (do not relitigate during execution)
 
 1. **Scaffold via `create-fumadocs-app`**, not by hand-writing Fumadocs boilerplate from memory. Fumadocs evolves quickly; the scaffolder produces the current correct starter for the installed Fumadocs version.
-2. **Next.js 16.1.6** — chosen to align with Minivoda (`packages/test-app/`). Verify Fumadocs-UI supports it before proceeding (Task 3).
-3. **PR scope is scaffold-only.** No live MDX component embeds. No experience-framework cross-repo content. No onboarding prose. No search-tuning. These are explicit non-goals for this PR.
-4. **Vercel deployment is part of PR 1**, behind access protection. Green pipeline before anyone writes content.
-5. **Nav auto-generated** from directory structure. No custom ordering/icons yet. Deferred to a follow-up.
-6. **Frontmatter adaptation in source config** — the existing COMPONENT.md files use `name:`, `slug:`, `status:`, `lastUpdated:`. Map `name → title` in `source.config.ts` rather than touching 52 files.
+2. **Next.js 16.1.6** — chosen to align with Minivoda (`packages/test-app/`). Verified Fumadocs-UI supports it (Fumadocs v16 requires Next 16+).
+3. **Demo scope.** This PR must be presentable to leadership. Includes: 7-section IA, stub prose for un-written sections, Nivoda branding, dark-first theme, hero landing. Does NOT include: live component demos (Storybook covers that in a separate demo segment), live token swatches on Color/Typography pages, live brand component rendering.
+4. **Vercel deployment is part of the PR**, behind access protection. Green pipeline before the demo.
+5. **Frontmatter adaptation in source config** — the existing COMPONENT.md files use `name:`, `slug:`, `status:`, `lastUpdated:`. Map `name → title` in `source.config.ts` rather than touching 52 files.
+6. **Functional grouping, not atomic, in sidebar.** Atoms/molecules/organisms is an implementation concept; Actions/Forms/Display/etc. is how consumers search. Filesystem stays atomic; `meta.json` overrides the sidebar.
+7. **Stubs use option (b) — 2-3 sentence teasers** with `status: not-yet-written`. No filler, no promised dates.
+8. **Brand direction: dark-first, soft black, restrained violet.** Sourced from `brand-system/visual-identity.md` in the `brand-system` repo. Violet is used for links, focus rings, and the primary CTA — never for chrome, panels, or backgrounds.
 
 ---
 
@@ -536,35 +549,526 @@ Strategy used: <A: direct cross-package glob | B: symlinked via prebuild>"
 
 ---
 
-## Task 7: Landing page, nav, and README
+## Task 7: Information architecture — 7-section IA with stubs and resources
 
-**Why:** The starter's landing page references example content we deleted. Replace it with a minimal Clarity V2 landing. Add a README so a cold reader can run the site.
+**Why:** The sidebar is the single most visible design decision of this PR. Auto-generated from filesystem = 37 alphabetical atoms, which dies on a projector. Structured functional IA = "this is a design system," not "this is a component library." Stubs (with teaser prose) signal scope and forward motion for the leadership demo.
+
+**Demo context:** Storybook is being presented separately as the live component demo. Fumadocs' job in the demo is to prove this is a *system* — foundations, patterns, content, brand, governance — not just components.
 
 **Files:**
-- Modify: `apps/docs/app/(home)/page.tsx` (or wherever the scaffold put the home route)
+- Create: `apps/docs/content/meta.json` — top-level 7-section ordering
+- Create: `apps/docs/content/foundations/*.mdx` — stub pages
+- Create: `apps/docs/content/foundations/meta.json`
+- Create: `apps/docs/content/components/meta.json` — functional grouping ordering (re-maps atomic filesystem to Actions/Forms/Display/etc.)
+- Create: `apps/docs/content/patterns/*.mdx` — stub pages
+- Create: `apps/docs/content/patterns/meta.json`
+- Create: `apps/docs/content/content/*.mdx` — stub pages (voice, writing, terminology)
+- Create: `apps/docs/content/content/meta.json`
+- Create: `apps/docs/content/brand/*.mdx` — logo, brand-expression pages
+- Create: `apps/docs/content/brand/meta.json`
+- Create: `apps/docs/content/resources/*.mdx` — pages that render repo-root markdown
+- Create: `apps/docs/content/resources/meta.json`
+- Modify: `apps/docs/source.config.ts` — add a collection for repo-root markdown (ROADMAP.md, VISION.md, CHANGELOG.md)
+
+**Target top-level sidebar shape:**
+
+```
+Get started                 [1 real page]
+Foundations                 [1 real, 5 stub]
+├── Tokens
+├── Color / OKLCH
+├── Typography              [real — links to Typography COMPONENT.md]
+├── Spacing                 [stub]
+├── Elevation               [stub]
+└── Motion                  [stub]
+Components                  [REAL — functional grouping of 52 COMPONENT.md]
+├── Actions
+├── Forms
+├── Display
+├── Feedback
+├── Overlays
+├── Navigation
+├── Data
+├── Filtering
+├── Layout
+└── PLP Kit
+Patterns                    [1 real, 3 stub]
+├── Product listing page    [real — pulls from PLP spec docs]
+├── Filter composition      [stub]
+├── Empty states            [stub]
+└── Loading states          [stub]
+Content                     [all stub]
+├── Voice & tone
+├── Writing for UI
+└── Terminology
+Brand                       [2 real, 1 stub]
+├── Logo                    [real — wraps Brand atom, shows wordmark + icon variants]
+├── Brand expression        [real — wraps BrandExpress atom]
+└── Illustration            [stub]
+Resources                   [ALL real — render existing repo markdown]
+├── Roadmap
+├── Vision
+├── Architecture
+├── ADRs
+├── Changelog
+└── Contributing            [stub]
+```
+
+**Stub prose pattern — option (b), 2-3 sentences each:**
+
+```mdx
+---
+title: Spacing
+status: not-yet-written
+---
+
+Clarity V2's spacing scale follows a 4px base with a geometric progression.
+The tokens are live in `@nivoda/tokens` today; written guidance is coming as
+the component library stabilises.
+```
+
+Every stub has: title, `status: not-yet-written`, and 2-3 sentences that signal what the page will cover and where to look in the meantime. Don't write filler. Don't promise dates.
+
+- [ ] **Step 1: Inspect how Fumadocs-MDX resolves meta.json ordering**
+
+Read: `node_modules/fumadocs-ui/dist/page-tree/*.d.ts` (or equivalent docs in the installed version).
+
+Confirm the expected shape of `meta.json`: typically `{ "title": "...", "pages": ["index", "page-a", "page-b", "---", "page-c"] }` where `---` inserts a separator. Page references can be relative or absolute. Some versions support cross-directory paths in `pages:` — verify before relying on it (load-bearing for the functional Components grouping).
+
+- [ ] **Step 2: Create top-level meta.json**
+
+Create `apps/docs/content/meta.json`:
+```json
+{
+  "title": "Clarity V2",
+  "pages": [
+    "index",
+    "---",
+    "foundations",
+    "components",
+    "patterns",
+    "content",
+    "brand",
+    "resources"
+  ]
+}
+```
+
+- [ ] **Step 3: Foundations — meta + stubs**
+
+Create `apps/docs/content/foundations/meta.json`:
+```json
+{
+  "title": "Foundations",
+  "pages": ["index", "tokens", "color", "typography", "spacing", "elevation", "motion"]
+}
+```
+
+Create `apps/docs/content/foundations/index.mdx` (section landing):
+```mdx
+---
+title: Foundations
+---
+
+The primitives that make every component feel like the same product.
+Tokens, color, typography, spacing, elevation, and motion — all sourced
+from one OKLCH-based design token pipeline.
+```
+
+Create `apps/docs/content/foundations/tokens.mdx`:
+```mdx
+---
+title: Tokens
+status: not-yet-written
+---
+
+Clarity V2's token system is built on W3C DTCG + OKLCH, transformed by a
+bespoke Node pipeline into shadcn-flat, structured, and React Native
+outputs. Full detail in [ADR-001](/docs/resources/architecture#adr-001).
+Visual reference is coming; the tokens themselves are live in `@nivoda/tokens`.
+```
+
+Create `apps/docs/content/foundations/color.mdx`:
+```mdx
+---
+title: Color / OKLCH
+status: not-yet-written
+---
+
+OKLCH is our color space. Every brand, status, and neutral hue is stored
+as `{ colorSpace, components, hex }` so the math stays perceptual and the
+hex fallback keeps React Native working. Visual swatches coming; raw tokens
+are live in `@nivoda/tokens/dist`.
+```
+
+Create `apps/docs/content/foundations/typography.mdx`:
+```mdx
+---
+title: Typography
+---
+
+Clarity V2 ships 12 role presets — H1–H6, Body 1/2 Regular and Emphasis,
+Caption Regular and Emphasis — sourced from Figma node `18422:14`. The
+Typography atom implements these directly. See the
+[Typography component](/docs/components/display/typography) for props and
+usage; role tokens live in `@nivoda/tokens` under `--text-typography-*`.
+```
+
+Create stubs for `spacing.mdx`, `elevation.mdx`, `motion.mdx` using the pattern in the intro above. 2-3 sentences each. Reference `@nivoda/tokens` where relevant.
+
+- [ ] **Step 4: Components — functional grouping meta.json**
+
+Create `apps/docs/content/components/meta.json`. Strategy depends on whether the installed Fumadocs supports cross-directory pages:
+
+**Strategy A — if cross-directory works:**
+```json
+{
+  "title": "Components",
+  "pages": [
+    "index",
+    "---Actions---",
+    "../components-src/atoms/button",
+    "../components-src/atoms/button-group",
+    "---Forms---",
+    "../components-src/atoms/input",
+    "../components-src/atoms/textarea",
+    "...etc..."
+  ]
+}
+```
+
+**Strategy B — if not, group by creating `apps/docs/content/components/actions/`, `/forms/`, etc. as thin index pages that each link into the real component pages under `/docs/components/atoms/button` etc.** Reuse the symlink approach from Task 6 if that's the shape you took.
+
+Group the 52 components as follows. Refer to the Storybook seeding PR commit messages as the authoritative batch-to-group mapping (#103: Forms / Display / Feedback / Overlays / Navigation / Data / Layout):
+
+- **Actions**: Button, ButtonGroup
+- **Forms**: Input, Textarea, Select, Checkbox, RadioGroup, Switch, Slider, Toggle, ToggleGroup, InputOTP, InputGroup, Field, Label, Combobox
+- **Display**: Avatar, Badge, Card, Separator, Skeleton, Spinner, Progress, Typography, Brand, BrandExpress, Kbd, Item, Empty, Direction, FilterButton
+- **Feedback**: Alert, Sonner, Tooltip, HoverCard
+- **Overlays**: Dialog, Sheet, Drawer, Popover, AlertDialog, DropdownMenu
+- **Navigation**: Breadcrumb, Pagination, Tabs, NavigationMenu, Sidebar, Command
+- **Data**: Table, Chart
+- **Filtering**: FilterButton, FilterToolbar, RangeFilter (FilterButton appears in both Display and Filtering — acceptable)
+- **Layout**: AppShell, AspectRatio, ScrollArea, Collapsible, Accordion
+- **PLP Kit**: (templates/plp/*)
+
+- [ ] **Step 5: Components section landing + index**
+
+Create `apps/docs/content/components/index.mdx`:
+```mdx
+---
+title: Components
+---
+
+52 components, organised by the job they do. Actions, forms, feedback,
+overlays, navigation, data, filtering, layout, and the PLP kit. Every
+component has props, usage guidelines, and do/don'ts — authored alongside
+the code so they never drift.
+
+See [Storybook ↗](<STORYBOOK_URL or "#">) for interactive demos with
+controls and args.
+```
+
+Leave the Storybook link as `#` if Storybook isn't deployed yet — fill in before the demo.
+
+- [ ] **Step 6: Patterns — meta + stubs + 1 real**
+
+Create `apps/docs/content/patterns/meta.json`:
+```json
+{
+  "title": "Patterns",
+  "pages": ["index", "product-listing-page", "filter-composition", "empty-states", "loading-states"]
+}
+```
+
+Create stub pages for filter-composition, empty-states, loading-states (2-3 sentences each).
+
+Create `apps/docs/content/patterns/product-listing-page.mdx` — real. Pull from the PLP work (see `docs/plans/specs/` and `packages/components/CHANGELOG.md` entries for April 16–22). 3–5 paragraphs covering: why PLP is a kit not a template, how to assemble PlpHeading/Grid/List/Row, where the filter subsystem plugs in, the grid/list view toggle pattern, empty/skeleton states. Link out to each constituent component.
+
+Create `apps/docs/content/patterns/index.mdx` — section landing, 2-3 sentences positioning Patterns as "components in collaboration."
+
+- [ ] **Step 7: Content — meta + 3 stubs**
+
+Create `apps/docs/content/content/meta.json`:
+```json
+{
+  "title": "Content",
+  "pages": ["index", "voice-and-tone", "writing-for-ui", "terminology"]
+}
+```
+
+Create index + 3 stubs. For voice and tone, reference `/Users/nivodatest/Documents/PROJECTS/nivoda/repos/brand-system/voice-and-tone.md` in the stub's "where to look now" sentence.
+
+- [ ] **Step 8: Brand — meta + 2 real + 1 stub**
+
+Create `apps/docs/content/brand/meta.json`:
+```json
+{
+  "title": "Brand",
+  "pages": ["index", "logo", "brand-expression", "illustration"]
+}
+```
+
+Create `apps/docs/content/brand/logo.mdx` — show the wordmark and icon variants. Reference the Brand atom component. Can be mostly markdown in PR 1 (image tags or links to the atom's docs page); live `<Brand />` rendering is PR 2 territory.
+
+Copy brand assets from the brand-system repo into `apps/docs/public/brand/`:
+```bash
+mkdir -p apps/docs/public/brand
+cp /Users/nivodatest/Documents/PROJECTS/nivoda/repos/brand-system/logos/*.svg apps/docs/public/brand/
+```
+
+Reference them in `logo.mdx` via `<img src="/brand/wordmark-white.svg" />` etc.
+
+Create `apps/docs/content/brand/brand-expression.mdx` — wraps the BrandExpress atom. Pull positioning from `brand-system/visual-identity.md` (§"Brand direction": "luxury dark theme, warm human photography, serif typography for display").
+
+Create `illustration.mdx` as stub.
+
+- [ ] **Step 9: Resources — wire real content from repo root**
+
+Extend `apps/docs/source.config.ts` to add a third collection pointing at repo-root markdown:
+```ts
+export const resources = defineDocs({
+  dir: "../..",
+  include: ["ROADMAP.md", "VISION.md", "CHANGELOG.md"],
+  // Reuse permissive schema
+});
+```
+(If cross-package globs didn't work in Task 6 and you took Strategy B — symlinks — extend that too: symlink each repo-root md into `apps/docs/content/resources/`.)
+
+Create `apps/docs/content/resources/meta.json`:
+```json
+{
+  "title": "Resources",
+  "pages": ["index", "roadmap", "vision", "architecture", "adrs", "changelog", "contributing"]
+}
+```
+
+For the pages:
+- `roadmap.mdx` — just renders `ROADMAP.md` (via the `resources` collection — Fumadocs can pull in external markdown sources, or use a re-export pattern if not)
+- `vision.mdx` — renders `VISION.md`
+- `architecture.mdx` — links/renders `docs/architecture/architecture.md` (already covered by the `guides` collection from Task 6; can just be a redirect or a short wrapper)
+- `adrs.mdx` — short intro + links to the five ADRs (ADR-001 through ADR-005), each as an anchor link into architecture.mdx
+- `changelog.mdx` — renders `CHANGELOG.md`
+- `contributing.mdx` — stub
+
+- [ ] **Step 10: Get started**
+
+Create `apps/docs/content/get-started.mdx` (or `apps/docs/content/index.mdx` if that's where Fumadocs expects it):
+```mdx
+---
+title: Get started
+---
+
+Clarity V2 is Nivoda's design system. Tokens, components, patterns, and
+governance — all in one repo, all browsable here.
+
+## For engineers
+
+Install the components package and import tokens CSS:
+
+\`\`\`bash
+npm install @nivoda/components @nivoda/tokens
+\`\`\`
+
+\`\`\`tsx
+import "@nivoda/components/styles.css";
+import { Button } from "@nivoda/components";
+\`\`\`
+
+## For designers and PMs
+
+Every component is documented with usage guidelines and do/don'ts.
+Browse [Components](/docs/components) for the library,
+[Foundations](/docs/foundations) for tokens and type,
+[Patterns](/docs/patterns) for higher-order compositions.
+
+For interactive component demos with controls and args, see
+[Storybook ↗](<STORYBOOK_URL or "#">).
+
+## The principle
+
+Documentation lives in the repo. Edit a `COMPONENT.md`, push, and this
+site rebuilds on every commit. No sync, no drift, no separate CMS.
+```
+
+- [ ] **Step 11: Build + verify the full IA**
+
+Run: `npx nx build @nivoda/docs` — expected: clean build
+Run: `npx nx dev @nivoda/docs` — visit:
+- `/` — Get started page
+- `/docs/foundations` — 7 pages in sidebar (tokens, color, typography real; spacing/elevation/motion stubs)
+- `/docs/components` — functional groups visible
+- `/docs/components/actions/button` (or whatever path Strategy A/B produced) — Button real content
+- `/docs/patterns/product-listing-page` — real content
+- `/docs/resources/roadmap` — renders ROADMAP.md
+- `/docs/resources/changelog` — renders CHANGELOG.md
+- Search bar — type "button", see results across components
+
+Kill the server.
+
+- [ ] **Step 12: Commit**
+
+```bash
+git add apps/docs apps/docs/public package-lock.json
+git commit -m "feat(docs): 7-section IA with functional component grouping
+
+Sidebar: Get started / Foundations / Components / Patterns / Content /
+Brand / Resources. Components regrouped functionally (Actions, Forms,
+Display, Feedback, Overlays, Navigation, Data, Filtering, Layout, PLP)
+rather than atomically — matches how consumers search.
+
+Stubs use 2-3 sentence teasers + status: not-yet-written. Real pages
+in Foundations (Typography), Patterns (PLP), Brand (Logo, Expression),
+and all of Resources pulling existing repo markdown (ROADMAP, VISION,
+architecture, ADRs, CHANGELOG).
+
+Brand assets copied from brand-system repo (logos only; photography
+and illustration deferred)."
+```
+
+---
+
+## Task 8: Landing page, branding, and README
+
+**Why:** Default Fumadocs chrome says "docs framework." The leadership demo needs "Nivoda design system" — dark-first theme, Nivoda wordmark in the nav, restrained violet accent, an actual hero. Scope is deliberately small: the visible surfaces for the demo, nothing more.
+
+**Brand rules (from `/Users/nivodatest/Documents/PROJECTS/nivoda/repos/brand-system/visual-identity.md`):**
+- **Dark-first** — default theme is dark, soft black `#0c0a09` (not true black)
+- **Violet is reserved** — use for CTAs and precious moments, never chrome
+- **Brand name**: violet (not purple), stone (not grey)
+- Wordmark white on dark, black on light — we're dark-first so use white
+
+**Files:**
+- Modify: `apps/docs/app/layout.tsx` — set default theme to dark, inject brand
+- Modify: `apps/docs/app/(home)/page.tsx` — replace with hero landing
+- Modify: `apps/docs/app/global.css` — brand accent tokens, soft-black background
+- Create: `apps/docs/app/layout.config.tsx` (Fumadocs convention) — nav logo + brand
 - Create: `apps/docs/README.md`
-- Optionally create: `apps/docs/content/meta.json` — top-level nav if auto-generation doesn't group components/guides nicely
+- Create: `apps/docs/public/brand/favicon.svg` — use `icon-white.svg` or derive
 
-- [ ] **Step 1: Replace landing page with a minimal Clarity V2 intro**
+- [ ] **Step 1: Copy favicon and logo into public/**
 
-Rewrite `apps/docs/app/(home)/page.tsx` to a single heading + two links:
+(Covered by Task 7 Step 8 if you did it there. If not:)
+```bash
+mkdir -p apps/docs/public/brand
+cp /Users/nivodatest/Documents/PROJECTS/nivoda/repos/brand-system/logos/*.svg apps/docs/public/brand/
+cp apps/docs/public/brand/icon-white.svg apps/docs/public/favicon.svg
+```
+
+- [ ] **Step 2: Set Fumadocs theme to dark-first**
+
+Locate Fumadocs' RootProvider in `apps/docs/app/layout.tsx`. Set the default theme:
+```tsx
+<RootProvider
+  theme={{
+    defaultTheme: "dark",
+    enableSystem: false, // force dark as brand default; user can still toggle
+  }}
+>
+```
+
+(API may differ — check `node_modules/fumadocs-ui/dist/provider.d.ts`. The intent is dark as default, not system-based.)
+
+- [ ] **Step 3: Override theme CSS variables for brand**
+
+In `apps/docs/app/global.css`, after the `@import "@nivoda/components/styles.css"` line, add:
+
+```css
+:root, .dark {
+  /* Fumadocs theme override — soft black, not true black */
+  --background: #0c0a09;
+  --fd-background: #0c0a09;
+  /* Violet accent — restrained; used only for links, focus rings, CTAs */
+  --fd-primary: oklch(from var(--color-primitive-violet-500) l c h);
+}
+```
+
+The exact Fumadocs var names depend on the installed version. Inspect `node_modules/fumadocs-ui/dist/global.css` to find the variables Fumadocs actually consumes. Override those, not guessed names.
+
+**Restraint check:** don't tint the sidebar, cards, or large surfaces with violet. The brand rule is "violet is precious" — keep it on links/focus/CTA only.
+
+- [ ] **Step 4: Configure nav logo**
+
+Fumadocs typically uses a `layout.config.tsx` or `baseOptions` object to declare nav. Add:
+```tsx
+import Image from "next/image";
+
+export const baseOptions = {
+  nav: {
+    title: (
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <Image src="/brand/wordmark-white.svg" alt="Nivoda" width={96} height={24} priority />
+        <span style={{ opacity: 0.5, fontSize: "0.875rem" }}>/ Clarity V2</span>
+      </div>
+    ),
+  },
+  // Other options preserved from scaffolder
+};
+```
+
+(Again, exact shape depends on installed Fumadocs — this is the intent.)
+
+- [ ] **Step 5: Build the hero landing page**
+
+Rewrite `apps/docs/app/(home)/page.tsx` as a hero + 3 value props + CTAs. Keep it to inline Tailwind, no new components. Dark-first, violet reserved for the primary CTA only:
+
 ```tsx
 export default function HomePage() {
   return (
-    <main style={{ padding: "4rem 2rem", maxWidth: 720, margin: "0 auto" }}>
-      <h1>Clarity V2</h1>
-      <p>Nivoda's design system. Tokens, components, patterns — one browsable source.</p>
-      <ul>
-        <li><a href="/docs/components/atoms/button">Components</a></li>
-        <li><a href="/docs/guides/architecture/architecture">Architecture</a></li>
-      </ul>
+    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-24 max-w-4xl mx-auto">
+      <div className="text-center space-y-6">
+        <h1 className="text-6xl font-serif tracking-tight">Clarity V2</h1>
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Nivoda's design system. Tokens, components, patterns, and guidance —
+          one browsable source, authored alongside the code.
+        </p>
+        <div className="flex gap-4 justify-center pt-4">
+          <a
+            href="/docs/get-started"
+            className="px-6 py-3 rounded-md bg-[oklch(var(--color-primitive-violet-500))] text-white font-medium hover:opacity-90"
+          >
+            Get started
+          </a>
+          <a
+            href="/docs/components"
+            className="px-6 py-3 rounded-md border border-white/20 hover:bg-white/5"
+          >
+            Browse components
+          </a>
+        </div>
+      </div>
+
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 w-full">
+        <div>
+          <h3 className="font-semibold mb-2">Tokens first</h3>
+          <p className="text-sm text-muted-foreground">
+            OKLCH color, 4px spacing, 12 type roles. Every visual decision is
+            a token — nothing is hardcoded.
+          </p>
+        </div>
+        <div>
+          <h3 className="font-semibold mb-2">Components, documented</h3>
+          <p className="text-sm text-muted-foreground">
+            52 components built on shadcn/ui + Radix, each with usage
+            guidelines, props, and do/don'ts authored alongside the code.
+          </p>
+        </div>
+        <div>
+          <h3 className="font-semibold mb-2">Self-publishing</h3>
+          <p className="text-sm text-muted-foreground">
+            Markdown in the repo is the source. Every push rebuilds the site.
+            No sync, no drift, no separate CMS.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }
 ```
-Intentionally unstyled — we're proving the pipeline, not shipping polish.
 
-- [ ] **Step 2: Write apps/docs/README.md**
+Exact class names depend on whether Fumadocs' Tailwind config exposes `text-muted-foreground`, `bg-background`, etc. Check before committing.
+
+- [ ] **Step 6: Write apps/docs/README.md**
 
 ```markdown
 # @nivoda/docs
@@ -583,34 +1087,51 @@ Visit http://localhost:3002
 
 ## What it contains
 
-- **Components** — auto-generated from `packages/components/src/components/**/COMPONENT.md`
-- **Guides** — the repo's `docs/**/*.md` directory
+- **Get started** — onboarding for engineers and designers
+- **Foundations** — tokens, color, typography, spacing, elevation, motion
+- **Components** — 52 components across Actions, Forms, Display, Feedback, Overlays, Navigation, Data, Filtering, Layout, and the PLP kit. Sourced from `packages/components/src/components/**/COMPONENT.md`
+- **Patterns** — higher-order compositions (PLP, filter composition, empty/loading states)
+- **Content** — voice, writing, terminology (stubs)
+- **Brand** — logo and brand expression, sourced from the brand-system repo
+- **Resources** — ROADMAP, VISION, architecture, ADRs, CHANGELOG — rendered from existing repo markdown
 
-Edit a COMPONENT.md, refresh the page, see the change. No sync to maintain.
+Edit any source file, push, and the site rebuilds on the next deploy.
 
 ## Deployment
 
-Deployed to Vercel on push. Behind access protection until Distribution phase opens it up.
-\`\`\`
+Deployed to Vercel on push. Behind access protection until further notice.
+```
 
-- [ ] **Step 3: Smoke-test build + dev**
+- [ ] **Step 7: Smoke-test**
 
-Run: `npx nx build @nivoda/docs` — expected: succeeds
-Run: `npx nx dev @nivoda/docs` — visit `/`, click both links, confirm both routes resolve
+Run: `npx nx build @nivoda/docs` — expected: clean build, no missing asset errors
+Run: `npx nx dev @nivoda/docs` — visit `/`:
+- Dark theme is default (not system-based)
+- Nivoda wordmark visible in nav, top-left
+- Hero renders with serif display heading
+- Primary CTA is violet; secondary is neutral outline
+- Background is soft black (not pure `#000`)
+- Sidebar shows all 7 sections from Task 7
+- Favicon visible in browser tab
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
-git add apps/docs
-git commit -m "feat(docs): landing page and README
+git add apps/docs package-lock.json
+git commit -m "feat(docs): demo-ready landing, dark-first theme, Nivoda branding
 
-Minimal landing page linking to components + guides collections.
-README covers how to run locally and where content comes from."
+Dark as default (brand direction: luxury dark theme, soft black #0c0a09
+not true black). Violet reserved for primary CTA and focus — never chrome.
+Nivoda wordmark in nav, favicon set.
+
+Hero: serif display heading, three value props (tokens first, documented
+components, self-publishing). Mirrors the brand-system positioning and
+matches what leadership will see in the demo."
 ```
 
 ---
 
-## Task 8: Vercel deployment (access-protected)
+## Task 9: Vercel deployment (access-protected)
 
 **Why:** Green pipeline before there's content to lose. Catches Next/Nx build integration issues while they're cheap to fix.
 
@@ -673,7 +1194,7 @@ Record the preview URL in the PR description when you open it.
 
 ---
 
-## Task 9: Update ROADMAP.md + open PR
+## Task 10: Update ROADMAP.md + open PR
 
 **Why:** The ROADMAP currently lists Distribution as "⚪ Next 0%". Shipping `apps/docs` bumps it to in-progress. Update in the same PR so the story stays coherent.
 
@@ -760,21 +1281,28 @@ EOF
 | React 19.2 gets clamped below 19.2 by a transitive `overrides`/`resolutions` | Low | Task 2 Step 3 catches this. Fumadocs requires React ≥19.2; if clamped, surface rather than patch silently. |
 | COMPONENT.md frontmatter mapping breaks build | Low-Medium | Relax the Zod schema in `source.config.ts` to be permissive; log malformed files but don't touch them in this PR. |
 | Nx `@nvx/next` plugin needed for proper build caching | Low | Plan uses plain `command` executors which work without the plugin. Adding the plugin is a follow-up, not a blocker. |
-| Vercel build can't resolve workspace deps | Medium | Task 8 sets Vercel's Root Directory to repo root, Build Command `npx nx build @nivoda/docs`, Output Directory `apps/docs/.next`. If deps still unresolved, force explicit workspace install: `npm install --workspaces`. |
+| Vercel build can't resolve workspace deps | Medium | Task 9 sets Vercel's Root Directory to repo root, Build Command `npx nx build @nivoda/docs`, Output Directory `apps/docs/.next`. If deps still unresolved, force explicit workspace install: `npm install --workspaces`. |
 | Minivoda PR (Joao's `origin/feat/minivoda-migration`) merges first and conflicts with root `package.json`/`package-lock.json` | Medium | Expected. Rebase `feat/docs-fumadocs` onto `dev` after merge. Check: if Joao's PR already added `apps/*` to `workspaces` (unlikely, his branch puts Minivoda in `packages/test-app/`), Task 1 Steps 1 and 3 become no-ops. If he added a different glob, merge both. `package-lock.json` regenerates via `npm install`. |
 | ESLint not configured for `apps/docs` | Low | Scaffolder may or may not set up ESLint. Acceptable to ship without in PR 1 — `nx affected --target=lint` will silently skip. Flag in PR description as explicit deferral, address in PR 2. |
+| Functional-grouping sidebar requires cross-directory `meta.json` references, which Fumadocs-MDX may reject | Medium | Task 7 Step 1 verifies first. Strategy A (cross-directory pages in meta.json) is preferred; Strategy B (symlink functional layout into `content/components/actions/*` etc.) is the fallback. Both produce identical rendered output. |
+| Brand CSS variable overrides miss the actual Fumadocs var names | Low-Medium | Task 8 Step 3 tells the executor to inspect `node_modules/fumadocs-ui/dist/global.css` rather than guessing var names. If overrides don't land, the default Fumadocs theme is acceptable for the demo — violet primary CTA via inline Tailwind on the hero is the load-bearing piece. |
+| Demo asset gaps (Storybook link stub, missing image credits) | Low | The `Storybook ↗` link in `get-started.mdx` and the components section landing need a real URL before the demo. Task 7 Step 5 flags this; confirm Storybook deploy status before the presentation. |
 | Fumadocs-MDX API has shifted from what's written in Task 6 | Medium | Task 6 explicitly tells the executor to check the installed version's actual API and adapt. The *intent* is captured; the exact call signature is not load-bearing. |
 
 ---
 
 ## Out of scope for this plan (PR 2 or later)
 
-- Live MDX component demos (`<ComponentPreview name="button" />` etc.) — biggest follow-up
-- Experience Framework cross-repo content (`../experience-framework/`)
-- Search result tuning / custom search UI
-- Custom theming / brand polish beyond the default Fumadocs-UI theme
-- Storybook iframe embeds in component docs pages
-- Onboarding material, prompt patterns, worked self-service examples
-- Public access (removing the Vercel gate) — decided during Distribution-complete
-- Custom nav ordering / per-section icons / sidebar IA beyond auto-generation
-- Analytics / feedback widgets
+- **Live MDX component demos** (`<ComponentPreview name="button" />` etc.) — biggest follow-up; Storybook is the live-demo surface in this cycle
+- **Live visual samples on Foundation pages** — Color swatches rendered from tokens, Typography samples of the 12 role presets. Stubs for PR 1; beautiful foundation pages in a follow-up.
+- **Storybook iframe embeds** in component docs pages — not recommended pattern; keep Fumadocs and Storybook separate with a link-out
+- **Real brand content** — voice and tone, writing for UI, terminology, illustration. Stubs in PR 1; real in a follow-up with input from the brand-system repo
+- **Experience Framework cross-repo content** (`../experience-framework/`)
+- **Real ADR pages** — PR 1 has one "ADRs" page linking to anchors in architecture.md. Splitting into five ADR-xxx pages is deferred.
+- **Auto-extracted prop tables** from TypeScript types (react-docgen or similar). PR 1 uses hand-written tables in COMPONENT.md.
+- **Search result tuning / custom search UI** — default Fumadocs search is fine for the demo
+- **Onboarding material, prompt patterns, worked self-service examples**
+- **Public access** (removing the Vercel gate) — decided during Distribution-complete
+- **Analytics / feedback widgets**
+- **Custom typography** (e.g. serif display font for headings beyond Fumadocs default) — nice-to-have, deferred
+- **ESLint configuration** for `apps/docs` — acceptable to ship without; flag as deferred in PR description
