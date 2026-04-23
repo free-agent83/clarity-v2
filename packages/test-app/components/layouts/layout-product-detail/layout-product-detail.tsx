@@ -11,11 +11,10 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  PlpGridContainer,
 } from "@nivoda/components";
 
 import { cn } from "@/lib/utils";
-import { ProductListItem } from "@/components/products/product-list-item";
-import type { ProductListItemProps } from "@/components/products/product-list-item";
 import type { BreadcrumbItem, ProductImage, SpecRow } from "../types";
 
 type LayoutProductDetailProps = {
@@ -32,7 +31,7 @@ type LayoutProductDetailProps = {
   shippingInfo?: React.ReactNode;
   specs: SpecRow[];
   description?: string;
-  relatedItems: ProductListItemProps[];
+  relatedItems?: React.ReactNode;
   relatedTitle?: string;
   className?: string;
 };
@@ -201,16 +200,12 @@ export function LayoutProductDetail({
       <hr className="border-border" />
 
       {/* Related items */}
-      {relatedItems.length > 0 ? (
+      {relatedItems ? (
         <div className="flex flex-col gap-6">
           <h2 className="text-2xl font-semibold text-foreground">
             {relatedTitle}
           </h2>
-          <div className="grid grid-cols-4 gap-5">
-            {relatedItems.map((item) => (
-              <ProductListItem key={item.id} {...item} />
-            ))}
-          </div>
+          <PlpGridContainer>{relatedItems}</PlpGridContainer>
         </div>
       ) : null}
     </div>

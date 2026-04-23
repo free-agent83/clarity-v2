@@ -1,15 +1,29 @@
 import { notFound } from "next/navigation";
-import { IconInfoCircle, IconRefresh, IconTruck } from "@tabler/icons-react";
+import { PlpGridContainer, Separator } from "@nivoda/components";
+import { PdpDelivery } from "@nivoda/components/components/templates/pdp/pdp-delivery";
+import { PdpHeading } from "@nivoda/components/components/templates/pdp/pdp-heading";
+import { PdpLayout } from "@nivoda/components/components/templates/pdp/pdp-layout";
+import { PdpPrice } from "@nivoda/components/components/templates/pdp/pdp-price";
+import { PdpPrimaryAction } from "@nivoda/components/components/templates/pdp/pdp-primary-action";
+import { PdpReturns } from "@nivoda/components/components/templates/pdp/pdp-returns";
+import { PdpSpecifications } from "@nivoda/components/components/templates/pdp/pdp-specifications";
+import type {
+  PdpSpecificationRow,
+  ProductMedia,
+} from "@nivoda/components/components/templates/pdp/pdp-types";
 
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
+import { GemstonePlpItem } from "@/components/products/gemstone-plp-item";
+import { PdpBreadcrumbs } from "@/components/products/pdp-breadcrumbs";
+import { PdpMediaWithLightbox } from "@/components/products/pdp-media-with-lightbox";
+import {
+  getMockStockId,
+  getPlpItemMock,
+} from "@/components/products/plp-item-mocks";
+import { ProductActions } from "@/components/product-actions";
+import { GemstoneCertificateInfo } from "@/components/layouts/layout-product-detail/gemstone-certificate-info";
 
 import { fetchGemstoneItem, fetchRelatedGemstones } from "@/lib/api/gemstones";
-import { formatUSD } from "@/lib/utils";
-import { LayoutProductDetail } from "@/components/layouts/layout-product-detail/layout-product-detail";
-import type { SpecRow } from "@/components/layouts/types";
-import type { ProductListItemProps } from "@/components/products/product-list-item";
-import { GemstoneCertificateInfo } from "@/components/layouts/layout-product-detail/gemstone-certificate-info";
-import { ProductActions } from "@/components/product-actions";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -21,18 +35,19 @@ export default async function GemstoneDetailPage({ params }: Props) {
   ]);
   if (!item) notFound();
 
+  const mockStockId = getMockStockId(item.id);
+  const mock = getPlpItemMock(item.id);
+
   const breadcrumbs = [
     { label: "Gemstones", href: "/buyer/browse/gemstones" },
     { label: item.description, href: `/buyer/browse/gemstones/${item.id}` },
   ];
 
-  const images = [item.images.main, ...item.images.additional]
-    .filter((img) => img && img.length > 0)
-    .map((src) => ({ src, alt: item.description }));
+  const media: ProductMedia[] = [item.images.main, ...item.images.additional]
+    .filter((src) => src && src.length > 0)
+    .map((src) => ({ type: "image", src, alt: item.description }));
 
-  const formattedPrice = formatUSD(item.price);
-
-  const specs: SpecRow[] = [
+  const specs: PdpSpecificationRow[] = [
     { label: "Type", value: item.type },
     { label: "Shape", value: item.shape },
     { label: "Carat", value: item.carat.toFixed(2) },
@@ -50,95 +65,125 @@ export default async function GemstoneDetailPage({ params }: Props) {
       value: `${item.certification.lab} ${item.certification.number}`,
     },
   ];
-  const relatedItems: ProductListItemProps[] = relatedRaw.map((related) => ({
-    id: related.id,
-    href: `/browse/gemstones/${related.id}`,
-    imageSrc: related.images.main,
-    imageAlt: related.description,
-    title: related.description,
-    subtitle: `${related.certification.lab} ${related.certification.number} · ${related.stockId}`,
-    priceLabel: "Price",
-    formattedPrice: formatUSD(related.price),
-  }));
 
   return (
-    <LayoutProductDetail
-      breadcrumbs={breadcrumbs}
-      images={images}
-      title={item.description}
-      priceLabel="Price"
-      formattedPrice={formattedPrice}
-      actions={
-        <ProductActions
-          product={{
-            title: item.description,
-            subtitle: item.type,
-            price: item.price,
-            imageSrc: item.images.main,
-            attributes: specs,
-          }}
-        />
-      }
-      configuration={
-        <GemstoneCertificateInfo
-          lab={item.certification.lab}
-          certificateNumber={item.certification.number}
-          type={item.type}
-          origin={item.origin}
-          treatment={item.treatment}
-          shape={item.shape}
-          carat={item.carat}
-          color={item.color}
-          clarity={item.clarity}
-          cut={item.cut}
-        />
-      }
-      ctaButton={
-        <AddToCartButton
-          product={{
-            productId: item.id,
-            name: item.description,
-            certLab: item.certification.lab,
-            certNumber: item.certification.number,
-            stockId: item.stockId,
-            price: item.price,
-            discount: null,
-            image: item.images.main,
-            category: "gemstone",
-            quantity: 1,
-          }}
-        />
-      }
-      shippingInfo={
-        <div className="flex flex-col gap-1">
-          <div className="flex items-start gap-3">
-            <IconRefresh
-              size={24}
-              className="mt-0.5 shrink-0 text-foreground"
+    <div className="flex flex-col gap-12 pb-32">
+      <PdpBreadcrumbs segments={breadcrumbs} />
+
+      <PdpLayout
+        stickyTop="24px"
+        media={<PdpMediaWithLightbox media={media} />}
+        body={
+          <div className="flex flex-col gap-6">
+            <PdpHeading name={item.description} sku={mockStockId} />
+            <PdpPrice
+              amount={item.price}
+              currency="USD"
+              label="Price"
+              perCarat={{ amount: item.pricePerCarat, currency: "USD" }}
             />
-            <div className="flex flex-wrap items-center gap-1 pt-0.5 text-sm">
-              <span className="font-medium text-[#3d745c]">14-day returns</span>
-              <span className="text-muted-foreground">
-                · Returns Policy applies
-              </span>
-              <IconInfoCircle size={18} className="text-muted-foreground" />
+            <div className="flex flex-col gap-1">
+              <PdpReturns
+                {...(mock.isReturnable
+                  ? {
+                      variant: "returnable",
+                      returnsWindow: "14 days",
+                      policyLink: <a href="#">Returns Policy applies</a>,
+                    }
+                  : { variant: "non-returnable" })}
+              />
+              <PdpDelivery
+                {...(mock.isExpress
+                  ? { variant: "express", date: mock.deliveryDate }
+                  : {
+                      variant: "regular",
+                      date: mock.deliveryDate,
+                      shipsFrom: item.origin || mock.shipsFrom,
+                    })}
+              />
             </div>
+            <GemstoneCertificateInfo
+              lab={item.certification.lab}
+              certificateNumber={item.certification.number}
+              type={item.type}
+              origin={item.origin}
+              treatment={item.treatment}
+              shape={item.shape}
+              carat={item.carat}
+              color={item.color}
+              clarity={item.clarity}
+              cut={item.cut}
+            />
+            <PdpPrimaryAction
+              secondaryActions={
+                <ProductActions
+                  product={{
+                    title: item.description,
+                    subtitle: item.type,
+                    price: item.price,
+                    imageSrc: item.images.main,
+                    attributes: specs.map((s) => ({
+                      label: s.label,
+                      value: String(s.value),
+                    })),
+                  }}
+                />
+              }
+            >
+              <AddToCartButton
+                product={{
+                  productId: item.id,
+                  name: item.description,
+                  certLab: item.certification.lab,
+                  certNumber: item.certification.number,
+                  stockId: mockStockId,
+                  price: item.price,
+                  discount: null,
+                  image: item.images.main,
+                  category: "gemstone",
+                  quantity: 1,
+                }}
+              />
+            </PdpPrimaryAction>
           </div>
-          <div className="flex items-start gap-3">
-            <IconTruck size={24} className="mt-0.5 shrink-0 text-foreground" />
-            <div className="flex flex-wrap items-center gap-1 pt-0.5 text-sm">
-              <span className="text-muted-foreground">
-                Estimated delivery in
-              </span>
-              <span className="font-medium text-foreground">
-                10 business days
-              </span>
-            </div>
-          </div>
+        }
+      >
+        <Separator />
+        <PdpSpecifications rows={specs} />
+      </PdpLayout>
+
+      {relatedRaw.length > 0 && (
+        <div className="flex flex-col gap-6">
+          <h2 className="text-2xl font-semibold text-foreground">
+            You may also like
+          </h2>
+          <PlpGridContainer>
+            {relatedRaw.map((related) => (
+              <GemstonePlpItem
+                key={related.id}
+                href={`/buyer/browse/gemstones/${related.id}`}
+                item={{
+                  id: related.id,
+                  stockId: related.stockId,
+                  type: related.type,
+                  shape: related.shape,
+                  carat: related.carat,
+                  color: related.color,
+                  clarity: related.clarity,
+                  cut: related.cut,
+                  origin: related.origin,
+                  price: related.price,
+                  pricePerCarat: related.pricePerCarat,
+                  image: related.images.main,
+                  description: related.description,
+                  certLab: related.certification.lab,
+                  certNumber: related.certification.number,
+                }}
+              />
+            ))}
+          </PlpGridContainer>
         </div>
-      }
-      specs={specs}
-      relatedItems={relatedItems}
-    />
+      )}
+    </div>
   );
 }

@@ -3,9 +3,8 @@ import {
   fetchGemstoneListFiltered,
 } from "@/lib/api/gemstones";
 import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
-import { formatUSD } from "@/lib/utils";
 import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
-import { ProductListItem } from "@/components/products/product-list-item";
+import { GemstonePlpItem } from "@/components/products/gemstone-plp-item";
 
 import { GemstonesFilters } from "./filters";
 
@@ -38,22 +37,10 @@ export default async function GemstonesListPage({
       perPage={parsed.pagination.perPage}
     >
       {items.map((item) => (
-        <ProductListItem
+        <GemstonePlpItem
           key={item.id}
-          id={item.id}
+          item={item}
           href={`/buyer/browse/gemstones/${item.id}`}
-          imageSrc={item.image}
-          imageAlt={item.description}
-          title={item.description}
-          subtitle={`${item.certLab} ${item.certNumber} · ${item.stockId}`}
-          priceLabel="Price"
-          formattedPrice={formatUSD(item.price)}
-          tags={[
-            { key: "type", label: item.type, title: item.type },
-            ...(item.origin
-              ? [{ key: "origin", label: item.origin, title: item.origin }]
-              : []),
-          ]}
         />
       ))}
     </LayoutPlp>

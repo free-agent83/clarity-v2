@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { IconInfoCircle, IconRefresh, IconTruck } from "@tabler/icons-react";
 
 import {
   fetchEngagementRingItem,
@@ -8,7 +7,8 @@ import {
 import { formatUSD } from "@/lib/utils";
 import { LayoutProductDetail } from "@/components/layouts/layout-product-detail/layout-product-detail";
 import type { SpecRow } from "@/components/layouts/types";
-import type { ProductListItemProps } from "@/components/products/product-list-item";
+import { ProductListItem } from "@/components/products/product-list-item";
+import { ProductShippingInfo } from "@/components/products/product-shipping-info";
 import { JewelryConfiguration } from "./jewelry-configuration";
 import { IncludedInMount } from "./included-in-mount";
 import { ProductActions } from "@/components/product-actions";
@@ -77,7 +77,7 @@ export default async function JewelryDetailPage({ params }: Props) {
       : []),
   ];
 
-  const relatedItems: ProductListItemProps[] = relatedRaw.map((related) => {
+  const relatedItems = relatedRaw.map((related) => {
     const relThumbnail =
       related.images.find((img) => img.isThumbnail)?.url ??
       related.images[0]?.url ??
@@ -86,16 +86,19 @@ export default async function JewelryDetailPage({ params }: Props) {
       related.availableMetals.length > 0
         ? Math.min(...related.availableMetals.map((am) => am.priceUsd))
         : 0;
-    return {
-      id: related.id,
-      href: `/browse/jewelry/engagement-rings/${related.id}`,
-      imageSrc: relThumbnail,
-      imageAlt: related.description,
-      title: related.description,
-      subtitle: `${related.bandStyle.value} · ${related.sku}`,
-      priceLabel: "Starting from",
-      formattedPrice: formatUSD(relMinPrice),
-    };
+    return (
+      <ProductListItem
+        key={related.id}
+        id={related.id}
+        href={`/browse/jewelry/engagement-rings/${related.id}`}
+        imageSrc={relThumbnail}
+        imageAlt={related.description}
+        title={related.description}
+        subtitle={`${related.bandStyle.value} · ${related.sku}`}
+        priceLabel="Starting from"
+        formattedPrice={formatUSD(relMinPrice)}
+      />
+    );
   });
 
   return (
@@ -132,34 +135,7 @@ export default async function JewelryDetailPage({ params }: Props) {
           metalTypeValue={defaultMetal}
         />
       }
-      shippingInfo={
-        <div className="flex flex-col gap-1">
-          <div className="flex items-start gap-3">
-            <IconRefresh
-              size={24}
-              className="mt-0.5 shrink-0 text-foreground"
-            />
-            <div className="flex flex-wrap items-center gap-1 pt-0.5 text-sm">
-              <span className="font-medium text-[#3d745c]">14-day returns</span>
-              <span className="text-muted-foreground">
-                · Returns Policy applies
-              </span>
-              <IconInfoCircle size={18} className="text-muted-foreground" />
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <IconTruck size={24} className="mt-0.5 shrink-0 text-foreground" />
-            <div className="flex flex-wrap items-center gap-1 pt-0.5 text-sm">
-              <span className="text-muted-foreground">
-                Estimated delivery in
-              </span>
-              <span className="font-medium text-foreground">
-                15 business days
-              </span>
-            </div>
-          </div>
-        </div>
-      }
+      shippingInfo={<ProductShippingInfo id={item.id} />}
       specs={specs}
       relatedItems={relatedItems}
     />

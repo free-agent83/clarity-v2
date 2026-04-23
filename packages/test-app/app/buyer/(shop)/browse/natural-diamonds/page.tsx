@@ -3,9 +3,8 @@ import {
   fetchDiamondListFiltered,
 } from "@/lib/api/diamonds";
 import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
-import { formatUSD } from "@/lib/utils";
 import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
-import { ProductListItem } from "@/components/products/product-list-item";
+import { DiamondPlpItem } from "@/components/products/diamond-plp-item";
 
 import { NaturalDiamondsFilters } from "./filters";
 
@@ -41,27 +40,11 @@ export default async function NaturalDiamondsListPage({
       perPage={parsed.pagination.perPage}
     >
       {items.map((item) => (
-        <ProductListItem
+        <DiamondPlpItem
           key={item.id}
-          id={item.id}
+          item={item}
           href={`/buyer/browse/natural-diamonds/${item.id}`}
-          imageSrc={item.image}
-          imageAlt={item.description}
-          title={item.description}
-          subtitle={`${item.certLab} ${item.certNumber} · ${item.stockId}`}
-          priceLabel="Price"
-          formattedPrice={formatUSD(item.price)}
-          tags={
-            item.certLab
-              ? [
-                  {
-                    key: "cert",
-                    label: item.certLab,
-                    title: `Certified by ${item.certLab}`,
-                  },
-                ]
-              : []
-          }
+          category="natural_diamond"
         />
       ))}
     </LayoutPlp>

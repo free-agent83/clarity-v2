@@ -1,8 +1,7 @@
 import { MELEE_FILTERS, fetchMeleeListFiltered } from "@/lib/api/melee";
 import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
-import { formatUSD } from "@/lib/utils";
 import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
-import { ProductListItem } from "@/components/products/product-list-item";
+import { MeleePlpItem } from "@/components/products/melee-plp-item";
 
 import { NaturalMeleeFilters } from "./filters";
 
@@ -38,20 +37,11 @@ export default async function NaturalMeleeListPage({
       perPage={parsed.pagination.perPage}
     >
       {items.map((item) => (
-        <ProductListItem
+        <MeleePlpItem
           key={item.id}
-          id={item.id}
+          item={item}
           href={`/buyer/browse/natural-melee/${item.id}`}
-          imageSrc={item.image}
-          imageAlt={item.description}
-          title={item.description}
-          subtitle={item.stockId}
-          priceLabel="Total price"
-          formattedPrice={formatUSD(item.totalPrice)}
-          tags={[
-            { key: "size", label: item.sizeRange },
-            { key: "qty", label: `${item.quantity}pcs` },
-          ]}
+          category="natural_melee"
         />
       ))}
     </LayoutPlp>
