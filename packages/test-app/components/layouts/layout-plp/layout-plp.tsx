@@ -4,11 +4,7 @@ import { PlpGridContainer, PlpHeading } from "@nivoda/components";
 
 import { PaginationControls } from "../pagination-controls";
 import type { BreadcrumbItem } from "../types";
-import { SearchInput } from "@/components/filters/search-input";
-import { UncontrolledSortButton } from "@/components/filters/uncontrolled-sort-button";
-import type { SortOption } from "@/components/filters/sort-button";
 
-export { type SortOption };
 export const PER_PAGE_OPTIONS = [20, 40, 60, 80, 100];
 export const DEFAULT_PER_PAGE = 20;
 
@@ -16,8 +12,13 @@ type LayoutPlpProps = {
   breadcrumbs: BreadcrumbItem[];
   categoryName: string;
   resultCount: number;
-  quickFilters?: React.ReactNode;
-  sortOptions?: SortOption[];
+  /**
+   * Pre-composed filter toolbar for this category. Typically a
+   * colocated client component in `browse/{category}/filters.tsx` that
+   * owns the filter state and renders the design-system `FilterToolbar`.
+   * Rendered between the heading and the product grid.
+   */
+  toolbar?: React.ReactNode;
   currentPage: number;
   totalPages: number;
   perPage: number;
@@ -28,8 +29,7 @@ export function LayoutPlp({
   breadcrumbs,
   categoryName,
   resultCount,
-  quickFilters,
-  sortOptions,
+  toolbar,
   currentPage,
   totalPages,
   perPage,
@@ -43,19 +43,7 @@ export function LayoutPlp({
         resultsCount={resultCount}
       />
 
-      <div className="flex flex-col gap-4">
-        <SearchInput placeholder="Search" full />
-        <div className="flex flex-wrap items-start gap-5">
-          {quickFilters ? (
-            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-              {quickFilters}
-            </div>
-          ) : null}
-          {sortOptions && sortOptions.length > 0 ? (
-            <UncontrolledSortButton options={sortOptions} />
-          ) : null}
-        </div>
-      </div>
+      {toolbar}
 
       <PlpGridContainer>{children}</PlpGridContainer>
 

@@ -4,85 +4,10 @@ import {
   LayoutPlp,
   PER_PAGE_OPTIONS,
   DEFAULT_PER_PAGE,
-  type SortOption,
 } from "@/components/layouts/layout-plp/layout-plp";
 import { ProductListItem } from "@/components/products/product-list-item";
-import { UncontrolledFilterBar as FilterBar } from "@/components/filters/uncontrolled-filter-bar";
 
-const FILTERS = [
-  {
-    key: "type",
-    label: "Type",
-    options: [
-      "Ruby",
-      "Sapphire",
-      "Emerald",
-      "Tanzanite",
-      "Aquamarine",
-      "Amethyst",
-      "Tourmaline",
-      "Spinel",
-    ],
-  },
-  {
-    key: "shape",
-    label: "Shape",
-    options: [
-      "Round",
-      "Oval",
-      "Cushion",
-      "Pear",
-      "Emerald",
-      "Marquise",
-      "Heart",
-    ],
-  },
-  {
-    key: "color",
-    label: "Color",
-    options: [
-      "Red",
-      "Blue",
-      "Green",
-      "Purple",
-      "Pink",
-      "Yellow",
-      "Orange",
-      "Teal",
-    ],
-  },
-  {
-    key: "carat",
-    label: "Carat",
-    options: ["Under 1ct", "1–2ct", "2–5ct", "5–10ct", "10ct+"],
-  },
-  {
-    key: "origin",
-    label: "Origin",
-    options: [
-      "Burma",
-      "Ceylon",
-      "Colombia",
-      "Madagascar",
-      "Mozambique",
-      "Thailand",
-      "Untreated",
-    ],
-  },
-  {
-    key: "treatment",
-    label: "Treatment",
-    options: ["None", "Heat", "Beryllium", "Fracture filled", "Oiling"],
-  },
-];
-
-const SORT_OPTIONS: SortOption[] = [
-  { value: "featured", label: "Featured", displayLabel: "Featured" },
-  { value: "price_asc", label: "Price: Low → High", displayLabel: "Price ↑" },
-  { value: "price_desc", label: "Price: High → Low", displayLabel: "Price ↓" },
-  { value: "newest", label: "Newest", displayLabel: "Newest" },
-  { value: "carat", label: "Carat", displayLabel: "Carat" },
-];
+import { GemstonesFilters } from "./filters";
 
 export default async function GemstonesListPage({
   searchParams,
@@ -110,8 +35,7 @@ export default async function GemstonesListPage({
       breadcrumbs={breadcrumbs}
       categoryName="Gemstones"
       resultCount={totalItems}
-      quickFilters={<FilterBar filters={FILTERS} />}
-      sortOptions={SORT_OPTIONS}
+      toolbar={<GemstonesFilters />}
       currentPage={currentPage}
       totalPages={totalPages}
       perPage={perPage}

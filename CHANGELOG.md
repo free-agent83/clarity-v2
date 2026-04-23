@@ -4,6 +4,25 @@ All notable progress on Clarity V2 is recorded here. Most recent entries first.
 
 ---
 
+## 2026-04-23 — Minivoda PLP pages adopt `FilterToolbar` from the component library
+
+Minivoda's six browse pages (natural/lab-grown diamonds, gemstones, natural/lab-grown melee, engagement rings) now render their filter / sort chrome through the design-system `FilterToolbar` organism. Each page owns its own filter-state controller, colocated alongside `page.tsx` as `filters.tsx`, following the DS's consumer-owned-state pattern.
+
+**Why:** the previous PLPs composed a hand-rolled search + filter-bar + sort trio inline in `LayoutProductList`, duplicating UI the design system already ships. Routing through `FilterToolbar` gives every category the same chrome, layout, sticky behaviour, and future drawer / preview-count scaffolding for free.
+
+**Scope of this pass:**
+- **Per-category filter controllers.** Each browse page now has a sibling `filters.tsx` client component that owns `useState` for active filter selections and sort value, composes filter buttons from a local filter definition, and renders `<FilterToolbar>` with the full consumer-owned prop surface (`filters`, `activeFilterCount`, `hasActiveFilters`, `onClearAll`, `sortOptions`, `sortValue`, `onSortChange`). Colocated so filter UI stays next to the category it belongs to — matching the "kit at the call site" guidance in the PLP COMPONENT.md.
+- **Shared `MultiSelectFilterButton` helper** in `components/filters/` — composes the DS `FilterButton` render-prop with a checkbox list inside the popover. Used by every category's filter controller; category-specific option lists stay in the per-category controller files.
+- **`LayoutPlp` reshaped.** Accepts a `toolbar?: ReactNode` prop and renders whatever the page passes between `PlpHeading` and `PlpGridContainer`. The `quickFilters` / `sortOptions` props, the local `SearchInput`, the `UncontrolledSortButton`, and the re-exported `SortOption` type are gone — all superseded by `FilterToolbar`.
+
+**Deliberately not done this pass (tracked for follow-up):**
+- **Search was dropped from PLPs.** `FilterToolbar` supports an `onSearchSubmit` callback, but the previous `<SearchInput>` in `LayoutPlp` was a dead UI (no submit wiring, no filter-the-grid behaviour). Rather than fake a search bar, this pass ships PLPs without one. The global search sits in the `AppShell` header; per-category scoped search returns as a follow-up when backend search supports it.
+- **All-filters drawer.** `FilterToolbar` supports a bundled drawer via the `drawer` prop for "All filters" overflow. Not wired here — if a category's filter count outgrows the main row, the drawer gets wired in that pass.
+- **Filter state is still ephemeral.** Selections don't persist to URL params or trigger refetches — filters are a visual shell on the prototype, same as before. URL-param integration is a separate task with its own design decisions.
+- **Legacy `filter-bar` / `sort-button` / `search-input` files remain on disk.** They still have non-PLP consumers (`orders-filterable-list`, `finances-table`, the stone-selection configurator page). Deleting them is the conclusion of a later pass when those surfaces also route through DS primitives.
+
+---
+
 ## 2026-04-10 — Architectural correction: tokens package is surface-agnostic
 
 Removed the shadcn-specific layer from the tokens package. The tokens package now emits only primitives and the surface-agnostic semantic layer; any mapping to a specific surface theme (shadcn, Tailwind `@theme`, etc.) lives in-loco in the consumer.

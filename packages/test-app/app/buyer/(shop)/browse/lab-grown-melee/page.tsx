@@ -4,46 +4,10 @@ import {
   LayoutPlp,
   PER_PAGE_OPTIONS,
   DEFAULT_PER_PAGE,
-  type SortOption,
 } from "@/components/layouts/layout-plp/layout-plp";
 import { ProductListItem } from "@/components/products/product-list-item";
-import { UncontrolledFilterBar as FilterBar } from "@/components/filters/uncontrolled-filter-bar";
 
-const FILTERS = [
-  {
-    key: "shape",
-    label: "Shape",
-    options: ["Round", "Princess", "Baguette", "Tapered baguette"],
-  },
-  {
-    key: "size",
-    label: "Size",
-    options: ["Under 1mm", "1–1.5mm", "1.5–2mm", "2–2.5mm", "2.5–3mm", "3mm+"],
-  },
-  {
-    key: "color_range",
-    label: "Color range",
-    options: ["DEF", "GHI", "JKL", "MNO"],
-  },
-  {
-    key: "clarity_range",
-    label: "Clarity range",
-    options: ["VVS", "VS", "SI", "I"],
-  },
-  {
-    key: "cut",
-    label: "Cut",
-    options: ["Excellent", "Very Good", "Good"],
-  },
-];
-
-const SORT_OPTIONS: SortOption[] = [
-  { value: "featured", label: "Featured", displayLabel: "Featured" },
-  { value: "price_asc", label: "Price: Low → High", displayLabel: "Price ↑" },
-  { value: "price_desc", label: "Price: High → Low", displayLabel: "Price ↓" },
-  { value: "newest", label: "Newest", displayLabel: "Newest" },
-  { value: "carat", label: "Carat", displayLabel: "Carat" },
-];
+import { LabGrownMeleeFilters } from "./filters";
 
 export default async function LabGrownMeleeListPage({
   searchParams,
@@ -76,8 +40,7 @@ export default async function LabGrownMeleeListPage({
       breadcrumbs={breadcrumbs}
       categoryName="Lab Grown Melee"
       resultCount={totalItems}
-      quickFilters={<FilterBar filters={FILTERS} />}
-      sortOptions={SORT_OPTIONS}
+      toolbar={<LabGrownMeleeFilters />}
       currentPage={currentPage}
       totalPages={totalPages}
       perPage={perPage}

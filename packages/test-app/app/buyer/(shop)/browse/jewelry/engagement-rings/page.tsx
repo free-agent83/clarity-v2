@@ -7,10 +7,10 @@ import {
   LayoutPlp,
   PER_PAGE_OPTIONS,
   DEFAULT_PER_PAGE,
-  type SortOption,
 } from "@/components/layouts/layout-plp/layout-plp";
 import { ProductListItem } from "@/components/products/product-list-item";
-import { UncontrolledFilterBar as FilterBar } from "@/components/filters/uncontrolled-filter-bar";
+
+import { EngagementRingsFilters } from "./filters";
 
 const METAL_SWATCH_COLORS: Record<string, string> = {
   "14k_yellow_gold": "#e6c24b",
@@ -40,53 +40,6 @@ function getMetalSwatches(
   }
   return swatches;
 }
-
-const FILTERS = [
-  {
-    key: "stone_shape",
-    label: "Stone shape",
-    options: [
-      "Round",
-      "Oval",
-      "Princess",
-      "Cushion",
-      "Emerald",
-      "Pear",
-      "Radiant",
-      "Marquise",
-    ],
-  },
-  {
-    key: "stone_count",
-    label: "Stone count",
-    options: ["Solitaire", "3-stone", "Halo", "Pavé", "Channel"],
-  },
-  {
-    key: "metal",
-    label: "Metal",
-    options: [
-      "14k Yellow Gold",
-      "18k Yellow Gold",
-      "14k Rose Gold",
-      "18k Rose Gold",
-      "14k White Gold",
-      "18k White Gold",
-      "950 Platinum",
-    ],
-  },
-  {
-    key: "style",
-    label: "Style",
-    options: ["Classic", "Vintage", "Modern", "Nature-inspired", "Bezel"],
-  },
-];
-
-const SORT_OPTIONS: SortOption[] = [
-  { value: "featured", label: "Featured", displayLabel: "Featured" },
-  { value: "price_asc", label: "Price: Low → High", displayLabel: "Price ↑" },
-  { value: "price_desc", label: "Price: High → Low", displayLabel: "Price ↓" },
-  { value: "newest", label: "Newest", displayLabel: "Newest" },
-];
 
 export default async function JewelryListPage({
   searchParams,
@@ -120,8 +73,7 @@ export default async function JewelryListPage({
       breadcrumbs={breadcrumbs}
       categoryName="Engagement Rings"
       resultCount={totalItems}
-      quickFilters={<FilterBar filters={FILTERS} />}
-      sortOptions={SORT_OPTIONS}
+      toolbar={<EngagementRingsFilters />}
       currentPage={currentPage}
       totalPages={totalPages}
       perPage={perPage}
