@@ -10,10 +10,12 @@ import {
 } from "@nivoda/components";
 import { SearchX } from "lucide-react";
 
-import { PaginationControls } from "../pagination-controls";
+import type { PlpViewMode } from "@/lib/plp-view-mode";
 import type { BreadcrumbItem } from "../types";
 import { PlpLoadingGrid } from "./plp-loading-grid";
+import { PlpLoadingList } from "./plp-loading-list";
 import { PlpLoadingProvider } from "./plp-loading-context";
+import { PlpPagination } from "./plp-pagination";
 
 export const PER_PAGE_OPTIONS = [20, 40, 60, 80, 100];
 export const DEFAULT_PER_PAGE = 20;
@@ -29,9 +31,17 @@ type LayoutPlpProps = {
    * Rendered between the heading and the product grid.
    */
   toolbar?: React.ReactNode;
+  /**
+   * Promotional banner rendered between the heading and the toolbar.
+   * Typically a narrow promo (e.g. Showroom).
+   */
+  banner?: React.ReactNode;
   currentPage: number;
   totalPages: number;
-  perPage: number;
+  /** Grid or list view. Defaults to grid. */
+  viewMode?: PlpViewMode;
+  /** Header row for the list view. Required when viewMode is "list". */
+  listHeader?: React.ReactNode;
   children: React.ReactNode;
 };
 
@@ -40,9 +50,11 @@ export function LayoutPlp({
   categoryName,
   resultCount,
   toolbar,
+  banner,
   currentPage,
   totalPages,
-  perPage,
+  viewMode = "grid",
+  listHeader,
   children,
 }: LayoutPlpProps) {
   return (
@@ -53,6 +65,8 @@ export function LayoutPlp({
           title={categoryName}
           resultsCount={resultCount}
         />
+
+        {banner}
 
         {toolbar}
 
@@ -70,13 +84,15 @@ export function LayoutPlp({
           </Empty>
         ) : (
           <>
-            <PlpLoadingGrid>{children}</PlpLoadingGrid>
+            {viewMode === "list" ? (
+              <PlpLoadingList header={listHeader}>{children}</PlpLoadingList>
+            ) : (
+              <PlpLoadingGrid>{children}</PlpLoadingGrid>
+            )}
 
-            <PaginationControls
+            <PlpPagination
               currentPage={currentPage}
               totalPages={totalPages}
-              perPage={perPage}
-              perPageOptions={PER_PAGE_OPTIONS}
             />
           </>
         )}

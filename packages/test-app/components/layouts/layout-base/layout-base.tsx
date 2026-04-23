@@ -30,12 +30,7 @@ import {
 } from "@nivoda/components";
 
 import type { AppUser } from "@/lib/api/users";
-import {
-  type NavItem,
-  adminItems,
-  myListItems,
-  productCategories,
-} from "@/lib/navigation";
+import { type NavItem, productCategories } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { CalculatorPopover } from "@/components/shell/calculator-popover";
@@ -158,8 +153,6 @@ export function LayoutBase({ children, user }: LayoutBaseProps) {
           </Button>
 
           <NavSection heading="Browse" items={productCategories} />
-          <NavSection heading="My List" items={myListItems} />
-          <NavSection items={adminItems} />
         </AppShellNavigationSheet>
 
         <CategoriesMenu />
@@ -227,10 +220,10 @@ function NavLink({ item }: { item: NavItem }) {
       href={item.href}
       target={item.target}
       className={cn(
-        "flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm tracking-wide transition-colors",
+        "flex h-12 items-center gap-2 rounded-md px-3 py-2.5 text-sm tracking-wide transition-colors",
         isActive
-          ? "bg-primary/10 text-primary"
-          : "text-foreground hover:bg-muted",
+          ? "bg-muted text-accent-foreground"
+          : "text-foreground hover:text-accent-foreground hover:bg-muted",
       )}
     >
       {Icon ? (
@@ -243,7 +236,7 @@ function NavLink({ item }: { item: NavItem }) {
       ) : null}
       <span className="flex-1 truncate">{item.label}</span>
       {item.badge ? (
-        <Badge variant="secondary" className="rounded-sm">
+        <Badge className="bg-accent text-accent-foreground" size="sm">
           {item.badge}
         </Badge>
       ) : null}

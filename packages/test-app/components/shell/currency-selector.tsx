@@ -5,6 +5,7 @@ import { IconChevronDown } from "@tabler/icons-react";
 
 import { cn } from "@/lib/utils";
 import {
+  Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -28,12 +29,12 @@ export function CurrencySelector() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+        <Button variant="ghost">
           <span>
             {selected.code} ({selected.symbol})
           </span>
           <IconChevronDown size={14} className="text-muted-foreground" />
-        </button>
+        </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-64 p-1">
         <ul role="listbox" aria-label="Select currency">
@@ -41,33 +42,25 @@ export function CurrencySelector() {
             const isSelected = currency.code === selected.code;
             return (
               <li key={currency.code} role="option" aria-selected={isSelected}>
-                <button
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors hover:bg-muted",
-                    isSelected ? "bg-muted" : "",
-                  )}
+                <Button
+                  variant="ghost"
+                  block
+                  className={cn("justify-start gap-3", isSelected && "bg-muted")}
                   onClick={() => {
                     setSelected(currency);
                     setOpen(false);
                   }}
                 >
-                  {/* Flag */}
                   <span className="w-5 shrink-0 text-base leading-none">
                     {currency.flag}
                   </span>
-                  {/* Code + symbol */}
-                  <span
-                    className={cn(
-                      "flex-1 text-left font-medium",
-                      isSelected && "text-foreground",
-                    )}
-                  >
+                  <span className={cn("flex-1 text-left font-medium", isSelected && "text-foreground")}>
                     {currency.code} ({currency.symbol})
                   </span>
                   <span className="shrink-0 text-xs text-muted-foreground">
                     {currency.label}
                   </span>
-                </button>
+                </Button>
               </li>
             );
           })}

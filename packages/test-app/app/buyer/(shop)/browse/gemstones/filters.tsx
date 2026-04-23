@@ -9,6 +9,7 @@ import {
   usePlpFilterController,
   type FilterDef,
 } from "@/hooks/use-plp-filter-controller";
+import { PlpViewModeToggle } from "@/components/products/plp-view-mode-toggle";
 
 const FILTERS: FilterDef[] = [
   {
@@ -93,5 +94,11 @@ export function GemstonesFilters() {
     defaultSort: "newest",
   });
 
-  return <FilterToolbar {...toolbarProps} onSearchSubmit={() => {}} />;
+  return (
+    <FilterToolbar
+      {...toolbarProps}
+      onSearchSubmit={() => {}}
+      actions={<PlpViewModeToggle />}
+    />
+  );
 }

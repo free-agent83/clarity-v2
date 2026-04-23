@@ -12,6 +12,7 @@ import type {
   ProductMedia,
 } from "@nivoda/components/components/templates/pdp/pdp-types";
 
+import { formatGemstoneDisplayName } from "@/components/products/gemstone-name";
 import { GemstonePlpItem } from "@/components/products/gemstone-plp-item";
 import { PdpBreadcrumbs } from "@/components/products/pdp-breadcrumbs";
 import { PdpMediaWithLightbox } from "@/components/products/pdp-media-with-lightbox";
@@ -36,10 +37,15 @@ export default async function GemstoneDetailPage({ params }: Props) {
 
   const mockStockId = getMockStockId(item.id);
   const mock = getPlpItemMock(item.id);
+  const displayName = formatGemstoneDisplayName(
+    item.description,
+    item.origin,
+    item.treatment,
+  );
 
   const media: ProductMedia[] = [item.images.main, ...item.images.additional]
     .filter((src) => src && src.length > 0)
-    .map((src) => ({ type: "image", src, alt: item.description }));
+    .map((src) => ({ type: "image", src, alt: displayName }));
 
   const specs: PdpSpecificationRow[] = [
     { label: "Type", value: item.type },
@@ -66,7 +72,7 @@ export default async function GemstoneDetailPage({ params }: Props) {
         segments={[
           { label: "Gemstones", href: "/buyer/browse/gemstones" },
           {
-            label: item.description,
+            label: displayName,
             href: `/buyer/browse/gemstones/${item.id}`,
           },
         ]}
@@ -77,7 +83,7 @@ export default async function GemstoneDetailPage({ params }: Props) {
         media={<PdpMediaWithLightbox media={media} />}
         body={
           <div className="flex flex-col gap-6">
-            <PdpHeading name={item.description} sku={mockStockId} />
+            <PdpHeading name={displayName} sku={mockStockId} />
             <PdpPrice
               amount={item.price}
               currency="USD"
@@ -108,7 +114,7 @@ export default async function GemstoneDetailPage({ params }: Props) {
               secondaryActions={
                 <StonePdpSecondaryActions
                   product={{
-                    title: item.description,
+                    title: displayName,
                     subtitle: item.type,
                     price: item.price,
                     imageSrc: item.images.main,
@@ -162,6 +168,7 @@ export default async function GemstoneDetailPage({ params }: Props) {
                   color: related.color,
                   clarity: related.clarity,
                   cut: related.cut,
+                  treatment: related.treatment,
                   origin: related.origin,
                   price: related.price,
                   pricePerCarat: related.pricePerCarat,

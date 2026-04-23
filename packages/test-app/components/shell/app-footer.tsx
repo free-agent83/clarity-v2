@@ -1,3 +1,5 @@
+import * as React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@nivoda/components";
 import {
   IconBrandFacebook,
   IconBrandInstagram,
@@ -14,12 +16,8 @@ import {
 // Figma-hosted assets (expire 7 days from design export — replace with local files)
 const LOGO_WORDMARK =
   "https://www.figma.com/api/mcp/asset/9ae012d5-ffb1-4b11-8083-e43fc9087616";
-const ACCOUNT_MANAGER_AVATAR =
-  "https://www.figma.com/api/mcp/asset/79e06553-c439-4f61-97c7-5da3ec66bb98";
-const APP_STORE_BADGE =
-  "https://www.figma.com/api/mcp/asset/ad395b79-e065-4638-ba65-40d59eb149c0";
-const GOOGLE_PLAY_BADGE =
-  "https://www.figma.com/api/mcp/asset/ab967e41-a280-4778-baaa-b378a8a7b51e";
+
+const ACCOUNT_MANAGER_PRAVATAR = "https://i.pravatar.cc/150?img=12";
 
 const FOOTER_LINKS = [
   {
@@ -56,17 +54,26 @@ function FooterDivider() {
 
 export function AppFooter() {
   return (
-    <footer className="bg-foreground">
+    <footer
+      className="bg-foreground"
+      style={
+        {
+          "--foreground": "oklch(0.147 0.004 49.25)",
+          "--background": "oklch(1 0 0)",
+          "--primary": "oklch(0.216 0.006 56.043)",
+          "--muted-foreground": "oklch(0.553 0.013 58.071)",
+        } as React.CSSProperties
+      }
+    >
       <div className="mx-auto flex max-w-7xl flex-col gap-12 px-5 pb-30 pt-16">
         {/* Contact sections */}
         <div className="flex gap-10">
           {/* Account manager */}
           <div className="flex flex-1 flex-col gap-5">
-            <img
-              src={ACCOUNT_MANAGER_AVATAR}
-              alt="Account Manager"
-              className="size-16 rounded-full object-cover"
-            />
+            <Avatar className="size-16">
+              <AvatarImage src={ACCOUNT_MANAGER_PRAVATAR} alt="John Appleseed" />
+              <AvatarFallback>JA</AvatarFallback>
+            </Avatar>
             <div>
               <p className="text-xl font-bold leading-8 tracking-[0.15px] text-background">
                 Your account manager
@@ -189,16 +196,20 @@ export function AppFooter() {
             <p className="whitespace-nowrap text-sm font-medium leading-5.5 tracking-[0.1px] text-background">
               Download the app
             </p>
-            <img
-              src={APP_STORE_BADGE}
-              alt="Download on the App Store"
-              className="h-10 w-30 rounded-md object-cover"
-            />
-            <img
-              src={GOOGLE_PLAY_BADGE}
-              alt="Get it on Google Play"
-              className="h-10 w-30 rounded-md object-cover"
-            />
+            <a href="#" aria-label="Download on the App Store">
+              <img
+                src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                alt="Download on the App Store"
+                className="h-10 w-auto"
+              />
+            </a>
+            <a href="#" aria-label="Get it on Google Play">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                alt="Get it on Google Play"
+                className="h-10 w-auto"
+              />
+            </a>
           </div>
         </div>
 

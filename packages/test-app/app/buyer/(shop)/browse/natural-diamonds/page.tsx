@@ -4,7 +4,13 @@ import {
 } from "@/lib/api/diamonds";
 import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
 import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
+import { ShowroomBanner } from "@/components/products/showroom-banner";
 import { DiamondPlpItem } from "@/components/products/diamond-plp-item";
+import {
+  DiamondPlpListHeader,
+  DiamondPlpListRow,
+} from "@/components/products/diamond-plp-list";
+import { parsePlpViewMode } from "@/lib/plp-view-mode";
 
 import { NaturalDiamondsFilters } from "./filters";
 
@@ -13,7 +19,9 @@ export default async function NaturalDiamondsListPage({
 }: {
   searchParams: Promise<PageSearchParams>;
 }) {
-  const parsed = parsePageListParams(await searchParams, DIAMOND_FILTERS);
+  const params = await searchParams;
+  const parsed = parsePageListParams(params, DIAMOND_FILTERS);
+  const viewMode = parsePlpViewMode(params.view);
   const { items, totalItems } = await fetchDiamondListFiltered(
     parsed.filters,
     parsed.sort,
@@ -34,19 +42,29 @@ export default async function NaturalDiamondsListPage({
       breadcrumbs={breadcrumbs}
       categoryName="Natural Diamonds"
       resultCount={totalItems}
+      banner={<ShowroomBanner />}
       toolbar={<NaturalDiamondsFilters />}
       currentPage={parsed.pagination.page}
-      totalPages={totalPages}
-      perPage={parsed.pagination.perPage}
+      totalPages={totalPages}      viewMode={viewMode}
+      listHeader={viewMode === "list" ? <DiamondPlpListHeader /> : undefined}
     >
-      {items.map((item) => (
-        <DiamondPlpItem
-          key={item.id}
-          item={item}
-          href={`/buyer/browse/natural-diamonds/${item.id}`}
-          category="natural_diamond"
-        />
-      ))}
+      {items.map((item) =>
+        viewMode === "list" ? (
+          <DiamondPlpListRow
+            key={item.id}
+            item={item}
+            href={`/buyer/browse/natural-diamonds/${item.id}`}
+            category="natural_diamond"
+          />
+        ) : (
+          <DiamondPlpItem
+            key={item.id}
+            item={item}
+            href={`/buyer/browse/natural-diamonds/${item.id}`}
+            category="natural_diamond"
+          />
+        ),
+      )}
     </LayoutPlp>
   );
 }

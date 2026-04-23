@@ -1,3 +1,4 @@
+import * as React from "react";
 import Link from "next/link";
 import { IconChevronDown } from "@tabler/icons-react";
 
@@ -5,7 +6,15 @@ import { productCategories } from "@/lib/navigation";
 
 export function CategoriesMenu() {
   return (
-    <nav className="flex h-22.5 items-center justify-center gap-2 bg-foreground py-4">
+    <nav
+      className="flex h-22.5 items-center justify-center gap-2 bg-foreground py-4"
+      style={
+        {
+          "--foreground": "oklch(0.147 0.004 49.25)",
+          "--background": "oklch(1 0 0)",
+        } as React.CSSProperties
+      }
+    >
       {productCategories.map((item) => (
         <Link
           key={item.href}

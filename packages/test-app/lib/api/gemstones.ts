@@ -166,6 +166,7 @@ export interface GemstoneListItem {
   color: string;
   clarity: string;
   cut: string;
+  treatment: string;
   origin: string;
   price: number;
   pricePerCarat: number;
@@ -341,6 +342,7 @@ export async function fetchGemstoneListFiltered(
       typeValue: gemstoneTypes.value,
       shapeValue: shapes.value,
       cutValue: gemstoneCutGrades.value,
+      treatmentValue: gemstoneTreatments.value,
       originValue: gemstoneOrigins.value,
       mainImage: productImages.url,
       certNumber: certifications.certificateNumber,
@@ -351,6 +353,10 @@ export async function fetchGemstoneListFiltered(
     .innerJoin(gemstoneTypes, eq(gemstones.gemstoneTypeId, gemstoneTypes.id))
     .innerJoin(shapes, eq(gemstones.shapeId, shapes.id))
     .innerJoin(gemstoneCutGrades, eq(gemstones.cutId, gemstoneCutGrades.id))
+    .leftJoin(
+      gemstoneTreatments,
+      eq(gemstones.treatmentId, gemstoneTreatments.id),
+    )
     .leftJoin(gemstoneOrigins, eq(gemstones.originId, gemstoneOrigins.id))
     .leftJoin(
       productImages,
@@ -408,6 +414,7 @@ export async function fetchGemstoneListFiltered(
     color: row.color ?? "Unknown",
     clarity: row.clarity ?? "Unknown",
     cut: row.cutValue ?? "Unknown",
+    treatment: row.treatmentValue ?? "",
     origin: row.originValue ?? "",
     price: Number(row.priceUsd),
     pricePerCarat: Number(row.pricePerCaratUsd ?? 0),

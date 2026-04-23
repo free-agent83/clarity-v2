@@ -4,17 +4,27 @@ import {
   DEFAULT_PER_PAGE,
 } from "@/components/layouts/layout-plp/layout-plp";
 import { EngagementRingPlpItem } from "@/components/products/engagement-ring-plp-item";
+import {
+  EngagementRingPlpListHeader,
+  EngagementRingPlpListRow,
+} from "@/components/products/engagement-ring-plp-list";
 
 import { fetchEngagementRingList } from "@/lib/api/jewelry";
+import { parsePlpViewMode } from "@/lib/plp-view-mode";
 
 import { EngagementRingsFilters } from "./filters";
 
 export default async function JewelryListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; perPage?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    perPage?: string;
+    view?: string | string[];
+  }>;
 }) {
   const params = await searchParams;
+  const viewMode = parsePlpViewMode(params.view);
 
   const {
     items: paginatedItems,
@@ -43,16 +53,26 @@ export default async function JewelryListPage({
       resultCount={totalItems}
       toolbar={<EngagementRingsFilters />}
       currentPage={currentPage}
-      totalPages={totalPages}
-      perPage={perPage}
+      totalPages={totalPages}      viewMode={viewMode}
+      listHeader={
+        viewMode === "list" ? <EngagementRingPlpListHeader /> : undefined
+      }
     >
-      {paginatedItems.map((item) => (
-        <EngagementRingPlpItem
-          key={item.id}
-          item={item}
-          href={`/buyer/browse/jewelry/engagement-rings/${item.id}`}
-        />
-      ))}
+      {paginatedItems.map((item) =>
+        viewMode === "list" ? (
+          <EngagementRingPlpListRow
+            key={item.id}
+            item={item}
+            href={`/buyer/browse/jewelry/engagement-rings/${item.id}`}
+          />
+        ) : (
+          <EngagementRingPlpItem
+            key={item.id}
+            item={item}
+            href={`/buyer/browse/jewelry/engagement-rings/${item.id}`}
+          />
+        ),
+      )}
     </LayoutPlp>
   );
 }

@@ -12,6 +12,7 @@ import {
 import type { GemstoneListItem } from "@/lib/api/gemstones";
 
 import { AddToCartButton } from "./add-to-cart-button";
+import { formatGemstoneDisplayName } from "./gemstone-name";
 import { getMockStockId, getPlpItemMock } from "./plp-item-mocks";
 
 export type GemstonePlpItemProps = {
@@ -24,17 +25,22 @@ export function GemstonePlpItem({ item, href }: GemstonePlpItemProps) {
   const stockId = getMockStockId(item.id);
   const cert = [item.certLab, item.certNumber].filter(Boolean).join(" ");
   const captionParts = [cert, stockId].filter(Boolean);
+  const displayName = formatGemstoneDisplayName(
+    item.description,
+    item.origin,
+    item.treatment,
+  );
 
   return (
     <PlpGridItem>
-      <PlpGridItemMedia image={item.image} imageAlt={item.description} />
+      <PlpGridItemMedia image={item.image} imageAlt={displayName} />
 
       <PlpGridItemName>
         <Link
           href={href}
           className="hover:underline focus-visible:underline focus-visible:outline-none"
         >
-          {item.description}
+          {displayName}
         </Link>
       </PlpGridItemName>
 
@@ -78,7 +84,7 @@ export function GemstonePlpItem({ item, href }: GemstonePlpItemProps) {
         <AddToCartButton
           product={{
             productId: item.id,
-            name: item.description,
+            name: displayName,
             certLab: item.certLab || null,
             certNumber: item.certNumber || null,
             stockId,
