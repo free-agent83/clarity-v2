@@ -28,7 +28,7 @@ When the visual weight shouldn't imply document structure (a display-sized numbe
 
 When Typography needs to style a consumer-provided element — an anchor, a Next.js `<Link>`, a router link — use `asChild`. The Link atom will consume Typography this way once it lands; styling overrides for link states (underline, hover, visited) belong to Link, not Typography.
 
-Typography does not provide a colour prop or default margins. Colour inherits from ambient context (`text-foreground` set on `<body>` in `globals.css`); spacing composes via the parent (`flex gap-*`, `space-y-*`).
+Typography does not provide a colour prop or default margins. Colour inherits from ambient context (`text-foreground` set on `<body>` in `theme.css`); spacing composes via the parent (`flex gap-*`, `space-y-*`).
 
 ## Best practices
 
@@ -43,10 +43,10 @@ Typography does not provide a colour prop or default margins. Colour inherits fr
 
 - [ ] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: no breakpoint-dependent behaviour
-- [x] Tokens only: all values flow through `text-typography-*` utilities defined in `globals.css`
+- [x] Tokens only: all values flow through `text-typography-*` utilities defined in `theme.css`
 
 ## Notes
 
-- The `text-typography-*` theme utilities are defined in `packages/components/src/styles/globals.css` using Tailwind v4's `--text-*` modifier convention. Each entry applies font-size, line-height, font-weight and letter-spacing as a single utility.
+- The `text-typography-*` theme utilities are defined in `packages/components/src/styles/theme.css` using Tailwind v4's `--text-*` modifier convention. Each entry applies font-size, line-height, font-weight and letter-spacing as a single utility.
 - `packages/tokens/src/typography.tokens.json` is knowingly stale relative to the DSW Web Components Figma file and is **not** consumed by this component. Aligning the tokens package is tracked separately.
 - Link and Dashed Link treatments from the Figma "Theme Styles" frame are out of scope here. They belong to a future Link atom that will compose Typography.

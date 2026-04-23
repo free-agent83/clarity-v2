@@ -103,7 +103,7 @@ Update `COMPONENTS.md` in the **same PR** as any of the following:
 - **A component is promoted from `unstable` to `stable` (or demoted).** Update its status tag.
 - **A component is deprecated or removed.** Mark it `deprecated` or delete the entry, matching the action taken in `COMPONENT.md` and `src/index.ts`.
 - **A component's "what it's for" scope changes meaningfully.** If a component's usage section is rewritten such that the one-liner no longer reflects its purpose, update both bullets.
-- **The `@theme` block in `globals.css` changes meaningfully.** New semantic token families, renamed utilities, removed tokens, or changes to the radius / typography scales all require the corresponding table in §2 of `COMPONENTS.md` to be updated. Purely additive hex value tweaks inside `:root` / `.dark` do not — those are theme-internal and the utility surface is unchanged.
+- **The `@theme` block in `theme.css` changes meaningfully.** New semantic token families, renamed utilities, removed tokens, or changes to the radius / typography scales all require the corresponding table in §2 of `COMPONENTS.md` to be updated. Purely additive hex value tweaks inside `:root` / `.dark` do not — those are theme-internal and the utility surface is unchanged.
 
 A stale `COMPONENTS.md` is a broken one — treat it with the same rigour as a stale `COMPONENT.md`. If you're unsure whether a change qualifies, assume it does and update the file.
 
@@ -112,11 +112,55 @@ A stale `COMPONENTS.md` is a broken one — treat it with the same rigour as a s
 `COMPONENTS.md` is an index, not a spec. Keep it thin.
 
 - No prop tables, no code examples, no variant matrices — those live in `COMPONENT.md`.
-- No exhaustive token value listings — those live in `globals.css`.
+- No exhaustive token value listings — those live in `theme.css`.
 - No build / test / publishing rules — those live in this file.
 - No rationale or decision records — those live in `ADRS.md` or `COMPONENT.md`.
 
-When a change would require more than a one-line tweak to an existing entry, the real change belongs in `COMPONENT.md` or `globals.css`; the `COMPONENTS.md` entry should follow, not lead.
+When a change would require more than a one-line tweak to an existing entry, the real change belongs in `COMPONENT.md` or `theme.css`; the `COMPONENTS.md` entry should follow, not lead.
+
+---
+
+## Consuming this package
+
+A consumer — whether the platform repo, Minivoda, or any external app — installs `@nivoda/components` and wires it into their own Tailwind v4 setup. The library does **not** ship pre-generated utility classes; it ships the tokens and leaves utility generation to the consumer's build, so consumers can write Tailwind classes against library tokens freely in their own code (`<div className="bg-primary/20 hover:ring-accent">` works because their Tailwind sees the library's `@theme` tokens and their own source files).
+
+### Setup
+
+In the consumer's global CSS entry:
+
+```css
+@import "tailwindcss";
+@import "@nivoda/components/theme.css";
+@source "../node_modules/@nivoda/components/dist";
+```
+
+- `@import "tailwindcss"` — consumer's Tailwind runtime.
+- `@import "@nivoda/components/theme.css"` — pulls the library's `@theme` tokens, `:root`/`.dark` values, `@custom-variant dark`, base resets, and the fonts/animations imports into the consumer's Tailwind context.
+- `@source "..."` — tells the consumer's Tailwind to scan the library's built `dist/` for class names when deciding which utilities to generate. Adjust the relative path to match where `node_modules/@nivoda/components/` resolves in the consumer's tree (workspace-hoisted monorepos usually need `../../../node_modules/...`).
+
+### What the consumer gets
+
+- Every semantic token (`--primary`, `--muted-foreground`, `--radius`, `--font-sans`, etc.) available as a CSS custom property on `:root`.
+- Tailwind utilities (`bg-primary`, `text-muted-foreground`, `rounded-md`, `font-sans`, `dark:…`) generated against those tokens in the consumer's own Tailwind output.
+- Base resets so `<body>` picks up `bg-background` / `text-foreground` automatically.
+- Font loading via `@fontsource-variable/inter`; consumer can override by setting `--font-sans` as an inline style on `<html>` (e.g. with `next/font`), because `@theme inline` uses `var(--font-sans)` references.
+- Components that tree-shake per-file and carry their own `"use client"` directives where required, so RSC frameworks see correct server/client boundaries out of the box.
+
+### What the consumer does NOT get
+
+- No pre-generated utility CSS. If a consumer omits the `@source` line, Tailwind will only emit utilities for class names used in the *consumer's* source — library component styling will be missing. The `@source` line is not optional.
+- No Tailwind preflight assumptions beyond what Tailwind's own base layer provides.
+- No font files beyond Inter Variable. Consumers wanting a different font set it via `--font-sans` / `--font-mono` themselves.
+
+### Portability of `theme.css`
+
+`theme.css` is authored to be portable across three consumer tiers:
+
+1. **Tailwind v4 consumer** (Next, Vite, Remix, etc.) — full fidelity.
+2. **Non-Tailwind bundler consumer** (raw React + Vite, esbuild) — `@theme` and `@custom-variant` directives are silently ignored; tokens, dark mode, and base resets still work.
+3. **Literal `<link rel="stylesheet">`** — the two `@import` lines fail (browsers don't resolve package paths), but tokens/dark/base resets still apply. Consumer loads fonts and animations themselves if they want them.
+
+Do not introduce constructs into `theme.css` that only work under a specific pipeline (e.g. `@apply` in `@layer base` — we specifically use plain CSS there to preserve portability).
 
 ---
 
@@ -313,14 +357,14 @@ Flagged violations are revisited per-component in later design-lead-led passes. 
 #### Rule 2 — The token flow is always top-down
 
 ```
-packages/tokens/  →  globals.css (shadcn theme)  →  components
+packages/tokens/  →  theme.css (shadcn theme)  →  components
 ```
 
 Each layer reads only from the one above it. The components layer never feeds into the shadcn theme; the shadcn theme never feeds into `packages/tokens/`. If you catch yourself wanting to flow information upward — a component-specific value leaking into the theme, a theme-specific assumption leaking into tokens — stop and rethink the design.
 
 #### Rule 3 — Always ask before changing the shadcn theme
 
-Adding a new token assignment to `globals.css`, changing what an existing semantic variable resolves to, or otherwise touching the shadcn theme layer all require approval from the design lead before the change lands. The theme is the single source of truth for what the design system looks like — silent edits ripple out to every component downstream. If a component needs a token that isn't mapped yet, flag it and wait for a ruling.
+Adding a new token assignment to `theme.css`, changing what an existing semantic variable resolves to, or otherwise touching the shadcn theme layer all require approval from the design lead before the change lands. The theme is the single source of truth for what the design system looks like — silent edits ripple out to every component downstream. If a component needs a token that isn't mapped yet, flag it and wait for a ruling.
 
 ---
 
