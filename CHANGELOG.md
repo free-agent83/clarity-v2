@@ -4,6 +4,32 @@ All notable progress on Clarity V2 is recorded here. Most recent entries first.
 
 ---
 
+## 2026-04-23 — Minivoda PLP pages adopt `FilterToolbar` from the component library
+
+Minivoda's six browse pages (natural/lab-grown diamonds, gemstones, natural/lab-grown melee, engagement rings) now render their filter / sort chrome through the design-system `FilterToolbar` organism. Each page owns its own filter-state controller, colocated alongside `page.tsx` as `filters.tsx`, following the DS's consumer-owned-state pattern.
+
+**Why:** the previous PLPs composed a hand-rolled search + filter-bar + sort trio inline in `LayoutProductList`, duplicating UI the design system already ships. Routing through `FilterToolbar` gives every category the same chrome, layout, sticky behaviour, and future drawer / preview-count scaffolding for free.
+
+**Scope of this pass:**
+- **Per-category filter controllers.** Each browse page has a sibling `filters.tsx` client component that defines the category's filter / sort config and renders `<FilterToolbar>`. Colocated so filter UI stays next to the category it belongs to — matching the "kit at the call site" guidance in the PLP COMPONENT.md.
+- **Shared `usePlpFilterController` hook** in `hooks/` — owns the draft state for the drawer and derives applied filter state from the URL via `useSearchParams`. Each category passes in its `FilterDef[]` + `FilterToolbarSortOption[]` (+ optional `defaultSort`) and gets back the full `FilterToolbar` prop surface (`filters`, `activeFilterCount`, `hasActiveFilters`, `onClearAll`, `sortOptions`, `sortValue`, `onSortChange`, and the composed `drawer` object). The hook handles mixed `FilterDef` kinds — multi-select (default) and range slider — so each category mixes checkbox filters and slider ranges without controller changes.
+- **Shared `MultiSelectFilterButton` + `RangeFilterButton` helpers** in `components/filters/` — compose the DS `FilterButton` render-prop with a checkbox list / `RangeFilter` slider inside the popover. Used by the hook for the main filter row; the drawer body uses DS `FilterSection` + `Checkbox` / `RangeFilter` directly.
+- **All-filters drawer wired** via `FilterToolbar`'s `drawer` prop. Consumer provides the drawer content (one `FilterSection` per filter definition), the `onOpen` handler (seeds the draft from the applied state), `onApply` (copies the draft back to the applied state by pushing new URL params; the toolbar closes the drawer automatically), and `onClearDraft` (wipes the draft).
+- **Search bar rendered** in the toolbar with a no-op `onSearchSubmit={() => {}}`. Visually present for consistency with the DS assembly pattern; pressing Enter is currently inert. Actual search routing lands when backend search supports per-category scopes.
+- **`LayoutPlp` reshaped.** Accepts a `toolbar?: ReactNode` prop and renders whatever the page passes between `PlpHeading` and `PlpGridContainer`. The `quickFilters` / `sortOptions` props, the local `SearchInput`, the `UncontrolledSortButton`, and the re-exported `SortOption` type are gone — all superseded by `FilterToolbar`.
+- **Filters now fetch filtered data from the database** for five of the six browse pages — natural diamonds, lab-grown diamonds, gemstones, natural melee, lab-grown melee. URL params are the source of truth; filter commits push via `router.push`, the page server component parses `searchParams` via a new `parsePageListParams` helper, and the fetch layer switches from the in-memory `fetchXList` (resolve-all → paginate) path to the Drizzle-native `fetchXListFiltered` path that was already in the codebase for the public REST API. `page=` resets to 1 on every filter / sort change; `perPage=` is preserved. Engagement rings is out of scope for this pass (filter-key-to-DB-value mapping needs verification).
+- **Carat filters now render as range sliders**, not checkbox lists. Diamonds and gemstones replace the old "Under 0.5ct / 0.5–1ct / …" multi-select with a DS `RangeFilter` single-axis slider — applied bounds encode into the URL as `carat_min=&carat_max=` and translate to `gte` / `lte` predicates on the diamonds/gemstones `carat` column at the DB.
+- **Sort values aligned to DB shape.** Controllers now emit `price_asc` / `price_desc` / `carat_asc` / `carat_desc` / `newest` — matching what the `*Filtered` functions understand. The old `featured` and bare `carat` labels are gone.
+- **`*Filtered` return shapes enriched** to cover the fields the grid needs. Diamonds: `stockId`, `certLab`, `certNumber`. Gemstones: `stockId`, `origin`, `certLab`, `certNumber`. Melee: `stockId`, `quantity`. All added via non-breaking `leftJoin`s on the existing query — the REST API responses pick up the new fields as additive.
+
+**Deliberately not done this pass (tracked for follow-up):**
+- **Engagement rings filters are still ephemeral.** Filter option labels in the UI (`"Solitaire"`, `"3-stone"`, `"14k Yellow Gold"`, etc.) need to be verified against the `band_styles.value` / `metals.value` lookups before the category can switch to `fetchEngagementRingListFiltered`.
+- **Search submit is a no-op.** The search bar renders but doesn't route anywhere — backend search coverage for per-category scoped search lands in a later pass.
+- **Non-contiguous carat ranges are over-inclusive** in edge cases (e.g. picking only the lowest and highest bins). The current DB predicates are single `gte` + `lte`, not an OR of multiple `BETWEEN` clauses. Swappable later if the cost shows up in practice.
+- **Legacy `filter-bar` / `sort-button` / `search-input` files remain on disk.** They still have non-PLP consumers (`orders-filterable-list`, `finances-table`, the stone-selection configurator page). Deleting them is the conclusion of a later pass when those surfaces also route through DS primitives.
+
+---
+
 ## 2026-04-10 — Architectural correction: tokens package is surface-agnostic
 
 Removed the shadcn-specific layer from the tokens package. The tokens package now emits only primitives and the surface-agnostic semantic layer; any mapping to a specific surface theme (shadcn, Tailwind `@theme`, etc.) lives in-loco in the consumer.

@@ -17,7 +17,7 @@ import { toast } from "sonner";
 
 import { useCartStore, type CartItem } from "@/hooks/use-cart-store";
 import { cn, formatUSD } from "@/lib/utils";
-import { Button } from "@nivoda/components";
+import { Button, Input, Separator } from "@nivoda/components";
 import { Sheet, SheetContent, SheetTitle } from "@nivoda/components";
 
 const CATEGORY_ICONS: Record<
@@ -106,12 +106,12 @@ function CartItemRow({
           </div>
 
           {/* Internal order reference */}
-          <input
+          <Input
             type="text"
             value={reference}
             onChange={(e) => onReferenceChange(item.id, e.target.value)}
             placeholder="Internal order ref."
-            className="mt-1 w-full rounded-md border border-border bg-background px-2 py-1 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring/50"
+            className="mt-1 h-auto px-2 py-1 text-xs"
           />
         </div>
 
@@ -173,8 +173,7 @@ function CartFooter({ total }: { total: number }) {
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="h-px bg-border" />
+      <Separator />
 
       {/* Total */}
       <div className="flex items-baseline justify-between">
@@ -186,7 +185,7 @@ function CartFooter({ total }: { total: number }) {
 
       {/* CTA */}
       <Button
-        className="h-11 w-full gap-2"
+        block
         onClick={() => {
           useCartStore.getState().closeSheet();
           router.push("/buyer/checkout");
@@ -263,14 +262,10 @@ export function CartButton() {
         else closeSheet();
       }}
     >
-      <button
-        type="button"
-        onClick={toggleSheet}
-        className="flex h-11 items-center gap-2 rounded-lg border border-border bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-      >
+      <Button variant="outline" onClick={toggleSheet}>
         Cart ({items.length})
         <IconShoppingCart size={20} />
-      </button>
+      </Button>
       <SheetContent
         side="right"
         showCloseButton={false}

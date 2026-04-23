@@ -2,6 +2,18 @@
 
 ---
 
+### Theme split into `primitives.css` (layer 1) and `web-theme.css` (layer 2); overlay animations fixed
+
+Separates the theme into two concern-layered files and fixes a silent bug that was disabling every Radix overlay animation (Sheet, Dialog, Popover, Drawer, AlertDialog) in consumer apps.
+
+- **`src/styles/theme.css` split into two files.**
+  - **`primitives.css` (new, layer 1)** — raw `:root` / `.dark` CSS custom properties, nothing else. No imports, no Tailwind directives, no shadcn mappings, no base resets. This is the agnostic token boundary; `packages/tokens/` will eventually generate into this file.
+  - **`web-theme.css` (new public entry, layer 2)** — imports `primitives.css`, then composes everything else: `@fontsource-variable/inter` and `tw-animate-css` imports, `@custom-variant` registrations, the `@theme inline` utility mapping, and the `@layer base` resets. This is what consumers import.
+- **Public export renamed `./theme.css` → `./web-theme.css`.** `package.json` `exports` now exposes `./web-theme.css` only; `primitives.css` is internal and can be promoted later if a surface needs it. Consumer migration is a one-line import swap. The one internal consumer (`packages/test-app/app/globals.css`) is updated in the same change.
+- **Added `@custom-variant data-open (&[data-state="open"])` and `@custom-variant data-closed (&[data-state="closed"])`.** Every overlay primitive in the library (Sheet, Dialog, Popover, Drawer, AlertDialog) uses classes like `data-open:animate-in`, `data-open:slide-in-from-left-10`, `data-closed:animate-out`, `data-closed:slide-out-to-left-10`. Tailwind v4 has no built-in `data-open` / `data-closed` variant — without `@custom-variant` registrations these classes silently never generated, and every overlay appeared/disappeared with no transition. Adding the two registrations makes the animations resolve against the `data-state` attribute Radix already sets, so enter/exit transitions now actually fire in consumer apps.
+- **Build command updated.** `project.json` now copies both `src/styles/primitives.css` and `src/styles/web-theme.css` to `dist/`. `web-theme.css` keeps its relative `@import "./primitives.css"`; the two files sit side-by-side in dist and the consumer bundler resolves the import.
+- **Docs updated.** Token-flow diagram in `CONTRIBUTING.md` and `COMPONENTS.md` now shows `packages/tokens/ → primitives.css → web-theme.css → components`. The Portability section in `CONTRIBUTING.md` is rewritten to cover both layers.
+
 ### Build refactor: per-file output, portable theme, peer-dep cleanup ([#126](https://github.com/free-agent83/clarity-v2/pull/126))
 
 Reshapes the library's build output so it behaves like a real publishable package for pure-React, Next.js App Router, and any other consumer. No component API changes. See [`docs/plans/2026-04-23-components-build-refactor-plan.md`](../../docs/plans/2026-04-23-components-build-refactor-plan.md) for the full design.

@@ -3,14 +3,14 @@ name: PLP (Product Listing Page)
 slug: plp
 version: 0.6.1
 status: unstable
-lastUpdated: 2026-04-22
+lastUpdated: 2026-04-23
 ---
 
 # PLP (Product Listing Page)
 
 Conceptually, the PLP is a single template — the product-listing page. In practice the library does not ship a unified `PlpTemplate` component; consumers assemble the page in their own code from a small set of PLP-specific building blocks (this folder) plus the filter subsystem and other library primitives. This doc covers the whole template: every kit piece and how they fit together.
 
-The refactor that produced this shape was deliberate. A fixed PlpTemplate couldn't accommodate the insertion points consumers inevitably need — category intro banners, promos, recommendation strips, interstitials — without growing a prop for each one. The kit-plus-assembly pattern lets consumers slot whatever they want between pieces while still leaning on the library for the hard parts (sticky filter chrome, responsive grid, skeleton loading, drawer draft lifecycle).
+The refactor that produced this shape was deliberate. A fixed library-side `PlpTemplate` couldn't accommodate the insertion points consumers inevitably need — category intro banners, promos, recommendation strips, interstitials — without growing a prop for each one. Shipping the kit instead of a template lets each consumer wrap the assembly as tightly or loosely as its surfaces require, while still leaning on the library for the hard parts (sticky filter chrome, responsive grid, skeleton loading, drawer draft lifecycle).
 
 ## Kit pieces
 
@@ -80,7 +80,7 @@ The canonical assembly pattern is in [`plp.stories.tsx`](./plp.stories.tsx). Tha
 - How to branch on status for loading / empty-filtered / empty-no-items / error / content states (see `renderPlpEmptyState` — a sample Empty-atom composition for PLP empty / error states that consumers can copy and adapt)
 - Where to insert banners / promos between kit pieces
 
-Consumers should read this file, copy the pattern, and adapt it. Do not try to encapsulate the assembly behind a wrapper component — the extensibility points (banner positioning, status branching, view toggle rendering) are the point.
+Consumers should read this file, copy the pattern, and adapt it. A consumer-side PLP wrapper — a local `LayoutPlp`, `BrowseLayout`, or similar that fixes the order of `PlpHeading` → `FilterToolbar` → `PlpGridContainer` / `PlpListContainer` → pagination — is a valid convenience and removes real duplication across category pages. What's not allowed is a wrapper that leaks beyond PLP surfaces: the moment a PDP, a search page, a settings screen, or any non-PLP surface starts rendering through the same wrapper, the coupling that justified it is gone and the extensibility points it hides (banner positioning, status branching, view toggle rendering) start fighting consumers. Keep the wrapper strictly scoped to product-listing pages; when a surface stops being a PLP, move it out.
 
 ## Usage guidelines
 
@@ -98,7 +98,7 @@ Consumers should read this file, copy the pattern, and adapt it. Do not try to e
 
 **Do:** Compose banners, promos, and recommendations between kit pieces as plain React children. The library's grid and list containers don't reach above themselves; insertion points are yours to decide.
 
-**Don't:** Re-introduce a unified PLP template. The kit is the deliberate surface.
+**Don't:** Ship a unified `PlpTemplate` component *inside the library*. The kit is the deliberate library-side surface. (Consumer-side PLP wrappers are fine — see Assembly reference for the scoping rule.)
 
 ## Quality checklist
 

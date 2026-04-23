@@ -1,0 +1,155 @@
+/*
+ * web-theme.css — Clarity V2 shadcn/Tailwind-v4 theme.
+ *
+ * Layer 2 of the theme stack. Imports the agnostic token layer
+ * (`primitives.css`) and composes on top of it everything that makes
+ * the design system functional for web consumers:
+ *
+ *   - Runtime CSS dependencies (fonts, animation utilities).
+ *   - Tailwind v4 custom variants used by library components
+ *     (`dark`, `data-open`, `data-closed`).
+ *   - The shadcn-flat → Tailwind utility mapping (`@theme inline`).
+ *   - Base resets (body, border-color, outline-color, font-family).
+ *
+ * Consumer-facing entry point:
+ *
+ *   @import "@nivoda/components/web-theme.css";
+ *
+ * Three consumer tiers are supported:
+ *
+ *   1. Tailwind v4 consumer (Next.js App Router, Remix, Vite + tailwindcss).
+ *      Full fidelity — Tailwind picks up `@theme inline` and every
+ *      `@custom-variant` below, and generates utility classes
+ *      (`bg-primary`, `text-muted-foreground`, `font-sans`, `dark:`,
+ *      `data-open:`, `data-closed:`) against the tokens. Consumer
+ *      writes any Tailwind class in their own code and it resolves
+ *      against the same tokens the library components use.
+ *
+ *   2. Non-Tailwind bundled consumer (raw React + Vite, esbuild,
+ *      vanilla CSS pipeline). The `@theme`, `@custom-variant`, and
+ *      `@layer` directives are unknown at-rules and are silently
+ *      ignored by every CSS processor and browser, as spec requires.
+ *      Consumer still gets the custom properties from `primitives.css`,
+ *      base resets, and the fonts/animations loaded via the `@import`
+ *      lines below — all usable directly as `var(--primary)`, etc.
+ *
+ *   3. Literal <link rel="stylesheet"> consumer (no bundler). Gets
+ *      tokens + base resets only. The three `@import` lines at the top
+ *      fail because browsers don't resolve package-path imports;
+ *      consumer loads fonts and animation utilities themselves.
+ *
+ * The `inline` keyword on `@theme` is load-bearing. It makes Tailwind
+ * emit `var(--foo)` references in generated utilities rather than
+ * inlining the literal value. That preserves the ability for consumers
+ * to override tokens at runtime (e.g. `next/font` setting `--font-sans`
+ * as an inline style on `<html>`). Do not remove.
+ *
+ * Base resets use plain CSS (`border-color: var(--border)`), not
+ * `@apply`, so they work whether Tailwind is processing this file or
+ * not.
+ */
+
+/* ─── Runtime CSS dependencies ──────────────────────────────────────── */
+/* Resolved by any bundler with node_modules support. Consumers using
+ * raw <link> tags must load fonts and animation utilities themselves. */
+@import "@fontsource-variable/inter";
+@import "tw-animate-css";
+
+/* ─── Raw tokens (layer 1) ──────────────────────────────────────────── */
+@import "./primitives.css";
+
+/* ─── Tailwind v4 custom variants ───────────────────────────────────── */
+/* `dark:` enables dark-mode utilities under the `.dark` class.
+ * `data-open:` and `data-closed:` map to the `data-state` attribute
+ * that Radix sets on open/closed overlay primitives (Sheet, Dialog,
+ * Popover, Drawer, AlertDialog, etc.) — required for the enter/exit
+ * animations on those components to resolve. All three are silently
+ * ignored by non-Tailwind processors. */
+@custom-variant dark (&:is(.dark *));
+@custom-variant data-open (&[data-state="open"]);
+@custom-variant data-closed (&[data-state="closed"]);
+@custom-variant data-checked (&[data-state="checked"]);
+@custom-variant data-unchecked (&[data-state="unchecked"]);
+@custom-variant data-indeterminate (&[data-state="indeterminate"]);
+@custom-variant data-horizontal (&[data-orientation="horizontal"]);
+@custom-variant data-vertical (&[data-orientation="vertical"]);
+
+/* ─── Tailwind v4 token mapping ─────────────────────────────────────── */
+/* Tells Tailwind how token names map to utility classes. `inline` emits
+ * `var(--foo)` references in generated utilities rather than inlining
+ * the literal value — preserves consumer-side token override. Silently
+ * ignored by non-Tailwind processors. */
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-express: var(--express);
+  --color-express-foreground: var(--express-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ─── Base resets ───────────────────────────────────────────────────── */
+/* Plain CSS — works whether Tailwind is processing this file or not.
+ * The `@layer base` declaration gives correct cascade ordering in
+ * Tailwind consumers and a plain CSS cascade layer in non-Tailwind
+ * consumers. */
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  html {
+    font-family: var(--font-sans);
+  }
+}

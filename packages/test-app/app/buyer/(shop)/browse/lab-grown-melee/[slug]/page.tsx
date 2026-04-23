@@ -1,15 +1,29 @@
 import { notFound } from "next/navigation";
-import { IconInfoCircle, IconRefresh, IconTruck } from "@tabler/icons-react";
+import { PlpGridContainer, Separator } from "@nivoda/components";
+import { PdpDelivery } from "@nivoda/components/components/templates/pdp/pdp-delivery";
+import { PdpHeading } from "@nivoda/components/components/templates/pdp/pdp-heading";
+import { PdpLayout } from "@nivoda/components/components/templates/pdp/pdp-layout";
+import { PdpPrice } from "@nivoda/components/components/templates/pdp/pdp-price";
+import { PdpPrimaryAction } from "@nivoda/components/components/templates/pdp/pdp-primary-action";
+import { PdpReturns } from "@nivoda/components/components/templates/pdp/pdp-returns";
+import { PdpSpecifications } from "@nivoda/components/components/templates/pdp/pdp-specifications";
+import type {
+  PdpSpecificationRow,
+  ProductMedia,
+} from "@nivoda/components/components/templates/pdp/pdp-types";
 
-import { AddToCartButton } from "@/components/products/add-to-cart-button";
+import { MeleePlpItem } from "@/components/products/melee-plp-item";
+import { PdpBreadcrumbs } from "@/components/products/pdp-breadcrumbs";
+import { PdpMediaWithLightbox } from "@/components/products/pdp-media-with-lightbox";
+import {
+  getMockStockId,
+  getPlpItemMock,
+} from "@/components/products/plp-item-mocks";
+import { StonePdpCta } from "@/components/products/stone-pdp-cta";
+import { StonePdpSecondaryActions } from "@/components/products/stone-pdp-secondary-actions";
 
 import { fetchMeleeItem, fetchRelatedMelee } from "@/lib/api/melee";
 import { formatUSD } from "@/lib/utils";
-import { LayoutProductDetail } from "@/components/layouts/layout-product-detail/layout-product-detail";
-import type { SpecRow } from "@/components/layouts/types";
-import type { ProductListItemProps } from "@/components/products/product-list-item";
-import { MeleeParcelInfo } from "@/components/layouts/layout-product-detail/melee-parcel-info";
-import { ProductActions } from "@/components/product-actions";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -21,21 +35,14 @@ export default async function LabGrownMeleeDetailPage({ params }: Props) {
   ]);
   if (!item) notFound();
 
-  const breadcrumbs = [
-    { label: "Lab-grown melee", href: "/buyer/browse/lab-grown-melee" },
-    {
-      label: item.description,
-      href: `/buyer/browse/lab-grown-melee/${item.id}`,
-    },
-  ];
+  const mockStockId = getMockStockId(item.id);
+  const mock = getPlpItemMock(item.id);
 
-  const images = [item.images.main, ...item.images.additional]
-    .filter((img) => img && img.length > 0)
-    .map((src) => ({ src, alt: item.description }));
+  const media: ProductMedia[] = [item.images.main, ...item.images.additional]
+    .filter((src) => src && src.length > 0)
+    .map((src) => ({ type: "image", src, alt: item.description }));
 
-  const formattedPrice = formatUSD(item.totalPrice);
-
-  const specs: SpecRow[] = [
+  const specs: PdpSpecificationRow[] = [
     { label: "Shape", value: item.shape },
     { label: "Size range", value: item.sizeRange },
     { label: "Color range", value: item.colorRange },
@@ -46,99 +53,124 @@ export default async function LabGrownMeleeDetailPage({ params }: Props) {
       label: "Total carat weight",
       value: `${item.totalCaratWeight.toFixed(2)} ct`,
     },
-    {
-      label: "Price per carat",
-      value: formatUSD(item.pricePerCarat),
-    },
+    { label: "Price per carat", value: formatUSD(item.pricePerCarat) },
   ];
-  const relatedItems: ProductListItemProps[] = relatedRaw.map((related) => ({
-    id: related.id,
-    href: `/browse/lab-grown-melee/${related.id}`,
-    imageSrc: related.images.main,
-    imageAlt: related.description,
-    title: related.description,
-    subtitle: related.stockId,
-    priceLabel: "Total price",
-    formattedPrice: formatUSD(related.totalPrice),
-  }));
 
   return (
-    <LayoutProductDetail
-      breadcrumbs={breadcrumbs}
-      images={images}
-      title={item.description}
-      priceLabel="Total price"
-      formattedPrice={formattedPrice}
-      actions={
-        <ProductActions
-          product={{
-            title: item.description,
-            subtitle: "Lab-grown melee",
-            price: item.totalPrice,
-            imageSrc: item.images.main,
-            attributes: specs,
-          }}
-        />
-      }
-      configuration={
-        <MeleeParcelInfo
-          stockId={item.stockId}
-          shape={item.shape}
-          sizeRange={item.sizeRange}
-          colorRange={item.colorRange}
-          clarityRange={item.clarityRange}
-          cut={item.cut}
-          quantity={item.quantity}
-          totalCaratWeight={item.totalCaratWeight}
-          pricePerCarat={item.pricePerCarat}
-        />
-      }
-      ctaButton={
-        <AddToCartButton
-          product={{
-            productId: item.id,
-            name: item.description,
-            certLab: null,
-            certNumber: null,
-            stockId: item.stockId,
-            price: item.totalPrice,
-            discount: null,
-            image: item.images.main,
-            category: "lab_grown_melee",
-            quantity: 1,
-          }}
-        />
-      }
-      shippingInfo={
-        <div className="flex flex-col gap-1">
-          <div className="flex items-start gap-3">
-            <IconRefresh
-              size={24}
-              className="mt-0.5 shrink-0 text-foreground"
+    <div className="mx-auto flex max-w-5xl flex-col gap-12 pb-32">
+      <PdpBreadcrumbs
+        segments={[
+          { label: "Lab-grown melee", href: "/buyer/browse/lab-grown-melee" },
+          {
+            label: item.description,
+            href: `/buyer/browse/lab-grown-melee/${item.id}`,
+          },
+        ]}
+      />
+
+      <PdpLayout
+        stickyTop="96px"
+        media={<PdpMediaWithLightbox media={media} />}
+        body={
+          <div className="flex flex-col gap-6">
+            <PdpHeading name={item.description} sku={mockStockId} />
+            <PdpPrice
+              amount={item.totalPrice}
+              currency="USD"
+              label="Total price"
+              perCarat={{ amount: item.pricePerCarat, currency: "USD" }}
             />
-            <div className="flex flex-wrap items-center gap-1 pt-0.5 text-sm">
-              <span className="font-medium text-[#3d745c]">14-day returns</span>
-              <span className="text-muted-foreground">
-                · Returns Policy applies
-              </span>
-              <IconInfoCircle size={18} className="text-muted-foreground" />
+            <div className="flex flex-col gap-1">
+              <PdpReturns
+                {...(mock.isReturnable
+                  ? {
+                      variant: "returnable",
+                      returnsWindow: "14 days",
+                      policyLink: <a href="#">Returns Policy applies</a>,
+                    }
+                  : { variant: "non-returnable" })}
+              />
+              <PdpDelivery
+                {...(mock.isExpress
+                  ? { variant: "express", date: mock.deliveryDate }
+                  : {
+                      variant: "regular",
+                      date: mock.deliveryDate,
+                      shipsFrom: mock.shipsFrom,
+                    })}
+              />
             </div>
+            <PdpPrimaryAction
+              secondaryActions={
+                <StonePdpSecondaryActions
+                  product={{
+                    title: item.description,
+                    subtitle: "Lab-grown melee",
+                    price: item.totalPrice,
+                    imageSrc: item.images.main,
+                    attributes: specs.map((s) => ({
+                      label: s.label,
+                      value: String(s.value),
+                    })),
+                  }}
+                />
+              }
+            >
+              <StonePdpCta
+                product={{
+                  productId: item.id,
+                  name: item.description,
+                  certLab: null,
+                  certNumber: null,
+                  stockId: mockStockId,
+                  price: item.totalPrice,
+                  discount: null,
+                  image: item.images.main,
+                  category: "lab_grown_melee",
+                  quantity: 1,
+                }}
+              />
+            </PdpPrimaryAction>
+            <Separator />
+            <PdpSpecifications rows={specs} />
           </div>
-          <div className="flex items-start gap-3">
-            <IconTruck size={24} className="mt-0.5 shrink-0 text-foreground" />
-            <div className="flex flex-wrap items-center gap-1 pt-0.5 text-sm">
-              <span className="text-muted-foreground">
-                Estimated delivery in
-              </span>
-              <span className="font-medium text-foreground">
-                5 business days
-              </span>
-            </div>
+        }
+      />
+
+      {relatedRaw.length > 0 && (
+        <>
+          <Separator />
+          <div className="flex flex-col gap-6">
+            <h2 className="text-2xl font-semibold text-foreground">
+              You may also like
+            </h2>
+            <PlpGridContainer>
+            {relatedRaw.map((related) => (
+              <MeleePlpItem
+                key={related.id}
+                href={`/buyer/browse/lab-grown-melee/${related.id}`}
+                category="lab_grown_melee"
+                item={{
+                  id: related.id,
+                  stockId: related.stockId,
+                  shape: related.shape,
+                  sizeRange: related.sizeRange,
+                  colorRange: related.colorRange,
+                  clarityRange: related.clarityRange,
+                  cut: related.cut,
+                  quantity: related.quantity,
+                  totalCaratWeight: related.totalCaratWeight,
+                  pricePerCarat: related.pricePerCarat,
+                  totalPrice: related.totalPrice,
+                  image: related.images.main,
+                  description: related.description,
+                }}
+              />
+            ))}
+            </PlpGridContainer>
           </div>
-        </div>
-      }
-      specs={specs}
-      relatedItems={relatedItems}
-    />
+        </>
+      )}
+    </div>
   );
 }

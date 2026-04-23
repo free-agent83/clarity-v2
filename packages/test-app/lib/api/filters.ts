@@ -2,6 +2,12 @@ import { NextRequest } from "next/server";
 import { apiError } from "./response";
 import { parsePagination, type ServerPaginationParams } from "./helpers";
 
+/**
+ * Plain-object `searchParams` as Next.js page server components receive
+ * them (from `await searchParams` in App Router pages).
+ */
+export type PageSearchParams = Record<string, string | string[] | undefined>;
+
 export interface FilterDefinition {
   /** Multi-value filter (comma-separated): shape=round,oval */
   multi?: string[];
@@ -67,6 +73,68 @@ export function parseListParams(
         400,
       );
     }
+  }
+
+  return { filters, sort, pagination };
+}
+
+/**
+ * Page-level variant of `parseListParams` — reads from the plain-object
+ * `searchParams` that Next.js server components receive (`await searchParams`)
+ * instead of a `NextRequest`. Unlike the route-handler variant, this
+ * function does not return `Response` errors: pages silently fall back
+ * to sensible defaults on invalid input, since the page always has to
+ * render *something*.
+ */
+export function parsePageListParams(
+  params: PageSearchParams,
+  definition: FilterDefinition,
+): ParsedFilters {
+  // Normalise into URLSearchParams so we can reuse parsePagination and
+  // share the same filter-parsing logic as the route-handler path.
+  const sp = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined) continue;
+    if (Array.isArray(value)) {
+      for (const v of value) sp.append(key, v);
+    } else {
+      sp.set(key, value);
+    }
+  }
+
+  const paginationResult = parsePagination(sp);
+  const pagination: ServerPaginationParams =
+    "error" in paginationResult
+      ? { page: 1, perPage: 20, offset: 0 }
+      : paginationResult;
+
+  const filters: ParsedFilters["filters"] = {};
+
+  for (const key of definition.multi ?? []) {
+    const value = sp.get(key);
+    if (value) {
+      filters[key] = value
+        .split(",")
+        .map((v) => v.trim())
+        .filter(Boolean);
+    }
+  }
+
+  for (const key of definition.range ?? []) {
+    const min = sp.get(`${key}_min`);
+    const max = sp.get(`${key}_max`);
+    if (min || max) {
+      filters[key] = {
+        min: min ? Number(min) : undefined,
+        max: max ? Number(max) : undefined,
+      };
+    }
+  }
+
+  let sort: string | null = null;
+  const sortParam = sp.get("sort");
+  if (sortParam && definition.sortOptions?.includes(sortParam)) {
+    sort = sortParam;
   }
 
   return { filters, sort, pagination };

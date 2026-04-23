@@ -145,11 +145,13 @@ export const MELEE_FILTERS: FilterDefinition = {
 
 export interface MeleeListItem {
   id: string;
+  stockId: string;
   shape: string;
   sizeRange: string;
   colorRange: string;
   clarityRange: string;
   cut: string;
+  quantity: number;
   totalCaratWeight: number;
   pricePerCarat: number;
   totalPrice: number;
@@ -277,9 +279,11 @@ export async function fetchMeleeListFiltered(
   const baseFrom = db
     .select({
       id: products.id,
+      stockId: products.stockId,
       priceUsd: products.priceUsd,
       description: products.description,
       createdAt: products.createdAt,
+      quantity: meleeLots.quantity,
       totalCaratWeight: meleeLots.totalCaratWeight,
       sizeRange: meleeLots.sizeRange,
       colorRange: meleeLots.colorRange,
@@ -334,11 +338,13 @@ export async function fetchMeleeListFiltered(
 
   const items: MeleeListItem[] = rows.map((row) => ({
     id: row.id,
+    stockId: row.stockId,
     shape: row.shapeValue ?? "Unknown",
     sizeRange: row.sizeRange ?? "",
     colorRange: row.colorRange ?? "",
     clarityRange: row.clarityRange ?? "",
     cut: row.cutValue ?? "Unknown",
+    quantity: row.quantity,
     totalCaratWeight: Number(row.totalCaratWeight),
     pricePerCarat:
       Number(row.priceUsd) / Math.max(Number(row.totalCaratWeight), 1),

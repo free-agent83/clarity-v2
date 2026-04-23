@@ -47,6 +47,6 @@ Typography does not provide a colour prop or default margins. Colour inherits fr
 
 ## Notes
 
-- The `text-typography-*` theme utilities are defined in `packages/components/src/styles/theme.css` using Tailwind v4's `--text-*` modifier convention. Each entry applies font-size, line-height, font-weight and letter-spacing as a single utility.
+- The `text-typography-*` theme utilities are defined in `packages/components/src/styles/web-theme.css` using Tailwind v4's `--text-*` modifier convention. Each entry applies font-size, line-height, font-weight and letter-spacing as a single utility.
 - `packages/tokens/src/typography.tokens.json` is knowingly stale relative to the DSW Web Components Figma file and is **not** consumed by this component. Aligning the tokens package is tracked separately.
 - Link and Dashed Link treatments from the Figma "Theme Styles" frame are out of scope here. They belong to a future Link atom that will compose Typography.

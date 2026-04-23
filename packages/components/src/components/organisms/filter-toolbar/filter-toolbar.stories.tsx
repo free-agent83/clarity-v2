@@ -343,8 +343,8 @@ export const StickyBarBehaviour: Story = {
 
 /**
  * Stress-test of the sticky bar with many active filters. Useful to
- * eyeball the chip row's wrapping behaviour, the "+N more" overflow on
- * narrow viewports, and the clear-all / active-count affordances when
+ * eyeball the chip row's wrapping behaviour, the "A, B, C, +N" overflow
+ * on narrow viewports, and the clear-all / active-count affordances when
  * the chip set is dense. Same structure as `StickyBarBehaviour` — only
  * the engaged-filters list differs.
  */
@@ -352,13 +352,13 @@ export const StickyBarManyFilters: Story = {
   parameters: { layout: "fullscreen" },
   render: () => {
     const engagedButtons = [
-      buildColorButton(["blue", "green", "red"], "Blue, Green +1 more"),
+      buildColorButton(["blue", "green", "red", "yellow", "pink"], "Blue, Green, Red, +2"),
       buildPriceButton(
         { price: { min: 500, max: 5000 } },
         "$500–$5000"
       ),
-      buildSimpleChipButton("shape", "Shape", "Round, Oval +2 more"),
-      buildSimpleChipButton("clarity", "Clarity", "VVS1, VVS2 +1 more"),
+      buildSimpleChipButton("shape", "Shape", "Round, Oval, Emerald, +2"),
+      buildSimpleChipButton("clarity", "Clarity", "VVS1, VVS2, VS1, +1"),
       buildSimpleChipButton("carat", "Carat", "1.5–3.0ct"),
       buildSimpleChipButton("origin", "Origin", "Botswana"),
       buildSimpleChipButton("lab", "Lab", "GIA, IGI"),

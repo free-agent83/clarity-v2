@@ -1,9 +1,6 @@
 import type { ComponentType } from "react";
 import {
   IconAdjustmentsAlt,
-  IconHeart,
-  IconListCheck,
-  IconReceipt2,
   IconSettings,
 } from "@tabler/icons-react";
 
@@ -43,11 +40,7 @@ export const productCategories: NavItem[] = [
 // Used by: NavSheet
 // ---------------------------------------------------------------------------
 
-export const myListItems: NavItem[] = [
-  { label: "Orders", href: "/buyer/orders", icon: IconListCheck },
-  { label: "Finances", href: "/buyer/finances", icon: IconReceipt2 },
-  { label: "Shortlists", href: "/buyer/shortlists", icon: IconHeart },
-];
+export const myListItems: NavItem[] = [];
 
 // ---------------------------------------------------------------------------
 // Admin & settings

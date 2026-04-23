@@ -2,6 +2,8 @@
 
 A living interactive prototype — a digital twin of the Nivoda production platform. Minivoda is the single source of truth for how features should look and behave, replacing static Figma designs with a real, clickable application backed by a live database.
 
+Lives in the Clarity V2 monorepo as `packages/test-app/`. It is the first live consumer of `@nivoda/components` (the Nivoda design system) — building flows here exercises the design system in production-shaped conditions. See the root [README.md](../../README.md), [VISION.md](../../VISION.md), and [ROADMAP.md](../../ROADMAP.md) for the broader strategy.
+
 **What it's used for:**
 
 - **UX pitch tool** — propose and validate design ideas internally before they reach production.
@@ -19,26 +21,30 @@ Deployed to Vercel with a Supabase Postgres backend.
 - **Buyer home** — hero carousel and product category grid
 - **Product browsing** — six categories, each with a listing page and individual product detail pages:
   - Natural diamonds, lab-grown diamonds, gemstones, natural melee, lab-grown melee, engagement rings
-- **Engagement ring configurator** — choose metal type, colour, quality, and stone shape
-- **Orders** — order list with status tabs and badges; order detail with progress timeline, item breakdown, payment info, delivery address, and updates
+- **Product filters and sorting** — wired across listing pages (filter sidebar, sort dropdown, calculator popover)
+- **Engagement ring configurator** — choose metal type, colour, quality, and stone shape, then select a matched diamond in a dedicated stone-selection flow (`/select-stone`, `/added-to-cart`)
+- **Cart** — add to cart, update quantities, remove items; state persisted via Zustand store; cart sheet accessible from the shell
+- **Checkout flow** — checkout page plus confirmation step; checkout state persisted via Zustand store
+- **Orders** — order list with status tabs, filters, and badges; order detail with progress timeline, item breakdown, payment info, delivery address, and updates
+- **Shortlists** — shortlists list and individual shortlist detail pages
+- **Finances** — finances overview and individual finance statement detail pages
+- **Search** — global search (results page + typeahead suggest), wired to `/api/v1/search`
+- **Help Centre** — dedicated `/help` surface outside the buyer area
 - **Share modal** — customise, generate, and share via link, QR code, WhatsApp, or email (Minivoda branding is stripped from shared content)
-- **App shell** — header with search bar, currency selector, wishlist/cart counters, sidebar navigation, mobile drawer
+- **App shell** — header with search bar, currency selector, shortlist/cart counters, sidebar navigation, mobile drawer
 - **Dark mode** — press `d` to toggle
+- **Admin area** — full CRUD for orders, shortlists, invoices, and products; god-mode auth via `app_metadata.role`; Supabase Realtime sync pushes admin mutations to buyer-facing views; cross-tab user switching via BroadcastChannel
+- **Public REST API** — versioned under `/api/v1/` — see [`docs/api/README.md`](docs/api/README.md) for the contract
 
 ### Under construction (placeholder pages exist)
 
-- Shortlists
-- Finances
 - Settings
-- Admin panel
 - Custom jewellery
 
 ### Not yet started
 
-- Cart and checkout flow
-- Wedding bands category
+- Wedding bands category, tennis bracelets category
 - My Memo, Requests, Holds, Feed Centre
-- Search and filter logic (UI is present but not wired)
 
 ## Site Map
 
@@ -48,44 +54,48 @@ All buyer-facing pages require sign-in. The URL paths below are relative to the 
 |---|---|
 | Marketing landing page | `/` |
 | Sign in | `/login` |
+| Help Centre | `/help` |
 | Buyer home | `/buyer` |
-| Natural diamonds — list | `/buyer/browse/natural-diamonds` |
-| Natural diamonds — detail | `/buyer/browse/natural-diamonds/:id` |
-| Lab-grown diamonds — list | `/buyer/browse/lab-grown-diamonds` |
-| Lab-grown diamonds — detail | `/buyer/browse/lab-grown-diamonds/:id` |
-| Gemstones — list | `/buyer/browse/gemstones` |
-| Gemstones — detail | `/buyer/browse/gemstones/:id` |
-| Natural melee — list | `/buyer/browse/natural-melee` |
-| Natural melee — detail | `/buyer/browse/natural-melee/:id` |
-| Lab-grown melee — list | `/buyer/browse/lab-grown-melee` |
-| Lab-grown melee — detail | `/buyer/browse/lab-grown-melee/:id` |
-| Engagement rings — list | `/buyer/browse/jewelry/engagement-rings` |
-| Engagement rings — detail | `/buyer/browse/jewelry/engagement-rings/:id` |
+| Search results | `/buyer/search` |
+| Natural diamonds — list / detail | `/buyer/browse/natural-diamonds` / `/:id` |
+| Lab-grown diamonds — list / detail | `/buyer/browse/lab-grown-diamonds` / `/:id` |
+| Gemstones — list / detail | `/buyer/browse/gemstones` / `/:id` |
+| Natural melee — list / detail | `/buyer/browse/natural-melee` / `/:id` |
+| Lab-grown melee — list / detail | `/buyer/browse/lab-grown-melee` / `/:id` |
+| Engagement rings — list / detail | `/buyer/browse/jewelry/engagement-rings` / `/:id` |
+| Engagement rings — select stone | `/buyer/browse/jewelry/engagement-rings/:id/select-stone` |
+| Engagement rings — added to cart | `/buyer/browse/jewelry/engagement-rings/:id/added-to-cart` |
 | Custom jewellery | `/buyer/browse/custom-jewellery` |
-| Orders — list | `/buyer/orders` |
-| Orders — detail | `/buyer/orders/:id` |
-| Shortlists | `/buyer/shortlists` |
-| Finances | `/buyer/finances` |
+| Orders — list / detail | `/buyer/orders` / `/:id` |
+| Shortlists — list / detail | `/buyer/shortlists` / `/:id` |
+| Finances — list / detail | `/buyer/finances` / `/:id` |
+| Checkout | `/buyer/checkout` |
+| Checkout confirmation | `/buyer/checkout/confirmation` |
 | Settings | `/buyer/settings` |
-| Admin | `/buyer/admin` |
+| Admin — home | `/buyer/admin` |
+| Admin — orders / invoices / products / shortlists | `/buyer/admin/{orders,invoices,products,shortlists}` |
 | Component kitchen sink (dev only) | `/buyer/ui-kitchen-sink` |
 
-Each browse category follows the same pattern: a product listing page and individual product detail pages.
+Buyer routes are organised into four route groups — `(shop)`, `(admin)`, `(checkout)`, `(configurator)` — each providing an independent layout while sharing the `/buyer` URL prefix.
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 16 (App Router) |
+| Framework | Next.js 16 (App Router, Turbopack) |
 | Language | TypeScript |
 | UI library | React 19 |
 | Styling | Tailwind CSS v4 |
-| UI primitives | shadcn/ui (Radix UI + Base UI) |
+| UI primitives | `@nivoda/components` — see [`packages/components/`](../components/) |
+| Design tokens | `@nivoda/components/web-theme.css` — sourced from [`packages/tokens/`](../tokens/) |
+| Client state | Zustand (cart, checkout, shortlists) |
+| Validation | Zod |
 | Icons | Tabler Icons |
 | Charts | Recharts |
 | Database | Supabase Postgres |
 | ORM | Drizzle ORM |
 | Auth | Supabase Auth |
+| Realtime | Supabase Realtime (admin → buyer view sync) |
 | Hosting | Vercel |
 
 ---
@@ -98,16 +108,18 @@ Everything below this line is for developers working on the codebase.
 
 ### Prerequisites
 
-- **Node.js** (check `.nvmrc` for the expected version)
+- **Node.js** — a recent LTS (tested against 20+)
 - **Docker** — required to run the local Supabase database
 
 ### Install and run
 
+This package is part of the `clarity-v2` npm workspace. Install from the **repo root**, not from inside this package:
+
 ```bash
-npm install
+cd ../.. && npm install
 ```
 
-Copy the example environment file:
+All remaining commands run from inside `packages/test-app/`. Copy the example environment file:
 
 ```bash
 cp .env.example .env.development.local
@@ -175,11 +187,13 @@ npm run db:studio   # Open Drizzle Studio (browser-based DB explorer)
 
 ### Adding UI components
 
-```bash
-npx shadcn@latest add <component-name>
+UI primitives come from [`packages/components/`](../components/) (`@nivoda/components`). Import them directly:
+
+```ts
+import { Button, Input } from "@nivoda/components"
 ```
 
-This places the component in `components/ui/`. Do not create files there manually.
+Missing primitives are added upstream in the components package, not here. Do not create a `components/ui/` folder in this app, and do not run `npx shadcn add`. See [`packages/components/CONTRIBUTING.md`](../components/CONTRIBUTING.md).
 
 ## Folder Structure
 
@@ -188,43 +202,64 @@ app/
   layout.tsx                    # Root layout (fonts, theme provider)
   page.tsx                      # Marketing landing page (public)
   login/                        # Sign-in page (Supabase Auth)
-  buyer/                        # Authenticated buyer area
-    layout.tsx                  # Buyer shell (navigation, footer)
-    page.tsx                    # Buyer home (hero carousel, category grid)
-    browse/
-      natural-diamonds/         # Product list + [slug] detail
-      lab-grown-diamonds/       #   "
-      gemstones/                #   "
-      natural-melee/            #   "
-      lab-grown-melee/          #   "
-      custom-jewellery/         # Under construction
-      jewelry/
-        engagement-rings/       # Product list + [slug] detail (with configurator)
-    orders/                     # Order list + [slug] detail
-    shortlists/                 # Under construction
-    finances/                   # Under construction
-    settings/                   # Under construction
-    admin/                      # Under construction
-    ui-kitchen-sink/            # Component showcase (dev only)
+  (help)/
+    help/                       # Help Centre
+  buyer/                        # Authenticated buyer area (protected by middleware)
+    layout.tsx                  # Session layout
+    (shop)/                     # Buyer shell (nav, footer, realtime)
+      page.tsx                  # Buyer home (hero carousel, category grid)
+      browse/                   # Product categories (list + [slug] detail)
+      orders/                   # Order list + [id] detail
+      shortlists/               # Shortlists list + [id] detail
+      finances/                 # Finance overview + [id] statement
+      search/                   # Search results
+      settings/                 # Placeholder
+      ui-kitchen-sink/          # Component showcase (dev only)
+    (admin)/admin/              # God-mode admin — orders / invoices / products / shortlists CRUD
+    (checkout)/checkout/        # Checkout page + confirmation
+    (configurator)/             # Engagement-ring configurator sub-flow (select-stone, etc.)
+  api/v1/                       # Public REST API — see docs/api/README.md
 
 components/
   shell/                        # App chrome: navigation bar, mobile drawer, footer
   layouts/                      # Reusable page layout wrappers
-    layout-product-detail/      # Product detail layout with certificate/parcel sub-components
+                                #   layout-base, layout-browse, layout-configurator,
+                                #   layout-product-list, layout-product-detail, layout-under-construction
   products/                     # Product-specific display components
-  ui/                           # shadcn/ui primitives — managed via CLI, do not edit
+  orders/                       # Order list/detail components
+  finances/                     # Finance list/detail components
+  admin/                        # Admin area components (header, sidebar, CRUD list/modals)
+  checkout/                     # Checkout-flow components
+  filters/                      # Filter UI compositions
+  search/                       # Search UI compositions
+  *.tsx                         # Top-level providers and widgets
+                                #   theme-provider, realtime-provider, realtime-shell, realtime-status,
+                                #   broadcast-listener, home-carousel, share-modal,
+                                #   product-actions, sign-out-button
 
 db/
-  schema/                       # Drizzle schema definitions (source of truth for DB structure)
+  schema/                       # Drizzle schema (commerce, jewelry, lookups, media, orders, products, users, enums)
   client.ts                     # Drizzle client (postgres.js + drizzle-orm)
 
-hooks/                          # Custom React hooks
+hooks/
+  use-cart-store.ts             # Zustand cart store
+  use-checkout-store.ts         # Zustand checkout store
+  use-shortlists-state.ts       # Shortlists client state
+  use-realtime-sync.ts          # Bridges SSR data with Supabase Realtime updates
+  use-search.ts                 # Search query + suggest hook
+  use-mobile.ts                 # Responsive breakpoint hook
 
 lib/
-  api/                          # Data-access modules (one per category/domain)
-  supabase/                     # Supabase client utilities (browser, server, middleware)
+  api/                          # Data-access modules — one per domain (diamonds, gemstones, melee,
+                                # jewelry/, orders, cart, shortlists, invoices, finances, search,
+                                # filters, addresses, users, auth, admin/)
+  supabase/                     # Supabase client utilities (client.ts, server.ts, middleware.ts, api.ts)
   navigation.ts                 # Sidebar navigation tree
   utils.ts                      # Shared helpers
+
+docs/
+  api/                          # Public REST API documentation (contract for mobile + external consumers)
+  superpowers/                  # Plans and specs from the agent-driven development workflow
 
 public/                         # Static assets
 
@@ -296,18 +331,18 @@ Formatting is enforced by Prettier (`npm run format`):
 
 ### Theme
 
-Colour tokens are CSS custom properties in `app/globals.css` using the `oklch` colour space. Dark mode uses the `.dark` class on `<html>`, toggled by `next-themes`. Press `d` to toggle.
+Theme tokens and dark-mode styling come from `@nivoda/components/web-theme.css`, imported by `app/globals.css` (three lines total — Tailwind plus the theme import). Dark mode is the `.dark` class on `<html>`, toggled by `next-themes` — press `d` to toggle. See [`packages/components/`](../components/) and [`packages/tokens/`](../tokens/) for the design-system sources.
 
 ### Path alias
 
-`@/*` maps to the repository root:
+`@/*` maps to the package root. Use it for local app code only — primitives come from `@nivoda/components`:
 
 ```ts
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { Button } from "@nivoda/components"
 import { db } from "@/db/client"
 ```
 
 ---
 
-*Last reviewed: 2026-03-24*
+*Last reviewed: 2026-04-23*

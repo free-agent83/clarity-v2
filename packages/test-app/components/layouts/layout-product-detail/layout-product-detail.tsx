@@ -2,11 +2,19 @@
 
 import * as React from "react";
 import { useState } from "react";
+import Link from "next/link";
+
+import {
+  Breadcrumb,
+  BreadcrumbItem as DsBreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  PlpGridContainer,
+} from "@nivoda/components";
 
 import { cn } from "@/lib/utils";
-import { ProductListItem } from "@/components/products/product-list-item";
-import { LayoutBrowse } from "../layout-browse/layout-browse";
-import type { ProductListItemProps } from "@/components/products/product-list-item";
 import type { BreadcrumbItem, ProductImage, SpecRow } from "../types";
 
 type LayoutProductDetailProps = {
@@ -23,7 +31,7 @@ type LayoutProductDetailProps = {
   shippingInfo?: React.ReactNode;
   specs: SpecRow[];
   description?: string;
-  relatedItems: ProductListItemProps[];
+  relatedItems?: React.ReactNode;
   relatedTitle?: string;
   className?: string;
 };
@@ -50,7 +58,28 @@ export function LayoutProductDetail({
   const currentImage = images[activeImageIdx] ?? images[0];
 
   return (
-    <LayoutBrowse breadcrumbs={breadcrumbs} className={className}>
+    <div className={cn("flex flex-col gap-12 pb-32", className)}>
+      <Breadcrumb>
+        <BreadcrumbList className="gap-3 text-base">
+          {breadcrumbs.map((item, i) => (
+            <React.Fragment key={item.href}>
+              {i > 0 && <BreadcrumbSeparator className="[&>svg]:size-4" />}
+              <DsBreadcrumbItem>
+                {i < breadcrumbs.length - 1 ? (
+                  <BreadcrumbLink asChild>
+                    <Link href={item.href}>{item.label}</Link>
+                  </BreadcrumbLink>
+                ) : (
+                  <BreadcrumbPage className="truncate">
+                    {item.label}
+                  </BreadcrumbPage>
+                )}
+              </DsBreadcrumbItem>
+            </React.Fragment>
+          ))}
+        </BreadcrumbList>
+      </Breadcrumb>
+
       {/* Two-column grid */}
       <div className="grid grid-cols-[1fr_480px] items-start gap-12">
         {/* LEFT: Sticky gallery */}
@@ -171,18 +200,14 @@ export function LayoutProductDetail({
       <hr className="border-border" />
 
       {/* Related items */}
-      {relatedItems.length > 0 ? (
+      {relatedItems ? (
         <div className="flex flex-col gap-6">
           <h2 className="text-2xl font-semibold text-foreground">
             {relatedTitle}
           </h2>
-          <div className="grid grid-cols-4 gap-5">
-            {relatedItems.map((item) => (
-              <ProductListItem key={item.id} {...item} />
-            ))}
-          </div>
+          <PlpGridContainer>{relatedItems}</PlpGridContainer>
         </div>
       ) : null}
-    </LayoutBrowse>
+    </div>
   );
 }

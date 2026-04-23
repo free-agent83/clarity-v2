@@ -31,7 +31,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
           toast("Removed from cart");
         }}
         className={cn(
-          "flex h-15 w-full items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors",
+          "flex h-12 w-full items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors",
           isHovered
             ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
             : "bg-emerald-600 text-white hover:bg-emerald-700",
@@ -59,7 +59,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
         addItem(product);
         toast("Added to cart");
       }}
-      className="flex h-15 w-full items-center justify-center gap-2 rounded-lg bg-foreground text-sm font-medium text-background transition-colors hover:bg-foreground/90"
+      className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-foreground text-sm font-medium text-background transition-colors hover:bg-accent-foreground hover:text-white"
     >
       Add to cart
       <IconShoppingCartPlus size={20} />

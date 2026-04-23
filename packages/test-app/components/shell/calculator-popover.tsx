@@ -4,14 +4,17 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { IconCalculator, IconX } from "@tabler/icons-react";
 import {
+  Button,
+  Field,
+  FieldDescription,
+  FieldLabel,
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@nivoda/components";
-import { Input } from "@nivoda/components";
-import { Label } from "@nivoda/components";
 import { cn } from "@/lib/utils";
 
 const SHAPES = [
@@ -88,21 +91,16 @@ export function CalculatorPopover() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <span className="text-sm font-semibold">Calculator</span>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          aria-label="Close calculator"
-        >
+        <Button variant="ghost" size="icon-sm" onClick={() => setOpen(false)} aria-label="Close calculator">
           <IconX size={16} />
-        </button>
+        </Button>
       </div>
 
       <div className="space-y-4 p-4">
         {/* Stone params — 2×2 grid */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <Label className="text-xs">Size (ct)</Label>
+          <Field className="gap-1.5">
+            <FieldLabel className="text-xs">Size (ct)</FieldLabel>
             <Input
               type="number"
               min="0"
@@ -111,9 +109,9 @@ export function CalculatorPopover() {
               value={size}
               onChange={(e) => setSize(e.target.value)}
             />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">Shape</Label>
+          </Field>
+          <Field className="gap-1.5">
+            <FieldLabel className="text-xs">Shape</FieldLabel>
             <Select value={shape} onValueChange={setShape}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Shape" />
@@ -126,9 +124,9 @@ export function CalculatorPopover() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">Colour</Label>
+          </Field>
+          <Field className="gap-1.5">
+            <FieldLabel className="text-xs">Colour</FieldLabel>
             <Select value={colour} onValueChange={setColour}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Colour" />
@@ -141,9 +139,9 @@ export function CalculatorPopover() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">Clarity</Label>
+          </Field>
+          <Field className="gap-1.5">
+            <FieldLabel className="text-xs">Clarity</FieldLabel>
             <Select value={clarity} onValueChange={setClarity}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Clarity" />
@@ -156,12 +154,12 @@ export function CalculatorPopover() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </Field>
         </div>
 
         {/* Discount */}
-        <div className="space-y-2">
-          <Label className="text-xs">Discount (%)</Label>
+        <Field className="gap-1.5">
+          <FieldLabel className="text-xs">Discount (%)</FieldLabel>
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Input
@@ -181,33 +179,35 @@ export function CalculatorPopover() {
                 %
               </span>
             </div>
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="icon"
               onClick={() => setDiscount((d) => Math.max(-99, d - 1))}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
               aria-label="Decrease by 1%"
             >
               −
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="secondary"
+              size="icon"
               onClick={() => setDiscount((d) => Math.min(999, d + 1))}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
               aria-label="Increase by 1%"
             >
               +
-            </button>
+            </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <FieldDescription>
             Use negative values for discount, positive values for markup.
-          </p>
-        </div>
+          </FieldDescription>
+        </Field>
 
         {/* Output */}
         <div className="space-y-3 border-t border-border pt-4">
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Price/Ct (USD)</Label>
+            <Field className="gap-1.5">
+              <FieldLabel className="text-xs">Price/Ct (USD)</FieldLabel>
               <div className="relative">
                 <Input
                   type="number"
@@ -222,10 +222,10 @@ export function CalculatorPopover() {
                   per ct
                 </span>
               </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Total Price (USD)</Label>
-              <div className="flex h-9 items-center rounded-md border border-border bg-muted/50 px-3">
+            </Field>
+            <Field className="gap-1.5">
+              <FieldLabel className="text-xs">Total Price (USD)</FieldLabel>
+              <div className="flex h-11 items-center rounded-md border border-border bg-muted/50 px-3">
                 <span
                   className={cn(
                     "text-sm font-semibold tabular-nums",
@@ -237,37 +237,32 @@ export function CalculatorPopover() {
                   {formattedTotal}
                 </span>
               </div>
-            </div>
+            </Field>
           </div>
         </div>
       </div>
 
       {/* Footer */}
       <div className="border-t border-border p-4">
-        <button
-          type="button"
-          onClick={handleReset}
-          className="w-full rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
-        >
+        <Button variant="secondary" onClick={handleReset} block>
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   );
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon"
         onClick={() => setOpen((o) => !o)}
-        className={cn(
-          "rounded-lg p-3 text-foreground transition-colors hover:bg-muted",
-          open && "bg-muted",
-        )}
+        aria-expanded={open}
         aria-label="Open calculator"
       >
         <IconCalculator size={20} />
-      </button>
+      </Button>
       {open && createPortal(panel, document.body)}
     </>
   );
