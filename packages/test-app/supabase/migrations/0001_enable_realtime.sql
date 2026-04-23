@@ -1,0 +1,17 @@
+ALTER PUBLICATION supabase_realtime ADD TABLE orders;
+ALTER PUBLICATION supabase_realtime ADD TABLE order_checkouts;
+ALTER PUBLICATION supabase_realtime ADD TABLE order_products;
+ALTER PUBLICATION supabase_realtime ADD TABLE order_events;
+ALTER PUBLICATION supabase_realtime ADD TABLE shortlists;
+ALTER PUBLICATION supabase_realtime ADD TABLE shortlist_items;
+ALTER PUBLICATION supabase_realtime ADD TABLE invoices;
+ALTER PUBLICATION supabase_realtime ADD TABLE ledger_entries;
+ALTER PUBLICATION supabase_realtime ADD TABLE products;
+ALTER PUBLICATION supabase_realtime ADD TABLE diamonds;
+ALTER PUBLICATION supabase_realtime ADD TABLE gemstones;
+ALTER PUBLICATION supabase_realtime ADD TABLE melee_lots;
+ALTER PUBLICATION supabase_realtime ADD TABLE engagement_rings;
+ALTER PUBLICATION supabase_realtime ADD TABLE wedding_bands;
+ALTER PUBLICATION supabase_realtime ADD TABLE tennis_bracelets;
+ALTER PUBLICATION supabase_realtime ADD TABLE product_images;
+ALTER PUBLICATION supabase_realtime ADD TABLE cart_items;

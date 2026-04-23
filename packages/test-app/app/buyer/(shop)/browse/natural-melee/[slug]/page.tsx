@@ -1,0 +1,141 @@
+import { notFound } from "next/navigation";
+import { IconInfoCircle, IconRefresh, IconTruck } from "@tabler/icons-react";
+
+import { AddToCartButton } from "@/components/products/add-to-cart-button";
+
+import { fetchMeleeItem, fetchRelatedMelee } from "@/lib/api/melee";
+import { formatUSD } from "@/lib/utils";
+import { LayoutProductDetail } from "@/components/layouts/layout-product-detail/layout-product-detail";
+import type { SpecRow } from "@/components/layouts/types";
+import type { ProductListItemProps } from "@/components/products/product-list-item";
+import { MeleeParcelInfo } from "@/components/layouts/layout-product-detail/melee-parcel-info";
+import { ProductActions } from "@/components/product-actions";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export default async function NaturalMeleeDetailPage({ params }: Props) {
+  const { slug } = await params;
+  const [item, relatedRaw] = await Promise.all([
+    fetchMeleeItem(slug, false),
+    fetchRelatedMelee(slug, false),
+  ]);
+  if (!item) notFound();
+
+  const breadcrumbs = [
+    { label: "Natural melee", href: "/buyer/browse/natural-melee" },
+    { label: item.description, href: `/buyer/browse/natural-melee/${item.id}` },
+  ];
+
+  const images = [item.images.main, ...item.images.additional]
+    .filter((img) => img && img.length > 0)
+    .map((src) => ({ src, alt: item.description }));
+
+  const formattedPrice = formatUSD(item.totalPrice);
+
+  const specs: SpecRow[] = [
+    { label: "Shape", value: item.shape },
+    { label: "Size range", value: item.sizeRange },
+    { label: "Color range", value: item.colorRange },
+    { label: "Clarity range", value: item.clarityRange },
+    { label: "Cut", value: item.cut },
+    { label: "Quantity", value: `${item.quantity} pieces` },
+    {
+      label: "Total carat weight",
+      value: `${item.totalCaratWeight.toFixed(2)} ct`,
+    },
+    {
+      label: "Price per carat",
+      value: formatUSD(item.pricePerCarat),
+    },
+  ];
+  const relatedItems: ProductListItemProps[] = relatedRaw.map((related) => ({
+    id: related.id,
+    href: `/browse/natural-melee/${related.id}`,
+    imageSrc: related.images.main,
+    imageAlt: related.description,
+    title: related.description,
+    subtitle: related.stockId,
+    priceLabel: "Total price",
+    formattedPrice: formatUSD(related.totalPrice),
+  }));
+
+  return (
+    <LayoutProductDetail
+      breadcrumbs={breadcrumbs}
+      images={images}
+      title={item.description}
+      priceLabel="Total price"
+      formattedPrice={formattedPrice}
+      actions={
+        <ProductActions
+          product={{
+            title: item.description,
+            subtitle: "Natural melee",
+            price: item.totalPrice,
+            imageSrc: item.images.main,
+            attributes: specs,
+          }}
+        />
+      }
+      configuration={
+        <MeleeParcelInfo
+          stockId={item.stockId}
+          shape={item.shape}
+          sizeRange={item.sizeRange}
+          colorRange={item.colorRange}
+          clarityRange={item.clarityRange}
+          cut={item.cut}
+          quantity={item.quantity}
+          totalCaratWeight={item.totalCaratWeight}
+          pricePerCarat={item.pricePerCarat}
+        />
+      }
+      ctaButton={
+        <AddToCartButton
+          product={{
+            productId: item.id,
+            name: item.description,
+            certLab: null,
+            certNumber: null,
+            stockId: item.stockId,
+            price: item.totalPrice,
+            discount: null,
+            image: item.images.main,
+            category: "natural_melee",
+            quantity: 1,
+          }}
+        />
+      }
+      shippingInfo={
+        <div className="flex flex-col gap-1">
+          <div className="flex items-start gap-3">
+            <IconRefresh
+              size={24}
+              className="mt-0.5 shrink-0 text-foreground"
+            />
+            <div className="flex flex-wrap items-center gap-1 pt-0.5 text-sm">
+              <span className="font-medium text-[#3d745c]">14-day returns</span>
+              <span className="text-muted-foreground">
+                · Returns Policy applies
+              </span>
+              <IconInfoCircle size={18} className="text-muted-foreground" />
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <IconTruck size={24} className="mt-0.5 shrink-0 text-foreground" />
+            <div className="flex flex-wrap items-center gap-1 pt-0.5 text-sm">
+              <span className="text-muted-foreground">
+                Estimated delivery in
+              </span>
+              <span className="font-medium text-foreground">
+                5 business days
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+      specs={specs}
+      relatedItems={relatedItems}
+    />
+  );
+}
