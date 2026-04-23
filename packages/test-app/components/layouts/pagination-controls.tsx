@@ -10,6 +10,8 @@ import {
   SelectValue,
 } from "@nivoda/components";
 
+import { usePlpLoading } from "./layout-plp/plp-loading-context";
+
 type PaginationControlsProps = {
   currentPage: number;
   totalPages: number;
@@ -86,12 +88,15 @@ function UrlPaginationControls({
 }: Omit<PaginationControlsProps, "onPageChange" | "onPerPageChange">) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { startTransition } = usePlpLoading();
 
   function navigate(page: number, newPerPage?: number) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", String(page));
     params.set("perPage", String(newPerPage ?? perPage));
-    router.push(`?${params.toString()}`);
+    startTransition(() => {
+      router.push(`?${params.toString()}`);
+    });
   }
 
   return (

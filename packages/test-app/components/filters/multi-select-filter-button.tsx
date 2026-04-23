@@ -11,6 +11,14 @@ type MultiSelectFilterButtonProps = {
   onChange: (next: string[]) => void;
 };
 
+const MAX_CHIP_VALUES = 3;
+
+function formatChipSummary(values: string[]): string {
+  if (values.length <= MAX_CHIP_VALUES) return values.join(", ");
+  const head = values.slice(0, MAX_CHIP_VALUES).join(", ");
+  return `${head}, +${values.length - MAX_CHIP_VALUES}`;
+}
+
 export function MultiSelectFilterButton({
   label,
   options,
@@ -18,11 +26,7 @@ export function MultiSelectFilterButton({
   onChange,
 }: MultiSelectFilterButtonProps) {
   const isActive = value.length > 0;
-  const chipSummary = isActive
-    ? value.length === 1
-      ? value[0]
-      : `${value[0]} +${value.length - 1}`
-    : undefined;
+  const chipSummary = isActive ? formatChipSummary(value) : undefined;
 
   return (
     <FilterButton<string[]>

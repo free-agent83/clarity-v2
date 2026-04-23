@@ -15,6 +15,7 @@ import {
 
 import { MultiSelectFilterButton } from "@/components/filters/multi-select-filter-button";
 import { RangeFilterButton } from "@/components/filters/range-filter-button";
+import { usePlpLoading } from "@/components/layouts/layout-plp/plp-loading-context";
 
 // ---------------------------------------------------------------------------
 // FilterDef — the per-category config each controller passes in
@@ -54,6 +55,7 @@ type PlpFilterControllerArgs = {
 type PlpFilterControllerResult = Pick<
   FilterToolbarProps,
   | "filters"
+  | "stickyFilters"
   | "activeFilterCount"
   | "hasActiveFilters"
   | "onClearAll"
@@ -85,6 +87,7 @@ export function usePlpFilterController({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { startTransition } = usePlpLoading();
 
   const resolvedDefaultSort = defaultSort ?? sortOptions[0].value;
 
@@ -121,6 +124,8 @@ export function usePlpFilterController({
   const [draft, setDraft] = React.useState<Record<string, FilterValue>>({});
 
   // --- Counts + booleans -------------------------------------------------
+  // Counts engaged filter *types* (each def with any active value counts
+  // once), not the total number of options selected across them.
   const activeFilterCount = React.useMemo(() => {
     let n = 0;
     for (const def of filterDefs) {
@@ -128,8 +133,8 @@ export function usePlpFilterController({
       if (!v) continue;
       if (def.kind === "range") {
         n += 1;
-      } else if (Array.isArray(v)) {
-        n += v.length;
+      } else if (Array.isArray(v) && v.length > 0) {
+        n += 1;
       }
     }
     return n;
@@ -177,9 +182,11 @@ export function usePlpFilterController({
       if (perPage) params.set("perPage", perPage);
 
       const qs = params.toString();
-      router.push(qs ? `${pathname}?${qs}` : pathname);
+      startTransition(() => {
+        router.push(qs ? `${pathname}?${qs}` : pathname);
+      });
     },
-    [filterDefs, resolvedDefaultSort, pathname, router, searchParams],
+    [filterDefs, resolvedDefaultSort, pathname, router, searchParams, startTransition],
   );
 
   // --- Commit handlers ---------------------------------------------------
@@ -201,11 +208,17 @@ export function usePlpFilterController({
     [pushUrl, values],
   );
 
-  // --- Main filter row ---------------------------------------------------
-  const filters = filterDefs.map((def) => {
+  // --- Main filter row + sticky subset (only actively-applied defs) -----
+  const filters: ReactNode[] = [];
+  const stickyFilters: ReactNode[] = [];
+  for (const def of filterDefs) {
     const value = values[def.key];
-    if (def.kind === "range") {
-      return (
+    const isActive =
+      def.kind === "range"
+        ? value !== undefined
+        : Array.isArray(value) && value.length > 0;
+    const button =
+      def.kind === "range" ? (
         <RangeFilterButton
           key={def.key}
           label={def.label}
@@ -213,20 +226,20 @@ export function usePlpFilterController({
           value={value as RangeValue | undefined}
           onChange={(next) => commitFilter(def.key, next)}
         />
+      ) : (
+        <MultiSelectFilterButton
+          key={def.key}
+          label={def.label}
+          options={def.options}
+          value={(value as string[]) ?? []}
+          onChange={(next) =>
+            commitFilter(def.key, next.length > 0 ? next : undefined)
+          }
+        />
       );
-    }
-    return (
-      <MultiSelectFilterButton
-        key={def.key}
-        label={def.label}
-        options={def.options}
-        value={(value as string[]) ?? []}
-        onChange={(next) =>
-          commitFilter(def.key, next.length > 0 ? next : undefined)
-        }
-      />
-    );
-  });
+    filters.push(button);
+    if (isActive) stickyFilters.push(button);
+  }
 
   // --- Drawer helpers ----------------------------------------------------
   function toggleDraftMulti(key: string, option: string) {
@@ -284,6 +297,7 @@ export function usePlpFilterController({
 
   return {
     filters,
+    stickyFilters,
     activeFilterCount,
     hasActiveFilters,
     onClearAll,
