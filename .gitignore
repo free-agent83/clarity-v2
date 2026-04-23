@@ -10,6 +10,7 @@ dist/
 # Build outputs
 storybook-static/
 build-storybook.log
+.next/
 
 # Nx cache
 .nx/cache
@@ -26,6 +27,7 @@ packages/components/.storybook/*.d.ts.map
 # Environment
 .env
 .env.local
+.env.*.local
 
 # Compiled Java class files
 *.class
