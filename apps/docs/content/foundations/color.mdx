@@ -1,7 +1,123 @@
 ---
 title: Color / OKLCH
-status: not-yet-written
-description: The OKLCH-based colour system, including violet brand and stone neutral.
+description: The OKLCH-based colour system — violet brand, stone neutral, four status palettes.
 ---
 
-Colour in Clarity V2 is authored in OKLCH for perceptual uniformity, with hex fallbacks for React Native. The brand colour is **violet** (not purple) and the neutral is **stone** (warm, not cool grey). Black is soft (`#0c0a09`), not true black. Detailed guidance on ramps, semantic roles, and dark-first behaviour is coming — in the meantime, see `packages/tokens/tokens/color/` in the repo.
+Every colour in Clarity V2 is authored in OKLCH and stored with a hex fallback. The source of truth is `packages/tokens/src/color/primitive.tokens.json`; semantic roles (`action.primary`, `status.success`) map onto it in `semantic.tokens.json`.
+
+## Why OKLCH
+
+`oklch(L C H)` is perceptually uniform — a ten-point shift in lightness looks like the same perceived step whether the hue is violet, green, or stone. HSL doesn't do this; a 50% lightness yellow is visibly brighter than a 50% lightness blue. OKLCH also reaches into the P3 wide-gamut space, so displays that support it render saturated hues (brand violet especially) with more chroma than sRGB can hold.
+
+Math is meaningful: step a scale by fixed L intervals and the perceived contrast ladder is even. That's how the 50–950 ramps below were built.
+
+Hex fallbacks are stored alongside because React Native can't parse OKLCH. Web emits `oklch(...)`; native reads `hex`. One source file, two outputs.
+
+## Palette structure
+
+Two layers:
+
+1. **Primitive** — raw hue scales, 11 steps each (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950). Named after the hue (`violet`, `stone`, `green`, etc.), not the role.
+2. **Semantic** — role tokens that reference a primitive step. `action.primary` points at `violet.600`; `surface.base` at `stone.950` in dark mode. Consumers should reach for semantic tokens; primitives are for designers building new roles.
+
+## Violet — brand
+
+Brand hue. The only accent that implies Nivoda. Reserved for primary actions, focus rings, selection states, and the rare moment that needs to lift off the surface. Never chrome, never decorative.
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(11, 1fr)', gap: '0.25rem', marginTop: '1rem'}}>
+  <div style={{background: '#f4f2ff', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>50</div>
+  <div style={{background: '#e9e8ff', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>100</div>
+  <div style={{background: '#d7d4ff', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>200</div>
+  <div style={{background: '#bab2ff', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>300</div>
+  <div style={{background: '#9886ff', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>400</div>
+  <div style={{background: '#7655fd', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>500</div>
+  <div style={{background: '#6330f5', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>600</div>
+  <div style={{background: '#5620e1', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>700</div>
+  <div style={{background: '#481abd', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>800</div>
+  <div style={{background: '#3d189a', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>900</div>
+  <div style={{background: '#230c69', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>950</div>
+</div>
+
+`violet.600` (`#6330f5`) is the primary action default. `violet.500` (`#7655fd`) is the hover. `violet.700` (`#5620e1`) is the pressed state. Everything else supports focus rings, tinted surfaces, and the rare decorative moment.
+
+It's violet, not purple. The names are not interchangeable in source — reviews catch `purple` and send it back.
+
+## Stone — neutral
+
+Warm neutral. Every surface, every border, every run of body text grounds on stone. Cool greys have been tried and rejected; they fight the luxury-dark direction.
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(11, 1fr)', gap: '0.25rem', marginTop: '1rem'}}>
+  <div style={{background: '#fafaf9', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>50</div>
+  <div style={{background: '#f5f5f4', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>100</div>
+  <div style={{background: '#e7e5e4', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>200</div>
+  <div style={{background: '#d6d3d1', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>300</div>
+  <div style={{background: '#a8a29e', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#0c0a09', textAlign: 'center'}}>400</div>
+  <div style={{background: '#78716c', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>500</div>
+  <div style={{background: '#57534e', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>600</div>
+  <div style={{background: '#44403c', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>700</div>
+  <div style={{background: '#292524', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>800</div>
+  <div style={{background: '#1c1917', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>900</div>
+  <div style={{background: '#0c0a09', padding: '1.5rem 0.25rem', borderRadius: '0.25rem', fontSize: '0.7rem', color: '#ffffff', textAlign: 'center'}}>950</div>
+</div>
+
+`stone.950` (`#0c0a09`) is Nivoda black — soft, warm, never pure `#000000`. Pure black is jarring on a luxury surface; stone.950 reads as dark and considered. Light-mode body text uses `stone.900`; dark-mode body text uses `stone.50`.
+
+## Status palettes
+
+Four status hues, shown here as the three load-bearing steps (50, 500, 900). Full ramps are in the source file.
+
+### Green — success
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.25rem', marginTop: '1rem'}}>
+  <div style={{background: '#f3faf6', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#0c0a09', textAlign: 'center'}}>50 <code style={{fontSize: '0.7rem'}}>#f3faf6</code></div>
+  <div style={{background: '#59b186', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#ffffff', textAlign: 'center'}}>500 <code style={{fontSize: '0.7rem', color: '#ffffff'}}>#59b186</code></div>
+  <div style={{background: '#25362f', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#ffffff', textAlign: 'center'}}>900 <code style={{fontSize: '0.7rem', color: '#ffffff'}}>#25362f</code></div>
+</div>
+
+Confirmations, completed states, positive deltas. Maps to `status.success`.
+
+### Red — error
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.25rem', marginTop: '1rem'}}>
+  <div style={{background: '#fef2f2', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#0c0a09', textAlign: 'center'}}>50 <code style={{fontSize: '0.7rem'}}>#fef2f2</code></div>
+  <div style={{background: '#ef4444', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#ffffff', textAlign: 'center'}}>500 <code style={{fontSize: '0.7rem', color: '#ffffff'}}>#ef4444</code></div>
+  <div style={{background: '#7f1d1d', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#ffffff', textAlign: 'center'}}>900 <code style={{fontSize: '0.7rem', color: '#ffffff'}}>#7f1d1d</code></div>
+</div>
+
+Errors and destructive actions. Maps to `status.error` and `action.destructive`.
+
+### Blue — info
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.25rem', marginTop: '1rem'}}>
+  <div style={{background: '#eef4ff', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#0c0a09', textAlign: 'center'}}>50 <code style={{fontSize: '0.7rem'}}>#eef4ff</code></div>
+  <div style={{background: '#326cff', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#ffffff', textAlign: 'center'}}>500 <code style={{fontSize: '0.7rem', color: '#ffffff'}}>#326cff</code></div>
+  <div style={{background: '#192b8f', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#ffffff', textAlign: 'center'}}>900 <code style={{fontSize: '0.7rem', color: '#ffffff'}}>#192b8f</code></div>
+</div>
+
+Informational messages and in-body links. Maps to `status.info`.
+
+### Amber — warning
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.25rem', marginTop: '1rem'}}>
+  <div style={{background: '#fffbeb', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#0c0a09', textAlign: 'center'}}>50 <code style={{fontSize: '0.7rem'}}>#fffbeb</code></div>
+  <div style={{background: '#f59e0b', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#0c0a09', textAlign: 'center'}}>500 <code style={{fontSize: '0.7rem'}}>#f59e0b</code></div>
+  <div style={{background: '#78350f', padding: '1.5rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: '#ffffff', textAlign: 'center'}}>900 <code style={{fontSize: '0.7rem', color: '#ffffff'}}>#78350f</code></div>
+</div>
+
+Warnings, holds, attention states. Maps to `status.warning`.
+
+## Hex and OKLCH side by side
+
+Each primitive token carries both:
+
+```json
+{
+  "$value": {
+    "colorSpace": "oklch",
+    "components": [0.515, 0.2644, 284],
+    "hex": "#6330f5"
+  }
+}
+```
+
+Web builds emit `oklch(0.515 0.2644 284)` into the CSS file. React Native reads `hex`. The two values aren't independent — hex is generated from the OKLCH triple at authoring time and checked into source so there's no runtime conversion cost on native.

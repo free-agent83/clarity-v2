@@ -1,7 +1,35 @@
 ---
 title: Motion
-status: not-yet-written
-description: Duration, easing, and the role of motion in a luxury-marketplace surface.
+status: planned
+description: Motion is not yet tokenised. Current pattern and planned direction.
 ---
 
-Motion in Clarity V2 is restrained by default — short durations, soft easing, and a strong preference for state-change feedback over decorative animation. The token set covers durations, easings, and a small library of named transitions; written guidance on choreography and reduced-motion behaviour is forthcoming.
+Motion is not tokenised in Clarity V2 yet. This page documents the current pattern and what's planned — flagging it honestly rather than hiding the gap.
+
+## Current pattern
+
+Components reach for Tailwind's default `transition-*` utilities directly. The durations in use are the stock Tailwind defaults:
+
+- `duration-150` — micro-interactions (hover lifts, focus rings).
+- `duration-200` — default state changes on interactive elements.
+- `duration-300` — overlays entering, drawers sliding in.
+
+Easing is the Tailwind default `ease-in-out` in most places, with `ease-out` on entrances and `ease-in` on exits where components have been hand-tuned. There is no single authoritative list — each component picks its own.
+
+## Rules of thumb while this is untokenised
+
+- Keep interactions short. Nothing longer than 300ms in a product surface.
+- Use `ease-out` for enters (things arriving should decelerate into place).
+- Use `ease-in` for exits (things leaving should accelerate away).
+- Respect `prefers-reduced-motion` — transitions should collapse to instant, not just slow down.
+- Don't invent new durations. If a value outside the three above feels needed, flag it so it lands in the token set instead of as a one-off.
+
+## Planned
+
+A motion token file alongside the existing six, emitting:
+
+- **Durations** — named steps (`motion.duration.fast`, `motion.duration.default`, `motion.duration.slow`).
+- **Easings** — named curves (`motion.easing.standard`, `motion.easing.enter`, `motion.easing.exit`).
+- **Component-motion presets** — the common patterns (dialog enter, popover show, drawer slide) as composable tokens.
+
+This lands alongside a motion review with the design team — it is real work that hasn't happened, not writing that hasn't been finished.
