@@ -1,4 +1,4 @@
-import { components, guides } from 'collections/server';
+import { components, guides, ia } from 'collections/server';
 import { loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
 import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
@@ -26,7 +26,29 @@ export const guidesSource = loader({
   plugins: [lucideIconsPlugin()],
 });
 
-export type DocsSource = typeof componentsSource | typeof guidesSource;
+// In-tree IA pages live under apps/docs/content/<section>/<slug>.mdx and serve
+// the URL space /docs/<section>/<slug>. The first path segment IS the section
+// (foundations, patterns, content, brand, resources, get-started).
+export const iaSource = loader({
+  baseUrl: docsRoute,
+  source: ia.toFumadocsSource(),
+  plugins: [lucideIconsPlugin()],
+});
+
+export type DocsSource =
+  | typeof componentsSource
+  | typeof guidesSource
+  | typeof iaSource;
+
+// Top-level URL segments routed to the in-tree IA collection.
+const IA_SECTIONS = new Set([
+  'get-started',
+  'foundations',
+  'patterns',
+  'content',
+  'brand',
+  'resources',
+]);
 
 /**
  * Resolve which content collection to use for a given `[[...slug]]` segments array.
@@ -35,43 +57,248 @@ export type DocsSource = typeof componentsSource | typeof guidesSource;
 export function resolveSource(slug: string[] | undefined): {
   source: DocsSource;
   slug: string[];
-  section: 'components' | 'guides';
+  section: 'components' | 'guides' | 'ia';
 } {
   const segs = slug ?? [];
   if (segs[0] === 'guides') {
     return { source: guidesSource, slug: segs.slice(1), section: 'guides' };
   }
-  // Default: components (also when first segment is "components")
   if (segs[0] === 'components') {
     return { source: componentsSource, slug: segs.slice(1), section: 'components' };
+  }
+  if (segs[0] && IA_SECTIONS.has(segs[0])) {
+    // iaSource already has baseUrl /docs, so we pass the full segment array.
+    return { source: iaSource, slug: segs, section: 'ia' };
   }
   return { source: componentsSource, slug: segs, section: 'components' };
 }
 
+// ---------------------------------------------------------------------------
+// Functional component grouping
+// ---------------------------------------------------------------------------
+// On disk, components live under atoms/molecules/organisms/templates. Consumers
+// don't search atomically — they search by job (Forms, Overlays, etc.). We
+// re-shape the components tree at sidebar-build time to present them
+// functionally without touching the package's filesystem layout.
+//
+// Key = section label shown in the sidebar.
+// Value = ordered list of slug paths (relative to /docs/components/).
+
+const COMPONENT_GROUPS: Record<string, string[]> = {
+  Actions: ['atoms/button', 'atoms/button-group'],
+  Forms: [
+    'atoms/input',
+    'atoms/textarea',
+    'molecules/select',
+    'atoms/checkbox',
+    'atoms/radio-group',
+    'atoms/switch',
+    'atoms/slider',
+    'atoms/toggle',
+    'atoms/toggle-group',
+    'atoms/input-otp',
+    'atoms/input-group',
+    'atoms/field',
+    'atoms/label',
+    'molecules/combobox',
+  ],
+  Display: [
+    'atoms/avatar',
+    'atoms/badge',
+    'molecules/card',
+    'atoms/separator',
+    'atoms/skeleton',
+    'atoms/spinner',
+    'atoms/progress',
+    'atoms/typography',
+    'atoms/brand',
+    'atoms/brand-express',
+    'atoms/kbd',
+    'atoms/item',
+    'atoms/empty',
+    'atoms/direction',
+    'atoms/filter-button',
+  ],
+  Feedback: ['atoms/alert', 'atoms/sonner', 'atoms/tooltip', 'atoms/hover-card'],
+  Overlays: [
+    'molecules/dialog',
+    'molecules/sheet',
+    'molecules/drawer',
+    'atoms/popover',
+    'molecules/alert-dialog',
+    'molecules/dropdown-menu',
+  ],
+  Navigation: [
+    'molecules/breadcrumb',
+    'molecules/pagination',
+    'molecules/tabs',
+    'organisms/navigation-menu',
+    'organisms/sidebar',
+    'molecules/command',
+  ],
+  Data: ['organisms/table', 'organisms/chart'],
+  Filtering: [
+    'atoms/filter-button',
+    'organisms/filter-toolbar',
+    'molecules/range-filter',
+  ],
+  Layout: [
+    'organisms/app-shell',
+    'atoms/aspect-ratio',
+    'atoms/scroll-area',
+    'molecules/collapsible',
+    'molecules/accordion',
+  ],
+  'PLP Kit': ['templates/plp'],
+};
+
+type SidebarNode =
+  | { type: 'page'; name: string; url: string }
+  | {
+      type: 'folder';
+      name: string;
+      root?: boolean;
+      children: SidebarNode[];
+      index?: { type: 'page'; name: string; url: string };
+    };
+
+function buildFunctionalComponentsChildren(): SidebarNode[] {
+  const pages = componentsSource.getPages();
+  // Map slug-path (e.g. "atoms/button") -> page object
+  const pageBySlug = new Map<string, { url: string; data: { title: string } }>();
+  for (const p of pages) {
+    pageBySlug.set(p.slugs.join('/'), {
+      url: p.url,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data: { title: (p.data as any).title ?? p.slugs[p.slugs.length - 1] },
+    });
+  }
+
+  const seen = new Set<string>();
+  const sections: SidebarNode[] = [];
+
+  for (const [groupName, slugs] of Object.entries(COMPONENT_GROUPS)) {
+    const children: SidebarNode[] = [];
+    for (const slug of slugs) {
+      const page = pageBySlug.get(slug);
+      if (!page) continue; // silently skip components that don't exist yet
+      seen.add(slug);
+      children.push({ type: 'page', name: page.data.title, url: page.url });
+    }
+    if (children.length > 0) {
+      sections.push({ type: 'folder', name: groupName, children });
+    }
+  }
+
+  // Anything left becomes an "Other" bucket so nothing gets dropped on the floor.
+  const otherChildren: SidebarNode[] = [];
+  for (const [slug, page] of pageBySlug) {
+    if (seen.has(slug)) continue;
+    otherChildren.push({ type: 'page', name: page.data.title, url: page.url });
+  }
+  otherChildren.sort((a, b) => a.name.localeCompare(b.name));
+  if (otherChildren.length > 0) {
+    sections.push({ type: 'folder', name: 'Other', children: otherChildren });
+  }
+
+  return sections;
+}
+
+// Order in which IA top-level sections should appear in the sidebar.
+const IA_SECTION_ORDER = [
+  'get-started',
+  'foundations',
+  'patterns',
+  'content',
+  'brand',
+  'resources',
+];
+
+const IA_SECTION_LABELS: Record<string, string> = {
+  'get-started': 'Get started',
+  foundations: 'Foundations',
+  patterns: 'Patterns',
+  content: 'Content',
+  brand: 'Brand',
+  resources: 'Resources',
+};
+
+function buildIaSectionChildren(section: string): SidebarNode[] {
+  const pages = iaSource.getPages().filter((p) => p.slugs[0] === section);
+  // Sort: index first, then alphabetical by title
+  const indexPage = pages.find((p) => p.slugs.length === 1);
+  const rest = pages
+    .filter((p) => p.slugs.length > 1)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .sort((a, b) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((a.data as any).title as string).localeCompare((b.data as any).title as string),
+    );
+  const ordered = [...(indexPage ? [indexPage] : []), ...rest];
+  return ordered.map((p) => ({
+    type: 'page',
+    name:
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (p.data as any).title ?? p.slugs[p.slugs.length - 1],
+    url: p.url,
+  }));
+}
+
 /**
- * Combined tree used by the docs layout sidebar. Concatenates both collections'
- * top-level page trees so both sections appear in the nav.
+ * Combined tree used by the docs layout sidebar. Renders the 7-section IA:
+ * Get started / Foundations / Components / Patterns / Content / Brand /
+ * Resources. Components are regrouped functionally (not atomically). The
+ * external `guides` collection is appended at the bottom under "Guides
+ * (internal)" so authored docs/* files remain reachable but don't dominate.
  */
 export function getCombinedPageTree() {
-  const componentsTree = componentsSource.getPageTree();
-  const guidesTree = guidesSource.getPageTree();
-  return {
-    name: 'Docs',
-    children: [
-      {
-        type: 'folder' as const,
+  const componentsChildren = buildFunctionalComponentsChildren();
+
+  const sections: SidebarNode[] = [];
+
+  for (const sectionKey of IA_SECTION_ORDER) {
+    const children = buildIaSectionChildren(sectionKey);
+    // For `get-started` (single page), inline as a top-level page if there's
+    // only an index page.
+    if (sectionKey === 'get-started') {
+      const idx = children[0];
+      if (idx && idx.type === 'page' && children.length === 1) {
+        sections.push({ type: 'page', name: idx.name, url: idx.url });
+        continue;
+      }
+    }
+    sections.push({
+      type: 'folder',
+      name: IA_SECTION_LABELS[sectionKey] ?? sectionKey,
+      root: false,
+      children,
+    });
+    // Insert Components folder right after Foundations.
+    if (sectionKey === 'foundations') {
+      sections.push({
+        type: 'folder',
         name: 'Components',
         root: false,
-        children: componentsTree.children,
-      },
-      {
-        type: 'folder' as const,
-        name: 'Guides',
-        root: false,
-        children: guidesTree.children,
-      },
-    ],
-  };
+        children: componentsChildren,
+      });
+    }
+  }
+
+  // Keep the external guides collection reachable but tucked at the bottom.
+  const guidesTree = guidesSource.getPageTree();
+  sections.push({
+    type: 'folder',
+    name: 'Guides (internal)',
+    root: false,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    children: guidesTree.children as any,
+  });
+
+  return {
+    name: 'Docs',
+    children: sections,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any;
 }
 
 // Structural type covering pages from either collection — avoids the union
@@ -117,5 +344,6 @@ export function getAllPages(): AnyPage[] {
   return [
     ...componentsSource.getPages(),
     ...guidesSource.getPages(),
+    ...iaSource.getPages(),
   ] as unknown as AnyPage[];
 }

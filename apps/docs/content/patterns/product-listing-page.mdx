@@ -1,0 +1,31 @@
+---
+title: Product listing page
+description: A composable kit for diamond and jewellery product listings.
+---
+
+The product listing page (PLP) is Nivoda's most-trafficked surface and the most demanding composition in the system. Clarity V2 ships PLP as a **kit, not a template** — a set of cooperating primitives you assemble per surface — because the inventory shape, filter set, and result density vary too much across diamonds, jewellery, and partner storefronts for a single locked template to serve all of them.
+
+## How the kit composes
+
+Three layers cooperate:
+
+1. **`PlpHeading`** owns the page title, total-count summary, and the view-toggle (grid vs list).
+2. **`PlpGrid` / `PlpList` / `PlpRow`** render results. Grid is the marketing-led default for jewellery; list (with `PlpRow`) is the dense data view diamond buyers expect — sortable columns, certificate IDs, technical attributes.
+3. **The filter subsystem** plugs in alongside via [`filter-toolbar`](../components/organisms/filter-toolbar), [`range-filter`](../components/molecules/range-filter), and [`filter-button`](../components/atoms/filter-button). Filters are decoupled from the result layer so the same toolbar drives a grid, a list, or a future map view.
+
+## View toggle pattern
+
+The grid/list switch is a single piece of state owned by the page. Consumers persist it per-user (the diamond power user wants list; the casual jewellery shopper wants grid). The toggle lives in `PlpHeading` and is implemented with [`toggle-group`](../components/atoms/toggle-group) so keyboard and screen-reader behaviour come for free.
+
+## Empty and loading states
+
+Every surface in the kit ships with an explicit empty and loading variant:
+
+- **Loading:** [`skeleton`](../components/atoms/skeleton) cards or rows that match the chosen view, never a generic spinner. The shape promises what's about to render.
+- **Empty:** the [`empty`](../components/atoms/empty) component with the active filter chips inline, so the user can drop one filter without re-navigating.
+
+See [Empty states](./empty-states) and [Loading states](./loading-states) for the cross-cutting rules these instances follow.
+
+## Why a kit beats a template
+
+A locked template would force every PLP into the same filter schema and the same result density. The marketplace can't do that — diamonds need 14 filter dimensions and a tabular result; rings need 5 and a glossy grid. The kit gives you the same primitives, the same a11y behaviour, the same tokens, and lets the surface decide composition.

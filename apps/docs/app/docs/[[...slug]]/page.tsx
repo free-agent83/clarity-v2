@@ -1,4 +1,4 @@
-import { getPageImage, getPageMarkdownUrl, resolveSource, componentsSource, guidesSource } from '@/lib/source';
+import { getPageImage, getPageMarkdownUrl, resolveSource, componentsSource, guidesSource, iaSource } from '@/lib/source';
 import {
   DocsBody,
   DocsDescription,
@@ -26,7 +26,12 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const MDX = data.body;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const markdownUrl = getPageMarkdownUrl(page as any).url;
-  const sourceSubdir = section === 'components' ? 'packages/components/src/components' : 'docs';
+  const sourceSubdir =
+    section === 'components'
+      ? 'packages/components/src/components'
+      : section === 'guides'
+        ? 'docs'
+        : 'apps/docs/content';
 
   return (
     <DocsPage toc={data.toc} full={data.full}>
@@ -61,7 +66,10 @@ export async function generateStaticParams() {
     ...p,
     slug: ['guides', ...(p.slug ?? [])],
   }));
-  return [...componentsParams, ...guidesParams];
+  // iaSource pages already include their section as the first slug segment
+  // (e.g. ['foundations', 'typography']), so use them as-is.
+  const iaParams = iaSource.generateParams();
+  return [...componentsParams, ...guidesParams, ...iaParams];
 }
 
 export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): Promise<Metadata> {

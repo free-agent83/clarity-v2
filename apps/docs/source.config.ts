@@ -62,6 +62,31 @@ export const guides = defineDocs({
   },
 });
 
+// In-tree IA collection: stub + landing pages authored under apps/docs/content/.
+// Provides the 7-section sidebar shape (Get started / Foundations / Patterns /
+// Content / Brand / Resources). The Components section is rendered separately
+// by re-shaping the `components` collection in lib/source.ts.
+export const ia = defineDocs({
+  dir: 'content',
+  docs: {
+    files: ['**/*.{md,mdx}'],
+    schema: z
+      .object({
+        title: z.string(),
+        description: z.string().optional(),
+        status: z.string().optional(),
+        full: z.boolean().optional(),
+      })
+      .passthrough(),
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});
+
 export default defineConfig({
   mdxOptions: {
     // MDX options
