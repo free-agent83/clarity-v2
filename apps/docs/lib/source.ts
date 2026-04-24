@@ -60,6 +60,12 @@ export function resolveSource(slug: string[] | undefined): {
   section: 'components' | 'guides' | 'ia';
 } {
   const segs = slug ?? [];
+  // /docs/components itself (no sub-path) renders the in-tree landing at
+  // apps/docs/content/components/index.mdx. Nested paths below it fall through
+  // to componentsSource (the external COMPONENT.md collection).
+  if (segs.length === 1 && segs[0] === 'components') {
+    return { source: iaSource, slug: segs, section: 'ia' };
+  }
   if (segs[0] === 'guides') {
     return { source: guidesSource, slug: segs.slice(1), section: 'guides' };
   }

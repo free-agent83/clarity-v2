@@ -1,0 +1,19 @@
+---
+title: Components
+description: 62 components organised by the job they do — Actions, Forms, Display, Feedback, Overlays, Navigation, Data, Filtering, Layout, and kit templates.
+---
+
+62 components, organised by the job they do. Every component has a props table, usage guidelines, and do/don'ts — authored in the same PR as the code so they never drift.
+
+The sidebar groups components functionally (Actions, Forms, Display, Feedback, Overlays, Navigation, Data, Filtering, Layout, PLP Kit, PDP Kit). On disk they live under atoms/molecules/organisms/templates — that split is an implementation concern, not a consumer one.
+
+For interactive demos with controls and args, see [Storybook ↗](#). Fumadocs documents *when* and *why*; Storybook shows *what it does*.
+
+## Status
+
+- **Stable**: components promoted after a conformance pass (named props interface, JSDoc, autodocs, COMPONENT.md, play functions). Safe to use.
+- **Unstable**: functionally complete but not yet barrel-exported. Import from the subpath if you need to consume.
+
+## Contributing
+
+Edit any `COMPONENT.md` in `packages/components/src/components/` — changes propagate here on the next deploy. No separate docs repo, no sync, no drift.
