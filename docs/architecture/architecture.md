@@ -134,7 +134,7 @@ MUI X components (Data Grid, Date Picker) are retained for complex data interfac
 Existing MUI-based components are not migrated wholesale. They are wrapped behind the Nivoda API and migrated incrementally as they are touched.
 
 **React Native — Platform-specific implementations**
-React Native components share token values and prop naming conventions with their web counterparts but are implemented separately, using React Native's styling primitives. NativeWind is the preferred styling layer, providing a Tailwind-compatible API that bridges naturally with the web component system.
+React Native components share token values and prop naming conventions with their web counterparts but are implemented separately, using React Native's styling primitives. NativeWind is under evaluation as a Tailwind-compatible styling bridge, but the React Native implementation approach is not yet finalised.
 
 No attempt is made to unify web and React Native into a single component codebase. The industry evidence is clear that this produces lowest-common-denominator UX on both platforms.
 
@@ -253,7 +253,7 @@ As the architecture evolved to support shadcn/ui-compatible output for Minivoda 
 2. **One component.** The library contains a single Button component. Visual regression testing for one component is pure overhead.
 3. **No CI/CD pipeline.** Chromatic's value is PR-level visual diffs. Without CI integration, it's a manual step nobody will run.
 4. **Cost at scale.** Chromatic bills per snapshot beyond the free tier. Paying for snapshots of components not yet in production is waste.
-5. **Project token exposed.** The token `chpt_923a06027fb30d6` was hardcoded in `package.json` and is in git history. Must be rotated if Chromatic is ever re-used.
+5. **Project token exposed.** A Chromatic project token was hardcoded in `package.json` and is in git history. The token value has been redacted from this doc; it must be rotated at Chromatic regardless of whether the service is ever re-used.
 6. **Platform team precedent.** The main platform's Storybook is already self-hosted behind VPN. Clarity-v2 should follow the same pattern when ready, not introduce a third-party dependency the org has moved away from.
 
 **If visual regression testing is needed later:**
