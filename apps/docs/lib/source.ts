@@ -241,17 +241,58 @@ const IA_SECTION_LABELS: Record<string, string> = {
   resources: 'Resources',
 };
 
+// Section-specific explicit ordering overrides for IA children. Keys are the
+// trailing slug segment (i.e. filename without extension). Pages listed here
+// appear in the given order; anything not listed falls back to alphabetical
+// after the explicit block.
+const IA_SECTION_CHILD_ORDER: Record<string, string[]> = {
+  brand: [
+    'direction',
+    'logo',
+    'colour',
+    'typography',
+    'photography',
+    'iconography',
+    'application-rules',
+    'illustration',
+  ],
+};
+
 function buildIaSectionChildren(section: string): SidebarNode[] {
   const pages = iaSource.getPages().filter((p) => p.slugs[0] === section);
-  // Sort: index first, then alphabetical by title
+  // Sort: index first, then explicit order (if any) then alphabetical by title.
   const indexPage = pages.find((p) => p.slugs.length === 1);
-  const rest = pages
-    .filter((p) => p.slugs.length > 1)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .sort((a, b) =>
+  const nonIndex = pages.filter((p) => p.slugs.length > 1);
+  const explicit = IA_SECTION_CHILD_ORDER[section];
+  let rest: typeof nonIndex;
+  if (explicit) {
+    const bySlug = new Map<string, (typeof nonIndex)[number]>();
+    for (const p of nonIndex) bySlug.set(p.slugs[p.slugs.length - 1], p);
+    const used = new Set<string>();
+    const inOrder: typeof nonIndex = [];
+    for (const slug of explicit) {
+      const p = bySlug.get(slug);
+      if (p) {
+        inOrder.push(p);
+        used.add(slug);
+      }
+    }
+    const leftover = nonIndex
+      .filter((p) => !used.has(p.slugs[p.slugs.length - 1]))
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ((a.data as any).title as string).localeCompare((b.data as any).title as string),
-    );
+      .sort((a, b) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ((a.data as any).title as string).localeCompare((b.data as any).title as string),
+      );
+    rest = [...inOrder, ...leftover];
+  } else {
+    rest = nonIndex
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .sort((a, b) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ((a.data as any).title as string).localeCompare((b.data as any).title as string),
+      );
+  }
   const ordered = [...(indexPage ? [indexPage] : []), ...rest];
   return ordered.map((p) => ({
     type: 'page',

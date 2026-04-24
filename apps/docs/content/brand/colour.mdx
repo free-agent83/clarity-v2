@@ -1,0 +1,77 @@
+---
+title: Colour
+description: The violet rule, dark/light interaction patterns, and application rules.
+---
+
+The full palette and token values live in [Foundations / Color](/docs/foundations/color). This page is the usage layer — when each colour applies, when it doesn't, and why.
+
+## Quick reference
+
+Six values someone building a slide deck, document, or email needs on hand.
+
+| Use for | Hex | Token |
+|---------|-----|-------|
+| Brand primary (headings, accents, CTAs) | `#6330f5` | violet-600 |
+| Brand light (tinted backgrounds) | `#f4f2ff` | violet-50 |
+| Text (primary) | `#0c0a09` | stone-950 |
+| Text (secondary) | `#57534e` | stone-600 |
+| Background (white) | `#ffffff` | — |
+| Background (off-white) | `#fafaf9` | stone-50 |
+
+## The violet rule
+
+**Violet never appears against a dark background. It looks bad. This is a hard rule, not a guideline.**
+
+Violet (`#6330f5`) only appears on white or light surfaces, and only on hover — never as a resting state. It is earned by interaction.
+
+- On dark backgrounds, the interaction language is dark → white.
+- On light backgrounds, the interaction language is dark → violet.
+
+## Dark context
+
+The dark theme is the primary brand surface. No violet anywhere. Interaction language is dark → white.
+
+| Element | Rest state | Hover state |
+|---------|-----------|-------------|
+| Button (primary) | stone-200 fill (`#e7e5e4`), dark text, subtle stone-200 border | white fill (`#ffffff`), violet text, white border |
+| Button (secondary) | transparent, subtle stone-700 border (`#44403c`), muted text | stone-900 surface fill (`#1c1917`), lighter border, lighter text — very subtle |
+| Card border | stone-700 (`#44403c`) | stone-400 (`#a8a29e`) |
+| Card link | stone-500 muted text (`#78716c`) | white text — triggered on card hover, not link hover |
+| Text link (inline) | stone-400 secondary text (`#a8a29e`), underline | white text, white underline |
+
+**Dark context palette:** stone-950 `#0c0a09` (deep background), stone-900 `#1c1917` (surface), stone-800 `#292524` (elevated), stone-700 `#44403c` (borders), stone-200 `#e7e5e4` (light fills), stone-50 `#fafaf9` (text).
+
+## Light context
+
+White cards, modals, marketing sections. Violet appears here — but only on hover.
+
+| Element | Rest state | Hover state |
+|---------|-----------|-------------|
+| Button (filled) | stone-950 dark fill (`#0c0a09`), white text | violet fill (`#6330f5`), white text |
+| Button (outline) | transparent, stone-200 light border (`#e7e5e4`), dark text | violet text (`#6330f5`), border unchanged |
+| Card border | stone-200 light grey (`#e7e5e4`) | violet (`#6330f5`) — border and link change together on card hover |
+| Card link | stone-500 muted text (`#78716c`) | violet (`#6330f5`) — triggered on card hover, not link hover |
+| Text link (inline) | stone-500 muted text (`#78716c`) | violet (`#6330f5`) |
+
+## No white cards on dark backgrounds
+
+Do not float white cards on the dark background. Keep dark surfaces consistently dark. Violet lives exclusively in dedicated light sections (modals, marketing pages, documentation) — not in isolated white elements on dark.
+
+## Colour application rules
+
+| Role | When to use | When NOT to use |
+|------|-------------|-----------------|
+| Brand violet | Hover states on light surfaces only | Any resting state. Any dark background. Large fills. Body text. |
+| Neutral (stone) | Body text, headings, backgrounds, borders, cards, buttons | Never use pure black (`#000`) — always use the stone scale |
+| White | Hover state on dark backgrounds. Text on dark. Light card surfaces. | Never as page background in the default dark theme |
+| Success (green) | Confirmation messages, positive metrics, completed states | Decorative use, brand expression |
+| Error (red) | Error messages, destructive action warnings, validation failures | General emphasis (use amber instead) |
+| Warning (amber) | Caution states, pending actions, non-critical alerts | Errors (use red) or positive states (use green) |
+| Info (blue) | Informational banners, neutral highlights | Primary CTAs (use violet on light) or links on dark (use white) |
+
+## Accessibility
+
+- All text/background combinations must meet WCAG AA (4.5:1 body, 3:1 large text).
+- Never rely on colour alone to convey meaning — pair with text or iconography.
+- Stone-50 on stone-950: high contrast, passes AAA.
+- Violet-600 on white: 3.97:1 — passes AA for large text only. Use violet-700 or darker for small text on white.
