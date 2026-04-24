@@ -1,45 +1,29 @@
-# docs
+# @nivoda/docs
 
-This is a Next.js application generated with
-[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+Fumadocs-powered documentation site for Clarity V2.
 
-Run development server:
+## Run locally
+
+From the repo root:
 
 ```bash
-npm run dev
-# or
-pnpm dev
-# or
-yarn dev
+npx nx dev @nivoda/docs
 ```
 
-Open http://localhost:3000 with your browser to see the result.
+Visit http://localhost:3002
 
-## Explore
+## What it contains
 
-In the project, you can see:
+- **Get started** — onboarding for engineers and designers
+- **Foundations** — tokens, color, typography, spacing, elevation, motion
+- **Components** — 62 components across Actions, Forms, Display, Feedback, Overlays, Navigation, Data, Filtering, Layout, and kit templates. Sourced from `packages/components/src/components/**/COMPONENT.md`
+- **Patterns** — higher-order compositions (PLP, filter composition, empty/loading states)
+- **Content** — voice, writing, terminology (stubs)
+- **Brand** — logo and brand expression, sourced from the brand-system repo
+- **Resources** — ROADMAP, VISION, architecture, ADRs, CHANGELOG — rendered from existing repo markdown
 
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
+Edit any source file, push, and the site rebuilds on the next deploy.
 
-| Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
-| `app/(home)`              | The route group for your landing page and other pages. |
-| `app/docs`                | The documentation layout and pages.                    |
-| `app/api/search/route.ts` | The Route Handler for search.                          |
+## Deployment
 
-### Fumadocs MDX
-
-A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
-
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
-
-## Learn More
-
-To learn more about Next.js and Fumadocs, take a look at the following
-resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
+Deployed to Vercel on push. Behind access protection until further notice.
