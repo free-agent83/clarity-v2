@@ -8,6 +8,14 @@ export const componentsSource = loader({
   baseUrl: `${docsRoute}/components`,
   source: components.toFumadocsSource(),
   plugins: [lucideIconsPlugin()],
+  // Source files are named `COMPONENT.md` colocated with the code. Strip the
+  // filename so URLs read `/docs/components/atoms/button`, not
+  // `/docs/components/atoms/button/COMPONENT`.
+  slugs: (file) => {
+    const segments = file.path.replace(/\.md$/, '').split('/');
+    if (segments[segments.length - 1] === 'COMPONENT') segments.pop();
+    return segments;
+  },
 });
 
 export const guidesSource = loader({
