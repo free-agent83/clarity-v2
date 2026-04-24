@@ -1,4 +1,4 @@
-import { getPageImage, getPageMarkdownUrl, source } from '@/lib/source';
+import { getPageImage, getPageMarkdownUrl, resolveSource, componentsSource, guidesSource } from '@/lib/source';
 import {
   DocsBody,
   DocsDescription,
@@ -15,11 +15,13 @@ import { gitConfig } from '@/lib/shared';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
-  const page = source.getPage(params.slug);
+  const { source, slug, section } = resolveSource(params.slug);
+  const page = source.getPage(slug);
   if (!page) notFound();
 
   const MDX = page.data.body;
   const markdownUrl = getPageMarkdownUrl(page).url;
+  const sourceSubdir = section === 'components' ? 'packages/components/src/components' : 'docs';
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
@@ -29,14 +31,15 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
         <MarkdownCopyButton markdownUrl={markdownUrl} />
         <ViewOptionsPopover
           markdownUrl={markdownUrl}
-          githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/docs/${page.path}`}
+          githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/${sourceSubdir}/${page.path}`}
         />
       </div>
       <DocsBody>
         <MDX
           components={getMDXComponents({
             // this allows you to link to other pages with relative file paths
-            a: createRelativeLink(source, page),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            a: createRelativeLink(source as any, page as any),
           })}
         />
       </DocsBody>
@@ -45,12 +48,21 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
 }
 
 export async function generateStaticParams() {
-  return source.generateParams();
+  const componentsParams = componentsSource.generateParams().map((p) => ({
+    ...p,
+    slug: ['components', ...(p.slug ?? [])],
+  }));
+  const guidesParams = guidesSource.generateParams().map((p) => ({
+    ...p,
+    slug: ['guides', ...(p.slug ?? [])],
+  }));
+  return [...componentsParams, ...guidesParams];
 }
 
 export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): Promise<Metadata> {
   const params = await props.params;
-  const page = source.getPage(params.slug);
+  const { source, slug } = resolveSource(params.slug);
+  const page = source.getPage(slug);
   if (!page) notFound();
 
   return {

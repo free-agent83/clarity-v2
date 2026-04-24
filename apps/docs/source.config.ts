@@ -1,12 +1,58 @@
 import { defineConfig, defineDocs } from 'fumadocs-mdx/config';
-import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
+import { metaSchema } from 'fumadocs-core/source/schema';
+import { z } from 'zod';
 
-// You can customize Zod schemas for frontmatter and `meta.json` here
-// see https://fumadocs.dev/docs/mdx/collections
-export const docs = defineDocs({
-  dir: 'content/docs',
+// Components collection: colocated COMPONENT.md files under packages/components/src/components
+// Frontmatter uses `name` (not `title`) so we map it via transform.
+export const components = defineDocs({
+  dir: '../../packages/components/src/components',
   docs: {
-    schema: pageSchema,
+    files: ['**/COMPONENT.md'],
+    schema: z
+      .object({
+        name: z.string(),
+        description: z.string().optional(),
+        slug: z.string().optional(),
+        version: z.string().optional(),
+        status: z.string().optional(),
+        lastUpdated: z.union([z.string(), z.date()]).optional(),
+        full: z.boolean().optional(),
+      })
+      .passthrough()
+      .transform((data) => ({
+        ...data,
+        title: data.name,
+        lastUpdated:
+          data.lastUpdated instanceof Date
+            ? data.lastUpdated.toISOString().slice(0, 10)
+            : data.lastUpdated,
+      })),
+    postprocess: {
+      includeProcessedMarkdown: true,
+    },
+  },
+  meta: {
+    schema: metaSchema,
+  },
+});
+
+// Guides collection: repo-level docs/
+export const guides = defineDocs({
+  dir: '../../docs',
+  docs: {
+    files: ['**/*.md'],
+    schema: z
+      .object({
+        title: z.string().optional(),
+        description: z.string().optional(),
+        full: z.boolean().optional(),
+      })
+      .passthrough()
+      .transform((data) => ({
+        ...data,
+        // Fallback title if frontmatter missing — loader will be unhappy otherwise.
+        title: data.title ?? 'Untitled',
+      })),
     postprocess: {
       includeProcessedMarkdown: true,
     },
