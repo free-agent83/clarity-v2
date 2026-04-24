@@ -1,23 +1,21 @@
 # Clarity V2 — Engineering Proposal
 
-*For: Abhishek (engineering leadership)*
 *From: Chris (design function)*
-*Date: 8 April 2026*
+*Date: 24 April 2026*
 *Status: Draft — pending conversation*
 
 ---
 
 ## TL;DR
 
-I've been rebuilding Nivoda's design system from the ground up. It's called Clarity V2. It's designed so that **whatever your engineers build using it ships design-correct on the first pass** — no design QA loop, no drift, no revision cycles. The same library is also agent-consumable, so design and PM can build directly against it when they want to. But the primary structural win is for engineering: your team stops waiting on design review, and design stops burning hours catching MUI drift.
+Nivoda's design system has been rebuilt from the ground up. It's called Clarity V2. It's designed so that **whatever engineering builds using it ships design-correct on the first pass** — no design QA loop, no drift, no revision cycles. The same library is also agent-consumable, so design and PM can build directly against it as needed. But the primary structural benefit is for engineering: the engineering team stops waiting on design review, and design stops spending hours catching MUI drift.
 
-**I'm not asking for a migration commitment yet.** I'm asking for three things:
+**No migration commitment is requested at this stage.** Two items are requested:
 
-1. **A review conversation** — 30 minutes to walk you through what's built and why
-2. **Permission to land Clarity V2 in the platform monorepo** as a dependency when the time comes — no code changes on your side, just agreement that the package is safe to import
-3. **Input on migration strategy** — whenever you're ready. I have three options drafted below that we should pick between together.
+1. **Approval of the direction.** That Clarity V2 is the right foundation for Nivoda's next-generation design system and component library — worth continuing with the intention of ultimately integrating it with the platform. Not a commitment to any timeline, not a resource ask. If a different direction is preferred, it should be surfaced before further work compounds.
+2. **A conversation on migration strategy, at engineering's convenience.** Three options drafted below. This is the substantive discussion — a preferred option is documented below; engineering input is requested before any commitment.
 
-Everything else I can continue building without blocking you. I'll come back when there's something concrete to decide on.
+Other work can continue without blocking engineering. A further update will follow when a concrete decision is needed.
 
 ---
 
@@ -25,14 +23,12 @@ Everything else I can continue building without blocking you. I'll come back whe
 
 The existing platform design system (`libs/shared/components` + `libs/shared/theme` + `libs/shared/style-dictionary`) has accumulated significant legacy:
 
-- **Material UI v7** as the underlying library with years of workarounds, custom theme overrides, and `sx` prop sprawl
-- **Not mobile-responsive by default** — retrofitted rather than designed in
-- **Not agent-consumable** — components lack the clean type contracts and colocated documentation that AI coding agents need to use components reliably
-- **60+ components** with 48 component-specific token files
+- **Material UI v7 + emotion runtime** with concrete workaround cost: **81 per-MUI-component override files in `libs/shared/theme/`** doing **89 `styleOverrides` passes** (25 of them for form inputs alone), each deep-selector-targeting MUI's internal class hooks (`alertClasses.icon`, `tabsClasses.indicator`, etc.) to force Nivoda tokens through where MUI's theme API won't reach. On top of that, **723 `sx={}` usages inside `libs/shared/components`** — each one a place where a token can be ignored or overridden inline at the call site. The system is unenforceable by construction, and is the mechanical source of the drift that design QA exists to catch
+- **Mobile responsiveness is opt-in at the call site** — applied per-component through `sx` and `useMediaQuery` rather than encoded in component contracts. Breakpoints exist in the theme, but the library doesn't guarantee a mobile-correct output; every feature pays a per-component mobile tax
+- **Not agent-consumable** — components lack the clean prop contracts and colocated documentation that AI coding agents need to use them reliably
+- **60+ components with 32 component-specific token files** — a governance surface that already needs a dedicated design-system team to keep aligned. That team doesn't exist; the cost is being paid in design QA hours, drift tolerance, and mobile regressions rather than as a visible budget line
 
-None of this is anyone's fault. It's normal for a system that's been live for years. But it's reaching the point where engineers routinely build around it rather than with it, and it can't be the foundation we use to take advantage of AI-assisted development.
-
-I've audited the existing system thoroughly (`docs/research/ds-diagnosis.md`) and built Clarity V2 as a replacement — built from first principles for 2026 tooling, agent-consumable by default, and designed to replace platform incrementally.
+The existing system has been audited thoroughly (`docs/research/ds-diagnosis.md`), and Clarity V2 built as a replacement — from first principles for 2026 tooling, agent-consumable by default, and designed to replace platform incrementally.
 
 ---
 
@@ -44,28 +40,28 @@ A standalone design system monorepo (`clarity-v2`) that contains:
 
 - Nx monorepo, `packages/tokens/`
 - W3C DTCG format (the 2025 standard), OKLCH color space
-- Bespoke ~200-line build script (not Style Dictionary — I evaluated it and it added more complexity than it saved for our scale; ADR-001 has the detail)
+- Bespoke ~200-line build script (not Style Dictionary — Style Dictionary was evaluated and added more complexity than it saved at this scale; ADR-001 has the detail)
 - Outputs: web CSS variables, shadcn-flat CSS (light + dark), JS/TS exports, React Native objects, JSON
-- **Token values are aligned with platform production values** — I did a side-by-side audit of every palette and made 15 explicit decisions. The brand violet, status colors, and neutrals all match what's in production today. See `docs/design/token-decisions.md`.
+- **Token values are aligned with platform production values** — a side-by-side audit of every palette was conducted, resulting in 15 explicit decisions. The brand violet, status colors, and neutrals all match what's in production today. See `docs/design/token-decisions.md`.
 - This means **migration causes zero visual drift** — the colors in Clarity V2 are already the colors engineering's production apps use.
 
 ### 2. A component library foundation
 
 - `packages/components/` — shadcn/ui + Radix UI + Tailwind CSS v4
 - React 19, zero-runtime CSS, clean TypeScript contracts
-- One production component (Button) complete with variants, stories, and full accessibility
-- **Core component set being built right now** (Phase B — next 2 weeks): Input, Select, Checkbox, Radio, Switch, Card, Dialog, Tabs, Alert, Badge, Tooltip, etc.
+- **~50 components seeded** across atoms, molecules, and organisms — forms (Input, Textarea, Select, Checkbox, Radio, Switch, Slider), display (Badge, Avatar, Alert, Card, Typography, Progress, Separator), overlays (Dialog, Popover, Tooltip, Sheet, Drawer, Hover Card), navigation (Tabs, Breadcrumb, Navigation Menu, Pagination), data (Table, Data Table, Chart), and more
+- Each component lands via the shadcn CLI with a default story and a `COMPONENT.md` scaffold. Button is the reference for what a "finished" component looks like (variants, tokens, full accessibility); the rest are at seed quality and being hardened through Phase B
 
 ### 3. Documentation and architecture
 
 - Four Architectural Decision Records covering the key technology choices (ADR-001 to ADR-004)
 - Full technical architecture document (`docs/architecture/architecture.md`)
 - Platform audit and token comparison (`docs/design/token-alignment.md`)
-- Testing infrastructure (vitest, 20 tests passing on the token pipeline)
+- Testing infrastructure (vitest, 19 tests passing on the token pipeline; the tokens package was refactored on 2026-04-10 to be surface-agnostic, with shadcn theme mapping moved into the components package where it belongs)
 
 ### 4. A clear governance model
 
-See `VISION.md`. Clarity V2 is the "law" — components with clear intent and binding precedent. It sits alongside the Experience Framework (the "constitution" — rules for how to build correctly) and the Design Engine (the "government" — what to build and why). Together they form the system the rest of the org (and its agents) plug into.
+Clarity V2 is the "law" — components with clear intent and binding precedent. It sits alongside the Experience Framework (the "constitution" — rules for how to build correctly) and Product OS (the "government" — what to build and why). Together these three layers form the system that the rest of the organisation (and its agents) plug into.
 
 ---
 
@@ -73,66 +69,39 @@ See `VISION.md`. Clarity V2 is the "law" — components with clear intent and bi
 
 ### The core outcome: design QA collapses to near zero
 
-Today, Nivoda features ship through a design → engineering → design-QA loop. Design specs the screen, your team implements it, design reviews the implementation, catches drift, files corrections, your team revises, design re-reviews. Ship.
+Today, Nivoda features ship through a design → engineering → design-QA loop. Design specs the screen, engineering implements it, design reviews the implementation, catches drift, files corrections, engineering revises, design re-reviews. Ship.
 
-That loop exists because the current MUI-based design system doesn't guarantee that "correctly implemented" means "design-correct". Engineers have to interpret mockups. Design has to catch the drift. MUI's `sx` prop makes it easy to deviate from the theme. Component variants are inconsistent across the library. The token system was built before the component library and the two have drifted. None of this is anyone's fault — it's a decade of normal legacy.
+That loop exists because the current MUI-based design system doesn't guarantee that "correctly implemented" means "design-correct". Engineers have to interpret mockups. Design has to catch the drift. MUI's `sx` prop makes it easy to deviate from the theme. Component variants are inconsistent across the library. The token system was built before the component library and the two have drifted. This is a decade of accumulated legacy.
 
-The loop is where design and engineering velocity both go. And it's where most of your engineers' "waiting on design" time comes from.
+The loop is where design and engineering velocity both go. And it's where most of engineering's "waiting on design" time comes from.
 
 **With Clarity V2, the loop collapses.** Engineers import components from `@nivoda/components`. Those components ARE the design — they encode the tokens, spacing, typography, accessibility, and variants that design already approved when the component was built. There is no path by which an engineer can build something "correctly" that is also "design-incorrect". The guard-rails are in the component APIs.
 
 Concretely, this means:
 
-- Your team ships features without waiting for design review
+- Engineering ships features without waiting for design review
 - Design doesn't need to review implementations because there's nothing to catch
 - The design hours freed from QA go into building more components, better documentation, governance — work that makes the system stronger, which compounds
-- Your engineers stop context-switching between "write code" and "wait for feedback"
+- Engineers stop context-switching between "write code" and "wait for feedback"
 
-This is the single biggest structural change to product velocity Nivoda can make right now, and **it's the primary reason I'm bringing this to you first**. Self-service for design/PM is a bonus enabled by the same work. But the main commercial lever is what happens when your team is building with it.
+This represents a structural change to product delivery, not an incremental one. Self-service for design and PM is a secondary benefit enabled by the same work. The primary commercial lever is what happens when engineering is building with it.
 
 ### The secondary benefit: platform modernisation without a rewrite
 
-Because the token values are already aligned with platform production (I did a full audit and made 15 explicit alignment decisions — see `docs/design/token-decisions.md`), Clarity V2 components can be introduced into platform gradually:
+Because the token values are already aligned with platform production (a full audit was conducted, resulting in 15 explicit alignment decisions — see `docs/design/token-decisions.md`), Clarity V2 components can be introduced into platform gradually:
 
 - New features built on Clarity V2 components instead of MUI
 - When an existing MUI component is touched for any reason, it can optionally be replaced with its Clarity V2 equivalent
 - Over time, platform becomes Clarity V2-native without a single "big migration sprint"
-- Engineering doesn't have to stop what they're doing to adopt it
+- Engineering does not have to pause in-flight work to adopt it
 
 The incremental path is explicit. No big bang. No feature freeze. No "migrate Q3 2026 or bust." Legacy MUI stays stable until the code is touched for another reason.
 
 ### The tertiary benefit: self-service for design and product
 
-Because the library is built to be consumed by AI coding agents, designers and PMs with tools like Claude Code can also build directly against it. Feature prototypes in hours. Meaningful UI changes without engineering tickets. Pressure relieved from your team for small changes, quick experiments, and one-off internal tools.
+Because the library is built to be consumed by AI coding agents, designers and PMs with tools like Claude Code can also build directly against it. Feature prototypes in hours. Meaningful UI changes without engineering tickets. Small changes, quick experiments, and one-off internal tools can be delivered without engineering capacity — which stays on priority work.
 
-**Planned validation (Phase B):** Once the core component set is in place, I intend to rebuild a real Nivoda customer screen with Claude Code + Clarity V2 as a live test of the self-service loop. The goal isn't a polished demo on a deadline — it's to validate that the components hold up under real use and to surface any gaps. If it works as expected, the result is a recognisable screen that shows *"a designer built this in hours; the same library is what engineering will import to ship without waiting for design review."*
-
----
-
-## What I need from you
-
-Three things, in order of urgency:
-
-### 1. A review conversation (~30 minutes, soon)
-
-Walk through the repo together. I'll show you:
-- The token pipeline and how it's aligned with platform
-- The architecture and the ADRs
-- The Button component and how it's built
-- The next 2-week plan and the leadership demo
-- This document and the migration options in the next section
-
-The goal of the conversation is **mutual understanding and your technical feedback**, not a commitment.
-
-### 2. Agreement to accept Clarity V2 as a platform dependency when the time comes
-
-When the component library is ready and the first new feature wants to use it, I need your OK to add `@nivoda/tokens` and `@nivoda/components` as dependencies in platform's `package.json`. No refactor. No migration. Just "yes, this package is safe to import."
-
-I can do the integration work myself if you don't have bandwidth, but I need your sign-off that the package is allowed in.
-
-### 3. Input on migration strategy (whenever you're ready)
-
-See the next section for the three options. I have a preferred option but want your input before picking. This is the Phase C decision — it doesn't have to happen this week.
+**Validation in progress (Phase B):** The core component set is now seeded, and a validation build is underway — a real Nivoda-style flow (product listing + product detail for diamonds, gemstones, and melee) is being rebuilt against Clarity V2 templates in the test app, with URL-backed filtering wired through to a real database. The objective is to validate that the components hold up under real use, to surface gaps, and to produce a reference artefact of a production-style flow built against Clarity V2.
 
 ---
 
@@ -145,7 +114,7 @@ Clarity V2 components coexist with MUI. Component-by-component, MUI instances in
 **Pros:**
 - No feature freeze, no dedicated migration sprint
 - Low risk — each replacement is small and reviewable
-- Works across all platform apps at the same pace as they're being worked on
+- Works across all platform apps at the current pace of development
 - Engineering decides per-component when to swap; design provides the replacements and migration notes
 
 **Cons:**
@@ -189,60 +158,50 @@ Don't migrate existing platform code at all. New features are built on Clarity V
 
 **Best if:** Engineering can't commit dedicated migration time but wants to stop the bleeding and have new work land on the new foundation. The pragmatic choice when migration isn't funded.
 
-### My preference
+### Recommendation
 
 **Option C to start, with Option A emerging naturally over time.** Build new features on Clarity V2 from day one. Let old MUI code stay stable until it's touched. When a component is touched, replace it with the Clarity V2 equivalent if the swap is trivial (which, thanks to token alignment, it usually will be).
 
-This gets us moving without forcing a migration decision, and it sets up the natural path to Option A once the team is comfortable.
-
-**But this is your call.** You know platform's realities better than I do.
+This gets the work moving without forcing a migration decision, and sets up the natural path to Option A once engineering is comfortable.
 
 ---
 
-## What I'm NOT asking for
+## Out of scope
 
-I want to be specific about this because I don't want to appear to be asking engineering to drop everything:
-
-- I'm **not asking** you to commit dev time to platform migration in the next 2 weeks
-- I'm **not asking** you to pause feature work
-- I'm **not asking** you to make a migration strategy decision today
-- I'm **not asking** for a review of every component decision — I have a designer's view on those and will escalate when I need an engineering view
-- I'm **not proposing** we deprecate the existing MUI system on any timeline
-- I'm **not asking** to modify `libs/shared/components`, `libs/shared/theme`, or `libs/shared/style-dictionary` — those stay as they are until we mutually agree otherwise
+- No engineering dev-time commitment in the next 2 weeks
+- No pause on feature work
+- No migration-strategy decision required today
+- No request for engineering review of component-level decisions; design retains those, with engineering input requested when a cross-cutting concern arises
+- No deprecation timeline for the existing MUI system
+- No modifications proposed to `libs/shared/components`, `libs/shared/theme`, or `libs/shared/style-dictionary`
 
 ---
 
-## What I've already done (so you can evaluate the quality of the work)
+## Work completed to date
 
-- **Phase A complete:** token pipeline, architecture, 15 token alignment decisions, one production component, full test suite, 4 ADRs
+- **Phase A complete:** token pipeline (now surface-agnostic), architecture, 15 token alignment decisions, 19-test suite, 4 ADRs, one production-quality component (Button)
+- **Phase B well underway:** ~50 components seeded across atoms/molecules/organisms via the shadcn CLI, each with a default story and contribution scaffold; PLP/PDP template primitives in place; a live validation build is running against a real database in the test app
 - **Platform audit done:** full inventory of platform's existing design system is in `docs/research/` and informed the token decisions
 - **ROADMAP written:** phased plan is in `ROADMAP.md`
-- **Governance model documented:** `VISION.md` explains how this relates to the Experience Framework and Design Engine
+- **Governance model documented:** Clarity V2 is the "law" layer of the Experience Framework / Product OS governance model, with binding precedent encoded in component APIs
 
-All of it is in a clean, reviewable Git history on the `feat/token-alignment-phase1` branch.
+All of it is in a clean, reviewable Git history in the `clarity-v2` repo, landing through reviewed PRs into `main`.
 
 ---
 
-## Open questions from me to you
+## Open questions
 
-Things I want your input on during the review conversation:
-
-1. **Platform build system compatibility.** Clarity V2 uses Nx + Vite + Tailwind v4 + React 19. Platform is also Nx + React 19. Are there any known integration issues I should plan around?
-2. **Publishing strategy.** When we're ready, how do you want Clarity V2 delivered? `file:` linking? Private npm registry? Git submodule? Something else?
+1. **Platform build system compatibility.** Clarity V2 uses Nx + Vite + Tailwind v4 + React 19. Platform is also Nx + React 19. Are there any known integration issues to plan around?
+2. **Publishing strategy.** At integration time, what delivery mechanism is preferred? `file:` linking? Private npm registry? Git submodule? Something else?
 3. **Versioning.** Semver from day one, or delay until first real consumer?
 4. **Storybook hosting.** Platform's Storybook is self-hosted behind VPN (post-Chromatic-incident). Should Clarity V2's Storybook land in the same place? Or a separate subdomain? Or inside Fumadocs?
-5. **CI integration.** Does the platform CI need to validate Clarity V2 against platform apps? Or do we rely on Clarity V2's own tests?
-6. **Migration incident recovery.** If we adopt Option C (opportunistic) and a new feature built on Clarity V2 breaks in production, what's the rollback story? (This is less a question and more a thing we should agree on before we ship anything.)
+5. **CI integration.** Does the platform CI need to validate Clarity V2 against platform apps? Or rely on Clarity V2's own tests?
+6. **Migration incident recovery.** If Option C (opportunistic) is adopted and a new feature built on Clarity V2 breaks in production, what's the rollback story? This should be agreed before shipping any Clarity V2 code into platform.
 
 ---
 
-## Next steps after this document lands in your inbox
+## Next steps
 
-1. I send you this document
-2. We pick a 30-minute slot in the next week
-3. I walk you through the repo live; you ask whatever you want
-4. We agree on whether to proceed (and if so, on what terms)
-5. You point me at any integration or CI constraints I need to plan for
-6. I keep building in parallel, come back when there's something real to integrate
-
-**I don't need you to do anything until step 2.** This document is the homework.
+- Response on directional approval (ask #1)
+- Scheduled conversation on migration strategy (ask #2), when convenient
+- Integration constraints (build system, publishing, CI) surfaced where relevant
