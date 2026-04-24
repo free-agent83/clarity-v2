@@ -96,6 +96,7 @@ const COMPONENT_GROUPS: Record<string, string[]> = {
     'atoms/slider',
     'atoms/toggle',
     'atoms/toggle-group',
+    'atoms/segmented-control',
     'atoms/input-otp',
     'atoms/input-group',
     'atoms/field',
@@ -106,6 +107,7 @@ const COMPONENT_GROUPS: Record<string, string[]> = {
     'atoms/avatar',
     'atoms/badge',
     'molecules/card',
+    'molecules/carousel',
     'atoms/separator',
     'atoms/skeleton',
     'atoms/spinner',
@@ -119,11 +121,19 @@ const COMPONENT_GROUPS: Record<string, string[]> = {
     'atoms/direction',
     'atoms/filter-button',
   ],
-  Feedback: ['atoms/alert', 'atoms/sonner', 'atoms/tooltip', 'atoms/hover-card'],
+  Feedback: [
+    'atoms/alert',
+    'atoms/inline-banner',
+    'atoms/page-banner',
+    'atoms/sonner',
+    'atoms/tooltip',
+    'atoms/hover-card',
+  ],
   Overlays: [
     'molecules/dialog',
     'molecules/sheet',
     'molecules/drawer',
+    'molecules/lightbox',
     'atoms/popover',
     'molecules/alert-dialog',
     'molecules/dropdown-menu',
@@ -132,6 +142,7 @@ const COMPONENT_GROUPS: Record<string, string[]> = {
     'molecules/breadcrumb',
     'molecules/pagination',
     'molecules/tabs',
+    'molecules/stepper',
     'organisms/navigation-menu',
     'organisms/sidebar',
     'molecules/command',
@@ -150,6 +161,7 @@ const COMPONENT_GROUPS: Record<string, string[]> = {
     'molecules/accordion',
   ],
   'PLP Kit': ['templates/plp'],
+  'PDP Kit': ['templates/pdp'],
 };
 
 type SidebarNode =
