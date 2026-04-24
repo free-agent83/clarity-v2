@@ -19,14 +19,19 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const page = source.getPage(slug);
   if (!page) notFound();
 
-  const MDX = page.data.body;
-  const markdownUrl = getPageMarkdownUrl(page).url;
+  // Union-narrowed `page.data` loses the MDX-injected fields (body, toc, full).
+  // They're added at build time by fumadocs-mdx for every page; safe to widen.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = page.data as any;
+  const MDX = data.body;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const markdownUrl = getPageMarkdownUrl(page as any).url;
   const sourceSubdir = section === 'components' ? 'packages/components/src/components' : 'docs';
 
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full}>
-      <DocsTitle>{page.data.title}</DocsTitle>
-      <DocsDescription className="mb-0">{page.data.description}</DocsDescription>
+    <DocsPage toc={data.toc} full={data.full}>
+      <DocsTitle>{data.title}</DocsTitle>
+      <DocsDescription className="mb-0">{data.description}</DocsDescription>
       <div className="flex flex-row gap-2 items-center border-b pb-6">
         <MarkdownCopyButton markdownUrl={markdownUrl} />
         <ViewOptionsPopover
@@ -69,7 +74,8 @@ export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): P
     title: page.data.title,
     description: page.data.description,
     openGraph: {
-      images: getPageImage(page).url,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      images: getPageImage(page as any).url,
     },
   };
 }

@@ -11,11 +11,13 @@ export const componentsSource = loader({
   // Source files are named `COMPONENT.md` colocated with the code. Strip the
   // filename so URLs read `/docs/components/atoms/button`, not
   // `/docs/components/atoms/button/COMPONENT`.
-  slugs: (file) => {
-    const segments = file.path.replace(/\.md$/, '').split('/');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  slugs: ((file: any) => {
+    const segments = (file.path as string).replace(/\.md$/, '').split('/');
     if (segments[segments.length - 1] === 'COMPONENT') segments.pop();
     return segments;
-  },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }) as any,
 });
 
 export const guidesSource = loader({
@@ -77,6 +79,7 @@ export function getCombinedPageTree() {
 type AnyPage = {
   slugs: string[];
   url: string;
+  locale?: string;
   data: {
     title: string;
     description?: string;
@@ -110,6 +113,9 @@ export async function getLLMText(page: AnyPage) {
 ${processed}`;
 }
 
-export function getAllPages() {
-  return [...componentsSource.getPages(), ...guidesSource.getPages()];
+export function getAllPages(): AnyPage[] {
+  return [
+    ...componentsSource.getPages(),
+    ...guidesSource.getPages(),
+  ] as unknown as AnyPage[];
 }

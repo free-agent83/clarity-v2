@@ -10,7 +10,8 @@ export async function GET(_req: Request, { params }: RouteContext<'/llms.mdx/doc
   const page = source.getPage(innerSlug);
   if (!page) notFound();
 
-  return new Response(await getLLMText(page), {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return new Response(await getLLMText(page as any), {
     headers: {
       'Content-Type': 'text/markdown',
     },

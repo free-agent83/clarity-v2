@@ -1,14 +1,20 @@
 import { componentsSource, guidesSource } from '@/lib/source';
 import { createSearchAPI } from 'fumadocs-core/search/server';
+import type { StructuredData } from 'fumadocs-core/mdx-plugins';
+
+const EMPTY_STRUCTURED_DATA: StructuredData = { headings: [], contents: [] };
 
 function indexesFor(source: typeof componentsSource | typeof guidesSource) {
-  return source.getPages().map((page) => ({
-    id: page.url,
-    title: page.data.title as string,
-    description: page.data.description as string | undefined,
-    url: page.url,
-    structuredData: page.data.structuredData,
-  }));
+  return source.getPages().map((page) => {
+    const data = page.data as { title: string; description?: string; structuredData?: StructuredData };
+    return {
+      id: page.url,
+      title: data.title,
+      description: data.description,
+      url: page.url,
+      structuredData: data.structuredData ?? EMPTY_STRUCTURED_DATA,
+    };
+  });
 }
 
 export const { GET } = createSearchAPI('advanced', {
