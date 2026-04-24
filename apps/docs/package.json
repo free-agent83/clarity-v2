@@ -11,6 +11,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@nivoda/components": "*",
+    "@nivoda/tokens": "*",
     "fumadocs-core": "16.8.2",
     "fumadocs-mdx": "14.3.1",
     "fumadocs-ui": "16.8.2",
