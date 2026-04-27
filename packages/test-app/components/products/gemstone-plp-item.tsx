@@ -66,6 +66,7 @@ export function GemstonePlpItem({ item, href }: GemstonePlpItemProps) {
 
       <PlpGridItemDelivery
         variant={mock.isExpress ? "express" : "regular"}
+        businessDays={mock.businessDays}
         date={mock.deliveryDate}
         shipsFrom={item.origin || mock.shipsFrom}
       />

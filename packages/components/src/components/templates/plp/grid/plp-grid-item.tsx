@@ -312,55 +312,66 @@ export function PlpGridItemName({
  * Delivery block. Standardised presentation with two variants.
  *
  * - `variant="express"` shows the BrandExpress badge + express-coloured
- *   date line.
- * - `variant="regular"` shows the default truck icon + date line.
+ *   line.
+ * - `variant="regular"` shows the default truck icon + line.
  *
- * `date` is any ReactNode — consumers format their own date string.
+ * `businessDays` is the lead emphatic text (e.g. "2 – 3"); rendered as
+ * "{businessDays} business days ({date})". `date` is any ReactNode.
  * `shipsFrom` is optional; when present, a secondary "Ships from X"
  * line appears below with the pin icon.
  */
 export function PlpGridItemDelivery({
   variant,
+  businessDays,
   date,
   shipsFrom,
 }: {
   variant: "express" | "regular";
+  businessDays?: ReactNode;
   date: ReactNode;
   shipsFrom?: ReactNode;
 }) {
   const isExpress = variant === "express";
+  const leadClass = isExpress ? "text-express" : "text-foreground";
   return (
     <div data-slot="plp-grid-item-delivery" className="text-muted-foreground">
       <div className="flex items-center gap-1.5">
-        {isExpress ? (
+        <IconTruckDelivery className="size-3.5 shrink-0" aria-hidden="true" />
+        {isExpress && (
           <BrandExpress className="h-2.5" aria-label="Express delivery" />
-        ) : (
-          <IconTruckDelivery className="size-3.5 shrink-0" aria-hidden="true" />
         )}
-        <Typography
-          as="span"
-          variant="caption"
-          className={isExpress ? "text-express" : undefined}
-        >
-          Get it{" "}
-          <Typography
-            as="span"
-            variant="caption"
-            emphasis
-            className={isExpress ? undefined : "text-foreground"}
-          >
-            {date}
-          </Typography>
+        <Typography as="span" variant="caption">
+          {businessDays ? (
+            <>
+              <Typography
+                as="span"
+                variant="caption"
+                className={leadClass}
+              >
+                {businessDays} business days
+              </Typography>{" "}
+              ({date})
+            </>
+          ) : (
+            <>
+              Get it{" "}
+              <Typography
+                as="span"
+                variant="caption"
+                emphasis
+                className={leadClass}
+              >
+                {date}
+              </Typography>
+            </>
+          )}
         </Typography>
       </div>
       {shipsFrom && (
         <div className="flex items-center gap-1.5">
           <IconMapPin className="size-3.5 shrink-0" aria-hidden="true" />
-          <Typography as="span" variant="caption">
-            Ships from{" "}
-            <Typography as="span" variant="caption" className="text-foreground">
-              {shipsFrom}
-            </Typography>
+          <Typography as="span" variant="caption" className="text-foreground">
+            {shipsFrom}
           </Typography>
         </div>
       )}

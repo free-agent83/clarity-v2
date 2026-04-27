@@ -50,6 +50,7 @@ export function DiamondPlpItem({ item, href, category }: DiamondPlpItemProps) {
 
       <PlpGridItemDelivery
         variant={mock.isExpress ? "express" : "regular"}
+        businessDays={mock.businessDays}
         date={mock.deliveryDate}
         shipsFrom={mock.shipsFrom}
       />
