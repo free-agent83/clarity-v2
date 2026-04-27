@@ -31,9 +31,12 @@ export function getMockStockId(id: string): string {
   return `${prefix}${hex}`;
 }
 
+const REGULAR_BUSINESS_DAYS = ["2 – 3", "3 – 5", "4 – 6"];
+
 export type PlpItemMock = {
   isExpress: boolean;
   isReturnable: boolean;
+  businessDays: string;
   deliveryDate: string;
   shipsFrom: string;
 };
@@ -43,9 +46,13 @@ export function getPlpItemMock(id: string): PlpItemMock {
   const monthIdx = h % 12;
   const dayStart = (h % 25) + 1;
   const dayEnd = dayStart + 5;
+  const isExpress = h % 3 === 0;
   return {
-    isExpress: h % 3 === 0,
+    isExpress,
     isReturnable: h % 4 !== 0,
+    businessDays: isExpress
+      ? "1 – 2"
+      : REGULAR_BUSINESS_DAYS[h % REGULAR_BUSINESS_DAYS.length],
     deliveryDate: `${MONTHS[monthIdx]} ${dayStart} – ${dayEnd}`,
     shipsFrom: SHIPS_FROM[h % SHIPS_FROM.length],
   };
