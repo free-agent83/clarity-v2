@@ -115,6 +115,7 @@ export function GemstonePlpListRow({ item, href }: GemstonePlpListRowProps) {
       <PlpListBodyCell>
         <PlpListRowDelivery
           variant={mock.isExpress ? "express" : "regular"}
+          businessDays={mock.businessDays}
           date={mock.deliveryDate}
           shipsFrom={item.origin || mock.shipsFrom}
         />

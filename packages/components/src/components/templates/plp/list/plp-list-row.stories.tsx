@@ -150,6 +150,7 @@ function StoryRow({
   returnable = "returnable",
   delivery = {
     variant: "regular",
+    businessDays: "2 – 3",
     date: "Nov 18 – 23",
     origin: "🇧🇼",
     shipsFrom: "Botswana",
@@ -268,6 +269,7 @@ export const ExpressDelivery: Story = {
       pricePerCarat={{ amount: 5110, currency: "USD" }}
       delivery={{
         variant: "express",
+        businessDays: "1 – 2",
         date: "Nov 15 – 17",
         origin: "🇺🇸",
         shipsFrom: "United States",
@@ -290,6 +292,7 @@ export const NonReturnable: Story = {
       returnable="non-returnable"
       delivery={{
         variant: "regular",
+        businessDays: "2 – 3",
         date: "Nov 18 – 23",
         origin: "🇷🇺",
         shipsFrom: "Russia",
@@ -317,6 +320,7 @@ export const WithDiscount: Story = {
       pricePerCarat={{ amount: 4999, currency: "USD" }}
       delivery={{
         variant: "regular",
+        businessDays: "2 – 3",
         date: "Nov 18 – 23",
         origin: "🇨🇦",
         shipsFrom: "Canada",
@@ -338,6 +342,7 @@ export const WithTariffs: Story = {
       pricePerCarat={{ amount: 5555, currency: "USD" }}
       delivery={{
         variant: "regular",
+        businessDays: "2 – 3",
         date: "Nov 18 – 23",
         origin: "🇦🇺",
         shipsFrom: "Australia",
@@ -363,6 +368,7 @@ export const WithLegacyPricing: Story = {
       pricePerCarat={{ amount: 9090, currency: "USD" }}
       delivery={{
         variant: "regular",
+        businessDays: "2 – 3",
         date: "Nov 18 – 23",
         origin: "🇿🇦",
         shipsFrom: "South Africa",
@@ -388,6 +394,7 @@ export const WithAlternateCurrency: Story = {
       pricePerCarat={{ amount: 9999, currency: "USD" }}
       delivery={{
         variant: "regular",
+        businessDays: "2 – 3",
         date: "Nov 18 – 23",
         origin: "🇧🇼",
         shipsFrom: "Botswana",
@@ -416,6 +423,7 @@ export const AllPriceVariants: Story = {
       pricePerCarat={{ amount: 7499, currency: "USD" }}
       delivery={{
         variant: "express",
+        businessDays: "1 – 2",
         date: "Nov 15 – 17",
         origin: "🇺🇸",
         shipsFrom: "United States",
