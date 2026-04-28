@@ -265,15 +265,17 @@ export function PlpListRowDelivery({
   const content = (
     <span
       data-slot="plp-list-row-delivery"
-      className="inline-flex items-center gap-1.5"
+      className="inline-flex items-start gap-1.5"
     >
-      {origin && <span className="text-lg">{origin}</span>}
+      {origin && <span className="text-lg leading-none">{origin}</span>}
       {businessDays ? (
         <span>
           <span className={isExpress ? "text-express" : undefined}>
             {businessDays} business days
           </span>{" "}
-          <span className="text-muted-foreground">({date})</span>
+          <span className="whitespace-nowrap text-muted-foreground">
+            ({date})
+          </span>
         </span>
       ) : (
         <span className={isExpress ? "text-express" : undefined}>{date}</span>
