@@ -335,10 +335,16 @@ export function PlpGridItemDelivery({
   const leadClass = isExpress ? "text-express" : "text-foreground";
   return (
     <div data-slot="plp-grid-item-delivery" className="text-muted-foreground">
-      <div className="flex items-center gap-1.5">
-        <IconTruckDelivery className="size-3.5 shrink-0" aria-hidden="true" />
+      <div className="flex items-start gap-1.5">
+        <IconTruckDelivery
+          className="size-3.5 shrink-0 mt-0.5"
+          aria-hidden="true"
+        />
         {isExpress && (
-          <BrandExpress className="h-2.5" aria-label="Express delivery" />
+          <BrandExpress
+            className="h-2.5 mt-1 shrink-0"
+            aria-label="Express delivery"
+          />
         )}
         <Typography as="span" variant="caption">
           {businessDays ? (
@@ -350,7 +356,7 @@ export function PlpGridItemDelivery({
               >
                 {businessDays} business days
               </Typography>{" "}
-              ({date})
+              <span className="whitespace-nowrap">({date})</span>
             </>
           ) : (
             <>
@@ -368,8 +374,11 @@ export function PlpGridItemDelivery({
         </Typography>
       </div>
       {shipsFrom && (
-        <div className="flex items-center gap-1.5">
-          <IconMapPin className="size-3.5 shrink-0" aria-hidden="true" />
+        <div className="flex items-start gap-1.5">
+          <IconMapPin
+            className="size-3.5 shrink-0 mt-0.5"
+            aria-hidden="true"
+          />
           <Typography as="span" variant="caption" className="text-foreground">
             {shipsFrom}
           </Typography>

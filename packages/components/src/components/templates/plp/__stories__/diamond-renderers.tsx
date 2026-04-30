@@ -46,13 +46,20 @@ import type { DiamondItem } from "./diamond-items";
 
 const noop = () => {};
 
+const REGULAR_BUSINESS_DAYS = ["2 – 3", "3 – 5", "4 – 6"];
+
+function getBusinessDays(item: DiamondItem): string {
+  if (item.isExpress) return "1 – 2";
+  const idx = Number.parseInt(item.id.replace(/\D/g, ""), 10);
+  return REGULAR_BUSINESS_DAYS[idx % REGULAR_BUSINESS_DAYS.length];
+}
+
 export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
   const userContext = useStorybookAppUser();
 
-  const video =
-    Number.parseInt(item.id.replace(/\D/g, ""), 10) % 3 === 0
-      ? SAMPLE_360_VIDEO_URL
-      : undefined;
+  const itemIndex = Number.parseInt(item.id.replace(/\D/g, ""), 10);
+  const video = itemIndex % 3 === 0 ? SAMPLE_360_VIDEO_URL : undefined;
+  const businessDays = getBusinessDays(item);
 
   const alternateCurrency =
     userContext.currency !== "USD"
@@ -95,6 +102,7 @@ export function DiamondPlpGridItem({ item }: { item: DiamondItem }) {
 
       <PlpGridItemDelivery
         variant={item.isExpress ? "express" : "regular"}
+        businessDays={businessDays}
         date="Nov 18 – 23"
         shipsFrom={item.origin}
       />
@@ -155,6 +163,7 @@ export function DiamondPlpListHeader() {
 export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
   const userContext = useStorybookAppUser();
   const [selected, setSelected] = useState(false);
+  const businessDays = getBusinessDays(item);
 
   const alternateCurrency =
     userContext.currency !== "USD"
@@ -200,6 +209,7 @@ export function DiamondPlpListRow({ item }: { item: DiamondItem }) {
       <PlpListBodyCell>
         <PlpListRowDelivery
           variant={item.isExpress ? "express" : "regular"}
+          businessDays={businessDays}
           date="Nov 18 – 23"
           origin={item.originFlag}
           shipsFrom={item.origin}
