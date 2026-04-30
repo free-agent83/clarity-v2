@@ -180,7 +180,7 @@ This gets the work moving without forcing a migration decision, and sets up the 
 ## Work completed to date
 
 - **Phase A complete:** token pipeline (now surface-agnostic), architecture, 15 token alignment decisions, 19-test suite, 4 ADRs, one production-quality component (Button)
-- **Phase B well underway:** ~50 components seeded across atoms/molecules/organisms via the shadcn CLI, each with a default story and contribution scaffold; PLP/PDP template primitives in place; a live validation build is running against a real database in the test app
+- **Phase B well underway:** ~50 components seeded across atoms/molecules/organisms via the shadcn CLI, each with a default story and contribution scaffold; PLP/PDP template primitives in place; a live validation build is running in the test app against fixture data
 - **Platform audit done:** full inventory of platform's existing design system is in `docs/research/` and informed the token decisions
 - **Governance model documented:** Clarity V2 is the "law" layer of the Experience Framework / Product OS governance model, with binding precedent encoded in component APIs
 
