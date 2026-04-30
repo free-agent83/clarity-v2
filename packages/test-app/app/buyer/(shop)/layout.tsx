@@ -1,6 +1,5 @@
 import { getCurrentUser } from "@/lib/api/users";
 import { LayoutBase } from "@/components/layouts/layout-base/layout-base";
-import { RealtimeShell } from "@/components/realtime-shell";
 import { UserProvider } from "@/providers/user-provider";
 
 export default async function ShopLayout({
@@ -11,9 +10,7 @@ export default async function ShopLayout({
   const user = await getCurrentUser();
   return (
     <UserProvider>
-      <RealtimeShell>
-        <LayoutBase user={user}>{children}</LayoutBase>
-      </RealtimeShell>
+      <LayoutBase user={user}>{children}</LayoutBase>
     </UserProvider>
   );
 }
