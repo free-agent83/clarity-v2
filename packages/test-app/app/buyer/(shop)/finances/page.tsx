@@ -12,6 +12,7 @@ import {
   computeFinanceSummary,
 } from "@/lib/api/finances";
 import { FinancesTable } from "@/components/finances/finances-table";
+import { checkSimulateError } from "@/lib/api/_simulate";
 
 function formatUsd(amount: number): string {
   return amount.toLocaleString("en-US", {
@@ -21,7 +22,13 @@ function formatUsd(amount: number): string {
   });
 }
 
-export default async function FinancesPage() {
+export default async function FinancesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ simulate?: string; [k: string]: unknown }>;
+}) {
+  const sp = await searchParams;
+  checkSimulateError(sp);
   const documents = await fetchFinanceDocuments();
   const summary = computeFinanceSummary(documents);
 

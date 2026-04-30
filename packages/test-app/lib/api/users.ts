@@ -1,31 +1,8 @@
-import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import { db } from "@/db/client";
-import { users } from "@/db/schema";
-import { createClient } from "@/lib/supabase/server";
+import { HARDCODED_USER } from "@/fixtures/user";
+import type { AppUser } from "@/fixtures/types/user";
 
-export type AppUser = typeof users.$inferSelect;
+export type { AppUser };
 
-export async function getCurrentUser() {
-  const supabase = await createClient();
-  const {
-    data: { user: authUser },
-  } = await supabase.auth.getUser();
-
-  if (!authUser) {
-    redirect("/login");
-  }
-
-  const appUser = await db.query.users.findFirst({
-    where: eq(users.authUserId, authUser.id),
-  });
-
-  if (!appUser) {
-    throw new Error(
-      `No application user found for auth user ${authUser.id}. ` +
-        `This indicates a data integrity issue — the auto-create flow may have failed.`,
-    );
-  }
-
-  return appUser;
+export async function getCurrentUser(): Promise<AppUser> {
+  return HARDCODED_USER;
 }

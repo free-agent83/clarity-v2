@@ -1,23 +1,8 @@
-import { db } from "@/db/client";
-import { eq } from "drizzle-orm";
-import { invoices } from "@/db/schema";
+import { FINANCE_DOCUMENTS } from "@/fixtures/finances";
+import { simulateLatency } from "./_simulate";
+import type { LedgerEntry } from "@/fixtures/types/finance";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export interface LedgerEntry {
-  id: string;
-  type: { id: string; value: string };
-  orderId: string | null;
-  description: string;
-  amountUsd: number;
-  occurredAt: string;
-  exchangeRates: {
-    currency: { id: string; value: string };
-    rate: number;
-  }[];
-}
+export type { LedgerEntry };
 
 export interface Invoice {
   id: string;
@@ -30,103 +15,37 @@ export interface Invoice {
   ledgerEntries: LedgerEntry[];
 }
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-export async function fetchInvoiceList(userId: string): Promise<Invoice[]> {
-  const rows = await db.query.invoices.findMany({
-    where: eq(invoices.userId, userId),
-    with: {
-      paymentMethod: true,
-      currentStatusRef: true,
-      ledgerEntries: {
-        with: {
-          ledgerEntryType: true,
-          exchangeRates: { with: { currency: true } },
-        },
-      },
-    },
-  });
-
-  return rows.map(mapRow);
+export async function fetchInvoiceList(_userId: string): Promise<Invoice[]> {
+  await simulateLatency();
+  return FINANCE_DOCUMENTS.filter((d) => d.type === "invoice").map((d) => ({
+    id: d.id,
+    invoiceNumber: d.invoiceNumber,
+    paymentMethod: d.paymentMethod,
+    issueDate: d.issueDate,
+    dueDate: d.dueDate,
+    totalAmountUsd: d.totalAmountUsd,
+    currentStatus: d.currentStatus,
+    ledgerEntries: d.ledgerEntries,
+  }));
 }
 
 export async function fetchInvoice(
   invoiceId: string,
-  userId: string,
+  _userId: string,
 ): Promise<Invoice | undefined> {
-  const row = await db.query.invoices.findFirst({
-    where: eq(invoices.id, invoiceId),
-    with: {
-      paymentMethod: true,
-      currentStatusRef: true,
-      ledgerEntries: {
-        with: {
-          ledgerEntryType: true,
-          exchangeRates: { with: { currency: true } },
-        },
-      },
-    },
-  });
-
-  if (!row || row.userId !== userId) return undefined;
-
-  return mapRow(row);
-}
-
-// ---------------------------------------------------------------------------
-// Internal
-// ---------------------------------------------------------------------------
-
-type InvoiceRow = Awaited<
-  ReturnType<
-    typeof db.query.invoices.findMany<{
-      with: {
-        paymentMethod: true;
-        currentStatusRef: true;
-        ledgerEntries: {
-          with: {
-            ledgerEntryType: true;
-            exchangeRates: { with: { currency: true } };
-          };
-        };
-      };
-    }>
-  >
->[number];
-
-function mapRow(row: InvoiceRow): Invoice {
+  await simulateLatency();
+  const doc = FINANCE_DOCUMENTS.find(
+    (d) => d.id === invoiceId && d.type === "invoice",
+  );
+  if (!doc) return undefined;
   return {
-    id: row.id,
-    invoiceNumber: row.invoiceNumber,
-    paymentMethod: {
-      id: row.paymentMethod?.id ?? "",
-      value: row.paymentMethod?.value ?? "Unknown",
-    },
-    issueDate: row.issueDate,
-    dueDate: row.dueDate,
-    totalAmountUsd: Number(row.totalAmountUsd),
-    currentStatus: row.currentStatusRef
-      ? { id: row.currentStatusRef.id, value: row.currentStatusRef.value }
-      : null,
-    ledgerEntries: (row.ledgerEntries ?? []).map((le) => ({
-      id: le.id,
-      type: {
-        id: le.ledgerEntryType?.id ?? "",
-        value: le.ledgerEntryType?.value ?? "Unknown",
-      },
-      orderId: le.orderId,
-      description: le.description,
-      amountUsd: Number(le.amountUsd),
-      occurredAt: le.occurredAt.toISOString(),
-      exchangeRates: (le.exchangeRates ?? []).map((er) => ({
-        currency: {
-          id: er.currency?.id ?? "",
-          value: er.currency?.value ?? "Unknown",
-        },
-        rate: Number(er.rate),
-      })),
-    })),
+    id: doc.id,
+    invoiceNumber: doc.invoiceNumber,
+    paymentMethod: doc.paymentMethod,
+    issueDate: doc.issueDate,
+    dueDate: doc.dueDate,
+    totalAmountUsd: doc.totalAmountUsd,
+    currentStatus: doc.currentStatus,
+    ledgerEntries: doc.ledgerEntries,
   };
 }

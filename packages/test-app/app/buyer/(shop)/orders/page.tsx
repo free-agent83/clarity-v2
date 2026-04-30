@@ -3,8 +3,15 @@ import { fetchAllOrders } from "@/lib/api/orders";
 import { Button } from "@nivoda/components";
 import { IconUpload } from "@tabler/icons-react";
 import { OrdersRealtimeWrapper } from "@/components/orders/orders-realtime-wrapper";
+import { checkSimulateError } from "@/lib/api/_simulate";
 
-export default async function OrdersListPage() {
+export default async function OrdersListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ simulate?: string; [k: string]: unknown }>;
+}) {
+  const sp = await searchParams;
+  checkSimulateError(sp);
   const user = await getCurrentUser();
   const initialOrders = await fetchAllOrders(user.id);
 

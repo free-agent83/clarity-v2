@@ -3,6 +3,7 @@ import {
   fetchDiamondListFiltered,
 } from "@/lib/api/diamonds";
 import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
+import { checkSimulateError } from "@/lib/api/_simulate";
 import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
 import { ShowroomBanner } from "@/components/products/showroom-banner";
 import { DiamondPlpItem } from "@/components/products/diamond-plp-item";
@@ -20,6 +21,7 @@ export default async function LabGrownDiamondsListPage({
   searchParams: Promise<PageSearchParams>;
 }) {
   const params = await searchParams;
+  checkSimulateError(params);
   const parsed = parsePageListParams(params, DIAMOND_FILTERS);
   const viewMode = parsePlpViewMode(params.view);
   const { items, totalItems } = await fetchDiamondListFiltered(

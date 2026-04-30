@@ -6,6 +6,7 @@ import {
   STATUS_DOT_COLORS,
   formatStatus,
 } from "@/lib/api/finances";
+import { checkSimulateError } from "@/lib/api/_simulate";
 import { Separator } from "@nivoda/components";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
@@ -16,9 +17,13 @@ import { PaymentBreakdownCard } from "@/components/finances/payment-breakdown-ca
 
 export default async function FinanceDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ simulate?: string; [k: string]: unknown }>;
 }) {
+  const sp = await searchParams;
+  checkSimulateError(sp);
   const { id } = await params;
   const document = await fetchFinanceDocument(id);
 
