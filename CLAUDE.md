@@ -10,8 +10,13 @@ Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components
 
 ## Required reading
 
-1. `CHANGELOG.md` — log of changes by date.
-2. `docs/architecture/architecture.md` — technical architecture + ADRs.
+1. `CONTRIBUTING.md` — branching, commits, merging, versioning, changelog, ADRs, PR etiquette.
+2. `CHANGELOG.md` — log of changes by date.
+3. `docs/architecture/architecture.md` — technical architecture + ADRs.
+
+## How we branch and merge
+
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the full ruleset. The shape: branch off `dev` with a `<type>/<short-kebab>` name, write Angular Conventional Commit messages, merge back to `dev` as a merge commit (no squash). `main` only moves on version bumps. **Commit as you go** — one logical unit per commit, committed before moving on. Don't batch a session's work into one end-of-task commit.
 
 ## Key conventions
 
