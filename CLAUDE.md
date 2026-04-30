@@ -16,7 +16,7 @@ Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components
 
 ## How we branch and merge
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the full ruleset. The shape: branch off `dev` with a `<type>/<short-kebab>` name, write Angular Conventional Commit messages, merge back to `dev` as a merge commit (no squash). `main` only moves on version bumps. **Commit as you go** — one logical unit per commit, committed before moving on. Don't batch a session's work into one end-of-task commit.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the full ruleset. The shape: branch off `dev` with a `<type>/<short-kebab>` name, write Angular Conventional Commit messages, merge back to `dev` as a merge commit (no squash). `staging` is the stable release candidate — design leadership promotes `dev` → `staging` when a version is ready (version bump happens here), and `staging` → `main` after sign-off. `main` is the released version. **Commit as you go** — one logical unit per commit, committed before moving on. Don't batch a session's work into one end-of-task commit.
 
 ## Things to avoid
 

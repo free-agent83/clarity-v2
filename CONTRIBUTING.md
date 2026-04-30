@@ -6,12 +6,13 @@ This is the root rulebook. Every package in this monorepo (`packages/tokens`, `p
 
 ## How we branch and merge
 
-Clarity V2 follows a simple `dev` → `main` flow with the [Angular Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-angular/) style.
+Clarity V2 follows a `dev` → `staging` → `main` flow with the [Angular Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-angular/) style.
 
 ### Trunks
 
-- **`dev`** is the working trunk. All feature work merges here.
-- **`main`** is the stable trunk. It only moves when we cut a version.
+- **`dev`** is the working trunk. All feature work merges here. May be unstable at any point.
+- **`staging`** is the release candidate trunk. Always stable. Represents the next version. Promoted from `dev` by design leadership when dev has enough stable work to constitute the target version. Where visual QA, automated testing, and stakeholder review happen.
+- **`main`** is the released trunk. In distribution. Only moves when a version is signed off by design leadership.
 
 ### Branching
 
@@ -39,9 +40,14 @@ When in doubt, commit smaller. A 3-line commit is fine.
 ### Merging
 
 - **Feature branch → `dev`:** merge commit (no squash, no rebase). The branch's commit history is preserved on `dev`.
-- **`dev` → `main`:** merge commit, **only on version bumps.** Tag the merge commit with a semver tag (e.g. `v0.0.1`). Between version bumps, `main` does not move.
+- **`dev` → `staging`:** merge commit. Triggered by design leadership when `dev` has enough stable work to constitute the target version. The version bump commit happens at this point.
+- **`staging` → `main`:** merge commit. Triggered by design leadership after sign-off following visual QA, automated tests, and stakeholder approval. Tag the merge commit with a semver tag (e.g. `v1.0.0`).
 
-PRs that target `main` directly will be rejected.
+**Staging fix path:** Bugs found during staging review may land as small targeted PRs directly on `staging`, bypassing `dev`. These must be backported to `dev` immediately after merge.
+
+**Hotfix path:** Critical bugs on `main` are branched as `hotfix/<name>` off `main`, merged to `main`, then backported to `staging` (if in-flight) and `dev`. Tag the merge commit.
+
+Promotions (`dev` → `staging`, `staging` → `main`) are merge commits made directly by design leadership — no PR required.
 
 ---
 
@@ -109,7 +115,7 @@ A change that affects multiple packages goes in **each affected package's** CHAN
 - **One bullet per logical change.** Group commits that serve the same purpose into a single bullet rather than one bullet per commit.
 - **Terse.** 1–2 sentences max. Reviewers scan these — no paragraphs, no nested bullets.
 - **Reference at least one commit hash** in backticks (e.g. `` `a1b2c3d` ``).
-- **Every merge into `dev`** adds at least one bullet under today's date in the appropriate changelog.
+- **Every merge that lands new or changed behaviour** (into `dev`, `staging`, or `main`) adds at least one bullet under today's date in the appropriate changelog.
 - Breaking changes get a `**Breaking:**` prefix on the bullet (post-1.0).
 
 ---
@@ -174,7 +180,11 @@ Append the next sequential number. Never renumber existing entries — ADR numbe
 
 ### Target branch
 
-All PRs target `dev`. PRs against `main` are rejected.
+- **Feature work:** PRs target `dev`.
+- **Staging fixes:** PRs target `staging`. Backport to `dev` is required immediately after merge.
+- **Hotfixes:** PRs target `main`. Backport to `staging` (if in-flight) and `dev` is required immediately after merge.
+
+Promotions (`dev` → `staging`, `staging` → `main`) are not PRs — they are direct merge commits by design leadership.
 
 ### Before opening a PR
 
