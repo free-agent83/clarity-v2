@@ -6,7 +6,7 @@ import { authConfig, COOKIE_NAME, COOKIE_MAX_AGE } from "@/lib/auth/config";
 import { signToken } from "@/lib/auth/jwt";
 
 export async function login(
-  _prevState: { error: string } | null,
+  _prevState: { error: string } | null | undefined,
   formData: FormData,
 ): Promise<{ error: string } | undefined> {
   const email = formData.get("email") as string;

@@ -67,6 +67,7 @@ export function CheckoutConfirmation() {
     clearOrderJustPlaced();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // eslint-disable-next-line react-hooks/refs
   if (!wasPlaced.current) return null;
 
   function handleCopyOrderNumber() {

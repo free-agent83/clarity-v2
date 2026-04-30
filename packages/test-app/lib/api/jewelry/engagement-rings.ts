@@ -1,10 +1,8 @@
 import { ENGAGEMENT_RINGS } from "@/fixtures/products/engagement-rings";
 import {
   toEngagementRingListItem,
-  getThumbnailUrl,
   type EngagementRingItem,
   type EngagementRingListItem,
-  type JewelryItemBase,
 } from "@/fixtures/types/engagement-ring";
 import { simulateLatency } from "../_simulate";
 import {
@@ -15,8 +13,7 @@ import {
 } from "../helpers";
 import type { FilterDefinition, ParsedFilters } from "../filters";
 
-export type { EngagementRingItem, EngagementRingListItem, JewelryItemBase };
-export { getThumbnailUrl };
+export type { EngagementRingItem, EngagementRingListItem };
 
 export async function fetchEngagementRingList(
   options: PaginatedOptions,
