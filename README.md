@@ -48,7 +48,7 @@ clarity-v2/
 └── packages/
     ├── tokens/                  # W3C DTCG token source + bespoke build pipeline
     ├── components/              # shadcn/ui + Radix UI + Tailwind CSS component library
-    └── test-app/                # Vite test harness for component development
+    └── test-app/                # Minivoda — clickable digital twin of the Nivoda platform; first live consumer of @nivoda/components
 ```
 
 ---
