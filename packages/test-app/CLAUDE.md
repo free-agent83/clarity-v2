@@ -4,7 +4,7 @@ Orients agents when working inside `packages/test-app/` — Minivoda, the living
 
 ## What this package is
 
-Minivoda — the **"Flow" surface of the Nivoda Design Triad** (see [VISION.md](../../VISION.md)). A clickable, backend-backed replica of the Nivoda product, and the venue where the self-serve delivery path happens: designers and PMs build new flows here using Clarity V2 components + AI agents, validate them with real users, then hand branches to engineering. Figma is a scrapbook; Minivoda is the source of truth for what a flow *is*.
+Minivoda — a clickable digital twin of the Nivoda product. The first live consumer of `@nivoda/components`, used to exercise the component library in production-shaped flows.
 
 Phase B is currently active (see [ROADMAP.md](../../ROADMAP.md)). This package is the **first live consumer** of `@nivoda/components` — exercising Clarity V2 in production-shaped flows is on the critical path, and work here should serve that goal unless explicitly directed otherwise.
 
