@@ -114,7 +114,7 @@ A stale `COMPONENTS.md` is a broken one — treat it with the same rigour as a s
 - No prop tables, no code examples, no variant matrices — those live in `COMPONENT.md`.
 - No exhaustive token value listings — those live in `primitives.css` (values) and `web-theme.css` (utility mappings).
 - No build / test / publishing rules — those live in this file.
-- No rationale or decision records — those live in `ADRS.md` or `COMPONENT.md`.
+- No rationale or decision records — those live in `COMPONENT.md`.
 
 When a change would require more than a one-line tweak to an existing entry, the real change belongs in `COMPONENT.md` or one of the theme files (`primitives.css` / `web-theme.css`); the `COMPONENTS.md` entry should follow, not lead.
 
@@ -554,7 +554,7 @@ A component is considered done when all of the following are true:
 
 ## Writing an ADR
 
-Package-scoped architectural decisions live in [`ADRS.md`](./ADRS.md) at the package root. Use a package-level ADR when a decision meaningfully shapes the library but doesn't affect the wider project — for example, dropping a planned API surface on a component, adopting a cross-cutting pattern (how variants are expressed, how templates compose), or rejecting a feature consumers might reasonably expect.
+Use a package-level ADR when a decision meaningfully shapes the library but doesn't affect the wider project — for example, dropping a planned API surface on a component, adopting a cross-cutting pattern (how variants are expressed, how templates compose), or rejecting a feature consumers might reasonably expect.
 
 Project-wide decisions (token pipeline, build tooling, documentation stack, visual regression policy, etc.) go in the project-level [`docs/architecture/architecture.md`](../../docs/architecture/architecture.md) § "Architectural Decisions" instead. If you're unsure which layer a decision belongs to, ask: does the decision only make sense if you're working *inside* this package? If yes, it's package-scoped.
 
@@ -567,7 +567,7 @@ Write an ADR when:
 - A workaround is being accepted that looks strange without the history (e.g., "why isn't this tokenised?").
 - A reversible decision is being made whose cost-to-revisit is high (e.g., a prop name or data shape that would be breaking to change).
 
-Don't write an ADR for routine component work. Component-level rationale belongs in the `COMPONENT.md` under "Usage guidelines" and "Best practices", not in ADRS.md.
+Don't write an ADR for routine component work. Component-level rationale belongs in the `COMPONENT.md` under "Usage guidelines" and "Best practices".
 
 ### Format, numbering, and cross-references
 
