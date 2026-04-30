@@ -4,7 +4,7 @@ This file orients Claude Code at the start of every session in this repo. It is 
 
 ## What this repo is
 
-Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components + Tailwind v4, in an Nx monorepo. Owned by the design function (Chris). It replaces an older MUI-based design system used elsewhere in the company.
+Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components + Tailwind v4, in an Nx monorepo. Owned by the design function. 
 
 **Core outcome:** Whoever builds UI — engineer, designer, or PM — produces design-correct output automatically. The components ARE the design. This collapses the design → engineering → design-QA iteration loop that currently dominates UI delivery. Both engineers writing code directly and designers/PMs using AI coding agents consume the same library and get the same guarantee.
 
@@ -18,21 +18,8 @@ Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components
 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the full ruleset. The shape: branch off `dev` with a `<type>/<short-kebab>` name, write Angular Conventional Commit messages, merge back to `dev` as a merge commit (no squash). `main` only moves on version bumps. **Commit as you go** — one logical unit per commit, committed before moving on. Don't batch a session's work into one end-of-task commit.
 
-## Key conventions
-
-- **Bespoke token build, not Style Dictionary.** See ADR-001. Build script is `packages/tokens/build.mjs`, ~200 lines of plain Node.js. Do not reintroduce SD.
-- **OKLCH color format** throughout. Tokens stored as DTCG structured color objects (`{ colorSpace: "oklch", components: [L, C, H], hex: "#..." }`) with hex fallbacks for React Native.
-- **shadcn-flat naming** for the shadcn output platform (`--background`, `--primary`, etc.). Other platforms use structured naming (`--color-primitive-violet-500`).
-- **Brand color is `violet`**, not `purple`. Uses platform production values. See `docs/design/token-decisions.md`.
-- **Component library is Tailwind v4 + shadcn/ui + Radix UI**. No MUI, no CSS-in-JS runtimes, no emotion. Components imported via shadcn CLI into `packages/components/src/components/`.
-- **Test with vitest.** Test file: `packages/tokens/tests/build.test.mjs`.
-
 ## Things to avoid
 
-- Do not commit `dist/`, `storybook-static/`, `node_modules/`, `.DS_Store` — all gitignored.
-- Do not add Chromatic back. See ADR-002 (security incident + self-hosted alternative).
-- Do not add Zeroheight. See ADR-004 (Fumadocs replaces it).
-- Do not add Tokens Studio. See ADR-003 (bidirectional Figma sync rejected).
 - Do not create markdown files in the repo root except the top-level ones already there (`README.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`). All other docs live under `docs/`.
 
 ## Docs structure
