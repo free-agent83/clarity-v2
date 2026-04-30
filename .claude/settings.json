@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=$(jq -r '.tool_input.file_path // \"\"'); case \"$FILE\" in *packages/tokens/src/*) echo 'BLOCKED: packages/tokens/src/ is human-only. See packages/tokens/CONTRIBUTING.md for the rule and rationale.' >&2; exit 2 ;; esac; exit 0"
+            "command": "FILE=$(jq -r '.tool_input.file_path // \"\"'); case \"$FILE\" in *packages/tokens/src/*|*packages/tokens/CONTRIBUTING.md) echo 'BLOCKED: packages/tokens/src/ and packages/tokens/CONTRIBUTING.md are human-only. See packages/tokens/CONTRIBUTING.md for the rule and rationale.' >&2; exit 2 ;; esac; exit 0"
           }
         ]
       }
