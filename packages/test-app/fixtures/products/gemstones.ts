@@ -1,10 +1,8 @@
-import type { GemstoneItem } from "@/lib/api/gemstones";
+import type { GemstoneItem } from "@/fixtures/types/gemstone";
 
-const IMG_BASE =
-  "https://s3.eu-west-2.amazonaws.com/nivoda.jewellery.catalog.media";
+const IMG = "/gemstone.png";
 
-const img = (sku: string, view: "FLAT" | "ANGLE" | "FRONT" = "FLAT") =>
-  `${IMG_BASE}/${sku}_${view}.jpg`;
+const img = (_sku: string, _view: "FLAT" | "ANGLE" | "FRONT" = "FLAT") => IMG;
 
 export const GEMSTONES: GemstoneItem[] = [
   {

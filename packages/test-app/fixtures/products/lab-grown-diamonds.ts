@@ -1,10 +1,8 @@
-import type { DiamondItem } from "@/lib/api/diamonds";
+import type { DiamondItem } from "@/fixtures/types/diamond";
 
-const IMG_BASE =
-  "https://s3.eu-west-2.amazonaws.com/nivoda.jewellery.catalog.media";
+const IMG = "/diamond.png";
 
-const img = (sku: string, view: "FLAT" | "ANGLE" | "FRONT" = "FLAT") =>
-  `${IMG_BASE}/${sku}_${view}.jpg`;
+const img = (_sku: string, _view: "FLAT" | "ANGLE" | "FRONT" = "FLAT") => IMG;
 
 export const LAB_GROWN_DIAMONDS: DiamondItem[] = [
   {

@@ -1,10 +1,7 @@
-import type { MeleeItem } from "@/lib/api/melee";
-
-const IMG_BASE =
-  "https://s3.eu-west-2.amazonaws.com/nivoda.jewellery.catalog.media";
+import type { MeleeItem } from "@/fixtures/types/melee";
 
 const img = (sku: string, view: "FLAT" | "ANGLE" = "FLAT") =>
-  `${IMG_BASE}/${sku}_${view}.jpg`;
+  `https://placehold.it/400x400?text=${encodeURIComponent(`${sku} ${view}`)}`;
 
 export const LAB_GROWN_MELEE: MeleeItem[] = [
   {
