@@ -2,7 +2,7 @@
 
 A living interactive prototype — a digital twin of the Nivoda production platform. Minivoda is the single source of truth for how features should look and behave, replacing static Figma designs with a real, clickable application backed by hardcoded fixture data.
 
-Lives in the Clarity V2 monorepo as `packages/test-app/`. It is the first live consumer of `@nivoda/components` (the Nivoda design system) — building flows here exercises the design system in production-shaped conditions. See the root [README.md](../../README.md), [VISION.md](../../VISION.md), and [ROADMAP.md](../../ROADMAP.md) for the broader strategy.
+Lives in the Clarity V2 monorepo as `packages/test-app/`. It is the first live consumer of `@nivoda/components` (the Nivoda design system) — building flows here exercises the design system in production-shaped conditions. See the root [README.md](../../README.md) for the broader strategy.
 
 **What it's used for:**
 
