@@ -522,10 +522,10 @@ Most atoms and simple molecules won't need standalone tests. The stories + a11y 
 
 ```bash
 # Run all component tests (stories + standalone)
-vitest --project=storybook
+npx vitest --project=storybook
 
 # In CI
-vitest --project=storybook --run
+npx vitest --project=storybook --run
 ```
 
 ---
