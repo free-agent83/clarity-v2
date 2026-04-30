@@ -6,7 +6,7 @@ Orients agents when working inside `packages/components/`. For system-wide conve
 
 The Clarity V2 **web component library**. Whoever uses it — engineer, designer, or AI agent — produces design-correct output automatically. The components ARE the design.
 
-Phase B is currently active (see [ROADMAP.md](../../ROADMAP.md)) and the critical path is building out the core component set. Work in this package should be squarely aimed at that goal unless explicitly directed otherwise.
+Building out the core component set is the current priority. Work in this package should be squarely aimed at that goal unless explicitly directed otherwise.
 
 ## How agents orient here
 
