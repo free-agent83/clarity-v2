@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "license": "UNLICENSED",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "dev": "bash scripts/dev.sh"
+  },
   "devDependencies": {
     "@nx/eslint-plugin": "^22.6.4",
     "@nx/js": "22.6.2",
