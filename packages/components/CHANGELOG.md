@@ -1,304 +1,63 @@
 # Changelog — @nivoda/components
 
----
+Package-specific changes for the Clarity V2 component library. Newest entries first.
 
-### Theme split into `primitives.css` (layer 1) and `web-theme.css` (layer 2); overlay animations fixed
-
-Separates the theme into two concern-layered files and fixes a silent bug that was disabling every Radix overlay animation (Sheet, Dialog, Popover, Drawer, AlertDialog) in consumer apps.
-
-- **`src/styles/theme.css` split into two files.**
-  - **`primitives.css` (new, layer 1)** — raw `:root` / `.dark` CSS custom properties, nothing else. No imports, no Tailwind directives, no shadcn mappings, no base resets. This is the agnostic token boundary; `packages/tokens/` will eventually generate into this file.
-  - **`web-theme.css` (new public entry, layer 2)** — imports `primitives.css`, then composes everything else: `@fontsource-variable/inter` and `tw-animate-css` imports, `@custom-variant` registrations, the `@theme inline` utility mapping, and the `@layer base` resets. This is what consumers import.
-- **Public export renamed `./theme.css` → `./web-theme.css`.** `package.json` `exports` now exposes `./web-theme.css` only; `primitives.css` is internal and can be promoted later if a surface needs it. Consumer migration is a one-line import swap. The one internal consumer (`packages/test-app/app/globals.css`) is updated in the same change.
-- **Added `@custom-variant data-open (&[data-state="open"])` and `@custom-variant data-closed (&[data-state="closed"])`.** Every overlay primitive in the library (Sheet, Dialog, Popover, Drawer, AlertDialog) uses classes like `data-open:animate-in`, `data-open:slide-in-from-left-10`, `data-closed:animate-out`, `data-closed:slide-out-to-left-10`. Tailwind v4 has no built-in `data-open` / `data-closed` variant — without `@custom-variant` registrations these classes silently never generated, and every overlay appeared/disappeared with no transition. Adding the two registrations makes the animations resolve against the `data-state` attribute Radix already sets, so enter/exit transitions now actually fire in consumer apps.
-- **Build command updated.** `project.json` now copies both `src/styles/primitives.css` and `src/styles/web-theme.css` to `dist/`. `web-theme.css` keeps its relative `@import "./primitives.css"`; the two files sit side-by-side in dist and the consumer bundler resolves the import.
-- **Docs updated.** Token-flow diagram in `CONTRIBUTING.md` and `COMPONENTS.md` now shows `packages/tokens/ → primitives.css → web-theme.css → components`. The Portability section in `CONTRIBUTING.md` is rewritten to cover both layers.
-
-### Build refactor: per-file output, portable theme, peer-dep cleanup ([#126](https://github.com/free-agent83/clarity-v2/pull/126))
-
-Reshapes the library's build output so it behaves like a real publishable package for pure-React, Next.js App Router, and any other consumer. No component API changes. See [`docs/plans/2026-04-23-components-build-refactor-plan.md`](../../docs/plans/2026-04-23-components-build-refactor-plan.md) for the full design.
-
-- **Per-file dist output.** Vite `lib` build switched from a single `dist/index.js` bundle to per-file output via `preserveModules`, mirroring `src/` structure under `dist/components/`. Consumers tree-shake individual components; bundle barrel drops from ~1.2 MB to ~16 KB, with the largest per-component chunk at ~20 KB.
-- **Per-file `"use client"` directives preserved.** Added `rollup-preserve-directives` plugin. Static primitives (Badge, Typography, Label-wrappers, etc.) render as Server Components with zero client JS; interactive primitives (Dialog, Sheet, DropdownMenu, etc.) carry their own `"use client"` at the top of their built file.
-- **Missing `"use client"` directives added to 22 components** that had been missing them since the initial shadcn bulk-add: `accordion`, `alert-dialog`, `app-shell`, `avatar`, `carousel`, `checkbox`, `command`, `drawer`, `hover-card`, `inline-banner`, `input-group`, `label`, `page-banner`, `popover`, `radio-group`, `scroll-area`, `separator`, `sheet`, `sidebar`, `sonner`, `table`, `toggle`. For shadcn-equivalent components the additions match shadcn v4 canonical exactly (cross-referenced via raw.githubusercontent fetch); Nivoda-custom components (`app-shell`, `inline-banner`, `page-banner`) were marked client for consistency with how they're rendered in practice.
-- **Runtime dependencies externalised.** `radix-ui`, `@base-ui/react`, `recharts`, `sonner`, `vaul`, `cmdk`, `embla-carousel-react`, `input-otp`, `next-themes`, `lucide-react`, `@tabler/icons-react` are no longer inlined. Moved to `peerDependencies` so consumers' bundlers dedup correctly against their own copies. `recharts` marked optional via `peerDependenciesMeta` (only needed by Chart). Small CSS-in-JS utilities (`cva`, `clsx`, `tailwind-merge`) and component-specific leaf libs stay in `dependencies`.
-- **CSS split into `theme.css` (consumer) + `globals.css` (Storybook-local).** `dist/theme.css` is a portable CSS fragment containing only `@theme inline`, `:root`/`.dark` tokens, `@custom-variant dark`, and `@layer base` resets written in plain CSS (no `@apply`). Works across three consumer tiers: Tailwind v4 (full fidelity, utilities generated by consumer Tailwind), non-Tailwind bundler (tokens + dark + base resets work; Tailwind directives gracefully ignored), and literal `<link>` tag (tokens + dark + base resets only; font/animation `@import`s fail gracefully). `globals.css` shrinks to a two-line `@import "tailwindcss"; @import "./theme.css"` for Storybook + vitest-browser.
-- **Base resets rewritten in plain CSS.** `border-color: var(--border)` instead of `@apply border-border` — required for `theme.css` portability across non-Tailwind pipelines. Visual output unchanged.
-- **`exports` map rewritten.** `"./styles.css"` is gone — consumers use `"./theme.css"`. New `"./*"` wildcard allows explicit deep imports like `@nivoda/components/components/atoms/button/button` for consumers who want maximum tree-shaking determinism.
-- **`tsc-alias` post-step on the library build.** Rewrites `@/` path aliases in `dist/*.d.ts` files to relative imports so consumers' `tsc` resolves library types correctly. Addresses a latent bug where `Pick<ComponentProps<typeof Button>, …>` in consumers resolved to `Pick<any, …>` because internal `@/components/atoms/button/button` references couldn't be resolved.
-
-### Components pass 3: new atoms + Stepper + AppShell banner slot ([#125](https://github.com/free-agent83/clarity-v2/pull/125))
-Adds four new components (`SegmentedControl`, `InlineBanner`, `PageBanner`, `Stepper`), variant/size additions to `Progress`, and an optional sticky banner slot on `AppShell`. All new components land as `unstable`.
-
-- **Progress.** Added `variant` prop (`default | success | info | warning | destructive`) controlling the indicator bar colour and a `size` prop (`default` = `h-1.5`, `lg` = `h-3`). Track stays `bg-muted` across variants. Replaced the placeholder `COMPONENT.md` with full documentation. No breaking changes. (`78a0863`)
-- **SegmentedControl.** New atom for switching between mutually-exclusive UI modes. Wraps `Radix ToggleGroup` with `type="single"` hard-coded and a non-empty selection guarantee. Inset-pill design with `bg-muted` track + 2px padding and `bg-background` / `shadow-xs` active pill; sizes `sm | default | lg` mirror Button. Hover and active foreground use `accent-foreground`. (`c1ad2e4`, `ad12c99`)
-- **InlineBanner.** New atom for block-level, page-level callouts. Solid semantic fills (not tinted — distinct from `Alert`'s quieter treatment), sizes `default | lg`, compound API: `InlineBannerTitle`, `InlineBannerDescription`, `InlineBannerAction` (single CTA). Icon is passed as a direct `<svg>` child and sits in a dedicated vertically-centred column via `grid-template-areas`. Optional `onDismiss` renders a stateless top-right close button. (`87e5a9b`, `440b416`, `316ba20`, `b05c9a0`, `812fba7`)
-- **PageBanner + AppShell banner slot.** New atom for full-bleed, app-level callouts (new features, promotions, downtime). Solid semantic fills across variants. `AppShell` gains an optional `banner` prop that wraps the `PageBanner` in a `sticky top-0` container; `AppShellHeader` offsets its own sticky `top` to sit just below the banner so both remain pinned while content scrolls. Two new stories demonstrate the integration (`WithBanner`, `WithDismissibleBanner`). (`bbcdf49`, `ad12c99`)
-- **Stepper.** New molecule for ordered multi-step flows (checkout, returns). Controlled via `activeStep`; errored steps flagged via `errorSteps`; `completed` and `error` steps become clickable when `onStepClick` is supplied. Compound API: `Stepper`, `StepperItem`, `StepperItemIndicator`, `StepperItemLabel`. Horizontal only in v0.1 — vertical, compact mode, and disabled state deferred. (`088fcae`)
+For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELOG.md). Format and rules: see root [`CONTRIBUTING.md`](../../CONTRIBUTING.md#changelog).
 
 ---
 
-### PLP list view stories + row primitives polish ([#123](https://github.com/free-agent83/clarity-v2/pull/123))
-Introduces a dedicated ListRow stories file mirroring GridItem, evolves the list-row primitives with a few small props and bug fixes surfaced while exercising them, and reorders the Storybook sidebar from simpler to more complex. No breaking changes.
+## 2026-04-30
 
-- **PLP list row primitives.** Added `ListRow` stories file with a shared `StoryRow` helper and full variant coverage (states, delivery, returns, price variants, all-price kitchen sink). Added `hug` prop on `PlpListBodyCell` / `PlpListHeaderCell` so icon-only columns (checkbox, thumbnail) stop stretching. Added `shipsFrom` tooltip on `PlpListRowDelivery` (reads "Express delivery from X" / "Ships from X"). Wrapped the "Incl. US tariffs" caption in the same `HoverCard` the grid uses. Fixed an issue where opening a row's actions menu broke the sticky-cell background (now uses `group-has-data-[state=open]/plp-row` to hold the hover look while any descendant popover is open). Centered the returnable icon vertically + horizontally in its column and tightened the tooltip anchor to the icon. (`c71f813`, `50b588e`, `f970851`, `a4290e2`, `25080fb`, `368f16f`, `36bf2e7`, `a752633`, `c8c46f7`, `e715cd7`)
-- **PLP stories architecture.** Split diamond / gemstone / jewelry stories into `api / renderers / filters / interactive` modules and introduced `__stories__/shared` with a mock API client. Collapsed the mini-app into a static presentation harness, reduced the rendered stories to just the diamond grid + list, and added static pagination, `WithBanner`, `WithInGridBanner`, and a static grid/list toggle. Renamed the long-standing `__fixtures__` folder to `__stories__` for consistency with Storybook terminology and swapped the story placeholder image for the real diamond asset. (`4c1d659`, `8f7cff9`, `b4e491a`, `221344d`, `189a4e9`, `adf7685`, `8294dea`, `056e412`, `efcb11f`, `82fd3c6`, `36a7625`, `09cffaf`, `0dde4c7`, `3591bc0`, `d4e4027`, `2698624`, `c2529e7`)
-- **Storybook sidebar order.** Top-level groups now run simpler → more complex (Foundations → Display → Feedback → Actions → Forms → Overlays → Navigation → Data → Filtering → Templates). Within `Templates/PLP`, stories run full-page compositions → structural pieces → item primitives. (`ed19c93`, `425b324`)
-- **DropdownMenu.** Removed the `w-(--radix-dropdown-menu-trigger-width)` class so content no longer stretches to the trigger width; the existing `min-w-32` keeps small menus readable while content sizes naturally.
-- **Chore.** Removed a dead `Badge` import from `plp-list-row.tsx`; gitignored accidentally-emitted `.d.ts` artefacts under `.storybook/`.
+- Stripped overlapping branching/versioning/PR/ADR-format sections from `CONTRIBUTING.md`. Package-specific guidance preserved (when to write a package vs project-level ADR). File shrank from 661 → 579 lines (`128ef7e`).
 
----
+## 2026-04-23
 
-### PLP polish: FilterToolbar consolidation + story quality ([#122](https://github.com/free-agent83/clarity-v2/pull/122))
-Second-wave consolidation after the filter-subsystem extraction: several thin modules folded into their owners, two unused PLP-specific empty/error wrappers deleted, and a thorough story quality pass.
+- Theme split into two layered files: new `primitives.css` (raw `:root` / `.dark` tokens, agnostic) and `web-theme.css` (composes everything else — fonts, animations, `@theme inline` mapping, `@layer base` resets). Public export renamed `./theme.css` → `./web-theme.css`.
+- Added `@custom-variant data-open` and `data-closed` registrations — fixes silently-broken Radix overlay animations (Sheet, Dialog, Popover, Drawer, AlertDialog) in consumer apps. Tailwind v4 has no built-in `data-open`/`data-closed` variant, so the existing `data-open:animate-in` etc. classes were never generating.
+- `project.json` updated to copy both CSS files to `dist/`; token-flow diagram in `CONTRIBUTING.md` and `COMPONENTS.md` refreshed.
 
-Breaking changes (all unstable, nothing in production):
+## 2026-04-22
 
-- `FilterDrawer` is no longer a standalone molecule. `FilterToolbar` now owns the drawer via a `drawer: FilterToolbarDrawer` prop. Replace `<FilterToolbar .../>` + `<FilterDrawer .../>` with `<FilterToolbar drawer={{ content, onOpen, onApply, ... }} .../>`. The `onOpenDrawer` prop on `FilterToolbar` is removed. `FilterSection` is now imported from `filter-toolbar`, not `filter-drawer`. (`ef679c9`, `34fe4fa`)
-- `ChipSelectFilter` removed. Replace with `ToggleGroup` + `ToggleGroupItem` (with `variant="outline"`) directly at each call site; inline the empty ↔ undefined conversion as `value ?? []` / `next.length > 0 ? next : undefined`. (`df966ea`)
-- `PlpEmpty` and `PlpError` removed. Use the `Empty` atom directly; `plp.stories.tsx` exports `renderPlpEmptyState` as a copy-and-adapt reference. (`2581a73`)
+- **Build refactor (#126):** Vite `lib` build switched to per-file output via `preserveModules` — bundle barrel drops from ~1.2 MB to ~16 KB. Added `rollup-preserve-directives` so `"use client"` is preserved per-file; added missing directives to 22 components. Runtime deps externalised to `peerDependencies` (radix-ui, @base-ui/react, recharts, sonner, vaul, cmdk, embla-carousel-react, input-otp, next-themes, lucide-react, @tabler/icons-react). CSS split into portable `theme.css` (consumer) + `globals.css` (Storybook-local). `tsc-alias` post-step rewrites `@/` aliases in dist `.d.ts` files.
+- **Components pass 3 (#125):** Four new components landed as `unstable` — `SegmentedControl` (atom), `InlineBanner` (atom, page-level callout), `PageBanner` + `AppShell` banner slot (full-bleed app callout, `sticky top-0`), `Stepper` (molecule, ordered multi-step flows). `Progress` gained `variant` and `size` props (`78a0863`, `c1ad2e4`, `87e5a9b`, `bbcdf49`, `088fcae`).
+- **PLP list view stories (#123):** Added dedicated `ListRow` stories file mirroring `GridItem`. New `hug` prop on `PlpListBodyCell`/`HeaderCell` for icon-only columns; `shipsFrom` tooltip on `PlpListRowDelivery`; sticky-cell background fix when row actions menu opens. PLP stories split into `api/renderers/filters/interactive` modules with shared mock API client. Storybook sidebar reordered simpler → more complex (`c71f813`, `4c1d659`, `ed19c93`).
 
-- Per-piece `COMPONENT.md` files (`plp-heading`, `plp-grid-container`, `plp-list-container`) consolidated into a single `templates/plp/COMPONENT.md`; `PlpGridItem` stories nested under `Templates/PLP/` in the Storybook sidebar. (`2581a73`, `4215eb1`)
-- PLP stories refactored into category-specific modules under `plp-stories/` (`DiamondInteractive`, `GemstoneInteractive`, `JewelryInteractive`); `Default` story gains a `category` control (diamonds / gemstones / jewellery) in place of separate story exports; added `WithBanner` and `WithPromoItems` stories using real mockup images. (`ee702c0`, `f2bb20c`, `8d84f34`, `3b6d3d1`, `2221e89`)
-- `FilterToolbar` stories updated with real `FilterButton` chips; new `StickyBarBehaviour`, `DrawerLoadingState`, and `DrawerMultipleSections` scenarios added; `COMPONENT.md` rewritten to match the current API. (`659d23b`, `799929e`, `fd18b90`, `54f1c03`)
+## 2026-04-21
 
----
+- **PLP polish (#122):** `FilterDrawer` is no longer standalone — `FilterToolbar` now owns the drawer via a `drawer: FilterToolbarDrawer` prop. `ChipSelectFilter`, `PlpEmpty`, `PlpError` removed. Per-piece `COMPONENT.md` files folded into a single `templates/plp/COMPONENT.md` (`ef679c9`, `df966ea`, `2581a73`).
+- **Filter subsystem extracted; PLP becomes a kit (breaking, unstable 0.6.0):** PLP-scoped filter system extracted into reusable molecules + the `FilterToolbar` organism under a new `Filtering/` Storybook section: `FilterDrawer`, `FilterSection`, `AllFiltersButton`, `ChipSelectFilter`, `RangeFilter`, `AsyncComboboxFilter`. `PlpTemplate` deleted; PLP becomes a kit (`PlpHeading`, `PlpGridContainer`, `PlpListContainer`, `PlpEmpty`, `PlpError`, plus existing grid/list primitives) — consumers assemble pages themselves.
+- **PLP filter system decoupled from business logic (breaking, unstable 0.5.0):** `FilterDefinition` schema and preset registry demolished; each preset is now a standalone component with direct props and its own value/option types. `PlpTemplate` no longer renders the drawer — consumers render `PlpFilterDrawer` as a sibling and own drawer state, draft buffering, and chip-summary formatting. `plp-types.ts` drops registry-era types (`FilterDefinition`, `FilterPresetName`, `FilterControlProps`, etc.). New `PlpFilterSection` primitive added.
 
-### Filter subsystem extracted; PLP becomes a kit (breaking, unstable 0.6.0)
+## 2026-04-20
 
-Two coupled moves. (1) The PLP-scoped filter system is extracted into reusable molecules and an organism under a new `Filtering/` Storybook section: `FilterDrawer`, `FilterSection`, `AllFiltersButton`, `ChipSelectFilter` (merged single + multi chips), `RangeFilter` (merged single-axis + multi-axis), `AsyncComboboxFilter` — plus the `FilterToolbar` organism (internal sticky chrome via IntersectionObserver). `FilterButton` (atom) absorbs the old `PlpQuickFilter`'s per-popover draft lifecycle. (2) `PlpTemplate` is deleted; PLP becomes a kit of individually-exported building blocks — `PlpHeading`, `PlpGridContainer`, `PlpListContainer`, `PlpEmpty`, `PlpError`, plus the existing grid item and list row primitives. Consumers assemble the PLP page in their own code.
+- **Typography atom (#121):** New `Typography` atom covering DSW typography styles (H1–H6, Body 1/2 Regular+Emphasis, Caption Regular+Emphasis). Single `variant` axis, `as` prop for element override, `asChild` via Radix Slot; defaults to `body2`. 12 `--text-typography-*` role presets added to `globals.css` `@theme inline`. Link/Dashed Link deferred to a future Link atom.
 
-Breaking changes:
+## 2026-04-17
 
-- `PlpTemplate` component removed. Assemble pages from the kit — see `templates/plp/plp.stories.tsx` for the canonical pattern.
-- `PlpQuickFilter` removed; use `FilterButton` directly with its new render-prop children API and draft-lifecycle props (`initialValue`, `onApply(value)`, `isActive`, `chipSummary`).
-- `PlpViewToggle` removed; use `ToggleGroup` + `ToggleGroupItem` inline inside `FilterToolbar`'s `actions` slot.
-- `BooleanChipFilter` removed; use `Toggle` or `Switch` atoms directly inside `FilterButton` / `FilterSection`.
-- `SingleSelectDropdownFilter` removed; use `Select` + `SelectTrigger` + `SelectContent` + `SelectItem` inline.
-- `SingleSelectChipsFilter` + `MultiSelectChipsFilter` merged into `ChipSelectFilter` with a `mode: "single" | "multiple"` discriminated union.
-- `RangeSliderFilter` + `MultiAxisRangeFilter` merged into `RangeFilter` with an `axes: RangeAxis[]` prop. Value shape is always `Record<string, { min; max }> | undefined` keyed by axis id — single-axis consumers key the value by their chosen axis id (e.g. `{ price: { min, max } }`).
-- `PlpFilterDrawer`, `PlpFilterSection`, `PlpAllFiltersButton`, `PlpToolbar`, `PlpStickyFilterBar` renamed to `FilterDrawer`, `FilterSection`, `AllFiltersButton`, `FilterToolbar` and relocated to their new molecule / organism folders.
-- `FilterToolbar` bundles the sticky chrome via internal IntersectionObserver; consumers no longer render a separate sticky bar.
-- `FilterDrawer` gains `applyLabel?: string` for non-list use.
-- `PlpEmpty` and `PlpError` are retained as thin PLP kit pieces — the generic `Empty` atom's default dashed-border styling diverges from the PLP invariant.
+- **PLP Template Phase 3a (unstable 0.3.0):** Three advanced filter presets — `range-slider` (two-thumb Slider + commit-on-blur numeric inputs + optional histogram), `multi-axis-range` (one slider + numeric input pair per axis), `async-combobox` (multi-select with lazy initial load, debounced search, label caching). Multi-select chip truncation at 2 + "+N more" (`3c98403`, `3a7d693`, `997952b`, `e62569d`).
+- **PLP Template Phase 3b (unstable 0.4.0):** 360 rotatable media on hover for grid thumbnails. New optional `media360: { videoUrl: string }` field on `GridItemData`. New `useHasHover` hook gates the entire 360 path on pointer-device detection — touch devices skip it entirely. Extracted `PlpGridThumbnail` sub-component (`4d9ef9a`, `aad08b3`, `a2110e9`).
+- **PLP Template Phase 2 (unstable 0.2.0):** List view added alongside grid. New `ListColumn<TItem>` and `PlpViewMode` types; `useIsTabletUp` hook at the 1024px breakpoint with viewport-based fallback to grid below. Sticky header, conditional Price/ct column, hover-gated actions cell, skeleton loading. Grid/list view toggle in toolbar (`110c3a8`, `922cced`, `4422048`).
+- **PLP Template Phase 3c deferred:** Analytics surface deferred indefinitely (consumers wire at their own state-setters/handlers). Captured as ADR-001 in this package's `ADRS.md`.
+- **Atoms round 2 (#120):** Refresh of six form/feedback atoms (Alert, Checkbox, RadioGroup, Slider, Switch, Textarea) — upstream styling, full COMPONENT.md, argTypes, non-discoverable composition stories, play functions on every interactive component. `--ring` theme token retuned from stone-neutral to violet brand hue. Two Rule 1 token-gap flags recorded (Checkbox `rounded-[4px]`, several Switch literals) (`1b6e84f`, `d90fb27`, `530e9f8`).
+- **FilterButton bakes in Apply/Clear:** `FilterButton` now renders Apply/Clear in its popover footer automatically — consumers supply the control as `children` and wire `onApply`/`onClear`. Previous `popoverContent` prop replaced by `children`. New internal `PlpStickyFilterBar` — fixed-position bar below `AppShellHeader` that appears when the main toolbar scrolls out of view, wired via `IntersectionObserver`.
+- **FilterButton atom (unstable 0.1.0):** Two-state control for applied filters — outline button label inactive, split into clickable `label: value` region + inline dismiss X when active. Modelled on Button's `outline` variant with `bg-muted` tint when active. `PlpQuickFilter` refactored to compose it.
 
-No code shipped to production yet — all components are unstable. See the design spec at `docs/plans/specs/2026-04-21-filter-subsystem-and-plp-kit-design.md` and the implementation plan at `docs/plans/2026-04-21-filter-subsystem-and-plp-kit-plan.md`.
+## 2026-04-16
 
----
+- **PLP Template Phase 1 (unstable 0.1.0):** First page-level template. Full grid view with filter system, sorting, pagination, responsive behaviour. Stateless — consumer owns filter state, sort, pagination, data. Rendered inside `AppShell`. Formalised the `templates/` tier in `CONTRIBUTING.md`. Four filter presets (boolean chip, single-select chips, multi-select chips, single-select dropdown). 10-section grid item with optional slots and platform/category actions. Toolbar (search + All Filters + quick filters + sort), All Filters drawer, active filters strip with sticky behaviour and inline chip editing (`870ad89`, `0ba88f5`, `8a49307`, `186d9eb`).
 
-### PLP filter system decoupled from business logic (breaking, unstable 0.5.0)
+## 2026-04-15
 
-Splits the PLP filter system into presentational building blocks owned by the library and wiring owned by the consumer. The `FilterDefinition` schema and preset registry are demolished; each preset is now a standalone component with direct props and its own exported value + option types. The PLP template no longer renders the drawer — consumers render `PlpFilterDrawer` as a sibling and own drawer state, draft buffering, and chip-summary formatting.
+- **AppShell organism + Brand foundation:** Both shipped as `stable 0.0.1`. `AppShell` is a four-region compound (header, nav sheet, main, root wrapper) with hardcoded brand region, search bar, and nav trigger — consumers compose only trailing actions and main content. `Brand` is an inline SVG wordmark with `fill="currentColor"`, resizable via `className`. Search bar uses direct `bg-stone-50` palette — flagged as Rule 1 token-gap, not fixed (`9942451`, `047e771`).
 
-Breaking changes for `PlpTemplate` consumers:
+## 2026-04-14
 
-- `filters`, `filterState`, `onFilterChange`, `filteredResultsCount`, `isCountLoading`, `onDraftFilterStateChange`, `emptyFilterSuggestions` removed.
-- New props: `toolbarFilters: ReactNode[]`, `stickyFilters: ReactNode[]`, `activeFilterCount`, `hasActiveFilters`, `onOpenDrawer`, `onClearAll`.
-- Preset components now take direct props (`value`, `onChange`, plus config like `min`/`max`/`options`/`axes`/`searchFn`). Each preset exports its own `Value` type and, where applicable, its own `Option` type.
-- `PlpQuickFilter` takes a render-prop child `(draft, setDraft) => ReactNode` and a pre-formatted `chipSummary`. Registry lookup removed.
-- `PlpFilterDrawer` takes `children` (the filter sections), plus `open`, `onOpenChange`, `onApply`, `onClearDraft`, `hasActiveDraft`, `resultsCount`, `isCountLoading`.
-- New `PlpFilterSection` primitive for drawer-body entries (heading + separator).
-- `plp-types.ts` drops `FilterDefinition`, `PresetFilterDefinition`, `CustomFilterDefinition`, `FilterPresetName`, `FilterControlProps`, `FilterState`, `FilterValue`, and `FilterOption`. `AppUserContextValue` was moved earlier to `.storybook/app-user-context.tsx`.
-- `plp-filter-registry.ts` and its test are deleted.
+- **Phase B conformance pass (14 components):** Promoted Separator, Skeleton, Label, Badge, Input, Toggle Group, Breadcrumb, Tooltip, Popover, Dropdown Menu, Select, Dialog, Sheet to `stable`. CONTRIBUTING.md: reworded Rule 1 (raw literals forbidden, `var(--token)` in arbitrary syntax allowed), added violation-handling policy, updated DoD for flagged violations. 14 components got named Props interfaces, JSDoc blocks, `tags: ["autodocs"]`, COMPONENT.md, minimal play functions for interactive ones (`20c9be9`, `66fc80c`, `2faad8f`).
+- **Hover state polish:** Fixed `Button.secondary` foreground from `text-primary-foreground` to `text-secondary-foreground`. Consistent `hover:text-primary-hover` across `Button.outline`, `Button.link`, `Toggle`. `Button.secondary` gets `hover:text-secondary-hover` backed by a new `--secondary-hover` token. `Toggle` adds `background` to its transition list (`e3d1a4b`).
+- **Smaller polish:** Breadcrumb separator marked use-as-is — `CustomSeparator` story removed (`5066a5d`). Dropdown destructive stories use `variant="destructive"` instead of faked `className`; aligned `py-3` across interactive items; spinner icon ref fixed (`433dfb9`, `af6fb4e`). Badge marked display-only — `AsLink` story removed, `asChild` deprecated (`fe48445`). Popover/Sheet story cleanup (`e2d1c57`).
 
-Stories rebuilt against the new API with a local `useFilterController` hook as the canonical wiring reference. See [`docs/plans/specs/2026-04-21-plp-filter-decoupling-design.md`](../../docs/plans/specs/2026-04-21-plp-filter-decoupling-design.md) for the full design.
+## 2026-04-13
 
----
-
-### FilterButton bakes in Apply/Clear; PLP gains a sticky filter bar
-
-- `FilterButton` now renders Apply and Clear buttons in its popover footer automatically. Consumers supply the filter control as `children` and wire `onApply` / `onClear` callbacks — the popover auto-closes after either fires. The previous `popoverContent` prop is replaced by `children`.
-- `PlpQuickFilter` simplified to compose the new FilterButton API; manual Apply/Clear rendering removed.
-- New internal `PlpStickyFilterBar` component — a fixed-position bar below the AppShellHeader that appears when the main toolbar scrolls out of view. Shows the "All Filters" button and any engaged filter buttons (quick or non-quick) as a single-row horizontal list with a right-side gradient fade to signify horizontal scrollability. No visible scrollbar. Hides when the main toolbar scrolls back into view or when no filter is engaged.
-- `PlpTemplate` wires the sticky bar via an `IntersectionObserver` on the main toolbar, with `rootMargin: "-72px"` to account for the AppShellHeader height.
-
----
-
-### Add FilterButton atom (unstable 0.1.0)
-
-Introduces `FilterButton` — a two-state control for applied filters. In the inactive state it renders a single outline button with just the filter label; in the active state it splits into a main clickable region showing `label: value` (opens a popover for editing) and an inline dismiss X (clears the filter). Styling is modelled on Button's `outline` variant with a filled `bg-muted` tint for the active state.
-
-- New atom under `atoms/filter-button/` with `.tsx`, `.stories.tsx` (under `Actions/Filter Button`), and `COMPONENT.md`
-- Barrel export added as commented `unstable` line — promote when stable
-- `PlpQuickFilter` refactored to compose `FilterButton` instead of raw `Button + Popover`; removes the duplicated popover/active-state logic and inherits the inline dismiss behaviour that the active filters strip previously provided
-
----
-
-### PLP Template — Phase 3c (analytics hooks) deferred
-
-The planned Phase 3c analytics surface on the PLP template is deferred indefinitely. Consumers wire analytics at their own state-setters and handlers rather than through a template-provided callback. Captured as ADR-001 in this package's [`ADRS.md`](./ADRS.md); the PLP architectural spec §8 has been annotated with a status note pointing at the ADR. No code changes shipped.
-
----
-
-### PLP Template — Phase 3b (unstable 0.4.0)
-
-Adds 360 rotatable media on hover to the PLP grid thumbnail. On pointer devices, items with a `media360.videoUrl` crossfade from their static image into a rotating video; horizontal cursor movement scrubs through the rotation. Touch devices skip the 360 code path entirely.
-
-- New optional `media360: { videoUrl: string }` field on `GridItemData` — category opt-in per item (`4d9ef9a`)
-- New `useHasHover` hook gating the entire 360 path on pointer-device detection — no video element mounts on touch (`aad08b3`)
-- Extracted `PlpGridThumbnail` sub-component owning the static image, optional 360 video with lazy intersection-observer loading and mousemove scrubbing, hover action toolbar, and selection checkbox (`a2110e9`)
-- `PlpGridItem` simplified to delegate thumbnail rendering to `PlpGridThumbnail` (`e532cba`)
-- Storybook: new `With360Media` grid item story; ~1/3 of mock items in PLP stories now include `media360` (`6463c28`, `178bdb3`)
-- COMPONENT.md bumped to 0.4.0 with `media360` field and encoding guidance documented (`b05f849`)
-
----
-
-### PLP Template — Phase 3a (unstable 0.3.0)
-
-Adds three advanced filter presets and chip truncation for multi-select values.
-
-- `range-slider` preset: two-thumb Slider with commit-on-blur numeric inputs, optional distribution histogram that highlights the selected sub-range, unit shown as prefix for currencies and suffix otherwise (`3c98403`)
-- `multi-axis-range` preset: one slider + numeric input pair per named axis, human-readable axis labels in UI and chip text (`3a7d693`)
-- `async-combobox` preset: multi-select Combobox with lazy initial load on open, debounced search, selected-option label caching so chips survive query changes (`997952b`)
-- `FilterPresetName`, `PresetFilterDefinition`, and `FilterValue` extended to cover the new presets and the multi-axis value shape (`2390c54`)
-- Chip truncation for multi-select (`multi-select-chips` and `async-combobox`): first two values shown, `+N more` for the rest (`e62569d`)
-- Registry threads `definition` through to all preset surfaces (drawer, quick filter popover, active chip edit popover); range and multi-axis chip formatters added (`b2d4218`)
-- Storybook: every existing PLP story now exercises all filter presets (`40cba5a`)
-- `PlpTemplate` COMPONENT.md bumped to 0.3.0 with the new preset names documented (`9a4a48f`)
-
----
-
-### PLP Template — Phase 2 (unstable 0.2.0)
-
-Adds list view to the PLP template, alongside the existing grid view. Stateless controlled `viewMode` with viewport-based fallback to grid below 1024px. Opt-in per category via the new `listColumns` prop.
-
-- Added `ListColumn<TItem>` and `PlpViewMode` types and a `useIsTabletUp` hook mirroring `useIsMobile` at the 1024px breakpoint (`110c3a8`, `d89d694`)
-- List view container with sticky header and conditional Price/ct column, row renderer reading fixed core fields from `GridItemData` and category fields from the raw `TItem` via each column's `cell` function, hover-gated actions cell with Add to cart + More menu (platform + category actions), and skeleton loading rows that preserve column headers (`922cced`, `920b448`, `7793527`, `7447f12`)
-- Grid/list view toggle using the `ToggleGroup` atom, wired into the toolbar behind a `hidden lg:flex` responsive gate (`a479799`, `1062f44`)
-- `PlpTemplate` gained `listColumns`, `viewMode`, `onViewModeChange`, and `onItemClick` props; resolves effective view mode from consumer intent + availability + viewport without mutating consumer state on fallback (`4422048`)
-- Storybook: `DiamondListView` with 6 list columns (carat, shape, color, clarity, origin, certificate) and `GemstoneListView` with 3 list columns, both starting in list view (`98accc3`)
-- `PlpTemplate` COMPONENT.md bumped to `0.2.0` with the new props documented (`7931302`)
-
----
-
-### PLP Template — Phase 1 (unstable 0.1.0)
-
-Introduces the `Templates/` tier and ships the first page-level template: `PlpTemplate`. Full grid view with filter system, sorting, pagination, and responsive behaviour. Stateless — consumer owns filter state, sort, pagination, and data fetching. Rendered inside `AppShell`.
-
-- Formalised `templates/` tier in CONTRIBUTING.md; added classification guidance and updated Storybook sidebar taxonomy to remove the "Phase C" qualifier on Templates (`870ad89`)
-- PLP type system + filter registry with preset resolver (`resolveFilterControl`, `formatFilterChipValue`) and test coverage (`870ad89`, `b12acf0`)
-- Four filter presets: boolean chip, single-select chips, multi-select chips, single-select dropdown — with `renderOption` escape hatch on `FilterOption` for rich per-option layouts (card-shaped cut selectors etc.) (`0ba88f5`)
-- Grid item with 10 fixed sections, optional `lead` / `categorySlotTop` / `categorySlotBottom` slots, platform thumbnail actions (favorite/share/viewMedia), category-specific actions, and auto-rendered pricing variants (discount, per-carat, tariffs, legacy, multi-currency) driven by user context (`8a49307`)
-- Toolbar (search + All Filters + quick filters + sort), All Filters drawer with result-count-aware footer, active filters strip with sticky behaviour and inline chip editing (`1f748b1`, `270d23e`, `622f23d`)
-- Grid container (2/3/4 column responsive), skeleton loading, empty/error states, heading with breadcrumbs (`9b62fc6`, `0700cc7`, `a8a67fd`)
-- `PlpTemplate` orchestrator wiring all sub-components, with pagination via the existing `Pagination` molecule (`186d9eb`, `1ddb192`)
-- Storybook: isolated grid item variant playground (12 stories) under `Templates/PLP Grid Item` and full template stories (8 stories) inside `AppShell` under `Templates/PLP` (`2db11ae`, `910e7a2`)
-- COMPONENT.md with full prop table, usage guidelines, and best practices (`e1aa4eb`)
-
----
-
-### Typography atom ([#121](https://github.com/free-agent83/clarity-v2/pull/121))
-
-New `Typography` atom covering the DSW Web Components typography styles (H1–H6, Body 1/2 Regular+Emphasis, Caption Regular+Emphasis). Link and Dashed Link treatments deferred to a future Link atom.
-
-- `Typography` component with a single `variant` axis (12 presets), `as` prop for element override, and `asChild` via Radix Slot; defaults to `body2` to err on compactness; no color/margin/truncation props by design
-- 12 `--text-typography-*` role presets added to `globals.css` `@theme inline` using Tailwind v4's `--text-*` modifier convention — each emits one utility applying font-size, line-height, font-weight and letter-spacing together; values sourced directly from Figma node `18422:14`
-- Stories: `Default`, `Specimen` (type specimen mirroring the Figma "Theme Styles" frame), `AsOverride`, `AsChildWithLink`, `Article` (lorem-ipsum blog article showing real composition); `COMPONENT.md` with full props table, usage, and best practices
-- Design spec: `docs/plans/specs/2026-04-20-typography-component-design.md`
-
----
-
-### Atoms round 2: styling refresh, docs, stories, --ring retuned ([#120](https://github.com/free-agent83/clarity-v2/pull/120))
-
-Refresh of six form/feedback atoms: upstream styling applied, docs and stories populated, `--ring` theme token retuned to the violet brand hue.
-
-- Alert, Checkbox, RadioGroup, Slider, Switch, Textarea: upstream styling (size, colour, shadow, cursor) refreshed; `globals.css` `--ring` shifted from stone-neutral to violet brand hue (`1b6e84f`)
-- Six atoms: argTypes, non-discoverable composition stories (icon/action Alert, horizontal RadioGroup, range/vertical Slider, settings-row Switch), play functions on every interactive component, full COMPONENT.md (props, usage, best practices, writing, quality checklist) (`d90fb27`, `530e9f8`, `ea51323`, `128f358`, `15972cd`, `fda69c3`)
-- Checkbox and Switch: Rule 1 token-gap flags recorded — `rounded-[4px]` on Checkbox; `h-[14px]`, `w-[24px]`, `size-[18px]`, two `translate-x-[calc(…)]` on Switch. Canonical spacing-token equivalents identified for three of the Switch literals; fix deferred per flag-don't-fix policy (`530e9f8`, `15972cd`)
-- Slider: `Snapping` story added showcasing step-based detents; iterated down to slider-only after UX review (`f536dad`, `611f721`, `b19a39b`)
-- Input: `Invalid` story added with `aria-invalid` + associated `aria-describedby` error (`6a2e5ec`)
-
----
-
-### AppShell organism and Brand foundation
-
-Introduces `AppShell` (page-shell organism) and `Brand` (Nivoda wordmark atom), both shipped as `stable 0.0.1`.
-
-- `AppShell`: four-region compound (header, nav sheet, main, root wrapper) with hardcoded brand region, search bar, and nav trigger — consumers compose only trailing actions and main content (`9942451`, `225d062`, `f53e382`)
-- `Brand`: inline SVG wordmark with `fill="currentColor"`, resizable via `className`, four stories under `Foundations/Brand` (`047e771`)
-- Search bar uses direct Tailwind palette (`bg-stone-50`) — flagged as Rule 1 token-gap, not fixed
-
----
-
-### Breadcrumb separator is fixed by the design system
-
-- `BreadcrumbSeparator` must be used as-is — removed `CustomSeparator` story and pruned orphaned `IconSlash` import; COMPONENT.md updated with explicit do/don't (`5066a5d`)
-
----
-
-### Dropdown menu polish
-
-- Switched destructive stories from faking `className` to using `variant="destructive"` so destructive CSS rules actually fire (`433dfb9`, `255e5be`)
-- Aligned `py-3` across all interactive item types for uniform row heights; labels stay at `py-1.5` (`af6fb4e`)
-- Fixed spinner icon reference (`835274c`)
-
----
-
-### Badge is display-only
-
-- Badge must never be used as a link or button — removed `AsLink` story, deprecated `asChild` prop, rewrote best practices (`fe48445`)
-
----
-
-### Hover state polish on interactive atoms
-
-- Fixed `Button.secondary` foreground from `text-primary-foreground` to `text-secondary-foreground` (`e3d1a4b`)
-- Added consistent `hover:text-primary-hover` across `Button.outline`, `Button.link`, and `Toggle`; `Button.secondary` gets `hover:text-secondary-hover` backed by a new `--secondary-hover` theme token (`e3d1a4b`)
-- `Toggle` gains `background` in its transition list for smooth hover animation (`e3d1a4b`)
-
----
-
-### Popover/Sheet story cleanup
-
-- Dropped per-instance `Input` height override in Popover story; added padding to Sheet form story (`e2d1c57`)
-
----
-
-### Phase B conformance pass (14 components)
-
-Promoted Separator, Skeleton, Label, Badge, Input, Toggle Group, Breadcrumb, Tooltip, Popover, Dropdown Menu, Select, Dialog, and Sheet to `stable` after a mechanical conformance pass.
-
-- CONTRIBUTING.md: reworded Rule 1 (raw literals forbidden, `var(--token)` in arbitrary syntax allowed), added violation-handling policy, updated DoD for flagged violations, fixed sidebar taxonomy (`20c9be9`, `855641b`, `c8a4972`)
-- 14 components: added named Props interfaces, JSDoc blocks, `tags: ["autodocs"]`, COMPONENT.md with full content sections, minimal play functions for interactive components (`a45ae70`, `e01784f`, `b502293`, `763adcb`, `cd5087b`, `b7d6784`, `1cde13e`, `d7a278e`, `8421476`, `24f9a8f`, `abf0881`, `c8402ff`, `dd9a787`, `261b27f`)
-- Barrel exports uncommented for the batch (`66fc80c`)
-- Post-verification test fixes: added `@storybook/test` to vitest optimizeDeps; switched portal-rendered play functions to `within(document.body)` (`2faad8f`)
-- Removed DiamondCutSelector story from Toggle Group (`8a056f2`)
-- Refs #58, #59, #60, #61, #62, #72, #73, #74, #75, #76, #77, #78, #82, #83
-
----
-
-### Button conformance pass
-
-Promoted Button to `stable 0.1.0` with loading prop, JSDoc blocks, and CONTRIBUTING.md revisions.
-
-- New `loading` prop (prepends Spinner, forces disabled, sets `aria-busy`), `ButtonProps` interface extracted and type-exported, JSDoc blocks on all exports (`407032d`, `cf5da23`, `cac6678`, `fb9510a`)
-- Indentation fix on destructive/success/link variants; removed dead `icon-lg` from argTypes (`905b110`, `1009125`)
-- CONTRIBUTING.md: dropped `forwardRef`/`displayName` convention, relaxed minimum story set, genericized examples, removed stale testing-infrastructure section, removed Figma parity from DoD (`89f7932`, `6f0595d`)
-- Button and variants exported from barrel; `@` alias added to `vite.config.ts` for library build (`cbaaaec`)
-- `COMPONENT.md` fleshed out and promoted to stable (`d617de1`)
-
----
-
-### Atomic folder structure and testing infrastructure
-
-Reorganized all 50 components into atomic design folders, added testing infrastructure, and scaffolded per-component stories and docs.
-
-- Removed 7 out-of-scope components (Native Select, Calendar, Context Menu, Menubar, Toast, Resizable) and orphaned deps; fixed dangling Button export (`15fa7b4`, `cff625d`)
-- Added `@` path alias to Storybook vite config (`712136f`)
-- Seeded atoms, molecules, organisms into `atoms/`, `molecules/`, `organisms/` folders; removed empty `ui/` directory (`ac8052a`, `32fa6fc`, `d69260f`)
-- Pointed shadcn CLI alias at `atoms/` (`4835fc8`)
-- Rewrote `src/index.ts` barrel as commented-out surface for controlled publishing (`bf05a97`)
-- Added visible placeholder content to all Default stories; simplified Combobox story (`48cf42d`, `38228f0`)
-- Pre-bundled React in vitest `optimizeDeps` to fix hook-call crashes (`ca54ae7`)
-- Added CHANGELOG (`bf05a97`)
-
----
-
-### Initial setup (pre-PR history)
-
-Initial shadcn/ui scaffolding and theme setup before the organized PR workflow began.
-
-- Added `components.json`, `globals.css`, `utils.ts`; scaffolded 55 components via `npx shadcn add` (`2d2b9dc`, `947f48d`)
-- Annotated `globals.css` with comments (`e990801`)
-- Reset to clean shadcn/ui theme starter (`7068ccb`)
-- Removed pre-shadcn reference Button implementation (`6e42687`)
+- **Button conformance pass:** Promoted Button to `stable 0.1.0`. New `loading` prop (prepends Spinner, forces disabled, sets `aria-busy`). `ButtonProps` interface extracted and type-exported. JSDoc blocks on all exports. CONTRIBUTING.md: dropped `forwardRef`/`displayName` convention, relaxed minimum story set, removed Figma parity from DoD (`407032d`, `89f7932`, `cbaaaec`).
+- **Atomic folder structure + testing infrastructure:** Reorganized 50 components into `atoms/`, `molecules/`, `organisms/`. Removed 7 out-of-scope (Native Select, Calendar, Context Menu, Menubar, Toast, Resizable). `@` path alias added to Storybook vite config. `src/index.ts` rewritten as commented-out surface for controlled publishing. Pre-bundled React in vitest `optimizeDeps` to fix hook-call crashes (`15fa7b4`, `ac8052a`, `bf05a97`, `ca54ae7`).
+- **Initial setup:** Initial shadcn/ui scaffolding before the organized PR workflow began — `components.json`, `globals.css`, `utils.ts`; 55 components scaffolded via `npx shadcn add` (`2d2b9dc`, `7068ccb`).
