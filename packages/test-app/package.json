@@ -1,5 +1,5 @@
 {
-  "name": "minivoda-digital-twin",
+  "name": "@nivoda/test-app",
   "version": "0.0.1",
   "type": "module",
   "private": true,
