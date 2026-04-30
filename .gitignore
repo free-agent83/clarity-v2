@@ -78,3 +78,6 @@ Thumbs.db
 
 # Claude Code worktree checkouts (local-only)
 .claude/worktrees/
+
+# Sketchpad for agents
+.sketchpad/
