@@ -569,93 +569,12 @@ Write an ADR when:
 
 Don't write an ADR for routine component work. Component-level rationale belongs in the `COMPONENT.md` under "Usage guidelines" and "Best practices", not in ADRS.md.
 
-### Format
+### Format, numbering, and cross-references
 
-Follow the project-level ADR format:
-
-```md
-## ADR-NNN: Title (Month Year)
-
-**Context:** What's the situation, what was planned, what triggered the decision.
-
-**Decision:** One or two sentences stating what's being chosen.
-
-**Rationale:**
-
-1. **Reason heading.** Explanation.
-2. **Reason heading.** Explanation.
-(...)
-
-**Trade-offs accepted:**
-
-- Bullet 1
-- Bullet 2
-
-**Reversibility:** High / Medium / Low, with a sentence explaining what reversing would require.
-
-**When to reconsider:**
-
-- Specific condition 1.
-- Specific condition 2.
-
-**Related:** (optional)
-- Links to specs, parent ADRs, related decisions.
-```
-
-### Numbering
-
-Append the next sequential number. Never renumber existing entries — ADR numbers are stable references. New entries go at the **bottom** of the file so the file reads chronologically.
-
-### Cross-references
-
-When an ADR supersedes or modifies an earlier decision, the earlier ADR should gain a short status note at its top pointing at the new one (keep the original content intact — don't rewrite history). When a spec's planned work is being deferred or overturned, add a status note at the top of the affected spec section pointing at the ADR.
+See the root [`CONTRIBUTING.md`](../../CONTRIBUTING.md#architectural-decisions-adrs) for the ADR template, numbering rules, and cross-reference convention.
 
 ---
 
-## Submitting a pull request
+## Pull requests, branching, and changelog
 
-### Target branch
-
-All PRs must target the `dev` branch, never `main`. PRs opened against `main` will be rejected.
-
-### CHANGELOG update
-
-Every PR must update `CHANGELOG.md` in this package before submission. The CHANGELOG entry is written as part of the PR, not after.
-
-### CHANGELOG format
-
-The CHANGELOG format is flat-by-PR. Each entry is one PR:
-
-```markdown
-### PR title ([#NNN](https://github.com/free-agent83/clarity-v2/pull/NNN))
-Optional 1-sentence summary if the title alone isn't enough.
-
-- Bullet describing a logical change group (`commit1`, `commit2`)
-- Another bullet (`commit3`)
-```
-
-Rules:
-
-- Each entry heading is the PR title, linked to the PR.
-- Below the heading, an optional 1-sentence summary only if the title isn't self-explanatory.
-- Bullet list where each bullet describes a logical change — group commits when they serve the same purpose.
-- Each bullet references at least one commit hash (short hash, in backticks).
-- Do NOT do one bullet per commit — group related commits into one bullet.
-- Max 2-3 sentences per bullet; no paragraphs, no nested bullets.
-- Keep it scannable — these are indexes for human reviewers.
-
-### PR body format
-
-```markdown
-## Summary
-- [1-3 bullets describing what changed and why — mirrors the CHANGELOG entry]
-
-## References
-Closes #XX, #YY
-```
-
-Rules:
-
-- The Summary bullets should mirror the CHANGELOG entry for this PR.
-- Keep it short — reviewers scan these, they don't read essays.
-- Always include References if the PR addresses any GitHub issues.
+See the root [`CONTRIBUTING.md`](../../CONTRIBUTING.md) for branching, commits, merging, PR body format, and the changelog policy. They apply uniformly across the monorepo. This package's `CHANGELOG.md` follows the project-wide format.
