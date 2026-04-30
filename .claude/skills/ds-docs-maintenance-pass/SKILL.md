@@ -1,5 +1,5 @@
 ---
-name: docs-maintenance-pass
+name: ds-docs-maintenance-pass
 description: Use when documentation files need a health check — stale links, outdated references, cross-doc contradictions, overlaps, or drift from the current codebase state. Covers all Markdown files except DESIGN.md, COMPONENTS.md, and COMPONENT.md files.
 ---
 
