@@ -41,6 +41,10 @@ docs/
 - `npx nx build components` — Nx build for components
 - `cd packages/components && npx storybook dev -p 6006` — run Storybook locally
 
+## User sketchpad
+
+If the user ever mentions a "sketchpad", they are referring to an untracked `.sketchpad/` folder sitting on this project's root.
+
 ## When in doubt
 
 Ask Chris. He's the design lead and owns all decisions. Do not improvise design or architectural decisions — flag gaps and wait for a ruling.
