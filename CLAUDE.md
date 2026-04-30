@@ -36,7 +36,7 @@ docs/
 ## How to run things
 
 - `cd packages/tokens && node build.mjs` — rebuild all token outputs
-- `cd packages/tokens && npx vitest run` — run token tests (should be 20 passing)
+- `cd packages/tokens && npx vitest run` — run token tests (should be 19 passing)
 - `npx nx build tokens` — Nx build for tokens
 - `npx nx build components` — Nx build for components
 - `cd packages/components && npx storybook dev -p 6006` — run Storybook locally
