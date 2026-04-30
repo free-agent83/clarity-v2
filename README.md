@@ -9,8 +9,6 @@ For governance, agent instructions, business context, and surface-specific rules
 ## Start Here
 
 **New to the project?**
-- [`ROADMAP.md`](./ROADMAP.md) — where we are, where we're going, phased plan with status dashboard
-- [`VISION.md`](./VISION.md) — the vision, commercial case, and conceptual model (design system / framework / engine)
 - [`CHANGELOG.md`](./CHANGELOG.md) — what's been built, what's in progress, what's next
 
 **Claude Code / AI agents?**

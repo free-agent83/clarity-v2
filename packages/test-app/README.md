@@ -102,7 +102,7 @@ Everything below this line is for developers working on the codebase.
 
 ### Prerequisites
 
-- **Node.js** — a recent LTS (tested against 20+)
+- **Node.js** — v22 or later (see root `package.json` `engines` field)
 
 ### Install and run
 
