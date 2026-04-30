@@ -69,7 +69,7 @@ clarity-v2/
 ## Related Repos
 
 - **[`../experience-framework/`](../experience-framework/)** — governance, principles, surface rules, and agent instructions. The "constitution" to Clarity V2's "law". Owned by design.
-- **[`../minivoda/clarity-digital-twin/`](../minivoda/clarity-digital-twin/)** — living interactive prototype of the Nivoda platform, deployed to Vercel with a real Supabase database. The venue where new flows are designed, validated with users, and handed off to engineering as branches. Consumes Clarity V2 components.
+- **[`../minivoda/clarity-digital-twin/`](../minivoda/clarity-digital-twin/)** — living interactive prototype of the Nivoda platform, deployed to Vercel with hardcoded fixture data (no live database). The venue where new flows are designed, validated with users, and handed off to engineering as branches. Consumes Clarity V2 components.
 - **`../platform/`** — the production Nivoda monorepo. Eventual consumer of Clarity V2 via a migration to be decided with engineering. Owned by engineering; do not modify from here.
 
 ---
