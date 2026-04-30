@@ -10,6 +10,7 @@ Pre-1.0 entries are grouped by date; post-1.0 will switch to release-version sub
 
 ## 2026-04-30
 
+- **M0 — Hygiene, conventions, and consolidation** closed. Installed Angular Conventional Commits + the `dev`/`main` flow, pre-1.0 versioning, by-date changelog format, and the agent commit-cadence rule in a new root `CONTRIBUTING.md`. Scrubbed all cross-repo references, the deleted-`VISION.md` design-triad metaphor, and the `Phase A/B/C/D` framing from agent-first markdown; deleted root `ROADMAP.md`. Aligned all package versions to `0.0.1` and renamed test-app to `@nivoda/test-app`. Merged the in-flight `claude/festive-beaver-0e136c` branch and pruned it (`c30630d`).
 - Created root [`CONTRIBUTING.md`](./CONTRIBUTING.md) — single source for branching (Angular Conventional Commits, off `dev`, merge commits, no squash), versioning (0.0.1 pre-1.0; independent semver post-1.0), changelog (date subheadings pre-1.0), ADR format, and PR etiquette (`2e97d0c`).
 - Agent-first markdown scrubbed: deleted root `ROADMAP.md`; removed cross-repo references and the design-triad / "Law branch" / "Flow surface" framing from every `CLAUDE.md`; dropped broken `VISION.md` links (`2c2a57f`, `9dee241`, `17bcbc5`, `b531283`, `5fcc227`).
 - Aligned every `package.json` version to `0.0.1` and renamed `minivoda-digital-twin` → `@nivoda/test-app` to fit the `@nivoda/*` scope (`a385834`, `7b39eb0`).

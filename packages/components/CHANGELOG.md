@@ -9,6 +9,7 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 ## 2026-04-30
 
 - Stripped overlapping branching/versioning/PR/ADR-format sections from `CONTRIBUTING.md`. Package-specific guidance preserved (when to write a package vs project-level ADR). File shrank from 661 → 579 lines (`128ef7e`).
+- Merged the in-flight `claude/festive-beaver-0e136c` branch into `dev`: `PlpListRow` gains a `shipsFrom` tooltip; row delivery icons top-aligned; `__stories__/diamond-renderers.tsx` carries `businessDays` through (`c30630d`, originally `5700f3c`, `8b16d4f`).
 
 ## 2026-04-23
 

@@ -9,6 +9,7 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 ## 2026-04-30
 
 - Renamed package `minivoda-digital-twin` → `@nivoda/test-app` to fit the `@nivoda/*` scope (`7b39eb0`).
+- Merged the in-flight `claude/festive-beaver-0e136c` branch into `dev`: PLP product lists for diamonds, engagement rings, gemstones, and melee now propagate `businessDays` consistently (`c30630d`, originally `5700f3c`, `8b16d4f`).
 - Added stub `CONTRIBUTING.md` pointing to root for cross-cutting policy; carries only test-app-specific notes for now (`e2a1775`).
 - Scrubbed the design-triad / "Flow surface" metaphor and Phase A/B/C/D references from `CLAUDE.md` (`9dee241`, `17bcbc5`).
 
