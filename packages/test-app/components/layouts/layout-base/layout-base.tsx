@@ -32,7 +32,7 @@ import {
 import type { AppUser } from "@/lib/api/users";
 import { type NavItem, productCategories } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { COOKIE_NAME } from "@/lib/auth/config";
 import { CalculatorPopover } from "@/components/shell/calculator-popover";
 import { CartButton } from "@/components/shell/cart-button";
 import { CategoriesMenu } from "@/components/shell/categories-menu";
@@ -102,8 +102,7 @@ export function LayoutBase({ children, user }: LayoutBaseProps) {
 
   async function handleSignOut() {
     setIsSigningOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    document.cookie = `${COOKIE_NAME}=; Max-Age=0; path=/`;
     window.location.href = "/login";
   }
 

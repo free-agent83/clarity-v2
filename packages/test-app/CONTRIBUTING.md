@@ -23,6 +23,24 @@ npm run dev
 
 The `dev` script also rebuilds `@nivoda/components` so changes there are picked up on first load.
 
+## Environment variables
+
+Copy `.env.example` to `.env.local` before running the app:
+
+```sh
+cp .env.example .env.local
+```
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `AUTH_USERNAME` | `demo@minivoda.test` | Login email for the demo account |
+| `AUTH_PASSWORD` | `demo` | Login password for the demo account |
+| `JWT_SECRET` | `dev-secret-not-for-production` | Signs the `minivoda_jwt` HttpOnly cookie. Use a strong random value in any shared environment. |
+| `DEMO_LATENCY_MIN_MS` | `80` | Minimum artificial latency (ms) on all data fetches |
+| `DEMO_LATENCY_MAX_MS` | `320` | Maximum artificial latency (ms) on all data fetches |
+
+The defaults work out of the box for local development. Do not commit `.env.local`.
+
 ## Package-specific guidance
 
 This file is intentionally minimal for now. Genuinely test-app-specific guidance accretes here as the app grows — for example, fixture conventions, route-folder layout, and environment variable expectations. Anything cross-cutting goes in root, not here.
