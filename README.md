@@ -54,7 +54,7 @@ clarity-v2/
 ## What This Repo Contains
 
 - **Design tokens** — W3C DTCG JSON source, transformed by a bespoke build script into web CSS, shadcn-compatible CSS, JS/TS, React Native, and JSON outputs
-- **Component library** — shadcn/ui + Radix UI + Tailwind CSS v4 (early stage — one component so far)
+- **Component library** — shadcn/ui + Radix UI + Tailwind CSS v4
 - **Storybook** — component development and documentation
 - **Test app** — Vite harness for live component iteration
 
