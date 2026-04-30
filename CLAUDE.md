@@ -1,27 +1,17 @@
 # CLAUDE.md
 
-This file orients Claude Code at the start of every session in this repo. It is not for humans — see `README.md`, `ROADMAP.md`, and `VISION.md` for human-facing context.
+This file orients Claude Code at the start of every session in this repo. It is not for humans — see `README.md` for human-facing context.
 
 ## What this repo is
 
-Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components + Tailwind v4, in an Nx monorepo. Owned by the design function (Chris). It replaces an older MUI-based design system that lives in the `platform` repo.
+Clarity V2 is Nivoda's new design system: W3C DTCG tokens + shadcn/ui components + Tailwind v4, in an Nx monorepo. Owned by the design function (Chris). It replaces an older MUI-based design system used elsewhere in the company.
 
 **Core outcome:** Whoever builds UI — engineer, designer, or PM — produces design-correct output automatically. The components ARE the design. This collapses the design → engineering → design-QA iteration loop that currently dominates UI delivery. Both engineers writing code directly and designers/PMs using AI coding agents consume the same library and get the same guarantee.
 
-See `ROADMAP.md` for the full picture.
+## Required reading
 
-## Required reading (in this order)
-
-1. `ROADMAP.md` — current status and master phased plan (A done, B active, C/D pending)
-2. `VISION.md` — vision, commercial case, and design triad conceptual model
-3. `CHANGELOG.md` — phase-by-phase progress log
-4. `docs/architecture/architecture.md` — technical architecture + ADRs 001–004
-
-## Related repos on disk
-
-- `../experience-framework/` — governance, principles, agent instructions, personas, surface rules. Owned by design. Clarity V2 is the "law"; this is the "constitution". See VISION.md.
-- `../minivoda/clarity-digital-twin/` — Minivoda: the living digital twin of the Nivoda platform. Next.js 16 + React 19 + Tailwind v4 + shadcn/ui on Supabase, deployed to Vercel. The venue where the self-serve delivery path happens — designers and PMs build new flows here using Clarity V2 components + AI, validate them with users, and hand them to engineering as branches. Consumes Clarity V2 tokens and (eventually) components. Figma is a scrapbook; Minivoda is the source of truth for flows. See VISION.md → "Where the self-serve path actually happens".
-- `../platform/` — the production Nivoda monorepo. Contains the current MUI-based design system at `libs/shared/style-dictionary/`, `libs/shared/components/`, `libs/shared/theme/`. **This is the eventual consumer of Clarity V2.** Reference for token alignment and component APIs. Do not modify platform code — that's engineering-owned.
+1. `CHANGELOG.md` — log of changes by date.
+2. `docs/architecture/architecture.md` — technical architecture + ADRs.
 
 ## Key conventions
 
@@ -34,12 +24,11 @@ See `ROADMAP.md` for the full picture.
 
 ## Things to avoid
 
-- Do not modify files in `../platform/` — that's production code owned by engineering.
 - Do not commit `dist/`, `storybook-static/`, `node_modules/`, `.DS_Store` — all gitignored.
 - Do not add Chromatic back. See ADR-002 (security incident + self-hosted alternative).
 - Do not add Zeroheight. See ADR-004 (Fumadocs replaces it).
 - Do not add Tokens Studio. See ADR-003 (bidirectional Figma sync rejected).
-- Do not create markdown files in the repo root except the top-level ones already there (`README.md`, `CLAUDE.md`, `ROADMAP.md`, `VISION.md`, `CHANGELOG.md`). All other docs live under `docs/`.
+- Do not create markdown files in the repo root except the top-level ones already there (`README.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`). All other docs live under `docs/`.
 
 ## Docs structure
 
@@ -62,4 +51,4 @@ docs/
 
 ## When in doubt
 
-Ask Chris. He's the design lead and owns all decisions. Do not improvise design or architectural decisions — flag gaps and wait for a ruling. See VISION.md "Separation of powers" for the operating model.
+Ask Chris. He's the design lead and owns all decisions. Do not improvise design or architectural decisions — flag gaps and wait for a ruling.
