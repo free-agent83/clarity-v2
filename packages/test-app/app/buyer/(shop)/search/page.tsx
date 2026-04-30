@@ -12,13 +12,16 @@ import {
 } from "@nivoda/components";
 
 import { SearchResultsContent } from "@/components/search/search-results-content";
+import { checkSimulateError } from "@/lib/api/_simulate";
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; simulate?: string; [k: string]: unknown }>;
 }) {
-  const { q } = await searchParams;
+  const sp = await searchParams;
+  checkSimulateError(sp);
+  const { q } = sp;
 
   // Redirect short/missing queries to home with search dialog open
   if (!q || q.length < 2) {

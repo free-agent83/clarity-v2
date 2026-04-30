@@ -6,6 +6,13 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 
 ---
 
+## 2026-04-30 (M1)
+
+- **M1 — Strip Supabase + Drizzle** completed. Ripped the entire DB stack (Supabase, Drizzle ORM, `postgres`), Supabase Auth, the admin area, and the public REST API. Replaced with hardcoded TypeScript fixture arrays under `fixtures/`, JWT cookie auth via `jose`, and in-memory `lib/api/*` projection functions. Every buyer-surface route preserved with identical data shapes. Artificial latency (`80–320ms`) and `?simulate=error` wired to all server pages (`2c70265`, `04f56c0`, `48717c8`, `9ccc4e1`).
+- Added `fixtures/types/` as canonical type SoT (8 domain modules); authored fixtures for all 6 product categories, plus user, orders, shortlists, and finances (`cd5234f`–`a26c141`).
+- Added `providers/user-provider.tsx` (`UserProvider` + `useUser()` context), `lib/auth/` (JWT sign/verify via `jose`), `middleware.ts` rewrite (JWT cookie gate on `/buyer/*`), and login action rewrite (env-var cred match + cookie mint) (`4360678`, `2c70265`).
+- Deleted: `db/`, `lib/supabase/`, `supabase/`, `drizzle.config.ts`, `lib/api/cart.ts`, `lib/api/auth.ts`, all realtime components (`realtime-provider`, `realtime-shell`, `realtime-status`, `broadcast-listener`, `orders-realtime-wrapper`, `use-realtime-sync`), `switch-user.ts`, `app/api/`, `app/buyer/(admin)/`, `lib/api/admin/`, `components/admin/` (`48717c8`, `9ccc4e1`).
+
 ## 2026-04-30
 
 - Renamed package `minivoda-digital-twin` → `@nivoda/test-app` to fit the `@nivoda/*` scope (`7b39eb0`).

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getCurrentUser } from "@/lib/api/users";
 import { fetchOrder } from "@/lib/api/orders";
 import type { Order } from "@/lib/api/orders";
+import { checkSimulateError } from "@/lib/api/_simulate";
 import { Button } from "@nivoda/components";
 import { Separator } from "@nivoda/components";
 import { Card, CardContent, CardHeader, CardTitle } from "@nivoda/components";
@@ -343,9 +344,13 @@ function DetailedUpdates({ order }: { order: Order }) {
 
 export default async function OrderDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ simulate?: string; [k: string]: unknown }>;
 }) {
+  const sp = await searchParams;
+  checkSimulateError(sp);
   const [{ id }, user] = await Promise.all([params, getCurrentUser()]);
   const order = await fetchOrder(id, user.id);
 

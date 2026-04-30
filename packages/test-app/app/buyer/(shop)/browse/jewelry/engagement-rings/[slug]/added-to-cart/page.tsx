@@ -4,6 +4,7 @@ import { IconCircleCheckFilled } from "@tabler/icons-react";
 import { fetchEngagementRingItem } from "@/lib/api/jewelry";
 import { fetchDiamondItem } from "@/lib/api/diamonds";
 import { formatUSD } from "@/lib/utils";
+import { checkSimulateError } from "@/lib/api/_simulate";
 import { AddedToCartActions } from "./added-to-cart-actions";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
 export default async function AddedToCartPage({ params, searchParams }: Props) {
   const { slug } = await params;
   const sp = await searchParams;
+  checkSimulateError(sp);
 
   const metalId = sp.metalId;
   const stoneId = sp.stoneId;

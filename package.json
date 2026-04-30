@@ -19,6 +19,9 @@
     "typescript": "~5.9.2",
     "vite": "^6.4.1"
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "workspaces": [
     "packages/*"
   ]

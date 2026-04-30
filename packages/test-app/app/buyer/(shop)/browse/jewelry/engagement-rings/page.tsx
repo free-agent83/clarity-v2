@@ -3,6 +3,7 @@ import {
   PER_PAGE_OPTIONS,
   DEFAULT_PER_PAGE,
 } from "@/components/layouts/layout-plp/layout-plp";
+import { checkSimulateError } from "@/lib/api/_simulate";
 import { EngagementRingPlpItem } from "@/components/products/engagement-ring-plp-item";
 import {
   EngagementRingPlpListHeader,
@@ -21,9 +22,12 @@ export default async function JewelryListPage({
     page?: string;
     perPage?: string;
     view?: string | string[];
+    simulate?: string;
+    [k: string]: unknown;
   }>;
 }) {
   const params = await searchParams;
+  checkSimulateError(params);
   const viewMode = parsePlpViewMode(params.view);
 
   const {

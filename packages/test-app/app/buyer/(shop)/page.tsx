@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/api/users";
 import { HomeCarousel } from "@/components/home-carousel";
+import { checkSimulateError } from "@/lib/api/_simulate";
 
 const HOME_CATEGORIES = [
   { label: "Engagement rings", slug: "engagement-rings", badge: "New" },
@@ -12,7 +13,13 @@ const HOME_CATEGORIES = [
   { label: "Lab grown melee", slug: "lab-grown-melee", badge: null },
 ];
 
-export default async function BuyerHomePage() {
+export default async function BuyerHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ simulate?: string; [k: string]: unknown }>;
+}) {
+  const sp = await searchParams;
+  checkSimulateError(sp);
   const user = await getCurrentUser();
 
   return (
