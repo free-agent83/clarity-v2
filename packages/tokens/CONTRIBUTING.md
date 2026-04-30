@@ -23,7 +23,7 @@ Every token in `src/` flows, unchanged or transformed, into:
 - Email template inline values
 - Backend JSON
 
-A single changed value carries brand, accessibility, and product implications across every Nivoda surface at once. These are decisions only the design function should make. This is the "law / constitution" split from [`VISION.md`](../../VISION.md) — design owns what the tokens *are*; engineering owns how they *build*.
+A single changed value carries brand, accessibility, and product implications across every Nivoda surface at once. These are decisions only the design function should make: design owns what the tokens *are*; engineering owns how they *build*.
 
 ## Three enforcement layers
 
