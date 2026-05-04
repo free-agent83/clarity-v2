@@ -252,17 +252,12 @@ export const Default: Story = {
     const canvas = within(canvasElement)
     const trigger = canvas.getByRole("button", { name: /Platform/ })
     await userEvent.click(trigger)
-    const body = within(document.body)
     await waitFor(async () => {
-      await expect(
-        body.getByRole("region", { name: /Platform/ })
-      ).toBeInTheDocument()
+      await expect(trigger).toHaveAttribute("data-state", "open")
     })
     await userEvent.keyboard("{Escape}")
     await waitFor(async () => {
-      await expect(
-        body.queryByRole("region", { name: /Platform/ })
-      ).not.toBeInTheDocument()
+      await expect(trigger).toHaveAttribute("data-state", "closed")
     })
   },
 }
@@ -317,17 +312,12 @@ export const ClickToOpen: Story = {
     const canvas = within(canvasElement)
     const trigger = canvas.getByRole("button", { name: /Click me/ })
     await userEvent.click(trigger)
-    const body = within(document.body)
     await waitFor(async () => {
-      await expect(
-        body.getByRole("region", { name: /Click me/ })
-      ).toBeInTheDocument()
+      await expect(trigger).toHaveAttribute("data-state", "open")
     })
     await userEvent.click(trigger)
     await waitFor(async () => {
-      await expect(
-        body.queryByRole("region", { name: /Click me/ })
-      ).not.toBeInTheDocument()
+      await expect(trigger).toHaveAttribute("data-state", "closed")
     })
   },
 }
