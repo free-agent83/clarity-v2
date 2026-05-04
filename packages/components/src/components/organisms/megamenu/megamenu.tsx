@@ -3,9 +3,9 @@
 import * as React from "react"
 import { createPortal } from "react-dom"
 import { Slot, Tabs as TabsPrimitive } from "radix-ui"
+import { IconChevronRight } from "@tabler/icons-react"
 
 import { cn } from "@/lib/utils"
-import { useIsMobile } from "@/hooks/use-mobile"
 import { useIsTabletUp } from "@/hooks/use-is-tablet-up"
 import { Typography } from "@/components/atoms/typography/typography"
 import {
@@ -380,7 +380,7 @@ interface MegamenuContentProps extends React.ComponentProps<"div"> {
 
 /**
  * Panel content for a megamenu. Renders via portal to `document.body`
- * on `md` and up; renders inside a bottom Sheet below `md`.
+ * on `lg` and up; renders inside a bottom Sheet below `lg`.
  *
  * Free-form children — typically composed of `<MegamenuTabs>`,
  * `<MegamenuLink>`, and `<MegamenuFooter>`, with consumer-supplied
@@ -394,7 +394,7 @@ function MegamenuContent({
 }: MegamenuContentProps) {
   const item = useItemContext("MegamenuContent")
   const group = useGroupContext("MegamenuContent")
-  const isMobile = useIsMobile()
+  const isTabletUp = useIsTabletUp()
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
@@ -402,7 +402,7 @@ function MegamenuContent({
   }, [])
 
   React.useEffect(() => {
-    if (!item.open || isMobile) return
+    if (!item.open || !isTabletUp) return
     const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Node | null
       if (!target) return
@@ -423,11 +423,11 @@ function MegamenuContent({
       document.removeEventListener("pointerdown", onPointerDown)
       document.removeEventListener("keydown", onKey)
     }
-  }, [item, isMobile])
+  }, [item, isTabletUp])
 
   const label = ariaLabel ?? item.triggerLabel ?? undefined
 
-  if (isMobile) {
+  if (!isTabletUp) {
     return (
       <Sheet
         open={item.open}
@@ -438,7 +438,6 @@ function MegamenuContent({
         <SheetContent
           side="bottom"
           data-slot="megamenu-content"
-          data-breakpoint="mobile"
           className={cn(
             "max-h-[85vh] overflow-y-auto px-0 py-0",
             className
@@ -470,7 +469,6 @@ function MegamenuContent({
       aria-label={label}
       data-slot="megamenu-content"
       data-state={item.open ? "open" : "closed"}
-      data-breakpoint="desktop"
       className={cn(
         "fixed inset-x-0 z-50 duration-100",
         "data-open:animate-in data-open:fade-in-0",
@@ -506,13 +504,13 @@ interface MegamenuLinkProps
   href: string
   title: React.ReactNode
   description?: React.ReactNode
-  icon?: React.ReactNode
+  leading?: React.ReactNode
   asChild?: boolean
 }
 
 /**
- * Atomic item inside a megamenu panel. Layout is icon (left) + text
- * stack (title above optional description).
+ * Atomic item inside a megamenu panel. Layout is leading content (left)
+ * + text stack (title above optional description).
  *
  * Clicking the link closes the megamenu — set `data-keep-open` on the
  * anchor (or call `event.preventDefault()` from `onClick`) if you need
@@ -522,7 +520,7 @@ function MegamenuLink({
   href,
   title,
   description,
-  icon,
+  leading,
   asChild = false,
   className,
   onClick,
@@ -542,13 +540,13 @@ function MegamenuLink({
 
   const inner = (
     <>
-      {icon ? (
+      {leading ? (
         <div
-          data-slot="megamenu-link-icon"
+          data-slot="megamenu-link-leading"
           aria-hidden="true"
-          className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-foreground [&_svg:not([class*='size-'])]:size-5 group-hover:text-accent-foreground group-hover:bg-accent"
+          className="self-center"
         >
-          {icon}
+          {leading}
         </div>
       ) : null}
       <span
@@ -582,8 +580,8 @@ function MegamenuLink({
       data-slot="megamenu-link"
       href={asChild ? undefined : href}
       className={cn(
-        "group flex items-start gap-3 rounded-md p-2 outline-none transition-colors",
-        "hover:bg-accent focus-visible:bg-muted",
+        "group flex items-start gap-3 rounded-md px-3 py-2 outline-none transition-colors",
+        "hover:bg-accent focus-visible:bg-accent",
         "focus-visible:ring-3 focus-visible:ring-ring/50",
         className
       )}
@@ -660,12 +658,22 @@ function MegamenuTabsList({
     <TabsPrimitive.List
       data-slot="megamenu-tabs-list"
       className={cn(
-        "hidden flex-col gap-1 border-r border-border p-4 lg:flex lg:w-60 lg:shrink-0",
+        "hidden flex-col gap-1 border-r border-border p-4 lg:flex lg:w-70 lg:shrink-0",
         className
       )}
       {...props}
     />
   )
+}
+
+type MegamenuTabsTriggerProps = React.ComponentProps<
+  typeof TabsPrimitive.Trigger
+> & {
+  /**
+   * Optional content rendered before the label — typically an icon, but
+   * accepts any node.
+   */
+  leading?: React.ReactNode
 }
 
 /**
@@ -675,8 +683,10 @@ function MegamenuTabsList({
 function MegamenuTabsTrigger({
   className,
   onPointerEnter,
+  leading,
+  children,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+}: MegamenuTabsTriggerProps) {
   const handlePointerEnter = (e: React.PointerEvent<HTMLButtonElement>) => {
     onPointerEnter?.(e)
     if (e.defaultPrevented) return
@@ -689,14 +699,29 @@ function MegamenuTabsTrigger({
       data-slot="megamenu-tabs-trigger"
       onPointerEnter={handlePointerEnter}
       className={cn(
-        "flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-medium text-muted-foreground transition-colors cursor-pointer",
+        "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-foreground transition-colors cursor-pointer",
         "hover:bg-muted hover:text-foreground",
         "focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none",
         "data-[state=active]:bg-accent data-[state=active]:text-accent-foreground",
         className
       )}
       {...props}
-    />
+    >
+      {leading ? (
+        <span
+          data-slot="megamenu-tabs-trigger-leading"
+          aria-hidden="true"
+          className="shrink-0"
+        >
+          {leading}
+        </span>
+      ) : null}
+      {children}
+      <IconChevronRight
+        aria-hidden="true"
+        className="ml-auto size-4 shrink-0 text-muted-foreground/30"
+      />
+    </TabsPrimitive.Trigger>
   )
 }
 

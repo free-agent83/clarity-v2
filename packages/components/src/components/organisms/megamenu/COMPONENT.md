@@ -8,7 +8,7 @@ lastUpdated: 2026-04-30
 
 # Megamenu
 
-Trigger-agnostic compound component for app-header navigation panels. A row of triggers (some megamenu, some plain links) coordinates so only one panel is open at a time, cross-trigger handoff is instant, and the panel collapses into a bottom Sheet below `md`.
+Trigger-agnostic compound component for app-header navigation panels. A row of triggers (some megamenu, some plain links) coordinates so only one panel is open at a time, cross-trigger handoff is instant, and the panel collapses into a bottom Sheet below `lg`.
 
 ## Props
 
@@ -17,8 +17,8 @@ Megamenu is a compound component. The pieces:
 - `MegamenuGroup` — coordinator + `<nav>` landmark
 - `Megamenu` — root for a single instance; holds open state + timing
 - `MegamenuTrigger` — behavior + ARIA wrapper (unstyled, `asChild`-first)
-- `MegamenuContent` — the panel; portals to `document.body` on `md+`, renders inside `Sheet` below `md`
-- `MegamenuLink` — atomic item (icon + title + description)
+- `MegamenuContent` — the panel; portals to `document.body` on `lg+`, renders inside `Sheet` below `lg`
+- `MegamenuLink` — atomic item (leading slot + title + description)
 - `MegamenuFooter` — bottom strip across the panel
 - `MegamenuTabs`, `MegamenuTabsList`, `MegamenuTabsTrigger`, `MegamenuTabsPanel` — internal vertical tabs
 
@@ -62,13 +62,19 @@ Default rendering is a bare `<button type="button">` with no styling. Production
 | `href` | `string` | — | Required. |
 | `title` | `ReactNode` | — | Required. Primary label. |
 | `description` | `ReactNode` | — | Optional secondary line. |
-| `icon` | `ReactNode` | — | Optional leading icon. |
+| `leading` | `ReactNode` | — | Optional content rendered before the label — typically an icon, but accepts any node. |
 | `asChild` | `boolean` | `false` | For routing libraries — pass a `<Link>` element through. |
 | `data-keep-open` | `""` (presence) | — | When set on the rendered anchor, clicking it does not close the panel. |
 
 ### MegamenuTabs
 
 `MegamenuTabs`, `MegamenuTabsList`, `MegamenuTabsTrigger`, and `MegamenuTabsPanel` accept the props of their underlying Radix `Tabs` primitives.
+
+`MegamenuTabsTrigger` adds:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `leading` | `ReactNode` | — | Optional content rendered before the label — typically an icon, but accepts any node. |
 
 `MegamenuTabsPanel` adds:
 
@@ -80,7 +86,7 @@ Default rendering is a bare `<button type="button">` with no styling. Production
 
 Use Megamenu for the primary navigation row in a marketing or product app header. The DS owns the panel and its internals; the trigger is unstyled and inherits its visual identity from the consumer's row-item component.
 
-**Don't use Megamenu** for a contextual menu attached to a button — use `DropdownMenu`. **Don't use Megamenu** for a single-purpose link list under a header — a styled `<a>` row inside the header is enough. **Don't use Megamenu** as the primary navigation on a small-screen-only surface — below `md` it falls back to a Sheet, which is the right behavior on mobile but isn't a substitute for a dedicated `Sidebar` or `Drawer` pattern.
+**Don't use Megamenu** for a contextual menu attached to a button — use `DropdownMenu`. **Don't use Megamenu** for a single-purpose link list under a header — a styled `<a>` row inside the header is enough. **Don't use Megamenu** as the primary navigation on a small-screen-only surface — below `lg` it falls back to a Sheet, which is the right behavior on mobile but isn't a substitute for a dedicated `Sidebar` or `Drawer` pattern.
 
 The activation mode is per-instance, but in practice an app header should pick one mode and apply it consistently across all megamenus in the group.
 
@@ -100,7 +106,7 @@ The activation mode is per-instance, but in practice an app header should pick o
 
 - [x] Accessibility: disclosure pattern (W3C APG), `aria-expanded` / `aria-controls` on trigger, `role="region"` on panel, Escape closes + restores focus
 - [x] Tokens only: no hardcoded visual values
-- [x] Responsive: full panel on `lg+`, 2-col flatten on `md`, bottom Sheet below `md`
+- [x] Responsive: full panel on `lg+`, bottom Sheet below `lg`
 - [x] Keyboard: Tab traverses linearly through trigger row and expanded panel; Escape closes
 - [x] Reduced motion respected (animation collapses to instant)
 - [ ] Storybook play functions cover hover flow, click flow, and Escape close

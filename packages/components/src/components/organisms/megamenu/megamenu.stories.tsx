@@ -10,6 +10,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Button } from "../../atoms/button/button"
+import { Typography } from "@/components/atoms/typography/typography"
 import {
   Megamenu,
   MegamenuContent,
@@ -23,8 +24,6 @@ import {
   MegamenuTrigger,
 } from "./megamenu"
 
-const sectionHeadingClass = "mb-3 text-sm font-semibold text-foreground"
-
 const meta: Meta<typeof MegamenuGroup> = {
   title: "Navigation/Megamenu",
   component: MegamenuGroup,
@@ -35,7 +34,7 @@ const meta: Meta<typeof MegamenuGroup> = {
   decorators: [
     (Story) => (
       <div className="flex min-h-150 flex-col bg-background">
-        <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background px-6">
+        <header className="sticky top-0 z-40 flex h-14 items-center justify-between px-6 bg-negative text-negative-foreground">
           <span className="text-sm font-semibold tracking-tight">
             Lustre &amp; Co.
           </span>
@@ -73,7 +72,7 @@ function NavLinkItem({
   className = "",
   ...props
 }: NavLinkItemProps) {
-  const baseClassName = `inline-flex h-9 items-center gap-1 rounded-md px-3 text-sm font-medium text-foreground/80 outline-none transition-colors hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground data-[state=open]:text-foreground ${className}`
+  const baseClassName = `inline-flex h-9 items-center gap-1 rounded-md px-3 text-sm font-medium text-negative-foreground outline-none transition-colors   data-[state=open]:bg-negative-foreground/10 ${className}`
 
   const inner = (
     <>
@@ -281,13 +280,14 @@ function LinkColumn({
 }) {
   return (
     <div>
-      <h3 className={sectionHeadingClass}>{title}</h3>
+      <Typography variant="subtitle-2" className="pl-3 mb-2">{title}</Typography>
       <div className="flex flex-col">
         {items.map((label) => (
           <MegamenuLink
             key={label}
             href={`#${prefix}-${slugify(label)}`}
             title={label}
+            leading={<div className="size-4 rounded bg-muted" />}
           />
         ))}
       </div>
@@ -450,16 +450,13 @@ function PromoBanner() {
       className="m-3 grid overflow-hidden rounded-md border border-border bg-muted/40 lg:grid-cols-[1fr_320px]"
     >
       <div className="flex flex-col items-start gap-3 p-6">
-        <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Spring 2026 Collection
-        </span>
-        <h3 className="text-xl font-semibold text-foreground">
+        <Typography as="h3" variant="h6" className="text-foreground">
           Bloom — engagement rings inspired by gardens in early spring
-        </h3>
-        <p className="max-w-prose text-sm text-muted-foreground">
+        </Typography>
+        <Typography variant="body-2" className="max-w-prose text-muted-foreground">
           Twenty-eight new settings, hand-finished in our New York atelier.
           Pair with any of our curated stones to bring it to life.
-        </p>
+        </Typography>
         <Button asChild size="sm" className="mt-1">
           <a href="#bloom">
             Explore the collection
@@ -550,19 +547,21 @@ export const WithCategoryTabbing: Story = {
         <MegamenuContent>
           <MegamenuTabs defaultValue="engagement-rings">
             <MegamenuTabsList>
-              <MegamenuTabsTrigger value="engagement-rings">
+              <MegamenuTabsTrigger leading={<div className="size-8 bg-muted rounded" />} value="engagement-rings">
                 Engagement Rings
               </MegamenuTabsTrigger>
-              <MegamenuTabsTrigger value="wedding-bands">
+              <MegamenuTabsTrigger leading={<div className="size-8 bg-muted rounded" />} value="wedding-bands">
                 Wedding Bands
               </MegamenuTabsTrigger>
-              <MegamenuTabsTrigger value="tennis-bracelets">
+              <MegamenuTabsTrigger leading={<div className="size-8 bg-muted rounded" />} value="tennis-bracelets">
                 Tennis Bracelets
               </MegamenuTabsTrigger>
-              <MegamenuTabsTrigger value="necklaces">
+              <MegamenuTabsTrigger leading={<div className="size-8 bg-muted rounded" />} value="necklaces">
                 Necklaces
               </MegamenuTabsTrigger>
-              <MegamenuTabsTrigger value="studs">Studs</MegamenuTabsTrigger>
+              <MegamenuTabsTrigger leading={<div className="size-8 bg-muted rounded" />} value="studs">
+                Studs
+              </MegamenuTabsTrigger>
             </MegamenuTabsList>
 
             <MegamenuTabsPanel
