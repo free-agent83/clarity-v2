@@ -23,13 +23,18 @@ import {
   MegamenuFooter,
   MegamenuGroup,
   MegamenuLink,
-  MegamenuSection,
   MegamenuTabs,
   MegamenuTabsList,
   MegamenuTabsPanel,
   MegamenuTabsTrigger,
   MegamenuTrigger,
 } from "./megamenu"
+
+const sectionHeadingClass =
+  "mb-2 px-2 text-xs font-medium tracking-wide text-muted-foreground uppercase"
+
+const sectionHeadingTitleCaseClass =
+  "mb-3 text-sm font-semibold text-foreground"
 
 const meta: Meta<typeof MegamenuGroup> = {
   title: "Navigation/Megamenu",
@@ -133,7 +138,8 @@ export const Default: Story = {
 
             <MegamenuTabsPanel value="contractors" tabLabel="For Contractors">
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-6 lg:grid-cols-2">
-                <MegamenuSection title="Core">
+                <div>
+                  <h3 className={sectionHeadingClass}>Core</h3>
                   <MegamenuLink
                     href="#invoices"
                     icon={<IconFileInvoice />}
@@ -152,8 +158,9 @@ export const Default: Story = {
                     title="Manage Work"
                     description="Keep everything organized"
                   />
-                </MegamenuSection>
-                <MegamenuSection title="Money">
+                </div>
+                <div>
+                  <h3 className={sectionHeadingClass}>Money</h3>
                   <MegamenuLink
                     href="#crypto"
                     icon={<IconCurrencyBitcoin />}
@@ -173,13 +180,14 @@ export const Default: Story = {
                     title="No company? No problem"
                     description="Invoice without a company"
                   />
-                </MegamenuSection>
+                </div>
               </div>
             </MegamenuTabsPanel>
 
             <MegamenuTabsPanel value="businesses" tabLabel="For Businesses">
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-6 lg:grid-cols-2">
-                <MegamenuSection title="Pay">
+                <div>
+                  <h3 className={sectionHeadingClass}>Pay</h3>
                   <MegamenuLink
                     href="#contractors"
                     icon={<IconUserPlus />}
@@ -192,15 +200,16 @@ export const Default: Story = {
                     title="Subscriptions"
                     description="Charge clients automatically"
                   />
-                </MegamenuSection>
-                <MegamenuSection title="Tools">
+                </div>
+                <div>
+                  <h3 className={sectionHeadingClass}>Tools</h3>
                   <MegamenuLink
                     href="#help"
                     icon={<IconHelpCircle />}
                     title="Help Center"
                     description="Guides and support"
                   />
-                </MegamenuSection>
+                </div>
               </div>
             </MegamenuTabsPanel>
           </MegamenuTabs>
@@ -222,7 +231,8 @@ export const Default: Story = {
         </MegamenuTrigger>
         <MegamenuContent>
           <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-6 lg:grid-cols-2">
-            <MegamenuSection title="Learn">
+            <div>
+              <h3 className={sectionHeadingClass}>Learn</h3>
               <MegamenuLink
                 href="#blog"
                 icon={<IconNews />}
@@ -235,15 +245,16 @@ export const Default: Story = {
                 title="Guides"
                 description="In-depth product walkthroughs"
               />
-            </MegamenuSection>
-            <MegamenuSection title="Support">
+            </div>
+            <div>
+              <h3 className={sectionHeadingClass}>Support</h3>
               <MegamenuLink
                 href="#help"
                 icon={<IconHelpCircle />}
                 title="Help Center"
                 description="Find answers fast"
               />
-            </MegamenuSection>
+            </div>
           </div>
         </MegamenuContent>
       </Megamenu>
@@ -272,20 +283,19 @@ export const ClickToOpen: Story = {
         </MegamenuTrigger>
         <MegamenuContent>
           <div className="p-6">
-            <MegamenuSection title="Click activation">
-              <MegamenuLink
-                href="#one"
-                icon={<IconFileInvoice />}
-                title="Item one"
-                description="Hovering does nothing"
-              />
-              <MegamenuLink
-                href="#two"
-                icon={<IconCash />}
-                title="Item two"
-                description="Click the trigger to open"
-              />
-            </MegamenuSection>
+            <h3 className={sectionHeadingClass}>Click activation</h3>
+            <MegamenuLink
+              href="#one"
+              icon={<IconFileInvoice />}
+              title="Item one"
+              description="Hovering does nothing"
+            />
+            <MegamenuLink
+              href="#two"
+              icon={<IconCash />}
+              title="Item two"
+              description="Click the trigger to open"
+            />
           </div>
         </MegamenuContent>
       </Megamenu>
@@ -296,14 +306,13 @@ export const ClickToOpen: Story = {
         </MegamenuTrigger>
         <MegamenuContent>
           <div className="p-6">
-            <MegamenuSection title="Coordinator still active">
-              <MegamenuLink
-                href="#a"
-                icon={<IconFolder />}
-                title="Opening this closes the other"
-                description="Single-active across the group"
-              />
-            </MegamenuSection>
+            <h3 className={sectionHeadingClass}>Coordinator still active</h3>
+            <MegamenuLink
+              href="#a"
+              icon={<IconFolder />}
+              title="Opening this closes the other"
+              description="Single-active across the group"
+            />
           </div>
         </MegamenuContent>
       </Megamenu>
@@ -332,7 +341,8 @@ export const WithoutTabs: Story = {
         </MegamenuTrigger>
         <MegamenuContent>
           <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-6 lg:grid-cols-3">
-            <MegamenuSection title="Pay">
+            <div>
+              <h3 className={sectionHeadingClass}>Pay</h3>
               <MegamenuLink
                 href="#a"
                 icon={<IconFileInvoice />}
@@ -345,8 +355,9 @@ export const WithoutTabs: Story = {
                 title="Get Paid"
                 description="Get paid fast"
               />
-            </MegamenuSection>
-            <MegamenuSection title="Tools">
+            </div>
+            <div>
+              <h3 className={sectionHeadingClass}>Tools</h3>
               <MegamenuLink
                 href="#c"
                 icon={<IconFolder />}
@@ -359,15 +370,16 @@ export const WithoutTabs: Story = {
                 title="Subscriptions"
                 description="Charge clients automatically"
               />
-            </MegamenuSection>
-            <MegamenuSection title="Help">
+            </div>
+            <div>
+              <h3 className={sectionHeadingClass}>Help</h3>
               <MegamenuLink
                 href="#e"
                 icon={<IconHelpCircle />}
                 title="Help Center"
                 description="Guides and FAQs"
               />
-            </MegamenuSection>
+            </div>
           </div>
           <MegamenuFooter>
             <span className="text-sm text-muted-foreground">
@@ -435,7 +447,10 @@ export const JewelleryByCategory: Story = {
               tabLabel="Engagement Rings"
             >
               <div className="grid grid-cols-1 gap-x-12 gap-y-6 p-6 lg:grid-cols-2">
-                <MegamenuSection title="Engagement rings by style">
+                <div>
+                  <h3 className={sectionHeadingTitleCaseClass}>
+                    Engagement rings by style
+                  </h3>
                   <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
                     {ENGAGEMENT_STYLES.map((label) => (
                       <MegamenuLink
@@ -445,8 +460,11 @@ export const JewelleryByCategory: Story = {
                       />
                     ))}
                   </div>
-                </MegamenuSection>
-                <MegamenuSection title="Engagement rings by stone shape">
+                </div>
+                <div>
+                  <h3 className={sectionHeadingTitleCaseClass}>
+                    Engagement rings by stone shape
+                  </h3>
                   <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
                     {ENGAGEMENT_SHAPES.map((label) => (
                       <MegamenuLink
@@ -456,20 +474,21 @@ export const JewelleryByCategory: Story = {
                       />
                     ))}
                   </div>
-                </MegamenuSection>
+                </div>
               </div>
             </MegamenuTabsPanel>
 
             <MegamenuTabsPanel value="wedding-bands" tabLabel="Wedding Bands">
               <div className="p-6">
-                <MegamenuSection title="Wedding bands by metal">
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-                    <MegamenuLink href="#yellow-gold" title="Yellow Gold" />
-                    <MegamenuLink href="#white-gold" title="White Gold" />
-                    <MegamenuLink href="#rose-gold" title="Rose Gold" />
-                    <MegamenuLink href="#platinum" title="Platinum" />
-                  </div>
-                </MegamenuSection>
+                <h3 className={sectionHeadingTitleCaseClass}>
+                  Wedding bands by metal
+                </h3>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                  <MegamenuLink href="#yellow-gold" title="Yellow Gold" />
+                  <MegamenuLink href="#white-gold" title="White Gold" />
+                  <MegamenuLink href="#rose-gold" title="Rose Gold" />
+                  <MegamenuLink href="#platinum" title="Platinum" />
+                </div>
               </div>
             </MegamenuTabsPanel>
 
@@ -478,14 +497,15 @@ export const JewelleryByCategory: Story = {
               tabLabel="Tennis Bracelets"
             >
               <div className="p-6">
-                <MegamenuSection title="Tennis bracelets by stone">
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-                    <MegamenuLink href="#diamond" title="Diamond" />
-                    <MegamenuLink href="#sapphire" title="Sapphire" />
-                    <MegamenuLink href="#ruby" title="Ruby" />
-                    <MegamenuLink href="#emerald" title="Emerald" />
-                  </div>
-                </MegamenuSection>
+                <h3 className={sectionHeadingTitleCaseClass}>
+                  Tennis bracelets by stone
+                </h3>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                  <MegamenuLink href="#diamond" title="Diamond" />
+                  <MegamenuLink href="#sapphire" title="Sapphire" />
+                  <MegamenuLink href="#ruby" title="Ruby" />
+                  <MegamenuLink href="#emerald" title="Emerald" />
+                </div>
               </div>
             </MegamenuTabsPanel>
           </MegamenuTabs>
@@ -495,109 +515,3 @@ export const JewelleryByCategory: Story = {
   ),
 }
 
-export const EngagementRingsRich: Story = {
-  render: () => (
-    <MegamenuGroup aria-label="Main">
-      <Megamenu>
-        <MegamenuTrigger asChild>
-          <NavLinkItem withChevron>Engagement Rings</NavLinkItem>
-        </MegamenuTrigger>
-        <MegamenuContent>
-          <div className="grid grid-cols-1 gap-x-10 gap-y-8 p-6 lg:grid-cols-[1fr_1fr_320px]">
-            <MegamenuSection title="Engagement rings by style">
-              <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
-                {ENGAGEMENT_STYLES.map((label) => (
-                  <MegamenuLink
-                    key={label}
-                    href={`#style-${label.toLowerCase().replace(/\s+/g, "-")}`}
-                    title={label}
-                  />
-                ))}
-              </div>
-            </MegamenuSection>
-
-            <MegamenuSection title="Engagement rings by stone shape">
-              <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
-                {ENGAGEMENT_SHAPES.map((label) => (
-                  <MegamenuLink
-                    key={label}
-                    href={`#shape-${label.toLowerCase()}`}
-                    title={label}
-                  />
-                ))}
-              </div>
-            </MegamenuSection>
-
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-semibold text-foreground">
-                  Custom engagement rings
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Create any ring from scratch, choose any stone. We handle
-                  everything else, giving you the best speed &amp; value.
-                </p>
-                <Button
-                  asChild
-                  variant="link"
-                  size="sm"
-                  className="self-start px-0"
-                >
-                  <a href="#design">
-                    Design your ring
-                    <IconArrowRight />
-                  </a>
-                </Button>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <h3 className="text-sm font-semibold text-foreground">
-                  Bespoke jewellery requests
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Receive bespoke quotes within 24 hours, manufactured and
-                  delivered at the same Nivoda speed and quality.
-                </p>
-                <Button
-                  asChild
-                  variant="link"
-                  size="sm"
-                  className="self-start px-0"
-                >
-                  <a href="#bespoke">
-                    Open a quote request
-                    <IconArrowRight />
-                  </a>
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <MegamenuFooter className="items-stretch gap-0 border-t-0 bg-transparent p-0">
-            <div className="grid w-full overflow-hidden rounded-md bg-muted/40 lg:grid-cols-[1fr_360px]">
-              <div className="flex flex-col items-start gap-3 p-6">
-                <h3 className="text-xl font-semibold text-foreground">
-                  New Year Collection 2026
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Explore our latest jewellery items — the brand new tennis
-                  bracelets, pendants &amp; stud ear rings collection
-                </p>
-                <Button asChild size="sm" className="mt-1">
-                  <a href="#new-year">
-                    Explore new jewellery
-                    <IconArrowRight />
-                  </a>
-                </Button>
-              </div>
-              <div
-                aria-hidden="true"
-                className="hidden bg-gradient-to-br from-muted to-muted-foreground/20 lg:block"
-              />
-            </div>
-          </MegamenuFooter>
-        </MegamenuContent>
-      </Megamenu>
-    </MegamenuGroup>
-  ),
-}

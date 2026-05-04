@@ -18,7 +18,6 @@ Megamenu is a compound component. The pieces:
 - `Megamenu` — root for a single instance; holds open state + timing
 - `MegamenuTrigger` — behavior + ARIA wrapper (unstyled, `asChild`-first)
 - `MegamenuContent` — the panel; portals to `document.body` on `md+`, renders inside `Sheet` below `md`
-- `MegamenuSection` — named content section
 - `MegamenuLink` — atomic item (icon + title + description + badge)
 - `MegamenuFooter` — bottom strip across the panel
 - `MegamenuTabs`, `MegamenuTabsList`, `MegamenuTabsTrigger`, `MegamenuTabsPanel` — internal vertical tabs

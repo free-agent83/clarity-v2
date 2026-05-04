@@ -58,7 +58,7 @@ function useItemContext(component: string): MegamenuItemContextValue {
   return ctx
 }
 
-interface MegamenuGroupProps extends React.ComponentProps<"nav"> {}
+interface MegamenuGroupProps extends React.ComponentProps<"nav"> { }
 
 /**
  * Coordinator for a row of `<Megamenu>` instances. Renders a `<nav>`
@@ -382,7 +382,8 @@ interface MegamenuContentProps extends React.ComponentProps<"div"> {
  * on `md` and up; renders inside a bottom Sheet below `md`.
  *
  * Free-form children — typically composed of `<MegamenuTabs>`,
- * `<MegamenuSection>`, `<MegamenuLink>`, and `<MegamenuFooter>`.
+ * `<MegamenuLink>`, and `<MegamenuFooter>`, with consumer-supplied
+ * markup for sections / headings / grids.
  */
 function MegamenuContent({
   className,
@@ -470,7 +471,7 @@ function MegamenuContent({
       data-state={item.open ? "open" : "closed"}
       data-breakpoint="desktop"
       className={cn(
-        "fixed inset-x-0 z-50 duration-100",
+        "fixed inset-x-0 z-50 duration-100 -translate-y-1",
         "data-open:animate-in data-open:fade-in-0",
         "data-closed:animate-out data-closed:fade-out-0",
         "motion-reduce:animate-none",
@@ -496,41 +497,6 @@ function MegamenuContent({
       </div>
     </div>,
     document.body
-  )
-}
-
-interface MegamenuSectionProps extends React.ComponentProps<"div"> {
-  title?: string
-  titleAs?: "h2" | "h3" | "h4"
-}
-
-/**
- * Named section inside a megamenu panel. Optional heading + free-form
- * children (typically a column of `<MegamenuLink>` items).
- */
-function MegamenuSection({
-  title,
-  titleAs: TitleTag = "h3",
-  className,
-  children,
-  ...props
-}: MegamenuSectionProps) {
-  return (
-    <div
-      data-slot="megamenu-section"
-      className={cn("flex flex-col gap-2", className)}
-      {...props}
-    >
-      {title ? (
-        <TitleTag
-          data-slot="megamenu-section-title"
-          className="px-2 text-xs font-medium tracking-wide text-muted-foreground uppercase"
-        >
-          {title}
-        </TitleTag>
-      ) : null}
-      <div className="flex flex-col">{children}</div>
-    </div>
   )
 }
 
@@ -655,7 +621,7 @@ function MegamenuFooter({
 }
 
 interface MegamenuTabsProps
-  extends React.ComponentProps<typeof TabsPrimitive.Root> {}
+  extends React.ComponentProps<typeof TabsPrimitive.Root> { }
 
 /**
  * Vertical tabs internal to a megamenu panel — tabs on the left,
@@ -788,7 +754,6 @@ export {
   Megamenu,
   MegamenuTrigger,
   MegamenuContent,
-  MegamenuSection,
   MegamenuLink,
   MegamenuFooter,
   MegamenuTabs,
@@ -801,7 +766,6 @@ export type {
   MegamenuProps,
   MegamenuTriggerProps,
   MegamenuContentProps,
-  MegamenuSectionProps,
   MegamenuLinkProps,
   MegamenuTabsProps,
 }
