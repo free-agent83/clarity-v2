@@ -88,12 +88,14 @@ export { Sheet, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetFooter
 export type { SheetProps, SheetContentProps } from "./components/molecules/sheet/sheet";
 export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants } from "./components/molecules/tabs/tabs";
 
-// ────────────────────── Organisms (5) ──────────────────────
+// ────────────────────── Organisms (6) ──────────────────────
 
 export { AppShell, AppShellHeader, AppShellActions, AppShellNavigationSheet, AppShellMain } from "./components/organisms/app-shell/app-shell";
 export type { AppShellProps, AppShellHeaderProps, AppShellActionsProps, AppShellNavigationSheetProps, AppShellNavigationSheetUser, AppShellMainProps } from "./components/organisms/app-shell/app-shell";
 export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle } from "./components/organisms/chart/chart";
 export type { ChartConfig } from "./components/organisms/chart/chart";
+export { Megamenu, MegamenuGroup, MegamenuTrigger, MegamenuContent, MegamenuSection, MegamenuLink, MegamenuFooter, MegamenuTabs, MegamenuTabsList, MegamenuTabsTrigger, MegamenuTabsPanel } from "./components/organisms/megamenu/megamenu";
+export type { MegamenuProps, MegamenuGroupProps, MegamenuTriggerProps, MegamenuContentProps, MegamenuSectionProps, MegamenuLinkProps, MegamenuTabsProps } from "./components/organisms/megamenu/megamenu";
 export { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger, NavigationMenuLink, NavigationMenuIndicator, NavigationMenuViewport, navigationMenuTriggerStyle } from "./components/organisms/navigation-menu/navigation-menu";
 export { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, useSidebar } from "./components/organisms/sidebar/sidebar";
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from "./components/organisms/table/table";

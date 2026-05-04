@@ -345,6 +345,10 @@ Wayfinding and page-level chrome.
 - For: the standard Nivoda page chrome, navigation sheet, and search.
 - Not for: marketing pages, auth screens, or focused modal flows.
 
+**Megamenu** · `organism` · `unstable` — [COMPONENT.md](./src/components/organisms/megamenu/COMPONENT.md)
+- For: app-header navigation panels — multiple triggers coordinate, the panel anchors below the row at viewport-full width, and collapses into a bottom Sheet below `md`.
+- Not for: contextual menus attached to a button (use DropdownMenu) or single-purpose link lists in a header.
+
 **NavigationMenu** · `organism` · `unstable` — [COMPONENT.md](./src/components/organisms/navigation-menu/COMPONENT.md)
 - For: rendering a top-level navigation bar with optional flyout panels.
 - Not for: in-page tabbed views or action menus.
