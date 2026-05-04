@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react"
 import { userEvent, within, expect, waitFor } from "@storybook/test"
 import {
+  IconArrowRight,
   IconCalendarTime,
   IconCash,
   IconChevronDown,
@@ -488,6 +489,113 @@ export const JewelleryByCategory: Story = {
               </div>
             </MegamenuTabsPanel>
           </MegamenuTabs>
+        </MegamenuContent>
+      </Megamenu>
+    </MegamenuGroup>
+  ),
+}
+
+export const EngagementRingsRich: Story = {
+  render: () => (
+    <MegamenuGroup aria-label="Main">
+      <Megamenu>
+        <MegamenuTrigger asChild>
+          <NavLinkItem withChevron>Engagement Rings</NavLinkItem>
+        </MegamenuTrigger>
+        <MegamenuContent>
+          <div className="grid grid-cols-1 gap-x-10 gap-y-8 p-6 lg:grid-cols-[1fr_1fr_320px]">
+            <MegamenuSection title="Engagement rings by style">
+              <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
+                {ENGAGEMENT_STYLES.map((label) => (
+                  <MegamenuLink
+                    key={label}
+                    href={`#style-${label.toLowerCase().replace(/\s+/g, "-")}`}
+                    title={label}
+                  />
+                ))}
+              </div>
+            </MegamenuSection>
+
+            <MegamenuSection title="Engagement rings by stone shape">
+              <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
+                {ENGAGEMENT_SHAPES.map((label) => (
+                  <MegamenuLink
+                    key={label}
+                    href={`#shape-${label.toLowerCase()}`}
+                    title={label}
+                  />
+                ))}
+              </div>
+            </MegamenuSection>
+
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Custom engagement rings
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Create any ring from scratch, choose any stone. We handle
+                  everything else, giving you the best speed &amp; value.
+                </p>
+                <Button
+                  asChild
+                  variant="link"
+                  size="sm"
+                  className="self-start px-0"
+                >
+                  <a href="#design">
+                    Design your ring
+                    <IconArrowRight />
+                  </a>
+                </Button>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Bespoke jewellery requests
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Receive bespoke quotes within 24 hours, manufactured and
+                  delivered at the same Nivoda speed and quality.
+                </p>
+                <Button
+                  asChild
+                  variant="link"
+                  size="sm"
+                  className="self-start px-0"
+                >
+                  <a href="#bespoke">
+                    Open a quote request
+                    <IconArrowRight />
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <MegamenuFooter className="items-stretch gap-0 border-t-0 bg-transparent p-0">
+            <div className="grid w-full overflow-hidden rounded-md bg-muted/40 lg:grid-cols-[1fr_360px]">
+              <div className="flex flex-col items-start gap-3 p-6">
+                <h3 className="text-xl font-semibold text-foreground">
+                  New Year Collection 2026
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Explore our latest jewellery items — the brand new tennis
+                  bracelets, pendants &amp; stud ear rings collection
+                </p>
+                <Button asChild size="sm" className="mt-1">
+                  <a href="#new-year">
+                    Explore new jewellery
+                    <IconArrowRight />
+                  </a>
+                </Button>
+              </div>
+              <div
+                aria-hidden="true"
+                className="hidden bg-gradient-to-br from-muted to-muted-foreground/20 lg:block"
+              />
+            </div>
+          </MegamenuFooter>
         </MegamenuContent>
       </Megamenu>
     </MegamenuGroup>
