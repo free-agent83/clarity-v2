@@ -7,6 +7,7 @@ import { Slot, Tabs as TabsPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useIsTabletUp } from "@/hooks/use-is-tablet-up"
+import { Typography } from "@/components/atoms/typography/typography"
 import {
   Sheet,
   SheetContent,
@@ -471,7 +472,7 @@ function MegamenuContent({
       data-state={item.open ? "open" : "closed"}
       data-breakpoint="desktop"
       className={cn(
-        "fixed inset-x-0 z-50 duration-100 -translate-y-1",
+        "fixed inset-x-0 z-50 duration-100",
         "data-open:animate-in data-open:fade-in-0",
         "data-closed:animate-out data-closed:fade-out-0",
         "motion-reduce:animate-none",
@@ -487,7 +488,7 @@ function MegamenuContent({
       }}
       {...props}
     >
-      <div className="mx-auto w-full max-w-7xl px-4 pt-2">
+      <div className="mx-auto w-full max-w-7xl px-4 pt-1">
         <div
           data-slot="megamenu-content-inner"
           className="rounded-lg border border-border bg-popover text-popover-foreground shadow-lg"
@@ -542,31 +543,35 @@ function MegamenuLink({
   const inner = (
     <>
       {icon ? (
-        <span
+        <div
           data-slot="megamenu-link-icon"
           aria-hidden="true"
-          className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-foreground [&_svg:not([class*='size-'])]:size-5"
+          className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-foreground [&_svg:not([class*='size-'])]:size-5 group-hover:text-accent-foreground group-hover:bg-accent"
         >
           {icon}
-        </span>
+        </div>
       ) : null}
       <span
         data-slot="megamenu-link-text"
         className="flex min-w-0 flex-1 flex-col gap-0.5"
       >
-        <span
+        <Typography
+          as="span"
+          variant="subtitle-2"
           data-slot="megamenu-link-title"
-          className="text-sm font-medium text-foreground"
+          className="text-foreground group-hover:text-accent-foreground"
         >
           {title}
-        </span>
+        </Typography>
         {description ? (
-          <span
+          <Typography
+            as="span"
+            variant="caption"
             data-slot="megamenu-link-description"
-            className="text-xs text-muted-foreground"
+            className="text-muted-foreground"
           >
             {description}
-          </span>
+          </Typography>
         ) : null}
       </span>
     </>
@@ -577,8 +582,8 @@ function MegamenuLink({
       data-slot="megamenu-link"
       href={asChild ? undefined : href}
       className={cn(
-        "flex items-start gap-3 rounded-md p-2 outline-none transition-colors",
-        "hover:bg-muted focus-visible:bg-muted",
+        "group flex items-start gap-3 rounded-md p-2 outline-none transition-colors",
+        "hover:bg-accent focus-visible:bg-muted",
         "focus-visible:ring-3 focus-visible:ring-ring/50",
         className
       )}
@@ -634,7 +639,7 @@ function MegamenuTabs({
       data-orientation={orientation}
       orientation={orientation}
       className={cn(
-        "group/megamenu-tabs flex flex-col gap-6 lg:flex-row lg:gap-8",
+        "group/megamenu-tabs flex flex-col lg:flex-row",
         className
       )}
       {...props}
@@ -655,7 +660,7 @@ function MegamenuTabsList({
     <TabsPrimitive.List
       data-slot="megamenu-tabs-list"
       className={cn(
-        "hidden flex-col gap-1 lg:flex lg:w-56 lg:shrink-0",
+        "hidden flex-col gap-1 border-r border-border p-4 lg:flex lg:w-60 lg:shrink-0",
         className
       )}
       {...props}
@@ -684,10 +689,10 @@ function MegamenuTabsTrigger({
       data-slot="megamenu-tabs-trigger"
       onPointerEnter={handlePointerEnter}
       className={cn(
-        "flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-medium text-muted-foreground transition-colors",
+        "flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-medium text-muted-foreground transition-colors cursor-pointer",
         "hover:bg-muted hover:text-foreground",
         "focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none",
-        "data-[state=active]:bg-muted data-[state=active]:text-foreground",
+        "data-[state=active]:bg-accent data-[state=active]:text-accent-foreground",
         className
       )}
       {...props}

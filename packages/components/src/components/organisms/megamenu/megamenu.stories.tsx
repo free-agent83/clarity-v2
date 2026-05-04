@@ -2,17 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react"
 import { userEvent, within, expect, waitFor } from "@storybook/test"
 import {
   IconArrowRight,
-  IconCalendarTime,
-  IconCash,
   IconChevronDown,
-  IconCreditCard,
-  IconCurrencyBitcoin,
-  IconFileInvoice,
-  IconFolder,
-  IconHelpCircle,
-  IconNews,
-  IconShieldLock,
-  IconUserPlus,
+  IconHeadset,
+  IconShieldCheck,
+  IconTruck,
 } from "@tabler/icons-react"
 
 import { Button } from "../../atoms/button/button"
@@ -29,11 +22,7 @@ import {
   MegamenuTrigger,
 } from "./megamenu"
 
-const sectionHeadingClass =
-  "mb-2 px-2 text-xs font-medium tracking-wide text-muted-foreground uppercase"
-
-const sectionHeadingTitleCaseClass =
-  "mb-3 text-sm font-semibold text-foreground"
+const sectionHeadingClass = "mb-3 text-sm font-semibold text-foreground"
 
 const meta: Meta<typeof MegamenuGroup> = {
   title: "Navigation/Megamenu",
@@ -44,17 +33,17 @@ const meta: Meta<typeof MegamenuGroup> = {
   },
   decorators: [
     (Story) => (
-      <div className="flex min-h-[600px] flex-col bg-background">
+      <div className="flex min-h-150 flex-col bg-background">
         <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background px-6">
           <span className="text-sm font-semibold tracking-tight">
-            Storybook Co.
+            Lustre &amp; Co.
           </span>
           <Story />
           <Button size="sm">Sign in</Button>
         </header>
         <main className="flex-1 p-8">
           <p className="text-sm text-muted-foreground">
-            Hover over a megamenu trigger to open its panel. The panel
+            Hover or click a megamenu trigger to open its panel. The panel
             anchors below the header row and spans the viewport width.
           </p>
         </main>
@@ -117,150 +106,379 @@ function NavLinkItem({
   )
 }
 
+// ─── Catalogue data ────────────────────────────────────────────
+
+const ENGAGEMENT_STYLES = [
+  "Solitaire",
+  "Halo",
+  "Three-Stone",
+  "Vintage",
+  "Bezel",
+  "Cathedral",
+  "Side Stone",
+  "Pavé",
+] as const
+
+const ENGAGEMENT_SHAPES = [
+  "Round",
+  "Princess",
+  "Cushion",
+  "Oval",
+  "Pear",
+  "Marquise",
+  "Emerald",
+  "Asscher",
+  "Heart",
+  "Radiant",
+] as const
+
+const ENGAGEMENT_METALS = [
+  "Yellow Gold",
+  "White Gold",
+  "Rose Gold",
+  "Platinum",
+  "Two-Tone",
+] as const
+
+const ENGAGEMENT_CUSTOMISE = [
+  "Design Your Own",
+  "Build a Setting",
+  "Bespoke Quote",
+  "Custom Engraving",
+  "Diamond Concierge",
+] as const
+
+const WEDDING_STYLES = [
+  "Plain",
+  "Diamond",
+  "Eternity",
+  "Half-Eternity",
+  "Curved",
+  "Vintage",
+  "Two-Tone",
+  "Hammered",
+] as const
+
+const WEDDING_WIDTHS = ["2mm", "3mm", "4mm", "5mm", "6mm", "8mm"] as const
+
+const WEDDING_METALS = [
+  "Yellow Gold",
+  "White Gold",
+  "Rose Gold",
+  "Platinum",
+  "Palladium",
+] as const
+
+const TENNIS_STONES = [
+  "Diamond",
+  "Sapphire",
+  "Ruby",
+  "Emerald",
+  "Mixed Gemstone",
+] as const
+
+const TENNIS_CARATS = [
+  "Under 1 ct",
+  "1–3 ct",
+  "3–5 ct",
+  "5–10 ct",
+  "10+ ct",
+] as const
+
+const TENNIS_LENGTHS = ['6.5"', '7"', '7.5"', "Custom"] as const
+
+const NECKLACE_STYLES = [
+  "Pendant",
+  "Solitaire",
+  "Halo",
+  "Chain",
+  "Choker",
+  "Lariat",
+  "Station",
+  "Riviera",
+] as const
+
+const NECKLACE_LENGTHS = [
+  '14" Collar',
+  '16" Choker',
+  '18" Princess',
+  '20" Matinee',
+  '24" Opera',
+  '30" Rope',
+] as const
+
+const NECKLACE_STONES = [
+  "Diamond",
+  "Pearl",
+  "Sapphire",
+  "Ruby",
+  "Emerald",
+  "Tanzanite",
+] as const
+
+const STUD_STYLES = [
+  "Solitaire",
+  "Halo",
+  "Cluster",
+  "Bezel",
+  "Three-Stone",
+  "Stud + Jacket",
+] as const
+
+const STUD_STONES = [
+  "Diamond",
+  "Pearl",
+  "Sapphire",
+  "Ruby",
+  "Emerald",
+  "Moissanite",
+] as const
+
+const STUD_CARATS = [
+  "Under 0.5 ct",
+  "0.5–1 ct",
+  "1–2 ct",
+  "2–3 ct",
+  "3+ ct",
+] as const
+
+// ─── Inline panel pieces ───────────────────────────────────────
+
+function slugify(label: string) {
+  return label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+}
+
+function LinkColumn({
+  title,
+  items,
+  prefix,
+}: {
+  title: string
+  items: ReadonlyArray<string>
+  prefix: string
+}) {
+  return (
+    <div>
+      <h3 className={sectionHeadingClass}>{title}</h3>
+      <div className="flex flex-col">
+        {items.map((label) => (
+          <MegamenuLink
+            key={label}
+            href={`#${prefix}-${slugify(label)}`}
+            title={label}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function EngagementRingsPanel() {
+  return (
+    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-4">
+      <LinkColumn
+        title="By style"
+        items={ENGAGEMENT_STYLES}
+        prefix="er-style"
+      />
+      <LinkColumn
+        title="By stone shape"
+        items={ENGAGEMENT_SHAPES}
+        prefix="er-shape"
+      />
+      <LinkColumn
+        title="By metal"
+        items={ENGAGEMENT_METALS}
+        prefix="er-metal"
+      />
+      <LinkColumn
+        title="Custom & bespoke"
+        items={ENGAGEMENT_CUSTOMISE}
+        prefix="er-custom"
+      />
+    </div>
+  )
+}
+
+function WeddingBandsPanel() {
+  return (
+    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-3">
+      <LinkColumn title="By style" items={WEDDING_STYLES} prefix="wb-style" />
+      <LinkColumn title="By width" items={WEDDING_WIDTHS} prefix="wb-width" />
+      <LinkColumn title="By metal" items={WEDDING_METALS} prefix="wb-metal" />
+    </div>
+  )
+}
+
+function TennisBraceletsPanel() {
+  return (
+    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-3">
+      <LinkColumn
+        title="By stone"
+        items={TENNIS_STONES}
+        prefix="tb-stone"
+      />
+      <LinkColumn
+        title="By total weight"
+        items={TENNIS_CARATS}
+        prefix="tb-carat"
+      />
+      <LinkColumn
+        title="By length"
+        items={TENNIS_LENGTHS}
+        prefix="tb-length"
+      />
+    </div>
+  )
+}
+
+function NecklacesPanel() {
+  return (
+    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-3">
+      <LinkColumn
+        title="By style"
+        items={NECKLACE_STYLES}
+        prefix="nk-style"
+      />
+      <LinkColumn
+        title="By length"
+        items={NECKLACE_LENGTHS}
+        prefix="nk-length"
+      />
+      <LinkColumn
+        title="By stone"
+        items={NECKLACE_STONES}
+        prefix="nk-stone"
+      />
+    </div>
+  )
+}
+
+function StudsPanel() {
+  return (
+    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-3">
+      <LinkColumn title="By style" items={STUD_STYLES} prefix="st-style" />
+      <LinkColumn title="By stone" items={STUD_STONES} prefix="st-stone" />
+      <LinkColumn
+        title="By total weight"
+        items={STUD_CARATS}
+        prefix="st-carat"
+      />
+    </div>
+  )
+}
+
+// ─── Footer + banner pieces ────────────────────────────────────
+
+function HelpFooter() {
+  return (
+    <MegamenuFooter className="grid grid-cols-1 gap-6 px-6 py-4 lg:grid-cols-3">
+      <div className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-background text-foreground [&_svg]:size-5"
+        >
+          <IconTruck />
+        </span>
+        <div className="flex flex-col gap-0.5">
+          <p className="text-sm font-medium text-foreground">
+            Free insured shipping
+          </p>
+          <p className="text-xs text-muted-foreground">
+            On every order, anywhere in the world.
+          </p>
+        </div>
+      </div>
+      <div className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-background text-foreground [&_svg]:size-5"
+        >
+          <IconShieldCheck />
+        </span>
+        <div className="flex flex-col gap-0.5">
+          <p className="text-sm font-medium text-foreground">
+            Lifetime warranty
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Resizing, polishing, and stone-tightening included.
+          </p>
+        </div>
+      </div>
+      <div className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-md bg-background text-foreground [&_svg]:size-5"
+        >
+          <IconHeadset />
+        </span>
+        <div className="flex flex-col gap-0.5">
+          <p className="text-sm font-medium text-foreground">
+            Talk to a gemologist
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Mon–Fri, 9 am – 6 pm EST. Live chat or phone.
+          </p>
+        </div>
+      </div>
+    </MegamenuFooter>
+  )
+}
+
+function PromoBanner() {
+  return (
+    <div
+      data-slot="megamenu-banner"
+      className="m-3 grid overflow-hidden rounded-md border border-border bg-muted/40 lg:grid-cols-[1fr_320px]"
+    >
+      <div className="flex flex-col items-start gap-3 p-6">
+        <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+          Spring 2026 Collection
+        </span>
+        <h3 className="text-xl font-semibold text-foreground">
+          Bloom — engagement rings inspired by gardens in early spring
+        </h3>
+        <p className="max-w-prose text-sm text-muted-foreground">
+          Twenty-eight new settings, hand-finished in our New York atelier.
+          Pair with any of our curated stones to bring it to life.
+        </p>
+        <Button asChild size="sm" className="mt-1">
+          <a href="#bloom">
+            Explore the collection
+            <IconArrowRight />
+          </a>
+        </Button>
+      </div>
+      <div
+        aria-hidden="true"
+        className="hidden bg-gradient-to-br from-muted to-muted-foreground/20 lg:block"
+      />
+    </div>
+  )
+}
+
+// ─── Stories ───────────────────────────────────────────────────
+
 export const Default: Story = {
   render: () => (
     <MegamenuGroup aria-label="Main">
       <Megamenu>
         <MegamenuTrigger asChild>
-          <NavLinkItem withChevron>Platform</NavLinkItem>
+          <NavLinkItem withChevron>Engagement Rings</NavLinkItem>
         </MegamenuTrigger>
         <MegamenuContent>
-          <MegamenuTabs defaultValue="contractors">
-            <MegamenuTabsList>
-              <MegamenuTabsTrigger value="contractors">
-                For Contractors
-              </MegamenuTabsTrigger>
-              <MegamenuTabsTrigger value="businesses">
-                For Businesses
-              </MegamenuTabsTrigger>
-            </MegamenuTabsList>
-
-            <MegamenuTabsPanel value="contractors" tabLabel="For Contractors">
-              <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-6 lg:grid-cols-2">
-                <div>
-                  <h3 className={sectionHeadingClass}>Core</h3>
-                  <MegamenuLink
-                    href="#invoices"
-                    icon={<IconFileInvoice />}
-                    title="Send Invoices"
-                    description="Invoice clients globally"
-                  />
-                  <MegamenuLink
-                    href="#get-paid"
-                    icon={<IconCash />}
-                    title="Get Paid"
-                    description="Get paid fast"
-                  />
-                  <MegamenuLink
-                    href="#manage"
-                    icon={<IconFolder />}
-                    title="Manage Work"
-                    description="Keep everything organized"
-                  />
-                </div>
-                <div>
-                  <h3 className={sectionHeadingClass}>Money</h3>
-                  <MegamenuLink
-                    href="#crypto"
-                    icon={<IconCurrencyBitcoin />}
-                    title="Crypto Payout"
-                    description="Get paid in crypto"
-                  />
-                  <MegamenuLink
-                    href="#early-pay"
-                    icon={<IconCalendarTime />}
-                    title="Early Pay"
-                    description="Access your payout early"
-                  />
-                  <MegamenuLink
-                    href="#no-company"
-                    icon={<IconShieldLock />}
-                    title="No company? No problem"
-                    description="Invoice without a company"
-                  />
-                </div>
-              </div>
-            </MegamenuTabsPanel>
-
-            <MegamenuTabsPanel value="businesses" tabLabel="For Businesses">
-              <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-6 lg:grid-cols-2">
-                <div>
-                  <h3 className={sectionHeadingClass}>Pay</h3>
-                  <MegamenuLink
-                    href="#contractors"
-                    icon={<IconUserPlus />}
-                    title="Pay Contractors"
-                    description="Pay your team in 100+ countries"
-                  />
-                  <MegamenuLink
-                    href="#subscriptions"
-                    icon={<IconCreditCard />}
-                    title="Subscriptions"
-                    description="Charge clients automatically"
-                  />
-                </div>
-                <div>
-                  <h3 className={sectionHeadingClass}>Tools</h3>
-                  <MegamenuLink
-                    href="#help"
-                    icon={<IconHelpCircle />}
-                    title="Help Center"
-                    description="Guides and support"
-                  />
-                </div>
-              </div>
-            </MegamenuTabsPanel>
-          </MegamenuTabs>
-
-          <MegamenuFooter>
-            <span className="text-sm text-muted-foreground">
-              Start in minutes. Get paid tomorrow.
-            </span>
-            <Button size="sm">Get Started</Button>
-          </MegamenuFooter>
+          <EngagementRingsPanel />
         </MegamenuContent>
       </Megamenu>
 
-      <NavLinkItem href="#pricing">Pricing</NavLinkItem>
-
-      <Megamenu>
-        <MegamenuTrigger asChild>
-          <NavLinkItem withChevron>Resources</NavLinkItem>
-        </MegamenuTrigger>
-        <MegamenuContent>
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-6 lg:grid-cols-2">
-            <div>
-              <h3 className={sectionHeadingClass}>Learn</h3>
-              <MegamenuLink
-                href="#blog"
-                icon={<IconNews />}
-                title="Blog"
-                description="Stories and updates"
-              />
-              <MegamenuLink
-                href="#guides"
-                icon={<IconFolder />}
-                title="Guides"
-                description="In-depth product walkthroughs"
-              />
-            </div>
-            <div>
-              <h3 className={sectionHeadingClass}>Support</h3>
-              <MegamenuLink
-                href="#help"
-                icon={<IconHelpCircle />}
-                title="Help Center"
-                description="Find answers fast"
-              />
-            </div>
-          </div>
-        </MegamenuContent>
-      </Megamenu>
+      <NavLinkItem href="#wedding">Wedding</NavLinkItem>
+      <NavLinkItem href="#earrings">Earrings</NavLinkItem>
+      <NavLinkItem href="#bracelets">Bracelets</NavLinkItem>
     </MegamenuGroup>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    const trigger = canvas.getByRole("button", { name: /Platform/ })
+    const trigger = canvas.getByRole("button", { name: /Engagement Rings/ })
     await userEvent.click(trigger)
     await waitFor(async () => {
       await expect(trigger).toHaveAttribute("data-state", "open")
@@ -272,154 +490,39 @@ export const Default: Story = {
   },
 }
 
-export const ClickToOpen: Story = {
-  render: () => (
-    <MegamenuGroup aria-label="Main">
-      <Megamenu trigger="click">
-        <MegamenuTrigger asChild>
-          <NavLinkItem withChevron>Click me</NavLinkItem>
-        </MegamenuTrigger>
-        <MegamenuContent>
-          <div className="p-6">
-            <h3 className={sectionHeadingClass}>Click activation</h3>
-            <MegamenuLink
-              href="#one"
-              icon={<IconFileInvoice />}
-              title="Item one"
-              description="Hovering does nothing"
-            />
-            <MegamenuLink
-              href="#two"
-              icon={<IconCash />}
-              title="Item two"
-              description="Click the trigger to open"
-            />
-          </div>
-        </MegamenuContent>
-      </Megamenu>
-
-      <Megamenu trigger="click">
-        <MegamenuTrigger asChild>
-          <NavLinkItem withChevron>Or me</NavLinkItem>
-        </MegamenuTrigger>
-        <MegamenuContent>
-          <div className="p-6">
-            <h3 className={sectionHeadingClass}>Coordinator still active</h3>
-            <MegamenuLink
-              href="#a"
-              icon={<IconFolder />}
-              title="Opening this closes the other"
-              description="Single-active across the group"
-            />
-          </div>
-        </MegamenuContent>
-      </Megamenu>
-    </MegamenuGroup>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    const trigger = canvas.getByRole("button", { name: /Click me/ })
-    await userEvent.click(trigger)
-    await waitFor(async () => {
-      await expect(trigger).toHaveAttribute("data-state", "open")
-    })
-    await userEvent.click(trigger)
-    await waitFor(async () => {
-      await expect(trigger).toHaveAttribute("data-state", "closed")
-    })
-  },
-}
-
-export const WithoutTabs: Story = {
+export const WithFooter: Story = {
   render: () => (
     <MegamenuGroup aria-label="Main">
       <Megamenu>
         <MegamenuTrigger asChild>
-          <NavLinkItem withChevron>Products</NavLinkItem>
+          <NavLinkItem withChevron>Engagement Rings</NavLinkItem>
         </MegamenuTrigger>
         <MegamenuContent>
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4 p-6 lg:grid-cols-3">
-            <div>
-              <h3 className={sectionHeadingClass}>Pay</h3>
-              <MegamenuLink
-                href="#a"
-                icon={<IconFileInvoice />}
-                title="Send Invoices"
-                description="Invoice clients globally"
-              />
-              <MegamenuLink
-                href="#b"
-                icon={<IconCash />}
-                title="Get Paid"
-                description="Get paid fast"
-              />
-            </div>
-            <div>
-              <h3 className={sectionHeadingClass}>Tools</h3>
-              <MegamenuLink
-                href="#c"
-                icon={<IconFolder />}
-                title="Manage Work"
-                description="Keep everything organized"
-              />
-              <MegamenuLink
-                href="#d"
-                icon={<IconCreditCard />}
-                title="Subscriptions"
-                description="Charge clients automatically"
-              />
-            </div>
-            <div>
-              <h3 className={sectionHeadingClass}>Help</h3>
-              <MegamenuLink
-                href="#e"
-                icon={<IconHelpCircle />}
-                title="Help Center"
-                description="Guides and FAQs"
-              />
-            </div>
-          </div>
-          <MegamenuFooter>
-            <span className="text-sm text-muted-foreground">
-              All the tools you need in one place.
-            </span>
-            <Button size="sm" variant="outline">
-              See pricing
-            </Button>
-          </MegamenuFooter>
+          <EngagementRingsPanel />
+          <HelpFooter />
         </MegamenuContent>
       </Megamenu>
     </MegamenuGroup>
   ),
 }
 
-const ENGAGEMENT_STYLES = [
-  "Bezel",
-  "Cathedral",
-  "Channel",
-  "Halo",
-  "Nature",
-  "Pave",
-  "Side Stone",
-  "Solitaire",
-  "Three Stone",
-  "Two Stone",
-] as const
+export const WithBottomBanner: Story = {
+  render: () => (
+    <MegamenuGroup aria-label="Main">
+      <Megamenu>
+        <MegamenuTrigger asChild>
+          <NavLinkItem withChevron>Engagement Rings</NavLinkItem>
+        </MegamenuTrigger>
+        <MegamenuContent>
+          <EngagementRingsPanel />
+          <PromoBanner />
+        </MegamenuContent>
+      </Megamenu>
+    </MegamenuGroup>
+  ),
+}
 
-const ENGAGEMENT_SHAPES = [
-  "Round",
-  "Cushion",
-  "Emerald",
-  "Heart",
-  "Marquise",
-  "Oval",
-  "Pear",
-  "Princess",
-  "Radiant",
-  "Asscher",
-] as const
-
-export const JewelleryByCategory: Story = {
+export const WithCategoryTabbing: Story = {
   render: () => (
     <MegamenuGroup aria-label="Main">
       <Megamenu>
@@ -438,73 +541,39 @@ export const JewelleryByCategory: Story = {
               <MegamenuTabsTrigger value="tennis-bracelets">
                 Tennis Bracelets
               </MegamenuTabsTrigger>
+              <MegamenuTabsTrigger value="necklaces">
+                Necklaces
+              </MegamenuTabsTrigger>
+              <MegamenuTabsTrigger value="studs">Studs</MegamenuTabsTrigger>
             </MegamenuTabsList>
 
             <MegamenuTabsPanel
               value="engagement-rings"
               tabLabel="Engagement Rings"
             >
-              <div className="grid grid-cols-1 gap-x-12 gap-y-6 p-6 lg:grid-cols-2">
-                <div>
-                  <h3 className={sectionHeadingTitleCaseClass}>
-                    Engagement rings by style
-                  </h3>
-                  <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
-                    {ENGAGEMENT_STYLES.map((label) => (
-                      <MegamenuLink
-                        key={label}
-                        href={`#style-${label.toLowerCase().replace(/\s+/g, "-")}`}
-                        title={label}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h3 className={sectionHeadingTitleCaseClass}>
-                    Engagement rings by stone shape
-                  </h3>
-                  <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
-                    {ENGAGEMENT_SHAPES.map((label) => (
-                      <MegamenuLink
-                        key={label}
-                        href={`#shape-${label.toLowerCase()}`}
-                        title={label}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <EngagementRingsPanel />
             </MegamenuTabsPanel>
 
-            <MegamenuTabsPanel value="wedding-bands" tabLabel="Wedding Bands">
-              <div className="p-6">
-                <h3 className={sectionHeadingTitleCaseClass}>
-                  Wedding bands by metal
-                </h3>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-                  <MegamenuLink href="#yellow-gold" title="Yellow Gold" />
-                  <MegamenuLink href="#white-gold" title="White Gold" />
-                  <MegamenuLink href="#rose-gold" title="Rose Gold" />
-                  <MegamenuLink href="#platinum" title="Platinum" />
-                </div>
-              </div>
+            <MegamenuTabsPanel
+              value="wedding-bands"
+              tabLabel="Wedding Bands"
+            >
+              <WeddingBandsPanel />
             </MegamenuTabsPanel>
 
             <MegamenuTabsPanel
               value="tennis-bracelets"
               tabLabel="Tennis Bracelets"
             >
-              <div className="p-6">
-                <h3 className={sectionHeadingTitleCaseClass}>
-                  Tennis bracelets by stone
-                </h3>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-                  <MegamenuLink href="#diamond" title="Diamond" />
-                  <MegamenuLink href="#sapphire" title="Sapphire" />
-                  <MegamenuLink href="#ruby" title="Ruby" />
-                  <MegamenuLink href="#emerald" title="Emerald" />
-                </div>
-              </div>
+              <TennisBraceletsPanel />
+            </MegamenuTabsPanel>
+
+            <MegamenuTabsPanel value="necklaces" tabLabel="Necklaces">
+              <NecklacesPanel />
+            </MegamenuTabsPanel>
+
+            <MegamenuTabsPanel value="studs" tabLabel="Studs">
+              <StudsPanel />
             </MegamenuTabsPanel>
           </MegamenuTabs>
         </MegamenuContent>
@@ -513,3 +582,65 @@ export const JewelleryByCategory: Story = {
   ),
 }
 
+export const Complex: Story = {
+  render: () => (
+    <MegamenuGroup aria-label="Main">
+      <Megamenu>
+        <MegamenuTrigger asChild>
+          <NavLinkItem withChevron>Jewellery</NavLinkItem>
+        </MegamenuTrigger>
+        <MegamenuContent>
+          <MegamenuTabs defaultValue="engagement-rings">
+            <MegamenuTabsList>
+              <MegamenuTabsTrigger value="engagement-rings">
+                Engagement Rings
+              </MegamenuTabsTrigger>
+              <MegamenuTabsTrigger value="wedding-bands">
+                Wedding Bands
+              </MegamenuTabsTrigger>
+              <MegamenuTabsTrigger value="tennis-bracelets">
+                Tennis Bracelets
+              </MegamenuTabsTrigger>
+              <MegamenuTabsTrigger value="necklaces">
+                Necklaces
+              </MegamenuTabsTrigger>
+              <MegamenuTabsTrigger value="studs">Studs</MegamenuTabsTrigger>
+            </MegamenuTabsList>
+
+            <MegamenuTabsPanel
+              value="engagement-rings"
+              tabLabel="Engagement Rings"
+            >
+              <EngagementRingsPanel />
+            </MegamenuTabsPanel>
+
+            <MegamenuTabsPanel
+              value="wedding-bands"
+              tabLabel="Wedding Bands"
+            >
+              <WeddingBandsPanel />
+            </MegamenuTabsPanel>
+
+            <MegamenuTabsPanel
+              value="tennis-bracelets"
+              tabLabel="Tennis Bracelets"
+            >
+              <TennisBraceletsPanel />
+            </MegamenuTabsPanel>
+
+            <MegamenuTabsPanel value="necklaces" tabLabel="Necklaces">
+              <NecklacesPanel />
+            </MegamenuTabsPanel>
+
+            <MegamenuTabsPanel value="studs" tabLabel="Studs">
+              <StudsPanel />
+            </MegamenuTabsPanel>
+          </MegamenuTabs>
+
+          <PromoBanner />
+          <HelpFooter />
+        </MegamenuContent>
+      </Megamenu>
+    </MegamenuGroup>
+  ),
+}
