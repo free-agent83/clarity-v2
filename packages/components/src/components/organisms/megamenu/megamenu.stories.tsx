@@ -381,3 +381,115 @@ export const WithoutTabs: Story = {
     </MegamenuGroup>
   ),
 }
+
+const ENGAGEMENT_STYLES = [
+  "Bezel",
+  "Cathedral",
+  "Channel",
+  "Halo",
+  "Nature",
+  "Pave",
+  "Side Stone",
+  "Solitaire",
+  "Three Stone",
+  "Two Stone",
+] as const
+
+const ENGAGEMENT_SHAPES = [
+  "Round",
+  "Cushion",
+  "Emerald",
+  "Heart",
+  "Marquise",
+  "Oval",
+  "Pear",
+  "Princess",
+  "Radiant",
+  "Asscher",
+] as const
+
+export const JewelleryByCategory: Story = {
+  render: () => (
+    <MegamenuGroup aria-label="Main">
+      <Megamenu>
+        <MegamenuTrigger asChild>
+          <NavLinkItem withChevron>Jewellery</NavLinkItem>
+        </MegamenuTrigger>
+        <MegamenuContent>
+          <MegamenuTabs defaultValue="engagement-rings">
+            <MegamenuTabsList>
+              <MegamenuTabsTrigger value="engagement-rings">
+                Engagement Rings
+              </MegamenuTabsTrigger>
+              <MegamenuTabsTrigger value="wedding-bands">
+                Wedding Bands
+              </MegamenuTabsTrigger>
+              <MegamenuTabsTrigger value="tennis-bracelets">
+                Tennis Bracelets
+              </MegamenuTabsTrigger>
+            </MegamenuTabsList>
+
+            <MegamenuTabsPanel
+              value="engagement-rings"
+              tabLabel="Engagement Rings"
+            >
+              <div className="grid grid-cols-1 gap-x-12 gap-y-6 p-6 lg:grid-cols-2">
+                <MegamenuSection title="Engagement rings by style">
+                  <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
+                    {ENGAGEMENT_STYLES.map((label) => (
+                      <MegamenuLink
+                        key={label}
+                        href={`#style-${label.toLowerCase().replace(/\s+/g, "-")}`}
+                        title={label}
+                      />
+                    ))}
+                  </div>
+                </MegamenuSection>
+                <MegamenuSection title="Engagement rings by stone shape">
+                  <div className="grid grid-flow-col grid-rows-5 gap-x-6 gap-y-1">
+                    {ENGAGEMENT_SHAPES.map((label) => (
+                      <MegamenuLink
+                        key={label}
+                        href={`#shape-${label.toLowerCase()}`}
+                        title={label}
+                      />
+                    ))}
+                  </div>
+                </MegamenuSection>
+              </div>
+            </MegamenuTabsPanel>
+
+            <MegamenuTabsPanel value="wedding-bands" tabLabel="Wedding Bands">
+              <div className="p-6">
+                <MegamenuSection title="Wedding bands by metal">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                    <MegamenuLink href="#yellow-gold" title="Yellow Gold" />
+                    <MegamenuLink href="#white-gold" title="White Gold" />
+                    <MegamenuLink href="#rose-gold" title="Rose Gold" />
+                    <MegamenuLink href="#platinum" title="Platinum" />
+                  </div>
+                </MegamenuSection>
+              </div>
+            </MegamenuTabsPanel>
+
+            <MegamenuTabsPanel
+              value="tennis-bracelets"
+              tabLabel="Tennis Bracelets"
+            >
+              <div className="p-6">
+                <MegamenuSection title="Tennis bracelets by stone">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1">
+                    <MegamenuLink href="#diamond" title="Diamond" />
+                    <MegamenuLink href="#sapphire" title="Sapphire" />
+                    <MegamenuLink href="#ruby" title="Ruby" />
+                    <MegamenuLink href="#emerald" title="Emerald" />
+                  </div>
+                </MegamenuSection>
+              </div>
+            </MegamenuTabsPanel>
+          </MegamenuTabs>
+        </MegamenuContent>
+      </Megamenu>
+    </MegamenuGroup>
+  ),
+}
