@@ -8,6 +8,7 @@ import {
   IconTruck,
 } from "@tabler/icons-react"
 
+import { cn } from "@/lib/utils"
 import { Button } from "../../atoms/button/button"
 import {
   Megamenu,
@@ -248,6 +249,27 @@ function slugify(label: string) {
   return label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
 }
 
+function PanelGrid({
+  cols,
+  children,
+}: {
+  cols: 2 | 3 | 4
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={cn(
+        "grid grid-cols-1 gap-x-8 gap-y-6 p-6",
+        cols === 2 && "lg:grid-cols-2",
+        cols === 3 && "lg:grid-cols-3",
+        cols === 4 && "lg:grid-cols-4"
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
 function LinkColumn({
   title,
   items,
@@ -275,7 +297,7 @@ function LinkColumn({
 
 function EngagementRingsPanel() {
   return (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-4">
+    <PanelGrid cols={4}>
       <LinkColumn
         title="By style"
         items={ENGAGEMENT_STYLES}
@@ -296,28 +318,24 @@ function EngagementRingsPanel() {
         items={ENGAGEMENT_CUSTOMISE}
         prefix="er-custom"
       />
-    </div>
+    </PanelGrid>
   )
 }
 
 function WeddingBandsPanel() {
   return (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-3">
+    <PanelGrid cols={3}>
       <LinkColumn title="By style" items={WEDDING_STYLES} prefix="wb-style" />
       <LinkColumn title="By width" items={WEDDING_WIDTHS} prefix="wb-width" />
       <LinkColumn title="By metal" items={WEDDING_METALS} prefix="wb-metal" />
-    </div>
+    </PanelGrid>
   )
 }
 
 function TennisBraceletsPanel() {
   return (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-3">
-      <LinkColumn
-        title="By stone"
-        items={TENNIS_STONES}
-        prefix="tb-stone"
-      />
+    <PanelGrid cols={3}>
+      <LinkColumn title="By stone" items={TENNIS_STONES} prefix="tb-stone" />
       <LinkColumn
         title="By total weight"
         items={TENNIS_CARATS}
@@ -328,13 +346,13 @@ function TennisBraceletsPanel() {
         items={TENNIS_LENGTHS}
         prefix="tb-length"
       />
-    </div>
+    </PanelGrid>
   )
 }
 
 function NecklacesPanel() {
   return (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-3">
+    <PanelGrid cols={3}>
       <LinkColumn
         title="By style"
         items={NECKLACE_STYLES}
@@ -350,13 +368,13 @@ function NecklacesPanel() {
         items={NECKLACE_STONES}
         prefix="nk-stone"
       />
-    </div>
+    </PanelGrid>
   )
 }
 
 function StudsPanel() {
   return (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-6 p-6 lg:grid-cols-3">
+    <PanelGrid cols={3}>
       <LinkColumn title="By style" items={STUD_STYLES} prefix="st-style" />
       <LinkColumn title="By stone" items={STUD_STONES} prefix="st-stone" />
       <LinkColumn
@@ -364,7 +382,7 @@ function StudsPanel() {
         items={STUD_CARATS}
         prefix="st-carat"
       />
-    </div>
+    </PanelGrid>
   )
 }
 

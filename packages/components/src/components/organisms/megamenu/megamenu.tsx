@@ -491,7 +491,7 @@ function MegamenuContent({
       <div className="mx-auto w-full max-w-7xl px-4 pt-1">
         <div
           data-slot="megamenu-content-inner"
-          className="rounded-lg border border-border bg-popover text-popover-foreground shadow-lg"
+          className="rounded-xl border border-border bg-popover text-popover-foreground shadow-lg"
         >
           {children}
         </div>
@@ -557,7 +557,7 @@ function MegamenuLink({
       >
         <Typography
           as="span"
-          variant="subtitle-2"
+          variant="body-2"
           data-slot="megamenu-link-title"
           className="text-foreground group-hover:text-accent-foreground"
         >
