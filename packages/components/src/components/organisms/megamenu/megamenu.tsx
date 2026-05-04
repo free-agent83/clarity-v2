@@ -506,13 +506,12 @@ interface MegamenuLinkProps
   title: React.ReactNode
   description?: React.ReactNode
   icon?: React.ReactNode
-  badge?: React.ReactNode
   asChild?: boolean
 }
 
 /**
  * Atomic item inside a megamenu panel. Layout is icon (left) + text
- * stack (title above optional description) + optional trailing badge.
+ * stack (title above optional description).
  *
  * Clicking the link closes the megamenu — set `data-keep-open` on the
  * anchor (or call `event.preventDefault()` from `onClick`) if you need
@@ -523,7 +522,6 @@ function MegamenuLink({
   title,
   description,
   icon,
-  badge,
   asChild = false,
   className,
   onClick,
@@ -561,14 +559,6 @@ function MegamenuLink({
           className="text-sm font-medium text-foreground"
         >
           {title}
-          {badge ? (
-            <span
-              data-slot="megamenu-link-badge"
-              className="ml-2 inline-flex align-middle"
-            >
-              {badge}
-            </span>
-          ) : null}
         </span>
         {description ? (
           <span

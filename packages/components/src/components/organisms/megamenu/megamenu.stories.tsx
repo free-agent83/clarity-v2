@@ -15,7 +15,6 @@ import {
   IconUserPlus,
 } from "@tabler/icons-react"
 
-import { Badge } from "../../atoms/badge/badge"
 import { Button } from "../../atoms/button/button"
 import {
   Megamenu,
@@ -172,7 +171,6 @@ export const Default: Story = {
                     icon={<IconCalendarTime />}
                     title="Early Pay"
                     description="Access your payout early"
-                    badge={<Badge>Beta</Badge>}
                   />
                   <MegamenuLink
                     href="#no-company"

@@ -18,7 +18,7 @@ Megamenu is a compound component. The pieces:
 - `Megamenu` — root for a single instance; holds open state + timing
 - `MegamenuTrigger` — behavior + ARIA wrapper (unstyled, `asChild`-first)
 - `MegamenuContent` — the panel; portals to `document.body` on `md+`, renders inside `Sheet` below `md`
-- `MegamenuLink` — atomic item (icon + title + description + badge)
+- `MegamenuLink` — atomic item (icon + title + description)
 - `MegamenuFooter` — bottom strip across the panel
 - `MegamenuTabs`, `MegamenuTabsList`, `MegamenuTabsTrigger`, `MegamenuTabsPanel` — internal vertical tabs
 
@@ -63,7 +63,6 @@ Default rendering is a bare `<button type="button">` with no styling. Production
 | `title` | `ReactNode` | — | Required. Primary label. |
 | `description` | `ReactNode` | — | Optional secondary line. |
 | `icon` | `ReactNode` | — | Optional leading icon. |
-| `badge` | `ReactNode` | — | Optional trailing badge (e.g. `<Badge>Beta</Badge>`). |
 | `asChild` | `boolean` | `false` | For routing libraries — pass a `<Link>` element through. |
 | `data-keep-open` | `""` (presence) | — | When set on the rendered anchor, clicking it does not close the panel. |
 
