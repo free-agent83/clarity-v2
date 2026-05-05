@@ -488,7 +488,7 @@ function MegamenuContent({
       }}
       {...props}
     >
-      <div className="mx-auto w-full max-w-7xl px-4 pt-1">
+      <div className="mx-auto w-full max-w-7xl px-4">
         <div
           data-slot="megamenu-content-inner"
           className="rounded-xl border border-border bg-popover text-popover-foreground shadow-lg"
