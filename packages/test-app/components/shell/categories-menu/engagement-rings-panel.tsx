@@ -110,13 +110,13 @@ function RingStudioBanner() {
       data-slot="categories-menu-banner"
       className="m-3 grid overflow-hidden rounded-md border border-border bg-muted/40 lg:grid-cols-[1fr_320px]"
     >
-      <div className="flex flex-col items-start gap-3 p-6">
-        <Typography variant="h4">The Ring Studio</Typography>
+      <div className="flex flex-col items-start p-6">
+        <Typography variant="h6">The Ring Studio</Typography>
         <Typography variant="body-2" className="text-muted-foreground">
           Customize everything in realtime. Manufactured and delivered at the
           same Nivoda speed and quality.
         </Typography>
-        <Button asChild size="sm" className="mt-1">
+        <Button asChild className="mt-4">
           <Link href="/buyer/browse/custom-jewellery">
             Customize my own jewelry
             <IconArrowRight />

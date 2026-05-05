@@ -48,7 +48,7 @@ export function CategoriesMenu() {
                   {item.label}
                 </NavLinkItem>
               </MegamenuTrigger>
-              <MegamenuContent aria-label={item.label}>
+              <MegamenuContent aria-label={item.label} yOffset={3}>
                 {panel}
               </MegamenuContent>
             </Megamenu>
