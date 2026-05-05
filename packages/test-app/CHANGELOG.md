@@ -6,6 +6,11 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 
 ---
 
+## 2026-05-05
+
+- **Categories strip rewritten on top of `Megamenu`** (M2.0.1). Extracted into `components/shell/categories-menu/` (`categories-menu.tsx`, `nav-link-item.tsx`, `engagement-rings-panel.tsx`, `gemstones-panel.tsx`, `index.ts`). Engagement rings and Gemstones items become megamenus driven by a `PANELS` registry; the rest stay plain Next.js links. Triggers carry the category `href` so clicks navigate to the listing while hovering opens the panel. Strip uses the new `bg-negative` / `text-negative-foreground` tokens (drops the inline `--foreground`/`--background` CSS-var override hack). Below `lg` the strip scrolls horizontally with the scrollbar hidden; megamenu panels collapse into bottom Sheets via `MegamenuContent`'s built-in fallback. Each panel is pulled upward by `yOffset={3}` so the seam between strip and panel disappears.
+- `npm run dev` now runs `nx watch --projects=components -- nx build components` alongside `next dev --turbopack` (via `concurrently`) so edits in `@nivoda/components` rebuild and hot-reload into Minivoda.
+
 ## 2026-04-30 (M1)
 
 - **M1 — Strip Supabase + Drizzle** completed. Ripped the entire DB stack (Supabase, Drizzle ORM, `postgres`), Supabase Auth, the admin area, and the public REST API. Replaced with hardcoded TypeScript fixture arrays under `fixtures/`, JWT cookie auth via `jose`, and in-memory `lib/api/*` projection functions. Every buyer-surface route preserved with identical data shapes. Artificial latency (`80–320ms`) and `?simulate=error` wired to all server pages (`2c70265`, `04f56c0`, `48717c8`, `9ccc4e1`).

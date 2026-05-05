@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "npx nx build components && next dev --turbopack",
+    "dev": "npx nx build components && concurrently --kill-others-on-fail --names 'cmp,next' --prefix-colors 'cyan,green' 'npx nx watch --projects=components -- npx nx build components' 'next dev --turbopack'",
     "build": "npx nx build components && next build",
     "start": "next start",
     "lint": "eslint",

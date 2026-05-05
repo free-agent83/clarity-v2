@@ -37,7 +37,6 @@ interface MegamenuItemContextValue {
   id: string
   contentId: string
   open: boolean
-  trigger: "hover" | "click"
   triggerRef: React.RefObject<HTMLElement | null>
   triggerLabel: string | null
   setTriggerLabel: (label: string | null) => void
@@ -126,7 +125,6 @@ interface MegamenuProps {
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
-  trigger?: "hover" | "click"
   openDelay?: number
   closeDelay?: number
   children: React.ReactNode
@@ -137,11 +135,12 @@ interface MegamenuProps {
  * configuration; the actual trigger and content live in
  * `<MegamenuTrigger>` and `<MegamenuContent>` children.
  *
- * Below the `lg` breakpoint (1024px), the `trigger` prop is ignored —
- * activation is implicit click and the panel renders inside a Sheet.
+ * Activation:
+ * - On `lg` and up, the panel opens on hover. Clicks are pass-through —
+ *   an `asChild` link navigates as expected.
+ * - Below `lg`, hover is ignored and clicks open the Sheet (with
+ *   `event.preventDefault()` so an `asChild` link does not navigate).
  *
- * @param trigger    Activation mode. `"hover"` (default) opens after `openDelay`
- *                   on pointer-enter; `"click"` opens only on click.
  * @param openDelay  Delay (ms) before hover opens. Default 100. Skipped
  *                   when another megamenu in the group is already open.
  * @param closeDelay Grace period (ms) before mouseout closes. Default 150.
@@ -150,7 +149,6 @@ function Megamenu({
   open: openProp,
   defaultOpen = false,
   onOpenChange,
-  trigger = "hover",
   openDelay = 100,
   closeDelay = 150,
   children,
@@ -235,7 +233,6 @@ function Megamenu({
       id,
       contentId,
       open,
-      trigger,
       triggerRef,
       triggerLabel,
       setTriggerLabel,
@@ -249,7 +246,6 @@ function Megamenu({
       id,
       contentId,
       open,
-      trigger,
       triggerLabel,
       scheduleOpen,
       scheduleClose,
@@ -296,7 +292,6 @@ function MegamenuTrigger({
 }: MegamenuTriggerProps) {
   const item = useItemContext("MegamenuTrigger")
   const isTabletUp = useIsTabletUp()
-  const effectiveTrigger = isTabletUp ? item.trigger : "click"
 
   const setRefs = React.useCallback(
     (node: HTMLElement | null) => {
@@ -315,7 +310,7 @@ function MegamenuTrigger({
     onPointerEnter?.(e)
     if (e.defaultPrevented) return
     if (e.pointerType !== "mouse") return
-    if (effectiveTrigger !== "hover") return
+    if (!isTabletUp) return
     item.scheduleOpen()
   }
 
@@ -323,13 +318,20 @@ function MegamenuTrigger({
     onPointerLeave?.(e)
     if (e.defaultPrevented) return
     if (e.pointerType !== "mouse") return
-    if (effectiveTrigger !== "hover") return
+    if (!isTabletUp) return
     item.scheduleClose()
   }
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(e)
     if (e.defaultPrevented) return
+    // `lg` and up: click is pass-through so an `asChild` link can
+    // navigate as expected. The panel is hover-only on desktop.
+    // Below `lg`: open the Sheet and suppress the native action so
+    // the link doesn't navigate; the user picks a subcategory inside
+    // the Sheet instead.
+    if (isTabletUp) return
+    e.preventDefault()
     if (item.open) {
       item.closeImmediately()
     } else {
@@ -370,12 +372,44 @@ function MegamenuTrigger({
   )
 }
 
+/**
+ * Allowed values for `MegamenuContent.yOffset`. The number is a Tailwind
+ * spacing-scale unit (1 = 0.25rem, 2 = 0.5rem, …). The applied class is
+ * always negative, so the panel slides upward toward the trigger row.
+ *
+ * Tailwind's JIT needs literal class strings, so the lookup is static —
+ * extend this map if a project needs values outside the range.
+ */
+const Y_OFFSET_CLASS = {
+  1: "-translate-y-1",
+  2: "-translate-y-2",
+  3: "-translate-y-3",
+  4: "-translate-y-4",
+  5: "-translate-y-5",
+  6: "-translate-y-6",
+  7: "-translate-y-7",
+  8: "-translate-y-8",
+  9: "-translate-y-9",
+  10: "-translate-y-10",
+  11: "-translate-y-11",
+  12: "-translate-y-12",
+} as const
+
+type MegamenuContentYOffset = keyof typeof Y_OFFSET_CLASS
+
 interface MegamenuContentProps extends React.ComponentProps<"div"> {
   /**
    * Override for the panel's accessible label. Defaults to the trigger's
    * text content.
    */
   "aria-label"?: string
+  /**
+   * Pull the panel upward by N units of the Tailwind spacing scale
+   * (1 = 0.25rem). Useful when the panel sits below a dark strip and
+   * needs to overlap the boundary for visual continuity. The translation
+   * is always negative — `yOffset={2}` applies `-translate-y-2`.
+   */
+  yOffset?: MegamenuContentYOffset
 }
 
 /**
@@ -390,6 +424,7 @@ function MegamenuContent({
   className,
   children,
   "aria-label": ariaLabel,
+  yOffset,
   ...props
 }: MegamenuContentProps) {
   const item = useItemContext("MegamenuContent")
@@ -474,19 +509,20 @@ function MegamenuContent({
         "data-open:animate-in data-open:fade-in-0",
         "data-closed:animate-out data-closed:fade-out-0",
         "motion-reduce:animate-none",
+        yOffset !== undefined && Y_OFFSET_CLASS[yOffset],
         className
       )}
       style={{ top: group.anchorY }}
       onPointerEnter={() => {
-        if (item.trigger === "hover") item.cancelTimers()
+        item.cancelTimers()
       }}
       onPointerLeave={(e) => {
         if (e.pointerType !== "mouse") return
-        if (item.trigger === "hover") item.scheduleClose()
+        item.scheduleClose()
       }}
       {...props}
     >
-      <div className="mx-auto w-full max-w-7xl px-4 pt-1">
+      <div className="mx-auto w-full max-w-7xl px-4">
         <div
           data-slot="megamenu-content-inner"
           className="rounded-xl border border-border bg-popover text-popover-foreground shadow-lg"
@@ -580,7 +616,7 @@ function MegamenuLink({
       data-slot="megamenu-link"
       href={asChild ? undefined : href}
       className={cn(
-        "group flex items-start gap-3 rounded-md px-3 py-2 outline-none transition-colors",
+        "group flex items-center gap-3 rounded-md px-3 py-2 outline-none transition-colors",
         "hover:bg-accent focus-visible:bg-accent",
         "focus-visible:ring-3 focus-visible:ring-ring/50",
         className
@@ -786,6 +822,7 @@ export type {
   MegamenuProps,
   MegamenuTriggerProps,
   MegamenuContentProps,
+  MegamenuContentYOffset,
   MegamenuLinkProps,
   MegamenuTabsProps,
 }

@@ -8,6 +8,12 @@ Pre-1.0 entries are grouped by date; post-1.0 will switch to release-version sub
 
 ---
 
+## 2026-05-05
+
+- **M2.0.1 — Megamenu** landed. Trigger-agnostic compound organism in `@nivoda/components`, wired into Minivoda's categories strip. Hover on `lg+` opens the panel, click navigates (the trigger forwards to an `asChild` link); below `lg`, click opens a Sheet with `event.preventDefault()`. Single-active coordinator across the group, instant cross-trigger handoff. Spec at [`.sketchpad/docs/specs/2026-04-30-megamenu.md`](./.sketchpad/docs/specs/2026-04-30-megamenu.md).
+- Dev-workflow loop: `npm run dev` (root via `scripts/dev.sh`, and `packages/test-app`) now runs `nx watch --projects=components -- nx build components` alongside `next dev --turbopack` so edits in `packages/components/src/**` rebuild and HMR through to Minivoda. `concurrently` added as a root devDep. Proper fix (a `development` export condition pointing at `src/`) tracked in the post-v1 backlog.
+- Theme: added `--negative` / `--negative-foreground` token pair (light + dark) in `primitives.css` and exposed via `web-theme.css` for dark-on-light rails like Minivoda's categories strip.
+
 ## 2026-04-30
 
 - Introduced `staging` as a third trunk branch between `dev` and `main`. Defines stability contracts, merge triggers (design leadership judgment), staging-fix path, and hotfix path in `CONTRIBUTING.md` and `CLAUDE.md` (`ab740b7`).

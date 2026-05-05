@@ -6,6 +6,12 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 
 ---
 
+## 2026-05-05
+
+- **Megamenu** (organism, unstable 0.1.0). Trigger-agnostic compound for app-header navigation panels. Compound API: `MegamenuGroup`, `Megamenu`, `MegamenuTrigger`, `MegamenuContent`, `MegamenuLink`, `MegamenuFooter`, plus the `MegamenuTabs` family. Trigger is unstyled (matches `Sheet.Trigger` / `Dialog.Trigger` / `Tooltip.Trigger`); consumers pass their row item via `asChild`. Activation: hover-opens on `lg+` with click pass-through (so an `asChild` link navigates), click-opens a bottom Sheet below `lg`. Single-active coordinator with instant cross-trigger handoff. `MegamenuContent.yOffset` (1–12) pulls the panel upward by the corresponding Tailwind spacing unit so it overlaps a strip above. Disclosure-pattern ARIA. Storybook coverage: `Default`, `WithFooter`, `WithBottomBanner`, `WithCategoryTabbing`, `Complex`.
+- Pinned `recharts: ^3.0.0` as a devDep. The chart organism imports `TooltipValueType`, declared as an optional peer at `^3.0.0`; without an installed version the `tsc --emitDeclarationOnly` step failed in workspace setups where the wrong recharts version was hoisted. The devDep gives tsc a matching install while leaving the public peer-dep contract unchanged.
+- Theme: added `--negative` / `--negative-foreground` token pair to `primitives.css` (light + dark) and exposed via `web-theme.css` as `--color-negative` / `--color-negative-foreground`. Used by consumers building dark-on-light rails (e.g., Minivoda's categories strip).
+
 ## 2026-04-30
 
 - Stripped overlapping branching/versioning/PR/ADR-format sections from `CONTRIBUTING.md`. Package-specific guidance preserved (when to write a package vs project-level ADR). File shrank from 661 → 579 lines (`128ef7e`).
