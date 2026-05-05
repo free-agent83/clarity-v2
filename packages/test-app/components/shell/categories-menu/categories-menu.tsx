@@ -44,7 +44,7 @@ export function CategoriesMenu() {
           return (
             <Megamenu key={item.href}>
               <MegamenuTrigger asChild>
-                <NavLinkItem badge={item.badge} withChevron>
+                <NavLinkItem href={item.href} badge={item.badge} withChevron>
                   {item.label}
                 </NavLinkItem>
               </MegamenuTrigger>

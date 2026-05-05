@@ -37,9 +37,10 @@ Accepts all native `<nav>` props.
 | `open` | `boolean` | — | Controlled open state. |
 | `defaultOpen` | `boolean` | `false` | Uncontrolled initial open state. |
 | `onOpenChange` | `(open: boolean) => void` | — | Fires whenever the panel opens or closes. |
-| `trigger` | `"hover" \| "click"` | `"hover"` | Activation mode. Hover opens after `openDelay`; click opens immediately. Below `lg`, this prop is ignored — activation is always click. |
 | `openDelay` | `number` (ms) | `100` | Delay before hover opens. Skipped when another megamenu in the group is already open. |
 | `closeDelay` | `number` (ms) | `150` | Grace period before mouseout closes — gives the cursor time to traverse the gap between trigger and panel. |
+
+**Activation:** on `lg` and up, the panel opens on hover and clicks are pass-through — an `asChild` link navigates as expected. Below `lg`, hover is ignored and clicks open the Sheet (with `event.preventDefault()` so an `asChild` link does not navigate; the user picks a subcategory from the Sheet instead).
 
 ### MegamenuTrigger
 

@@ -1,6 +1,4 @@
 import * as React from "react";
-import Link from "next/link";
-import { IconArrowRight } from "@tabler/icons-react";
 
 import { MegamenuLink, Typography } from "@nivoda/components";
 
@@ -25,7 +23,7 @@ function slug(label: string) {
 
 /**
  * Megamenu panel for the Gemstones category. A 2-column grid of the
- * most-shopped types with a "See all" link beneath.
+ * most-shopped types. The trigger itself navigates to the full listing.
  */
 export function GemstonesPanel() {
   return (
@@ -43,13 +41,6 @@ export function GemstonesPanel() {
           />
         ))}
       </div>
-      <Link
-        href={GEMSTONES_BASE}
-        className="ml-3 mt-2 inline-flex items-center gap-1 self-start text-sm font-medium text-foreground hover:underline"
-      >
-        See all gemstone types
-        <IconArrowRight className="size-4" />
-      </Link>
     </div>
   );
 }

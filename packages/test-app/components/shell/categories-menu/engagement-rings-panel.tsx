@@ -2,13 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { IconArrowRight } from "@tabler/icons-react";
 
-import {
-  Button,
-  cn,
-  MegamenuFooter,
-  MegamenuLink,
-  Typography,
-} from "@nivoda/components";
+import { Button, cn, MegamenuLink, Typography } from "@nivoda/components";
 
 const ENGAGEMENT_BASE = "/buyer/browse/jewelry/engagement-rings";
 
@@ -140,7 +134,7 @@ function RingStudioBanner() {
 /**
  * Megamenu panel for the Engagement rings category. Three sections —
  * by style, by stone shape, by metal — followed by The Ring Studio
- * promo banner and a "Browse all" link.
+ * promo banner.
  */
 export function EngagementRingsPanel() {
   return (
@@ -163,16 +157,6 @@ export function EngagementRingsPanel() {
       </div>
 
       <RingStudioBanner />
-
-      <MegamenuFooter className="justify-start">
-        <Link
-          href={ENGAGEMENT_BASE}
-          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-        >
-          Browse all engagement rings
-          <IconArrowRight className="size-4" />
-        </Link>
-      </MegamenuFooter>
     </>
   );
 }
