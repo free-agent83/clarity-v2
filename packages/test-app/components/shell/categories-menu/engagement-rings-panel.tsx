@@ -145,13 +145,13 @@ export function EngagementRingsPanel() {
           "lg:grid-cols-[2fr_2fr_1fr]"
         )}
       >
-        <PanelSection title="Engagement rings by style">
+        <PanelSection title="By style">
           <FlowGridFiveByTwo items={STYLES} param="style" />
         </PanelSection>
-        <PanelSection title="Engagement rings by stone shape">
+        <PanelSection title="By stone shape">
           <FlowGridFiveByTwo items={SHAPES} param="shape" />
         </PanelSection>
-        <PanelSection title="Engagement rings by metal">
+        <PanelSection title="By metal">
           <MetalColumn items={METALS} param="metal" />
         </PanelSection>
       </div>

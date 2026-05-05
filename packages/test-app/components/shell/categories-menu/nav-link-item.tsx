@@ -17,13 +17,13 @@ type CommonProps = {
 
 type NavLinkItemProps =
   | (CommonProps & {
-      href: string;
-      onClick?: React.MouseEventHandler<HTMLAnchorElement>;
-    })
+    href: string;
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  })
   | (CommonProps & {
-      href?: undefined;
-      onClick?: React.MouseEventHandler<HTMLButtonElement>;
-    });
+    href?: undefined;
+    onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  });
 
 const baseClassName = cn(
   "inline-flex h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 text-base text-negative-foreground outline-none transition-colors",
@@ -54,7 +54,7 @@ export const NavLinkItem = React.forwardRef<
     <>
       <span>{children}</span>
       {badge ? (
-        <span className="rounded-full bg-negative-foreground px-1.5 py-0.5 text-xs leading-tight text-primary">
+        <span className="rounded-full bg-accent-foreground px-1.5 py-0.5 text-xs leading-tight text-negative-foreground">
           {badge}
         </span>
       ) : null}

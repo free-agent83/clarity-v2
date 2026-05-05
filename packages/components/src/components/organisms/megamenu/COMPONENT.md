@@ -55,6 +55,7 @@ Default rendering is a bare `<button type="button">` with no styling. Production
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `aria-label` | `string` | trigger text | Accessible label for the panel `region`. Defaults to the trigger's text content; override when the trigger isn't text-only. |
+| `yOffset` | `1 \| 2 \| ... \| 12` | — | Pull the panel upward by N units of the Tailwind spacing scale (1 = 0.25rem). Useful when the panel sits below a dark strip and needs to overlap the boundary for visual continuity. The translation is always negative. |
 
 ### MegamenuLink
 

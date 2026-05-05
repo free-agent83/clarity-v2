@@ -372,12 +372,44 @@ function MegamenuTrigger({
   )
 }
 
+/**
+ * Allowed values for `MegamenuContent.yOffset`. The number is a Tailwind
+ * spacing-scale unit (1 = 0.25rem, 2 = 0.5rem, …). The applied class is
+ * always negative, so the panel slides upward toward the trigger row.
+ *
+ * Tailwind's JIT needs literal class strings, so the lookup is static —
+ * extend this map if a project needs values outside the range.
+ */
+const Y_OFFSET_CLASS = {
+  1: "-translate-y-1",
+  2: "-translate-y-2",
+  3: "-translate-y-3",
+  4: "-translate-y-4",
+  5: "-translate-y-5",
+  6: "-translate-y-6",
+  7: "-translate-y-7",
+  8: "-translate-y-8",
+  9: "-translate-y-9",
+  10: "-translate-y-10",
+  11: "-translate-y-11",
+  12: "-translate-y-12",
+} as const
+
+type MegamenuContentYOffset = keyof typeof Y_OFFSET_CLASS
+
 interface MegamenuContentProps extends React.ComponentProps<"div"> {
   /**
    * Override for the panel's accessible label. Defaults to the trigger's
    * text content.
    */
   "aria-label"?: string
+  /**
+   * Pull the panel upward by N units of the Tailwind spacing scale
+   * (1 = 0.25rem). Useful when the panel sits below a dark strip and
+   * needs to overlap the boundary for visual continuity. The translation
+   * is always negative — `yOffset={2}` applies `-translate-y-2`.
+   */
+  yOffset?: MegamenuContentYOffset
 }
 
 /**
@@ -392,6 +424,7 @@ function MegamenuContent({
   className,
   children,
   "aria-label": ariaLabel,
+  yOffset,
   ...props
 }: MegamenuContentProps) {
   const item = useItemContext("MegamenuContent")
@@ -476,6 +509,7 @@ function MegamenuContent({
         "data-open:animate-in data-open:fade-in-0",
         "data-closed:animate-out data-closed:fade-out-0",
         "motion-reduce:animate-none",
+        yOffset !== undefined && Y_OFFSET_CLASS[yOffset],
         className
       )}
       style={{ top: group.anchorY }}
@@ -582,7 +616,7 @@ function MegamenuLink({
       data-slot="megamenu-link"
       href={asChild ? undefined : href}
       className={cn(
-        "group flex items-start gap-3 rounded-md px-3 py-2 outline-none transition-colors",
+        "group flex items-center gap-3 rounded-md px-3 py-2 outline-none transition-colors",
         "hover:bg-accent focus-visible:bg-accent",
         "focus-visible:ring-3 focus-visible:ring-ring/50",
         className
@@ -788,6 +822,7 @@ export type {
   MegamenuProps,
   MegamenuTriggerProps,
   MegamenuContentProps,
+  MegamenuContentYOffset,
   MegamenuLinkProps,
   MegamenuTabsProps,
 }
