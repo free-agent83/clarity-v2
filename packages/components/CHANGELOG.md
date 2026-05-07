@@ -6,6 +6,11 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 
 ---
 
+## 2026-05-07
+
+- **`web-theme.css` self-declares Tailwind v4 source paths.** Added `@source ".."` to the public CSS entry, so Tailwind discovers the utility classes baked into compiled library components automatically. Removes the requirement for every consumer to ship their own `@source ".../node_modules/@nivoda/components/dist"` line — that pattern was fragile (relative paths broke in git worktrees and any non-canonical project layout) and a leaky abstraction. Resolves the "broken styling everywhere in Minivoda" symptom seen when running from a worktree.
+- Build artefact layout: `web-theme.css` and `primitives.css` now ship at `dist/styles/` (mirroring `src/styles/`) so the `@source ".."` directive resolves symmetrically in Storybook (reads from `src/styles/`) and in consumers (read from `dist/styles/` via the export map). Public import path `@nivoda/components/web-theme.css` is unchanged — the `package.json` `exports` entry now points at `./dist/styles/web-theme.css`. Build script in `project.json` updated to `mkdir -p dist/styles && cp … dist/styles/`.
+
 ## 2026-05-05
 
 - **Megamenu** (organism, unstable 0.1.0). Trigger-agnostic compound for app-header navigation panels. Compound API: `MegamenuGroup`, `Megamenu`, `MegamenuTrigger`, `MegamenuContent`, `MegamenuLink`, `MegamenuFooter`, plus the `MegamenuTabs` family. Trigger is unstyled (matches `Sheet.Trigger` / `Dialog.Trigger` / `Tooltip.Trigger`); consumers pass their row item via `asChild`. Activation: hover-opens on `lg+` with click pass-through (so an `asChild` link navigates), click-opens a bottom Sheet below `lg`. Single-active coordinator with instant cross-trigger handoff. `MegamenuContent.yOffset` (1–12) pulls the panel upward by the corresponding Tailwind spacing unit so it overlaps a strip above. Disclosure-pattern ARIA. Storybook coverage: `Default`, `WithFooter`, `WithBottomBanner`, `WithCategoryTabbing`, `Complex`.

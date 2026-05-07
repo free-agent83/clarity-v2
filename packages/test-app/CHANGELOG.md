@@ -6,6 +6,10 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 
 ---
 
+## 2026-05-07
+
+- `app/globals.css` shrinks to two lines (drops the `@source ".../node_modules/@nivoda/components/dist"` line). The components package now self-declares its Tailwind v4 source paths from inside `web-theme.css`, so consumers no longer need to know — or correctly relative-path — the location of the library's compiled output. Minivoda's CSS entry is now exactly what an external consumer would write. Fixes the broken header / slider / megamenu hover / general styling regression seen when running Minivoda from a git worktree.
+
 ## 2026-05-05
 
 - **Categories strip rewritten on top of `Megamenu`** (M2.0.1). Extracted into `components/shell/categories-menu/` (`categories-menu.tsx`, `nav-link-item.tsx`, `engagement-rings-panel.tsx`, `gemstones-panel.tsx`, `index.ts`). Engagement rings and Gemstones items become megamenus driven by a `PANELS` registry; the rest stay plain Next.js links. Triggers carry the category `href` so clicks navigate to the listing while hovering opens the panel. Strip uses the new `bg-negative` / `text-negative-foreground` tokens (drops the inline `--foreground`/`--background` CSS-var override hack). Below `lg` the strip scrolls horizontally with the scrollbar hidden; megamenu panels collapse into bottom Sheets via `MegamenuContent`'s built-in fallback. Each panel is pulled upward by `yOffset={3}` so the seam between strip and panel disappears.
