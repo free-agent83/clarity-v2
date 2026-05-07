@@ -8,6 +8,11 @@ Pre-1.0 entries are grouped by date; post-1.0 will switch to release-version sub
 
 ---
 
+## 2026-05-07
+
+- **`@nivoda/components/web-theme.css` self-declares its Tailwind v4 source paths.** Added a single `@source ".."` directive inside the package's public CSS entry — Tailwind now discovers the utility classes used inside compiled library components without each consumer adding their own `@source` line. Caught when Minivoda was run from a git worktree: the previous setup needed `@source "../../../node_modules/@nivoda/components/dist"` in every consumer's `globals.css`, and that relative path didn't resolve from a worktree (no local `node_modules`), silently dropping every library-internal class from the generated CSS — broken header, broken slider, no megamenu hover, generally wrong styling. Library-side fix; consumers (test-app today, any future repo) just import and Tailwind picks up the right files in any directory layout.
+- Build artefact: `web-theme.css` and `primitives.css` now ship under `dist/styles/` so the `..` directive resolves symmetrically in src (Storybook) and dist (consumers). Public import path (`@import "@nivoda/components/web-theme.css"`) is unchanged — the package export map redirects to the new location.
+
 ## 2026-05-05
 
 - **M2.0.1 — Megamenu** landed. Trigger-agnostic compound organism in `@nivoda/components`, wired into Minivoda's categories strip. Hover on `lg+` opens the panel, click navigates (the trigger forwards to an `asChild` link); below `lg`, click opens a Sheet with `event.preventDefault()`. Single-active coordinator across the group, instant cross-trigger handoff. Spec at [`.sketchpad/docs/specs/2026-04-30-megamenu.md`](./.sketchpad/docs/specs/2026-04-30-megamenu.md).

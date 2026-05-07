@@ -11,7 +11,7 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./web-theme.css": "./dist/web-theme.css",
+    "./web-theme.css": "./dist/styles/web-theme.css",
     "./*": {
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"
