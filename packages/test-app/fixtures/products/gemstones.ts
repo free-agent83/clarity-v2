@@ -1,6 +1,6 @@
 import type { GemstoneItem } from "@/fixtures/types/gemstone";
 
-const IMG = "/gemstone.png";
+const IMG = "/images/products/gemstones/gemstone.png";
 
 const img = (_sku: string, _view: "FLAT" | "ANGLE" | "FRONT" = "FLAT") => IMG;
 

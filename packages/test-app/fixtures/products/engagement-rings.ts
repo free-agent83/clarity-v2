@@ -3,7 +3,7 @@ import type {
   JewelryImage,
 } from "@/fixtures/types/engagement-ring";
 
-const RING_IMG = "/ring.jpg";
+const RING_IMG = "/images/products/engagement-rings/ring.jpg";
 
 const imgs = (id: string): JewelryImage[] => [
   { url: RING_IMG, sortOrder: 0, isThumbnail: true },

@@ -1,7 +1,7 @@
 import type { MeleeItem } from "@/fixtures/types/melee";
 
-const img = (sku: string, view: "FLAT" | "ANGLE" = "FLAT") =>
-  `https://placehold.it/400x400?text=${encodeURIComponent(`${sku} ${view}`)}`;
+const img = (_sku: string, _view: "FLAT" | "ANGLE" = "FLAT") =>
+  "/images/products/melee/melee.png";
 
 export const NATURAL_MELEE: MeleeItem[] = [
   {
