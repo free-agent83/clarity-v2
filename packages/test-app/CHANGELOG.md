@@ -6,6 +6,10 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 
 ---
 
+## 2026-05-13
+
+- Product images relocated from `public/static/products/<category>/` and the three root placeholders (`ring.jpg`, `diamond.png`, `gemstone.png`) under `public/images/products/<category>/`; the home grid, engagement-rings, natural-diamonds, lab-grown-diamonds, gemstones, natural-melee, lab-grown-melee, and shortlists fixtures all repointed at the new paths. Melee fixtures previously pointed at a `placehold.it` URL that now 403s (and `next/image` blocks unlisted remote hosts anyway) — they now use the new `melee/melee.png` placeholder (`e06160d`).
+
 ## 2026-05-07
 
 - `app/globals.css` shrinks to two lines (drops the `@source ".../node_modules/@nivoda/components/dist"` line). The components package now self-declares its Tailwind v4 source paths from inside `web-theme.css`, so consumers no longer need to know — or correctly relative-path — the location of the library's compiled output. Minivoda's CSS entry is now exactly what an external consumer would write. Fixes the broken header / slider / megamenu hover / general styling regression seen when running Minivoda from a git worktree.
