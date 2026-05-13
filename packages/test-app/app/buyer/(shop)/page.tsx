@@ -5,15 +5,15 @@ import { HomeCarousel } from "@/components/home-carousel";
 import { checkSimulateError } from "@/lib/api/_simulate";
 
 const HOME_CATEGORIES = [
-  { label: "Engagement rings", slug: "jewelry/engagement-rings", badge: "New", image: "/ring.jpg" },
-  { label: "Wedding bands", slug: "wedding-bands", badge: "New", image: "/static/products/wedding-bands/wedding-bands-001-hero.jpg" },
-  { label: "Chains", slug: "chains", badge: null, image: "/static/products/chains/chains-002-hero.jpg" },
-  { label: "Pendants", slug: "pendants", badge: null, image: "/static/products/pendants/pendants-002-hero.jpg" },
-  { label: "Studs", slug: "studs", badge: null, image: "/static/products/studs/studs-001-hero.jpg" },
-  { label: "Tennis bracelets", slug: "tennis-bracelets", badge: null, image: "/static/products/tennis-bracelets/tennis-bracelets-001-hero.jpg" },
-  { label: "Natural diamonds", slug: "natural-diamonds", badge: null, image: "/diamond.png" },
-  { label: "Lab grown diamonds", slug: "lab-grown-diamonds", badge: null, image: "/diamond.png" },
-  { label: "Gemstones", slug: "gemstones", badge: null, image: "/gemstone.png" },
+  { label: "Engagement rings", slug: "jewelry/engagement-rings", badge: "New", image: "/images/products/engagement-rings/ring.jpg" },
+  { label: "Wedding bands", slug: "wedding-bands", badge: "New", image: "/images/products/wedding-bands/wedding-bands-001-hero.jpg" },
+  { label: "Chains", slug: "chains", badge: null, image: "/images/products/chains/chains-002-hero.jpg" },
+  { label: "Pendants", slug: "pendants", badge: null, image: "/images/products/pendants/pendants-002-hero.jpg" },
+  { label: "Studs", slug: "studs", badge: null, image: "/images/products/studs/studs-001-hero.jpg" },
+  { label: "Tennis bracelets", slug: "tennis-bracelets", badge: null, image: "/images/products/tennis-bracelets/tennis-bracelets-001-hero.jpg" },
+  { label: "Natural diamonds", slug: "natural-diamonds", badge: null, image: "/images/products/diamonds/diamond.png" },
+  { label: "Lab grown diamonds", slug: "lab-grown-diamonds", badge: null, image: "/images/products/diamonds/diamond.png" },
+  { label: "Gemstones", slug: "gemstones", badge: null, image: "/images/products/gemstones/gemstone.png" },
 ];
 
 export default async function BuyerHomePage({

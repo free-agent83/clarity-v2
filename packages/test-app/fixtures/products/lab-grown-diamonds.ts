@@ -1,6 +1,6 @@
 import type { DiamondItem } from "@/fixtures/types/diamond";
 
-const IMG = "/diamond.png";
+const IMG = "/images/products/diamonds/diamond.png";
 
 const img = (_sku: string, _view: "FLAT" | "ANGLE" | "FRONT" = "FLAT") => IMG;
 
