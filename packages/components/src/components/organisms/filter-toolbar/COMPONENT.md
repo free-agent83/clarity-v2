@@ -6,6 +6,8 @@ status: unstable
 lastUpdated: 2026-04-21
 ---
 
+<Gap>Usage guidance for this component is light — props and the live demo are accurate; written guidance is forthcoming.</Gap>
+
 # FilterToolbar
 
 Complete filter chrome for a filterable / sortable / searchable listing view. Bundles in one organism: a search input, a wrapping row of quick-filter chips, an "All filters" button that opens an internally-managed drawer, a sort dropdown, a right-side actions slot for extras (view toggle, etc.), and a sticky version of the filter row that pins to the top of the viewport once the main toolbar scrolls past.
