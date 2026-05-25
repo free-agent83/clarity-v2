@@ -1,0 +1,21 @@
+---
+title: Principles
+description: Clarity is an agentic design system — code-first, agent-readable, designed so anyone building UI ships design-correct output by construction.
+---
+
+Clarity is an agentic design system.
+
+That means two things at once. It is consumed directly by AI coding agents — Claude Code, Cursor, and whatever comes next — reading the same files engineers read, in the same place. And it is built so that whoever produces UI, by whatever route, produces design-correct output automatically. The components are the design. There is no interpretation step where drift can creep in, and therefore no iteration loop to catch it.
+
+Most design systems treat code as a downstream artefact of a design tool. Clarity inverts that. Tokens are JSON. Components are real React. Documentation is markdown next to the code. The same library serves engineers writing code directly and designers prompting agents to build working UI. One library, two delivery paths, zero translation layer.
+
+The three principles below describe how that works in practice.
+
+### [Code-first](/docs/principles/code-first)
+There is no separate design source of truth. The code is the source.
+
+### [Two delivery paths](/docs/principles/two-delivery-paths)
+Engineering ships faster without design gates. Design and product self-serve with AI tools. Same library underneath.
+
+### [Built for agents](/docs/principles/built-for-agents)
+The repo itself is the interface. No MCP server, no sync, no stale copy — agents read the live files.

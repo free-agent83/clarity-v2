@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd ../.. && npx nx build components && npx nx build docs",
+  "installCommand": "cd ../.. && npm install",
+  "framework": "nextjs"
+}

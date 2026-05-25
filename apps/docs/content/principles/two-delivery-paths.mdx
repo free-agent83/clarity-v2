@@ -1,0 +1,24 @@
+---
+title: Two delivery paths
+description: One library, two ways to ship — engineers build directly, designers and PMs build through AI agents, both produce design-correct output by construction.
+---
+
+The same library opens up two ways to ship UI.
+
+### Engineering, without design gates
+
+Engineers import from Clarity and features ship design-correct on the first pass. Components are pre-approved at the source — there is no separate spec to match, because the component is the spec. Design review stops being a queue. The familiar loop of design hand-off, engineering implementation, design review, fix, re-review collapses into a single step: build.
+
+The gains compound. Reviewers spend their time on the things components cannot encode — flow, hierarchy, copy — instead of catching the same dozen primitive mistakes on every PR. Engineers move faster because they are no longer waiting for a designer to ratify a button.
+
+### Design and product, building directly
+
+Because the library is built to be read by AI coding agents, designers and PMs with tools like Claude Code or Cursor can build against it directly. Not mockups. Real working UI, running in the browser, against the live component library and the live tokens.
+
+This is not a parallel system. It is the same library, accessed through a different surface. A designer prompting an agent and an engineer typing into their editor are calling the same `<Button>`, hitting the same tokens, getting the same output. The agent is not generating CSS that approximates a Figma file — it is composing real components from a real library.
+
+### Both paths compound
+
+Both paths produce design-correct output by construction. Both depend on the same enabling work: building the components, documenting them for agents, proving them in production. Every new consumer reinforces the value for the others. A component used by engineers is hardened for designers. A pattern proven through agents is faster for engineers. The library gets sharper from both directions at once.
+
+The structural point is that there is only one library. There is no separate "designer-friendly" version. The thing the agents read is the thing that ships.

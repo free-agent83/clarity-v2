@@ -1,0 +1,89 @@
+---
+title: Typography
+description: The three-typeface stack — Nanum Myeongjo for headlines, Inter for UI, JetBrains Mono for code.
+---
+
+Nivoda uses three typefaces with clear, non-overlapping roles. Headlines carry the luxury-marketplace pillar; body and UI get out of the way; code stays monospaced.
+
+> The Clarity V2 documentation site renders in Inter only (Nanum Myeongjo is not loaded here). This page documents the brand typeface stack for product UI, marketing, and presentation contexts — not the docs site's own implementation.
+
+## Three typefaces, clear roles
+
+Never mix typefaces beyond this stack. Never combine display serifs and body serifs. Each typeface has one job.
+
+### Nanum Myeongjo
+
+Headlines only. A display serif for hero headings, page titles, and section headers. Korean typeface with formal elegance — carries warmth and reinforces the high-end marketplace pillar.
+
+- **Source:** https://fonts.google.com/specimen/Nanum+Myeongjo
+- **Stack:** `Nanum Myeongjo, serif`
+- **Usage:** display text (48px), page titles (36px), section headers (24px). Headlines and display only. Do not use for body or UI.
+
+### Inter
+
+Body and everything else. Primary typeface for paragraphs, UI, labels, supporting text, navigation, and all UI copy.
+
+- **Source:** https://fonts.google.com/specimen/Inter
+- **Stack:** `Inter, system-ui, sans-serif`
+- **Usage:** body paragraphs, buttons, form labels, captions, navigation, all UI elements.
+
+### JetBrains Mono
+
+Monospaced. Code, data tables, and technical content only.
+
+- **Source:** https://fonts.google.com/specimen/JetBrains+Mono
+- **Stack:** `JetBrains Mono, monospace`
+
+## Approved weights
+
+Only these four. Never light (300) or extra-bold (800+).
+
+| Weight | Value | Usage |
+|--------|-------|-------|
+| Normal | 400 | Body text, descriptions, supporting content |
+| Medium | 500 | Subsection headings, labels, emphasis within body |
+| Semibold | 600 | Section headings, page titles, navigation |
+| Bold | 700 | Display/hero text, strong emphasis (use sparingly) |
+
+## Size scale
+
+| Token | Size | Usage |
+|-------|------|-------|
+| xs | 12px | Labels, metadata, helper text |
+| sm | 14px | Supporting text, captions, table cells |
+| base | 16px | Default body text |
+| lg | 18px | Emphasised body, lead paragraphs |
+| xl | 20px | Subsection headings |
+| 2xl | 24px | Section headings |
+| 3xl | 30px | Page titles |
+| 4xl | 36px | Slide section headers, marketing headings |
+| 5xl | 48px | Hero/display text, presentation title slides |
+
+## Line heights
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| tight | 1.25 | Headings, display text |
+| normal | 1.5 | Body text, default |
+| relaxed | 1.625 | Long-form reading |
+
+## Hierarchy for non-UI contexts
+
+For presentations, documents, and marketing.
+
+| Level | Size | Weight | Line height | Use |
+|-------|------|--------|-------------|-----|
+| Display | 48px | Bold (700) | 1.25 | Title slides, hero headlines |
+| Heading 1 | 36px | Semibold (600) | 1.25 | Page/slide titles |
+| Heading 2 | 24px | Semibold (600) | 1.25 | Section headers |
+| Heading 3 | 20px | Medium (500) | 1.5 | Subsection headers |
+| Body | 16px | Normal (400) | 1.5 | Default text |
+| Body small | 14px | Normal (400) | 1.5 | Supporting text, footnotes |
+| Caption | 12px | Medium (500) | 1.5 | Labels, metadata |
+
+## Rules
+
+- Never mix typefaces outside this stack.
+- Never use weights outside the four approved weights.
+- Never use sizes outside the defined scale.
+- Do not override line height or letter spacing values.

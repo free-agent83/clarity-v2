@@ -70,3 +70,7 @@ Use Dialog for tasks that require the user's full attention and block interactio
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: content caps at `sm:max-w-md` on small screens and above
 - [ ] Tokens only — flagged: raw `2rem` literal in `max-w-[calc(100%-2rem)]`. See Known deviations.
+
+## Live component
+
+<StorybookEmbed story="overlays-dialog--default" />

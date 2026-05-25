@@ -44,3 +44,7 @@ Use Label to name every form control. Always set `htmlFor` to the control's `id`
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: no breakpoint-dependent behaviour
 - [x] Tokens only: no raw literals inside arbitrary value syntax
+
+## Live component
+
+<StorybookEmbed story="forms-label--default" />

@@ -52,3 +52,7 @@ Use Select for single-value picks from a moderate list of options (~5–50). Alw
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: listbox repositions near edges via Radix
 - [x] Tokens only: no raw literals inside arbitrary value syntax
+
+## Live component
+
+<StorybookEmbed story="forms-select--default" />

@@ -26,6 +26,7 @@
     "node": ">=22.0.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ]
 }

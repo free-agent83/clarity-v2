@@ -1,0 +1,32 @@
+{
+  "name": "@nivoda/docs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/docs",
+  "projectType": "application",
+  "targets": {
+    "dev": {
+      "command": "next dev -p 3002",
+      "options": { "cwd": "apps/docs" },
+      "cache": false
+    },
+    "build": {
+      "command": "next build",
+      "options": { "cwd": "apps/docs" },
+      "inputs": ["default", "^default"],
+      "outputs": ["{projectRoot}/.next"],
+      "cache": true
+    },
+    "start": {
+      "command": "next start -p 3002",
+      "options": { "cwd": "apps/docs" },
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "typecheck": {
+      "command": "tsc --noEmit",
+      "options": { "cwd": "apps/docs" },
+      "inputs": ["default", "^default"],
+      "cache": true
+    }
+  }
+}

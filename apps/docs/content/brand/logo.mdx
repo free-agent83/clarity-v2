@@ -1,0 +1,59 @@
+---
+title: Logo
+description: Wordmark and icon variants, with usage rules.
+---
+
+Nivoda's logo comes in two shapes (wordmark and icon) and two colourways (white for dark surfaces, black for light). Use the canonical SVG assets — never recreate or approximate.
+
+## Wordmark
+
+Use the wordmark wherever space allows. It is the primary brand mark.
+
+<div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'center', padding: '2rem', background: '#0c0a09', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+  <img src="/brand/wordmark-white.svg" alt="Nivoda wordmark, white" style={{ height: '40px' }} />
+</div>
+
+<div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'center', padding: '2rem', background: '#ffffff', borderRadius: '0.5rem', border: '1px solid #e7e5e4' }}>
+  <img src="/brand/wordmark-black.svg" alt="Nivoda wordmark, black" style={{ height: '40px' }} />
+</div>
+
+## Icon
+
+The icon is for spaces where the wordmark won't fit — favicons, app icons, avatars, very tight UI surfaces.
+
+<div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'center', padding: '2rem', background: '#0c0a09', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+  <img src="/brand/icon-white.svg" alt="Nivoda icon, white" style={{ height: '48px' }} />
+</div>
+
+<div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'center', padding: '2rem', background: '#ffffff', borderRadius: '0.5rem', border: '1px solid #e7e5e4' }}>
+  <img src="/brand/icon-black.svg" alt="Nivoda icon, black" style={{ height: '48px' }} />
+</div>
+
+## Approved variants
+
+Four canonical files. Use these; do not recreate.
+
+| File | When to use |
+|------|-------------|
+| `wordmark-white.svg` | Full wordmark, white. Dark backgrounds or dark photography. |
+| `wordmark-black.svg` | Full wordmark, black. Light backgrounds, white surfaces, light photography. |
+| `icon-white.svg` | Icon only, white. When the wordmark is unavailable — small spaces, favicons, app icons. |
+| `icon-black.svg` | Icon only, black. When the wordmark is unavailable on light backgrounds. |
+
+## Usage rules
+
+- **Safe backgrounds** — white (`#ffffff`), off-white (`#fafaf9`), soft black (`#0c0a09`), or dark photography.
+- **Minimum clear space** — 16px on all sides, or 1/4 of the logo height, whichever is larger. Nothing else (text, icons, borders, other elements) sits inside that space.
+- **Minimum size** — web/digital: 40px width for the wordmark, 24px width for the icon. Print: 1 inch / 25mm width (wordmark), 0.5 inch / 12mm width (icon). Below these, the marks become illegible. Do not render smaller.
+- **Maximum scale** — no upper limit. Scale up as needed, always maintaining aspect ratio. Use SVG for infinite scalability.
+- **Co-branding** — when Nivoda's logo appears alongside a partner's, maintain equal or greater visual weight. Minimum 16px clear space between logos.
+
+## Never
+
+- Stretch, rotate, or distort the logo.
+- Change the logo colours.
+- Place on backgrounds that reduce legibility.
+- Recreate or approximate — always use the canonical asset from `/brand/`.
+- Add effects (shadows, gradients, outlines).
+
+In code, the [`brand`](../components/atoms/brand) component renders these assets directly so consumers don't import SVGs by hand.

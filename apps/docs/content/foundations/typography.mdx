@@ -1,0 +1,98 @@
+---
+title: Typography
+description: Type stack, role presets, and the Typography component.
+---
+
+Clarity V2 ships a single sans-serif stack and a fixed list of role presets. Every run of text in a product surface is one of those presets — pick the role, not the size.
+
+## Stack
+
+Inter Variable, loaded via `@fontsource-variable/inter` in `@nivoda/components`. Falls through to `system-ui, sans-serif` if the variable font hasn't loaded. Monospace (`JetBrains Mono, monospace`) is used for code and tabular figures only.
+
+Serif display typography is reserved for marketing surfaces — it doesn't appear in product UI or in these docs.
+
+## Role presets
+
+Twelve roles, each a fixed combination of size, weight, line-height and tracking. Source: `packages/components/src/components/atoms/typography/typography.tsx`.
+
+<div style={{marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem'}}>
+  <div>
+    <div style={{fontSize: '96px', fontWeight: 300, lineHeight: 1.17, letterSpacing: '-0.025em', fontFamily: 'Inter, system-ui, sans-serif'}}>Heading 1</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>h1 · 96px / 6rem · 300 · lh 112px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '60px', fontWeight: 300, lineHeight: 1.2, fontFamily: 'Inter, system-ui, sans-serif'}}>Heading 2</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>h2 · 60px / 3.75rem · 300 · lh 72px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '48px', fontWeight: 500, lineHeight: 1.17, fontFamily: 'Inter, system-ui, sans-serif'}}>Heading 3</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>h3 · 48px / 3rem · 500 · lh 56px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '36px', fontWeight: 500, lineHeight: 1.22, fontFamily: 'Inter, system-ui, sans-serif'}}>Heading 4</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>h4 · 36px / 2.25rem · 500 · lh 44px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '24px', fontWeight: 500, lineHeight: 1.33, fontFamily: 'Inter, system-ui, sans-serif'}}>Heading 5</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>h5 · 24px / 1.5rem · 500 · lh 32px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '20px', fontWeight: 500, lineHeight: 1.6, fontFamily: 'Inter, system-ui, sans-serif'}}>Heading 6</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>h6 · 20px / 1.25rem · 500 · lh 32px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '16px', fontWeight: 400, lineHeight: 1.75, fontFamily: 'Inter, system-ui, sans-serif'}}>Subtitle 1 — medium section label above a block of body text.</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>subtitle-1 · 16px / 1rem · 400 · lh 28px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '14px', fontWeight: 500, lineHeight: 1.43, fontFamily: 'Inter, system-ui, sans-serif'}}>Subtitle 2 — smaller section label, field group headings.</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>subtitle-2 · 14px / 0.875rem · 500 · lh 20px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '16px', fontWeight: 400, lineHeight: 1.5, fontFamily: 'Inter, system-ui, sans-serif'}}>Body 1 — the default for long-form prose. This is the reading size for marketing copy, article bodies, and help centre content. Line length and line-height are tuned for comfortable multi-paragraph reading.</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>body-1 · 16px / 1rem · 400 · lh 24px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '16px', fontWeight: 500, lineHeight: 1.5, fontFamily: 'Inter, system-ui, sans-serif'}}>Body 1 Emphasis — same preset with <code>emphasis</code> raising weight to 500 for in-line stress.</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>body-1, emphasis · 16px · 500 · lh 24px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '14px', fontWeight: 400, lineHeight: 1.43, fontFamily: 'Inter, system-ui, sans-serif'}}>Body 2 — the default for UI copy. Form help text, table cells, card bodies, anywhere space is tighter than marketing but the text still needs to breathe.</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>body-2 · 14px / 0.875rem · 400 · lh 20px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '14px', fontWeight: 500, lineHeight: 1.43, fontFamily: 'Inter, system-ui, sans-serif'}}>Body 2 Emphasis — same preset with raised weight.</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>body-2, emphasis · 14px · 500 · lh 20px</code>
+  </div>
+  <div>
+    <div style={{fontSize: '12px', fontWeight: 400, lineHeight: 1.67, letterSpacing: '0.025em', fontFamily: 'Inter, system-ui, sans-serif'}}>CAPTION — METADATA, LABELS, MICROCOPY UNDER FORM FIELDS.</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>caption · 12px / 0.75rem · 400 · lh 20px · tracking wide</code>
+  </div>
+  <div>
+    <div style={{fontSize: '12px', fontWeight: 500, lineHeight: 1.67, letterSpacing: '0.025em', fontFamily: 'Inter, system-ui, sans-serif'}}>CAPTION EMPHASIS — SAME PRESET, MEDIUM WEIGHT.</div>
+    <code style={{fontSize: '0.75rem', color: '#a8a29e'}}>caption, emphasis · 12px · 500 · lh 20px</code>
+  </div>
+</div>
+
+## How to use
+
+```tsx
+import { Typography } from "@nivoda/components/typography"
+
+<Typography variant="h1">Page title</Typography>
+<Typography variant="body-1">The default for long-form prose.</Typography>
+<Typography variant="body-2" emphasis>Stressed UI copy.</Typography>
+<Typography variant="caption">Helper text under a form field.</Typography>
+```
+
+Pick the `variant` that matches the role, not the size. "Is this a page title?" → `h1`. "Is this a caption under a form field?" → `caption`. The component picks a sensible HTML element for the role (`h1`–`h6` render their matching tag; subtitles render `<h6>`; body and caption render `<p>`); pass `as` to override when the visual weight shouldn't imply document structure.
+
+Colour is not a Typography concern. Text inherits from ambient context; override with `className="text-muted-foreground"` or similar. Margins aren't a Typography concern either — spacing composes via the parent's `flex gap-*` or `space-y-*`.
+
+See the [Typography component](/docs/components/atoms/typography) for the full props table, `asChild` usage, and best practices.
+
+## Source
+
+- Role presets: `packages/components/src/components/atoms/typography/typography.tsx`
+- Component reference: [`COMPONENT.md`](/docs/components/atoms/typography) — authored alongside the code
+- Font-size and weight tokens: `packages/tokens/src/typography.tokens.json`

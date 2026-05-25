@@ -1,0 +1,96 @@
+---
+title: Spacing
+description: The 4px-base spacing scale — 13 steps, geometric-ish progression.
+---
+
+Thirteen steps on a 4px base. The scale is intentionally sparse at the top end — gaps exist so a component can't reach for an "almost right" value.
+
+Source: `packages/tokens/src/spacing.tokens.json`.
+
+## The scale
+
+<div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem'}}>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.0</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>0px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '0px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.1</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>4px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '4px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.2</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>8px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '8px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.3</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>12px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '12px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.4</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>16px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '16px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.5</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>20px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '20px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.6</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>24px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '24px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.8</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>32px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '32px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.10</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>40px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '40px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.12</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>48px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '48px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.16</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>64px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '64px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.20</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>80px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '80px'}} />
+  </div>
+  <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+    <code style={{minWidth: '5rem', fontSize: '0.75rem'}}>spacing.24</code>
+    <code style={{minWidth: '3.5rem', fontSize: '0.75rem', color: '#a8a29e'}}>96px</code>
+    <div style={{background: '#7655fd', height: '1.25rem', width: '96px'}} />
+  </div>
+</div>
+
+## Tailwind mapping
+
+The step numbers match Tailwind v4's default spacing utilities directly: `p-1` = `4px`, `p-4` = `16px`, `p-24` = `96px`. Reach for the Tailwind utility and you get the token value for free — no custom `@theme` mapping required.
+
+Tailwind ships every integer step from 0 to 96 by default. Clarity V2 intentionally does not. `p-7` (`28px`), `p-9` (`36px`), `p-11` (`44px`), `p-14` (`56px`), `p-18` (`72px`), `p-22` (`88px`) are not in the scale — the gaps are load-bearing. If a layout "needs" 28px, the answer is 24 or 32, not a new token.
+
+## When to use which
+
+- **`spacing.1` / `spacing.2`** — icon-to-label gap, dense form rows.
+- **`spacing.3` / `spacing.4`** — default padding inside buttons, inputs, list items.
+- **`spacing.6` / `spacing.8`** — card padding, section breathing room inside a surface.
+- **`spacing.12` / `spacing.16`** — gaps between sections on a page.
+- **`spacing.20` / `spacing.24`** — hero and landing-page blocks. Rarely justified inside product surfaces.
+
+## Consumption
+
+Every spacing value in the component library is applied through a Tailwind utility (`p-*`, `m-*`, `gap-*`, `space-*`). Raw pixel literals are a lint violation — if a component needs a value that isn't in the scale, the fix is to pick an adjacent step, not to add the value.

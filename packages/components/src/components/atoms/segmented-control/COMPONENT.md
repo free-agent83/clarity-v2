@@ -56,3 +56,7 @@ Use SegmentedControl for choosing between a small, fixed set of mutually-exclusi
 - [x] Accessibility: Radix `ToggleGroup` with `type="single"` exposes `role="radiogroup"` and `role="radio"` on items; passes axe-core via `@storybook/addon-a11y`; keyboard navigable (arrow keys).
 - [x] Responsive: the component is `w-fit` and does not wrap; use a wrapper to constrain width if necessary.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
+
+## Live component
+
+<StorybookEmbed story="forms-segmented-control--default" />

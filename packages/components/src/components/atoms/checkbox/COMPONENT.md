@@ -56,3 +56,7 @@ Use Checkbox for independent choices — each checkbox represents a separate yes
 - [x] Accessibility: Radix primitive handles keyboard and ARIA; passes axe-core via `@storybook/addon-a11y`; labelled via associated `Label`.
 - [x] Responsive: fixed size by design; layout is owned by the parent container.
 - [ ] Tokens only — flagged: `rounded-[4px]` raw literal. See Known deviations.
+
+## Live component
+
+<StorybookEmbed story="forms-checkbox--default" />

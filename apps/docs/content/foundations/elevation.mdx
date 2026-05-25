@@ -1,0 +1,66 @@
+---
+title: Elevation
+description: Four shadow tokens plus the radius scale.
+---
+
+Elevation is carried by shadow tokens on light surfaces and by surface-tint deltas on dark ones. Four steps cover every case: from chip-level hairlines up to modal-over-page lifts. Pair each shadow with an appropriate radius — they're read together.
+
+Source: `packages/tokens/src/shadow.tokens.json` and `packages/tokens/src/radius.tokens.json`.
+
+## Shadow scale
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginTop: '1.5rem', padding: '2rem', background: '#fafaf9', borderRadius: '0.75rem'}}>
+  <div style={{background: '#ffffff', padding: '1.5rem', borderRadius: '8px', boxShadow: '0px 1px 2px 0px #0000000d'}}>
+    <div style={{fontWeight: 600, color: '#0c0a09', marginBottom: '0.25rem'}}>shadow.sm</div>
+    <code style={{fontSize: '0.7rem', color: '#78716c'}}>0 1px 2px rgba(0,0,0,0.05)</code>
+  </div>
+  <div style={{background: '#ffffff', padding: '1.5rem', borderRadius: '8px', boxShadow: '0px 4px 6px -1px #0000001a'}}>
+    <div style={{fontWeight: 600, color: '#0c0a09', marginBottom: '0.25rem'}}>shadow.md</div>
+    <code style={{fontSize: '0.7rem', color: '#78716c'}}>0 4px 6px -1px rgba(0,0,0,0.1)</code>
+  </div>
+  <div style={{background: '#ffffff', padding: '1.5rem', borderRadius: '8px', boxShadow: '0px 10px 15px -3px #0000001a'}}>
+    <div style={{fontWeight: 600, color: '#0c0a09', marginBottom: '0.25rem'}}>shadow.lg</div>
+    <code style={{fontSize: '0.7rem', color: '#78716c'}}>0 10px 15px -3px rgba(0,0,0,0.1)</code>
+  </div>
+  <div style={{background: '#ffffff', padding: '1.5rem', borderRadius: '8px', boxShadow: '0px 20px 25px -5px #0000001a'}}>
+    <div style={{fontWeight: 600, color: '#0c0a09', marginBottom: '0.25rem'}}>shadow.xl</div>
+    <code style={{fontSize: '0.7rem', color: '#78716c'}}>0 20px 25px -5px rgba(0,0,0,0.1)</code>
+  </div>
+</div>
+
+## When to use which
+
+- **`sm`** — inline chips, tag pills, subtle definition on hover of a flat element. Barely-there.
+- **`md`** — cards at rest. The default "this thing is a surface" shadow.
+- **`lg`** — floating surfaces that overlay content: dropdowns, popovers, select menus.
+- **`xl`** — dialogs, drawers, modal overlays. The heaviest lift in the system; reserved for page-level interruptions.
+
+On dark surfaces shadows read less — a black-on-black shadow does no work. Dark-mode elevation relies on tinting the surface a step lighter (`stone.900` over `stone.950`) and using a subtle `stone.800` border instead. Shadow tokens are still emitted; components apply them unconditionally and let the renderer decide how visible they read.
+
+## Radius scale
+
+Seven steps. Every rounded corner in the system picks from this list.
+
+| Token | Value | Typical use |
+|---|---|---|
+| `radius.none` | `0px` | Full-bleed edges, table cells. |
+| `radius.sm` | `4px` | Tight chips, small badges. |
+| `radius.md` | `6px` | Inputs, buttons. The default. |
+| `radius.lg` | `8px` | Cards, tiles. |
+| `radius.xl` | `12px` | Featured cards, media tiles. |
+| `radius.2xl` | `16px` | Hero blocks, marketing surfaces. |
+| `radius.full` | `9999px` | Pills, avatars, circular icon buttons. |
+
+<div style={{display: 'flex', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap'}}>
+  <div style={{background: '#7655fd', color: '#ffffff', padding: '1.5rem 1rem', borderRadius: '0px', fontSize: '0.75rem', fontWeight: 600}}>none</div>
+  <div style={{background: '#7655fd', color: '#ffffff', padding: '1.5rem 1rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600}}>sm 4px</div>
+  <div style={{background: '#7655fd', color: '#ffffff', padding: '1.5rem 1rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600}}>md 6px</div>
+  <div style={{background: '#7655fd', color: '#ffffff', padding: '1.5rem 1rem', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 600}}>lg 8px</div>
+  <div style={{background: '#7655fd', color: '#ffffff', padding: '1.5rem 1rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 600}}>xl 12px</div>
+  <div style={{background: '#7655fd', color: '#ffffff', padding: '1.5rem 1rem', borderRadius: '16px', fontSize: '0.75rem', fontWeight: 600}}>2xl 16px</div>
+  <div style={{background: '#7655fd', color: '#ffffff', padding: '1.5rem 1.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600}}>full</div>
+</div>
+
+## Pairing
+
+Shadow and radius are chosen together. A larger surface reads right with a larger radius and a stronger shadow; an inline chip uses `sm` for both. Don't mix `xl` shadow with `sm` radius — the lift and the softness must match.

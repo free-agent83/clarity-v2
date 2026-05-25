@@ -51,3 +51,7 @@ Use Tooltip to explain icon-only buttons, truncated text, and non-obvious contro
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: no breakpoint-dependent behaviour
 - [ ] Tokens only: no raw literals inside arbitrary value syntax
+
+## Live component
+
+<StorybookEmbed story="overlays-tooltip--default" />

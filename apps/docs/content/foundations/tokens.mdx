@@ -1,0 +1,45 @@
+---
+title: Tokens
+description: The W3C DTCG token graph that underpins the system.
+---
+
+A token is a named design decision — a value with a role. `color.violet.600` instead of `#6330f5`, `spacing.4` instead of `16px`. The name is the contract; the value is an implementation detail that can change without breaking consumers.
+
+## What ships
+
+Six token files under `packages/tokens/src/` make up the graph:
+
+- **`color/primitive.tokens.json`** — raw OKLCH hue scales. `violet`, `stone`, `green`, `red`, `blue`, `amber`, plus `black` and `white`.
+- **`color/semantic.tokens.json`** — role tokens that reference primitives via DTCG `{color.violet.600}` strings. `action.primary`, `status.success`, `surface.base`, etc.
+- **`spacing.tokens.json`** — 13 steps on a 4px base.
+- **`radius.tokens.json`** — seven steps, `none` through `2xl` plus `full`.
+- **`shadow.tokens.json`** — four elevation levels with concrete offset/blur/colour.
+- **`typography.tokens.json`** — font sizes, weights, line heights, and families.
+
+All source files are W3C DTCG-compliant JSON — standard `$value`, `$type`, `$description` keys. Color values are stored as structured objects (`{ colorSpace: "oklch", components: [L, C, H], hex: "#..." }`) so web consumers get OKLCH and React Native gets the hex fallback from the same source.
+
+## The build
+
+Bespoke Node script, not Style Dictionary. `packages/tokens/build.mjs` is about 200 lines of plain Node, one optional dependency (`culori` for OKLCH↔hex). See ADR-001 for the rationale — the short version is that the shadcn-flat output required enough custom code against Style Dictionary's plugin API that rolling the pipeline was simpler than bending SD to fit.
+
+The script reads the six source files, merges them, resolves `{ref}` strings, and emits four outputs:
+
+| Output | Path | Purpose |
+|---|---|---|
+| Structured CSS | `dist/web/tokens.css` | Full token graph as `--color-violet-600`, `--spacing-4`, etc. |
+| shadcn-flat CSS | generated in `packages/components/src/styles/` | Flat names (`--background`, `--primary`) consumed by shadcn/ui components. |
+| JS / TS | `dist/js/tokens.{js,d.ts}` | Typed exports for any JS runtime. |
+| React Native | `dist/react-native/tokens.{js,d.ts}` | Hex colour values, numeric dimensions. |
+| JSON | `dist/json/tokens.json` | Resolved flat JSON for tools that want a single map. |
+
+## Consumption
+
+**Web (Tailwind v4 + shadcn/ui):** `@nivoda/components` publishes `web-theme.css` which imports the generated CSS custom properties. Import it once in your app's root and every `bg-primary`, `text-muted-foreground`, `rounded-lg` utility resolves against Clarity V2 tokens. No Tailwind config required — Tailwind v4 reads `@theme` directives from the CSS.
+
+**React Native:** import named constants from `@nivoda/tokens/react-native`. Colours arrive as hex strings; dimensions as numbers. Consumption is deferred until the first RN surface lands.
+
+**Figma:** tokens flow to Figma one-way via an export pipeline (see ADR-003 for why the sync is one-way).
+
+## What's not a token
+
+Motion hasn't been tokenised yet — see [Motion](./motion). Component-specific values (padding inside a specific variant of a specific component) stay in the component; tokens are the vocabulary the components speak, not the components themselves.

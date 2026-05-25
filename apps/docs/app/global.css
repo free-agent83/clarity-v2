@@ -1,0 +1,23 @@
+@import '@nivoda/components/web-theme.css';
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+html {
+  scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}
+
+/* Nivoda brand overrides — dark-first, soft-black surfaces, violet reserved.
+   Violet is ONLY for the primary accent slot (links, focus ring, primary CTA).
+   It must NOT tint the sidebar, cards, or any large chrome surface. */
+.dark {
+  --color-fd-background: #0c0a09;
+  --color-fd-primary: oklch(0.58 0.22 295);
+  --color-fd-primary-foreground: oklch(0.99 0 0);
+}
+

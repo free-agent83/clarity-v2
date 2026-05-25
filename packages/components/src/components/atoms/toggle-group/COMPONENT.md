@@ -53,3 +53,7 @@ Use Toggle Group for mutually exclusive or multi-select choices where the option
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: items wrap via container utilities when needed
 - [x] Tokens only: no raw literals inside arbitrary value syntax
+
+## Live component
+
+<StorybookEmbed story="forms-toggle-group--default" />

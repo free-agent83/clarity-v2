@@ -56,3 +56,7 @@ Use PageBanner for announcements that apply to the entire application: new featu
 - [x] Accessibility: `role="status"` on the root; dismiss button has `aria-label`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: full-width, single-line with ellipsis at narrow widths.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
+
+## Live component
+
+<StorybookEmbed story="feedback-page-banner--default" />
