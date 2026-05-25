@@ -19,11 +19,10 @@ export function baseOptions(): BaseLayoutProps {
             style={{ height: 18, width: 'auto' }}
           />
           <span style={{ opacity: 0.5, fontSize: '0.875rem' }}>
-            / Clarity V2
+            / Clarity by Nivoda
           </span>
         </span>
       ),
     },
-    githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
   };
 }

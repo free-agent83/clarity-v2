@@ -11,11 +11,10 @@ import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/components/mdx';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
-import { gitConfig } from '@/lib/shared';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
-  const { source, slug, section } = resolveSource(params.slug);
+  const { source, slug } = resolveSource(params.slug);
   const page = source.getPage(slug);
   if (!page) notFound();
 
@@ -26,12 +25,6 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const MDX = data.body;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const markdownUrl = getPageMarkdownUrl(page as any).url;
-  const sourceSubdir =
-    section === 'components'
-      ? 'packages/components/src/components'
-      : section === 'guides'
-        ? 'docs'
-        : 'apps/docs/content';
 
   return (
     <DocsPage toc={data.toc} full={data.full}>
@@ -39,10 +32,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       <DocsDescription className="mb-0">{data.description}</DocsDescription>
       <div className="flex flex-row gap-2 items-center border-b pb-6">
         <MarkdownCopyButton markdownUrl={markdownUrl} />
-        <ViewOptionsPopover
-          markdownUrl={markdownUrl}
-          githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/${sourceSubdir}/${page.path}`}
-        />
+        <ViewOptionsPopover markdownUrl={markdownUrl} />
       </div>
       <DocsBody>
         <MDX
