@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd ../.. && npx nx run components:build-storybook",
+  "outputDirectory": "storybook-static",
+  "installCommand": "cd ../.. && npm install",
+  "framework": null
+}
