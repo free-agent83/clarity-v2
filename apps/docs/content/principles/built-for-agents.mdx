@@ -20,3 +20,39 @@ Because all of this lives in the repo, agents always read the current state. The
 This is what makes the agentic delivery path real. A designer prompting Claude Code to build a checkout step does not get hallucinated components — the agent reads `button/COMPONENT.md`, sees the variants, reads the token file, and composes the right thing. The same is true for any future agent or tool that arrives. The interface is open, file-based, and standard. The repo is the API.
 
 The lesson generalises. A design system that is legible to humans through documentation, and legible to machines through structure, does not need a separate strategy for either audience. It just needs to be honest about being made of files.
+
+---
+
+## What an agent actually reads
+
+Every component ships with a `COMPONENT.md` colocated next to its source. Here is an abbreviated excerpt from the Button component:
+
+```md
+---
+name: Button
+slug: button
+status: stable
+---
+
+## Props
+
+| Prop      | Type                                                              | Default   | Description                              |
+|-----------|-------------------------------------------------------------------|-----------|------------------------------------------|
+| variant   | 'default' \| 'secondary' \| 'destructive' \| 'outline' \| 'ghost' \| 'link' | 'default' | Visual style                             |
+| size      | 'default' \| 'sm' \| 'lg' \| 'icon' \| 'icon-xs'                | 'default' | Size variant                             |
+| loading   | boolean                                                           | false     | Shows spinner, disables interaction      |
+| asChild   | boolean                                                           | false     | Renders as child element via Radix Slot  |
+
+## Usage guidelines
+
+Use Button for synchronous actions: form submission, dialog triggers, immediate in-page operations.
+Do not use for navigation — use a link styled as a button via the asChild pattern instead.
+
+## Live component
+
+<StorybookEmbed story="actions-button--default" />
+```
+
+The agent reads this file, knows the available variants and sizes, knows when not to use the component, and can see a live rendered example. No other surface is needed.
+
+See it live: [Button →](/docs/components/atoms/button)
