@@ -28,7 +28,7 @@ export const guidesSource = loader({
 
 // In-tree IA pages live under apps/docs/content/<section>/<slug>.mdx and serve
 // the URL space /docs/<section>/<slug>. The first path segment IS the section
-// (foundations, patterns, content, brand, resources, get-started).
+// (get-started, principles, foundations, patterns, content, brand).
 export const iaSource = loader({
   baseUrl: docsRoute,
   source: ia.toFumadocsSource(),
@@ -309,9 +309,9 @@ function buildIaSectionChildren(section: string): SidebarNode[] {
 }
 
 /**
- * Combined tree used by the docs layout sidebar. Renders the 7-section IA:
- * Get started / Foundations / Components / Patterns / Content / Brand /
- * Resources. Components are regrouped functionally (not atomically). The
+ * Combined tree used by the docs layout sidebar. Renders the 6-section IA:
+ * Get started / Principles / Foundations / Components / Patterns / Content /
+ * Brand. Components are regrouped functionally (not atomically). The
  * external `guides` collection is appended at the bottom under "Guides
  * (internal)" so authored docs/* files remain reachable but don't dominate.
  */

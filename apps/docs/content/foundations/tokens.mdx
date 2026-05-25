@@ -20,7 +20,7 @@ All source files are W3C DTCG-compliant JSON — standard `$value`, `$type`, `$d
 
 ## The build
 
-Bespoke Node script, not Style Dictionary. `packages/tokens/build.mjs` is about 200 lines of plain Node, one optional dependency (`culori` for OKLCH↔hex). See [ADR-001](/docs/resources/adrs) for the rationale — the short version is that the shadcn-flat output required enough custom code against Style Dictionary's plugin API that rolling the pipeline was simpler than bending SD to fit.
+Bespoke Node script, not Style Dictionary. `packages/tokens/build.mjs` is about 200 lines of plain Node, one optional dependency (`culori` for OKLCH↔hex). See ADR-001 for the rationale — the short version is that the shadcn-flat output required enough custom code against Style Dictionary's plugin API that rolling the pipeline was simpler than bending SD to fit.
 
 The script reads the six source files, merges them, resolves `{ref}` strings, and emits four outputs:
 
@@ -38,7 +38,7 @@ The script reads the six source files, merges them, resolves `{ref}` strings, an
 
 **React Native:** import named constants from `@nivoda/tokens/react-native`. Colours arrive as hex strings; dimensions as numbers. Consumption is deferred until the first RN surface lands.
 
-**Figma:** tokens flow to Figma one-way via an export pipeline (see [ADR-003](/docs/resources/adrs) for why the sync is one-way).
+**Figma:** tokens flow to Figma one-way via an export pipeline (see ADR-003 for why the sync is one-way).
 
 ## What's not a token
 

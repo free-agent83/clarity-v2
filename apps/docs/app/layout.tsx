@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   icons: { icon: '/favicon.svg' },
-  title: 'Clarity V2',
+  title: 'Clarity by Nivoda',
   description: "Nivoda's design system — tokens, components, patterns.",
 };
 
