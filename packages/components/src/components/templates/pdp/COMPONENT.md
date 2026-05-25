@@ -83,4 +83,4 @@ function TennisBraceletPDP() {
 
 ## Live component
 
-<StorybookEmbed story="templates-pdp-delivery--default" />
+<StorybookEmbed story="templates-pdp-delivery--regular" />

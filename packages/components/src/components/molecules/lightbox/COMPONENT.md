@@ -59,4 +59,4 @@ When a `video360` item is active, a scrub bar is always visible (desktop and mob
 
 ## Live component
 
-<StorybookEmbed story="overlays-lightbox--default" />
+<StorybookEmbed story="overlays-lightbox--with-images" />

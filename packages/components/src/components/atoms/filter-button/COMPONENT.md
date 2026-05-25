@@ -64,4 +64,4 @@ The component is generic over the filter value type `V`. Consumers declare the t
 
 ## Live component
 
-<StorybookEmbed story="filtering-filterbutton--default" />
+<StorybookEmbed story="filtering-filterbutton--inactive" />

@@ -6,6 +6,8 @@ status: unstable
 lastUpdated: 2026-04-21
 ---
 
+<Gap>Usage guidance for this component is light — props and the live demo are accurate; written guidance is forthcoming.</Gap>
+
 # RangeFilter
 
 One or more numeric range axes, each with a two-thumb slider, commit-on-blur numeric inputs, and an optional distribution histogram behind the slider.
@@ -39,3 +41,7 @@ Multi-axis use: pass multiple axes each with a `label`. Per-axis heading replace
 
 - [x] Accessibility: labelled inputs, keyboard-operable slider
 - [x] Tokens only: no hardcoded visual values
+
+## Live component
+
+<StorybookEmbed story="filtering-rangefilter--single-axis" />

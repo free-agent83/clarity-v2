@@ -108,4 +108,4 @@ Consumers should read this file, copy the pattern, and adapt it. A consumer-side
 
 ## Live component
 
-<StorybookEmbed story="templates-plp-gridcontainer--default" />
+<StorybookEmbed story="templates-plp-gridcontainer--loading" />
