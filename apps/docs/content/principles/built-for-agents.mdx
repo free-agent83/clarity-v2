@@ -1,0 +1,22 @@
+---
+title: Built for agents
+description: The repo is the interface — agents read the same files engineers do, with no MCP server, no sync, and no stale copy in between.
+---
+
+The repo is the interface.
+
+AI coding agents do not need a special endpoint to use Clarity. They open the repository, the same way an engineer does, and read the files. No MCP server stands in between. No documentation mirror lags behind the code. No sync job translates the system into an agent-friendly shape. The agent-friendly shape is the shape the system already has.
+
+What agents read is the same machine-readable surface engineers and tools rely on:
+
+- **Tokens** as W3C DTCG JSON — queryable by name, by category, by reference. The colour, spacing, and typography contracts of the system, in a format that does not require interpretation.
+- **Component contracts** as TypeScript source — props, variants, slots, and types, all expressed in code. The contract is the implementation.
+- **Usage guidance** as `COMPONENT.md` files colocated with each component. Sixty-two components, sixty-two markdown files, sitting next to the source they describe.
+- **Executable examples** as Storybook stories, also colocated. Runnable proof of how a component is meant to be composed.
+- **Workspace structure** as an Nx project graph, machine-readable, so agents can reason about package boundaries and dependencies.
+
+Because all of this lives in the repo, agents always read the current state. There is no version of the design system that is "true" elsewhere. The truth is the file the engineer just edited.
+
+This is what makes the agentic delivery path real. A designer prompting Claude Code to build a checkout step does not get hallucinated components — the agent reads `button/COMPONENT.md`, sees the variants, reads the token file, and composes the right thing. The same is true for any future agent or tool that arrives. The interface is open, file-based, and standard. The repo is the API.
+
+The lesson generalises. A design system that is legible to humans through documentation, and legible to machines through structure, does not need a separate strategy for either audience. It just needs to be honest about being made of files.

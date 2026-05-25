@@ -1,0 +1,16 @@
+---
+title: Code-first
+description: There is no separate design source of truth. The code is the source — tokens are JSON, components are React, docs are markdown next to the code.
+---
+
+There is no separate design source of truth. The code is the source.
+
+That sounds like a slogan, but in Clarity it is a structural commitment. Tokens are not exported from a design tool and reconciled in code — they are authored as W3C DTCG-compliant JSON and compiled in one direction. A roughly two-hundred-line build script turns that JSON into CSS variables, a Tailwind v4 theme, a runtime JSON bundle, and Figma variables. The colour space is OKLCH. Spacing is on a 4-pixel base. Typography is a fixed set of twelve roles. Whatever consumes the system — web, native, Figma — gets the same numbers from the same file.
+
+Components are written in real React on top of shadcn/ui and Radix primitives, styled with Tailwind v4. There are sixty-two of them. Every one ships with a Storybook story alongside the source, and a `COMPONENT.md` file in the same directory. The story is executable documentation. The markdown is human and agent documentation. The source is the contract. All three sit in the same folder.
+
+Documentation lives in the repo as markdown. This site is built from those same files at build time. There is no CMS, no separate authoring environment, no sync job. Editing a component's docs is editing the file next to its source code. Publishing is `git push`.
+
+The effect is one pipeline with no translation layer. There is no design file to mirror in code, no code library to mirror in a design file. Drift is not managed — it is structurally impossible, because there is nothing to drift from.
+
+This is what makes the rest of the system tractable. Two delivery paths can share one library. Agents can read the system from source. Both depend on the same root commitment: the code is what is real.
