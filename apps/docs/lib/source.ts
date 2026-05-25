@@ -43,11 +43,11 @@ export type DocsSource =
 // Top-level URL segments routed to the in-tree IA collection.
 const IA_SECTIONS = new Set([
   'get-started',
+  'principles',
   'foundations',
   'patterns',
   'content',
   'brand',
-  'resources',
 ]);
 
 /**
@@ -225,20 +225,20 @@ function buildFunctionalComponentsChildren(): SidebarNode[] {
 // Order in which IA top-level sections should appear in the sidebar.
 const IA_SECTION_ORDER = [
   'get-started',
+  'principles',
   'foundations',
   'patterns',
   'content',
   'brand',
-  'resources',
 ];
 
 const IA_SECTION_LABELS: Record<string, string> = {
   'get-started': 'Get started',
+  principles: 'Principles',
   foundations: 'Foundations',
   patterns: 'Patterns',
   content: 'Content',
   brand: 'Brand',
-  resources: 'Resources',
 };
 
 // Section-specific explicit ordering overrides for IA children. Keys are the
@@ -255,6 +255,11 @@ const IA_SECTION_CHILD_ORDER: Record<string, string[]> = {
     'iconography',
     'application-rules',
     'illustration',
+  ],
+  principles: [
+    'code-first',
+    'two-delivery-paths',
+    'built-for-agents',
   ],
 };
 
