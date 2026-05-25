@@ -10,10 +10,13 @@ export default function HomePage() {
           alt="Nivoda"
           className="h-8 w-auto mx-auto mb-10 opacity-90"
         />
-        <h1 className="text-6xl font-semibold tracking-tight">Clarity V2</h1>
+        <h1 className="text-6xl font-semibold tracking-tight">
+          Clarity is an agentic design system.
+        </h1>
         <p className="text-xl text-fd-muted-foreground max-w-2xl mx-auto">
-          Nivoda&apos;s design system. Tokens, components, patterns, and
-          guidance — one browsable source, authored alongside the code.
+          Code-first and agent-readable. Tokens, components, and docs live in
+          one repo, so whoever builds UI ships design-correct output by
+          construction.
         </p>
         <div className="flex gap-4 justify-center pt-4">
           <Link
@@ -32,27 +35,37 @@ export default function HomePage() {
       </div>
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-24 w-full max-w-5xl">
-        <div>
-          <h3 className="font-semibold mb-2">Tokens first</h3>
+        <Link
+          href="/docs/principles/code-first"
+          className="block rounded-md p-4 -m-4 hover:bg-white/5 transition-colors"
+        >
+          <h3 className="font-semibold mb-2">Code-first</h3>
           <p className="text-sm text-fd-muted-foreground">
-            OKLCH color, 4px spacing, 12 type roles. Every visual decision is
-            a token — nothing is hardcoded.
+            Tokens as JSON, components as React, docs as markdown. One
+            pipeline, no separate design source of truth to drift away from
+            the code.
           </p>
-        </div>
-        <div>
-          <h3 className="font-semibold mb-2">Components, documented</h3>
+        </Link>
+        <Link
+          href="/docs/principles/two-delivery-paths"
+          className="block rounded-md p-4 -m-4 hover:bg-white/5 transition-colors"
+        >
+          <h3 className="font-semibold mb-2">Two delivery paths</h3>
           <p className="text-sm text-fd-muted-foreground">
-            62 components built on shadcn/ui + Radix, each with usage
-            guidelines, props, and do/don&apos;ts authored alongside the code.
+            Engineers ship UI without design gates. Design and product use AI
+            agents to build real working UI. Same library underneath.
           </p>
-        </div>
-        <div>
-          <h3 className="font-semibold mb-2">Self-publishing</h3>
+        </Link>
+        <Link
+          href="/docs/principles/built-for-agents"
+          className="block rounded-md p-4 -m-4 hover:bg-white/5 transition-colors"
+        >
+          <h3 className="font-semibold mb-2">Built for agents</h3>
           <p className="text-sm text-fd-muted-foreground">
-            Markdown in the repo is the source. Every push rebuilds the site.
-            No sync, no drift, no separate CMS.
+            Every component ships with a COMPONENT.md next to its code. The
+            repo is the interface — no MCP server, no sync, no stale copy.
           </p>
-        </div>
+        </Link>
       </section>
     </main>
   );
