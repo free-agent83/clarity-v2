@@ -37,3 +37,7 @@ Use Separator to visually group related content into sections — inside menus, 
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: no breakpoint-dependent behaviour
 - [x] Tokens only: no raw literals inside arbitrary value syntax
+
+## Live component
+
+<StorybookEmbed story="display-separator--default" />

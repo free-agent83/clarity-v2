@@ -84,3 +84,7 @@ The `Spinner` atom hardcodes `size-4`. For the `icon-xs` button (which wants `si
 - [x] Accessibility: passes axe-core via `@storybook/addon-a11y`, keyboard navigable (native `<button>` + `focus-visible` styling), announces `aria-busy` when loading
 - [x] Responsive: no breakpoint-specific behaviour by design; `block` handles container-fit
 - [ ] Tokens only — flagged: raw pixel literals in `rounded-[min(var(--radius-md),10px)]` and `rounded-[min(var(--radius-md),8px)]`. See Known deviations.
+
+## Live component
+
+<StorybookEmbed story="actions-button--default" />

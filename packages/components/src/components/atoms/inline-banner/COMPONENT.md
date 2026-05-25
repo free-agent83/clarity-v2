@@ -55,3 +55,7 @@ Use InlineBanner under a page heading to surface persistent, page-level informat
 - [x] Accessibility: `role="status"` on the root; dismiss button has `aria-label`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: the banner is full-width and the actions slot wraps below at narrow widths.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
+
+## Live component
+
+<StorybookEmbed story="feedback-inline-banner--default" />

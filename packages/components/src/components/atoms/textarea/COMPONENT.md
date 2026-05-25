@@ -48,3 +48,7 @@ Use Textarea for free-form, multi-line input where the length is open-ended — 
 - [x] Accessibility: native `<textarea>`; passes axe-core via `@storybook/addon-a11y` when paired with a `Label`.
 - [x] Responsive: fills its container width; height grows with content via `field-sizing: content`.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
+
+## Live component
+
+<StorybookEmbed story="forms-textarea--default" />

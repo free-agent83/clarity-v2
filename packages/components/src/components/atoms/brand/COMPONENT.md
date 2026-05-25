@@ -101,3 +101,7 @@ colour. Apply the `text-*` class directly to the `Brand` element.
 - [x] Accessibility: `role="img"` + `aria-label` default; overridable to `aria-hidden` for decorative use
 - [ ] Responsive: works at all breakpoints (via consumer-controlled height utilities)
 - [x] Tokens only: no hardcoded visual values (colour via `currentColor`, size via spacing utilities)
+
+## Live component
+
+<StorybookEmbed story="foundations-brand--default" />

@@ -80,3 +80,7 @@ function TennisBraceletPDP() {
 - [x] Tokens only — no hardcoded visual values
 - [x] 360° scrub: hover-only in gallery, always visible in `Lightbox`
 - [x] TypeScript: zero `tsc --noEmit` errors
+
+## Live component
+
+<StorybookEmbed story="templates-pdp-delivery--default" />

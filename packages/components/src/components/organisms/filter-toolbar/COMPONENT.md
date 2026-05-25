@@ -111,3 +111,7 @@ See the PLP assembly story (`templates/plp/plp.stories.tsx`) for the full patter
 - [x] Accessibility: keyboard navigable, semantic search input, semantic heading per filter section, aria-hidden on the hidden sticky chrome, focus trap in the drawer via the Sheet molecule
 - [x] Responsive: mobile condenses to All Filters + Sort; the filter row hides on `< 640px`
 - [x] Tokens only: no hardcoded visual values
+
+## Live component
+
+<StorybookEmbed story="filtering-filtertoolbar--default" />

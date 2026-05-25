@@ -41,3 +41,7 @@ Use Progress when a task has a determinate percentage of completion — uploads,
 - [x] Accessibility: Radix `Progress.Root` exposes `role="progressbar"` and the appropriate `aria-valuenow` / `aria-valuemin` / `aria-valuemax`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: the track is 100% width of its container; no breakpoint-specific behaviour by design.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
+
+## Live component
+
+<StorybookEmbed story="feedback-progress--default" />

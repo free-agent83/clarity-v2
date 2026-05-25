@@ -56,3 +56,7 @@ Use Sheet for tasks or panels that need more room than a Dialog but shouldn't na
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: anchors and sizes adapt to the chosen `side` variant
 - [x] Tokens only: no raw literals inside arbitrary value syntax
+
+## Live component
+
+<StorybookEmbed story="overlays-sheet--default" />

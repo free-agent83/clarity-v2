@@ -61,3 +61,7 @@ The `h-[14px]`, `w-[24px]`, and `size-[18px]` literals have canonical spacing-to
 - [x] Accessibility: Radix primitive handles `role="switch"`, `aria-checked`, and keyboard toggling; passes axe-core via `@storybook/addon-a11y`; labelled via associated `Label`.
 - [x] Responsive: fixed size by design; layout is owned by the parent container.
 - [ ] Tokens only — flagged: raw pixel literals on `sm` track dimensions and thumb translate. See Known deviations.
+
+## Live component
+
+<StorybookEmbed story="forms-switch--default" />

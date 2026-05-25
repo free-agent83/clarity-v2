@@ -55,3 +55,7 @@ Use the range form (two thumbs) for picking a span within a range — a price fi
 - [x] Accessibility: Radix primitive handles arrow-key stepping, home/end, Page Up / Page Down, `role="slider"`, and `aria-valuemin` / `aria-valuemax` / `aria-valuenow`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: horizontal slider fills its container width; vertical requires an explicit height on the parent.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
+
+## Live component
+
+<StorybookEmbed story="forms-slider--default" />

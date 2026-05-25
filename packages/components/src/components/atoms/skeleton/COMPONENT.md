@@ -37,3 +37,7 @@ Use Skeleton to reserve layout space and signal that content is loading. Each Sk
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: adapts to its container via width and height classes
 - [x] Tokens only: no raw literals inside arbitrary value syntax
+
+## Live component
+
+<StorybookEmbed story="feedback-skeleton--default" />

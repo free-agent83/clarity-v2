@@ -259,3 +259,7 @@ form. If the form needs a wider layout, redesign the form.
 - [ ] Accessibility: passes axe-core, keyboard navigable, screen reader tested
 - [ ] Responsive: works at all breakpoints
 - [ ] Tokens only: no hardcoded visual values — see Known deviations (search bar surface fill uses `bg-stone-50` / `bg-stone-100`)
+
+## Live component
+
+<StorybookEmbed story="navigation-app-shell--default" />
