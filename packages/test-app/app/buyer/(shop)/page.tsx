@@ -1,18 +1,28 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/api/users";
 import { HomeCarousel } from "@/components/home-carousel";
+import { checkSimulateError } from "@/lib/api/_simulate";
 
 const HOME_CATEGORIES = [
-  { label: "Engagement rings", slug: "engagement-rings", badge: "New" },
-  { label: "Wedding bands", slug: "wedding-bands", badge: "New" },
-  { label: "Natural diamonds", slug: "natural-diamonds", badge: null },
-  { label: "Lab grown diamonds", slug: "lab-grown-diamonds", badge: null },
-  { label: "Gemstones", slug: "gemstones", badge: null },
-  { label: "Natural melee", slug: "natural-melee", badge: null },
-  { label: "Lab grown melee", slug: "lab-grown-melee", badge: null },
+  { label: "Engagement rings", slug: "jewelry/engagement-rings", badge: "New", image: "/images/products/engagement-rings/ring.jpg" },
+  { label: "Wedding bands", slug: "wedding-bands", badge: "New", image: "/images/products/wedding-bands/wedding-bands-001-hero.jpg" },
+  { label: "Chains", slug: "chains", badge: null, image: "/images/products/chains/chains-002-hero.jpg" },
+  { label: "Pendants", slug: "pendants", badge: null, image: "/images/products/pendants/pendants-002-hero.jpg" },
+  { label: "Studs", slug: "studs", badge: null, image: "/images/products/studs/studs-001-hero.jpg" },
+  { label: "Tennis bracelets", slug: "tennis-bracelets", badge: null, image: "/images/products/tennis-bracelets/tennis-bracelets-001-hero.jpg" },
+  { label: "Natural diamonds", slug: "natural-diamonds", badge: null, image: "/images/products/diamonds/diamond.png" },
+  { label: "Lab grown diamonds", slug: "lab-grown-diamonds", badge: null, image: "/images/products/diamonds/diamond.png" },
+  { label: "Gemstones", slug: "gemstones", badge: null, image: "/images/products/gemstones/gemstone.png" },
 ];
 
-export default async function BuyerHomePage() {
+export default async function BuyerHomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ simulate?: string; [k: string]: unknown }>;
+}) {
+  const sp = await searchParams;
+  checkSimulateError(sp);
   const user = await getCurrentUser();
 
   return (
@@ -34,6 +44,15 @@ export default async function BuyerHomePage() {
             className="flex flex-col gap-3"
           >
             <div className="relative aspect-square overflow-hidden rounded-xl bg-stone-300">
+              {cat.image && (
+                <Image
+                  src={cat.image}
+                  alt={cat.label}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
+              )}
               {cat.badge && (
                 <span className="absolute right-3 top-3 rounded-full bg-stone-100 px-1.5 py-0.5 text-xs text-violet-700">
                   {cat.badge}

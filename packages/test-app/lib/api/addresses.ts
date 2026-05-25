@@ -1,15 +1,15 @@
-import { db } from "@/db/client";
-import { eq, and, isNull } from "drizzle-orm";
-import { addresses } from "@/db/schema";
+import { HARDCODED_USER } from "@/fixtures/user";
+import { simulateLatency } from "./_simulate";
+import type { Address } from "@/fixtures/types/user";
 
-export async function fetchAddresses(userId: string) {
-  return db.query.addresses.findMany({
-    where: and(eq(addresses.userId, userId), isNull(addresses.deletedAt)),
-  });
+export type { Address };
+
+export async function fetchAddresses(_userId: string): Promise<Address[]> {
+  await simulateLatency();
+  return HARDCODED_USER.addresses;
 }
 
-export async function fetchAddress(id: string) {
-  return db.query.addresses.findFirst({
-    where: eq(addresses.id, id),
-  });
+export async function fetchAddress(id: string): Promise<Address | undefined> {
+  await simulateLatency();
+  return HARDCODED_USER.addresses.find((a) => a.id === id);
 }

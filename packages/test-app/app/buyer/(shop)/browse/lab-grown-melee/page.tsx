@@ -1,5 +1,6 @@
 import { MELEE_FILTERS, fetchMeleeListFiltered } from "@/lib/api/melee";
 import { parsePageListParams, type PageSearchParams } from "@/lib/api/filters";
+import { checkSimulateError } from "@/lib/api/_simulate";
 import { LayoutPlp } from "@/components/layouts/layout-plp/layout-plp";
 import { MeleePlpItem } from "@/components/products/melee-plp-item";
 import {
@@ -16,6 +17,7 @@ export default async function LabGrownMeleeListPage({
   searchParams: Promise<PageSearchParams>;
 }) {
   const params = await searchParams;
+  checkSimulateError(params);
   const parsed = parsePageListParams(params, MELEE_FILTERS);
   const viewMode = parsePlpViewMode(params.view);
   const { items, totalItems } = await fetchMeleeListFiltered(

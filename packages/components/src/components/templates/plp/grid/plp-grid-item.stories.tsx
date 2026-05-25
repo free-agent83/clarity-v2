@@ -74,6 +74,7 @@ function DefaultCard({
       </div>
       <PlpGridItemDelivery
         variant="regular"
+        businessDays="2 – 3"
         date="Nov 18 – 23"
         shipsFrom="United States"
       />
@@ -187,6 +188,7 @@ export const ExpressDelivery: Story = {
       <PlpGridItemName>Same-day shipping stone</PlpGridItemName>
       <PlpGridItemDelivery
         variant="express"
+        businessDays="1 – 2"
         date="Nov 15 – 17"
         shipsFrom="New York"
       />
@@ -203,6 +205,7 @@ export const NonReturnable: Story = {
       <PlpGridItemName>Final sale gemstone</PlpGridItemName>
       <PlpGridItemDelivery
         variant="regular"
+        businessDays="2 – 3"
         date="Nov 18 – 23"
         shipsFrom="United States"
       />
@@ -221,6 +224,7 @@ export const WithDiscount: Story = {
       <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
       <PlpGridItemDelivery
         variant="regular"
+        businessDays="2 – 3"
         date="Nov 18 – 23"
         shipsFrom="United States"
       />
@@ -241,6 +245,7 @@ export const WithPerCarat: Story = {
       <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
       <PlpGridItemDelivery
         variant="regular"
+        businessDays="2 – 3"
         date="Nov 18 – 23"
         shipsFrom="United States"
       />
@@ -261,6 +266,7 @@ export const WithTariffs: Story = {
       <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
       <PlpGridItemDelivery
         variant="regular"
+        businessDays="2 – 3"
         date="Nov 18 – 23"
         shipsFrom="United States"
       />
@@ -277,6 +283,7 @@ export const WithLegacyPricing: Story = {
       <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
       <PlpGridItemDelivery
         variant="regular"
+        businessDays="2 – 3"
         date="Nov 18 – 23"
         shipsFrom="United States"
       />
@@ -297,6 +304,7 @@ export const WithAlternateCurrency: Story = {
       <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
       <PlpGridItemDelivery
         variant="regular"
+        businessDays="2 – 3"
         date="Nov 18 – 23"
         shipsFrom="United States"
       />
@@ -317,6 +325,7 @@ export const AllPriceVariants: Story = {
       <PlpGridItemName>Emerald Green Radiant 1ct</PlpGridItemName>
       <PlpGridItemDelivery
         variant="express"
+        businessDays="1 – 2"
         date="Nov 15 – 17"
         shipsFrom="New York"
       />

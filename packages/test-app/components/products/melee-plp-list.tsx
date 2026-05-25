@@ -97,6 +97,7 @@ export function MeleePlpListRow({ item, href, category }: MeleePlpListRowProps) 
       <PlpListBodyCell>
         <PlpListRowDelivery
           variant={mock.isExpress ? "express" : "regular"}
+          businessDays={mock.businessDays}
           date={mock.deliveryDate}
           shipsFrom={mock.shipsFrom}
         />

@@ -9,8 +9,6 @@ For governance, agent instructions, business context, and surface-specific rules
 ## Start Here
 
 **New to the project?**
-- [`ROADMAP.md`](./ROADMAP.md) — where we are, where we're going, phased plan with status dashboard
-- [`VISION.md`](./VISION.md) — the vision, commercial case, and conceptual model (design system / framework / engine)
 - [`CHANGELOG.md`](./CHANGELOG.md) — what's been built, what's in progress, what's next
 
 **Claude Code / AI agents?**
@@ -48,7 +46,7 @@ clarity-v2/
 └── packages/
     ├── tokens/                  # W3C DTCG token source + bespoke build pipeline
     ├── components/              # shadcn/ui + Radix UI + Tailwind CSS component library
-    └── test-app/                # Vite test harness for component development
+    └── test-app/                # Minivoda — clickable digital twin of the Nivoda platform; first live consumer of @nivoda/components
 ```
 
 ---
@@ -56,7 +54,7 @@ clarity-v2/
 ## What This Repo Contains
 
 - **Design tokens** — W3C DTCG JSON source, transformed by a bespoke build script into web CSS, shadcn-compatible CSS, JS/TS, React Native, and JSON outputs
-- **Component library** — shadcn/ui + Radix UI + Tailwind CSS v4 (early stage — one component so far)
+- **Component library** — shadcn/ui + Radix UI + Tailwind CSS v4
 - **Storybook** — component development and documentation
 - **Test app** — Vite harness for live component iteration
 
@@ -71,7 +69,7 @@ clarity-v2/
 ## Related Repos
 
 - **[`../experience-framework/`](../experience-framework/)** — governance, principles, surface rules, and agent instructions. The "constitution" to Clarity V2's "law". Owned by design.
-- **[`../minivoda/clarity-digital-twin/`](../minivoda/clarity-digital-twin/)** — living interactive prototype of the Nivoda platform, deployed to Vercel with a real Supabase database. The venue where new flows are designed, validated with users, and handed off to engineering as branches. Consumes Clarity V2 components.
+- **[`../minivoda/clarity-digital-twin/`](../minivoda/clarity-digital-twin/)** — living interactive prototype of the Nivoda platform, deployed to Vercel with hardcoded fixture data (no live database). The venue where new flows are designed, validated with users, and handed off to engineering as branches. Consumes Clarity V2 components.
 - **`../platform/`** — the production Nivoda monorepo. Eventual consumer of Clarity V2 via a migration to be decided with engineering. Owned by engineering; do not modify from here.
 
 ---

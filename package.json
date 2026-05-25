@@ -1,9 +1,11 @@
 {
   "name": "@nivoda/clarity-v2",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "UNLICENSED",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "dev": "bash scripts/dev.sh"
+  },
   "devDependencies": {
     "@nx/eslint-plugin": "^22.6.4",
     "@nx/js": "22.6.2",
@@ -12,12 +14,16 @@
     "@swc/core": "1.15.8",
     "@swc/helpers": "0.5.18",
     "@tailwindcss/vite": "^4.2.2",
+    "concurrently": "^9.1.0",
     "eslint": "^10.1.0",
     "nx": "22.6.2",
     "prettier": "^2.6.2",
     "tslib": "^2.3.0",
     "typescript": "~5.9.2",
     "vite": "^6.4.1"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   },
   "workspaces": [
     "packages/*",

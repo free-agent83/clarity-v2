@@ -235,21 +235,28 @@ export function PlpListRowMedia({
 }
 
 /**
- * Delivery indicator for list rows. The `express` variant colors the
- * date in the express accent; the regular variant uses body text.
- * Optional `origin` renders inline before the date — typically a
- * flag emoji indicating country of origin. When `shipsFrom` is
- * provided, the whole cell becomes a tooltip trigger showing
- * "Ships from {shipsFrom}" — useful when `origin` is a flag emoji
- * without the country name spelled out.
+ * Delivery indicator for list rows. With `businessDays` provided,
+ * renders "{businessDays} business days ({date})" — lead text takes the
+ * variant accent (express → express colour; regular → inherits) with
+ * the date parenthetical in muted body. Without `businessDays`, the
+ * legacy bare-date form is preserved (express colour applies to the
+ * whole date).
+ *
+ * Optional `origin` renders inline before the lead — typically a flag
+ * emoji indicating country of origin. When `shipsFrom` is provided, the
+ * whole cell becomes a tooltip trigger showing "Ships from {shipsFrom}"
+ * — useful when `origin` is a flag emoji without the country name
+ * spelled out.
  */
 export function PlpListRowDelivery({
   variant,
+  businessDays,
   date,
   origin,
   shipsFrom,
 }: {
   variant: "express" | "regular";
+  businessDays?: ReactNode;
   date: ReactNode;
   origin?: ReactNode;
   shipsFrom?: ReactNode;
@@ -258,13 +265,21 @@ export function PlpListRowDelivery({
   const content = (
     <span
       data-slot="plp-list-row-delivery"
-      className={cn(
-        "inline-flex items-center gap-1.5",
-        isExpress && "text-express"
-      )}
+      className="inline-flex items-start gap-1.5"
     >
-      {origin && <span className="text-lg">{origin}</span>}
-      <span>{date}</span>
+      {origin && <span className="text-lg leading-none">{origin}</span>}
+      {businessDays ? (
+        <span>
+          <span className={isExpress ? "text-express" : undefined}>
+            {businessDays} business days
+          </span>{" "}
+          <span className="whitespace-nowrap text-muted-foreground">
+            ({date})
+          </span>
+        </span>
+      ) : (
+        <span className={isExpress ? "text-express" : undefined}>{date}</span>
+      )}
     </span>
   );
 

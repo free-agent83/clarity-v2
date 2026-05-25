@@ -23,7 +23,7 @@ Every token in `src/` flows, unchanged or transformed, into:
 - Email template inline values
 - Backend JSON
 
-A single changed value carries brand, accessibility, and product implications across every Nivoda surface at once. These are decisions only the design function should make. This is the "law / constitution" split from [`VISION.md`](../../VISION.md) — design owns what the tokens *are*; engineering owns how they *build*.
+A single changed value carries brand, accessibility, and product implications across every Nivoda surface at once. These are decisions only the design function should make: design owns what the tokens *are*; engineering owns how they *build*.
 
 ## Three enforcement layers
 
@@ -51,22 +51,9 @@ If the boundary ever changes, **all three layers must be updated together**. The
 4. Request review from the design lead.
 5. Merge only after design sign-off.
 
-## Versioning and breaking-change policy
+## Versioning
 
-The package currently sits at `0.1.0` (pre-1.0, private). The policy below applies best-effort today and becomes binding once the `platform` repo adopts this package as a dependency.
-
-**Semver rules:**
-
-- **Patch** — value tweaks with no material visual change
-- **Minor** — additive tokens or new categories
-- **Major** — any token rename, removal, or value shift that materially changes component appearance
-
-**Breaking changes** (rename, removal, material value shift) must:
-
-- Get a **deprecation window of at least one minor version** before removal. Deprecated tokens stay in the build output with an `@deprecated` marker pointing at the replacement.
-- Be announced in [`CHANGELOG.md`](../../CHANGELOG.md) under a "Breaking" heading with a migration note.
-
-The deprecation window exists so downstream consumers (primarily the `platform` repo) can upgrade on their own schedule rather than being forced into a simultaneous cutover.
+See the root [`CONTRIBUTING.md`](../../CONTRIBUTING.md#versioning) for the project-wide versioning and breaking-change policy. It applies to this package as written: a token rename, removal, or value shift that materially changes component appearance is a **major** change and triggers the deprecation window.
 
 ## What agents can do
 

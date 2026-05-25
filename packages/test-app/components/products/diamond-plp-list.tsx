@@ -107,6 +107,7 @@ export function DiamondPlpListRow({
       <PlpListBodyCell>
         <PlpListRowDelivery
           variant={mock.isExpress ? "express" : "regular"}
+          businessDays={mock.businessDays}
           date={mock.deliveryDate}
           shipsFrom={mock.shipsFrom}
         />

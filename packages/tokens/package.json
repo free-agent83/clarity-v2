@@ -1,6 +1,6 @@
 {
   "name": "@nivoda/tokens",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "description": "Nivoda design tokens — W3C DTCG format, bespoke build pipeline",

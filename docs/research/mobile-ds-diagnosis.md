@@ -1,12 +1,13 @@
-# Mobile Design System — State of Play Review
+# Mobile Design System — Clarity V2 Integration
 
-Based on conversation: Chris Learey & Arthur Pasqualon | 31 March 2026
+**Original diagnostic:** Chris Learey & Arthur Pasqualon | 31 March 2026  
+**Updated for Clarity V2:** 24 April 2026
 
 ## Executive Summary
 
-The mobile application has a set of core UI components in place, but they are not consistently aligned with the current Figma design system. The token build pipeline is used as the token layer but naming conventions, typography definitions, and color tokens diverge from Figma by an estimated 30%. There is no active Storybook instance for mobile (one existed previously), meaning there is no central place to view, test, or document mobile components. Several areas of the app, notably checkout and orders, still rely on legacy JavaScript components that predate the current design system and TypeScript migration.
+The mobile application has historically managed its own component library separate from web, with three critical gaps: token naming misalignment, no isolated component documentation (Storybook), and legacy code spread across checkout and orders screens. **Clarity V2 eliminates these problems for mobile by introducing a unified, cross-platform token pipeline and a shared component architecture where React Native variants are built alongside web components, not after them.**
 
-Mobile does not use a third-party UI library (e.g. Material UI); all components are built in-house using React Native. This provides flexibility but increases the maintenance burden and makes alignment with Figma even more critical.
+This document describes mobile's current state, identifies why those gaps mattered, and explains how Clarity V2's architecture provides the solution.
 
 ## Current State Assessment
 
@@ -39,35 +40,44 @@ The table below summarises the maturity of each layer of the mobile design syste
 - No dedicated engineering time has been allocated for design system alignment on mobile; work has been done ad-hoc, feature by feature.
 - No component versioning or packaging strategy exists on mobile, unlike the web team which uses NX and npm packages.
 
-## Recommended Roadmap
+## How Clarity V2 Solves Mobile's Gaps
 
-Arthur and Chris agreed on a phased approach, starting with the foundational token layer before addressing components or feature screens. The following phases were discussed.
+The gaps identified above — token misalignment, no component documentation, legacy code, and packaging inconsistency — were inherent to maintaining mobile as a separate system. Clarity V2 was built to eliminate these problems at the architectural level.
 
-| Phase | Workstream | Description | Est. Effort |
-|---|---|---|---|
-| **1** | **Token Alignment** | Align color and typography token names in the codebase to match Figma exactly. Ensure the token build pipeline is the single source of truth used by both web and mobile. | ~1 sprint (1 dev) |
-| **2** | **Storybook Setup** | Re-establish a Storybook instance for mobile React Native components. Start with one or two core components, then expand incrementally. Investigate any past issues with the team. | TBD |
-| **3a** | **Core Component Refactor** | Systematically update core components (buttons, filters, inputs) to match Figma variants. Document each in Storybook. | TBD |
-| **3b** | **Feature Screen Refresh** | Revamp legacy screens (checkout, orders, cart) to use updated components and TypeScript. Requires updated Figma layouts for these sections. | TBD |
-| **4** | **Packaging & Versioning** | Introduce component packaging and versioning for mobile, aligned with web approach (NX/npm). Coordinate with front-end team on strategy. | TBD |
-
-**Note:** Phases 3a and 3b are parallel paths. The product team will need to decide whether to prioritise core component refactoring or feature-level screen refreshes. Both require design resource for updated Figma layouts.
-
-## Open Dependencies & Decisions
-
-1. Engineering allocation: Dedicated mobile developer time needs to be agreed with Andre and product leadership. Arthur estimates at least one full sprint for Phase 1 alone.
-2. Figma completeness: Some screens (checkout, orders) lack updated Figma layouts. Design resource is needed before mobile can refactor those areas.
-3. Storybook viability: Arthur will consult with longer-tenured mobile developers about any historical issues with Storybook on React Native before committing to the tooling choice.
-4. Documentation platform: Chris is evaluating a documentation app that can embed Storybook components for broader usage guidelines, which would benefit from both web and mobile using Storybook.
-5. Phases 3a vs 3b prioritisation needs a product decision on whether to focus on systematic component quality or user-facing screen modernisation first.
-
-## Immediate Next Steps
-
-| Owner | Action | Timeline |
+| Gap | What it was | How Clarity V2 solves it |
 |---|---|---|
-| **Chris** | Document architectural proposal for design system across web and mobile, including token alignment and Storybook adoption. | This week |
-| **Chris** | Discuss mobile engineering allocation with Andre and leadership. | This week |
-| **Chris** | Generate and share a color palette reference from Figma for Arthur's team. | Near-term |
-| **Arthur** | Check with mobile team on any past Storybook issues or concerns. | This week |
-| **Arthur** | If time allows, explore re-establishing Storybook for one or two mobile components. | Near-term |
-| **Arthur** | Sync with front-end team on their component packaging and versioning approach (NX/npm). | Near-term |
+| **Token Naming Mismatch** | Mobile and web tokens had different names for the same colors/typography, forcing manual mapping. ~30% divergence from Figma. | Clarity V2's unified token pipeline (`packages/tokens/`) outputs the same token values to web, React Native, and JSON. A single source of truth in `packages/tokens/src/` feeds all platforms. Token names are Tailwind-standard (`xs/sm/base/lg`) for typography and DTCG primitives for colors — no mapping, no divergence. |
+| **No Component Documentation** | Mobile components existed but couldn't be reviewed or tested in isolation. No Storybook. | Clarity V2 components (`packages/components/`) include React Native variants built alongside web components. Each component has a Storybook story + COMPONENT.md documentation. React Native variants consume the same tokens and follow the same prop contracts as web. |
+| **Legacy Code Islands** | Checkout, orders, and cart used pre-design-system JavaScript. Not TypeScript, not tokenized. | Clarity V2 components are all TypeScript + token-aware. As these legacy screens are touched for any reason, they can be incrementally replaced with Clarity V2 components. No big migration, just component-by-component replacement as the app evolves. |
+| **No Packaging Strategy** | Mobile components weren't versioned or packaged. Web used NX + npm. | Clarity V2 uses Nx monorepo + scoped npm packages (`@nivoda/components`, `@nivoda/tokens`). Mobile teams import components from npm, same as web. Versioning is coordinated across both platforms. |
+
+---
+
+## Mobile Integration Path
+
+Mobile teams adopt Clarity V2 components as new features are built or existing components are touched. This is incremental adoption, not a migration sprint.
+
+### Immediate (when ready)
+1. **Import tokens** — `packages/tokens/` outputs React Native-compatible JS/TS objects. Mobile code switches from local token definitions to npm imports.
+2. **Start with primitives** — Button, Input, Select, etc. Already have React Native variants in Clarity V2. First few features use these instead of local components.
+3. **Document as you go** — Each component used gets added to the mobile team's integration notes. Design team reviews for RN-specific concerns.
+
+### Near-term
+1. **Storybook for RN components** — Clarity V2's Storybook includes React Native stories. Mobile team can review component contracts and test scenarios without writing code.
+2. **Replace a screen** — Pick a non-critical screen (product listing, search results, etc.) and rebuild it using Clarity V2 components. This becomes the reference implementation showing mobile engineers what "done" looks like.
+3. **Sync with web team** — Coordinate on component updates. If web changes a Button variant, mobile's React Native Button changes in lockstep (in the same PR).
+
+### Ongoing
+1. **Legacy screens** — Checkout, orders, and cart are replaced component-by-component as they're touched for other reasons (bug fixes, features, performance). Not a dedicated project — just opportunistic when the code is open anyway.
+2. **New features** — All new mobile work uses Clarity V2 components. The mobile codebase gradually becomes 100% Clarity V2 without a single "migration sprint."
+
+---
+
+## Alignment with Web Team
+
+Clarity V2 is designed for teams (web and mobile) to move at their own pace while staying synchronized on tokens and component contracts. The web team's adoption plan is in `docs/plans/engineering-proposal.md`; mobile follows the same patterns:
+- **Option C (Opportunistic):** New features use Clarity V2. Legacy code stays stable until touched.
+- **Incremental replacement:** When a component is modified, use the Clarity V2 equivalent instead.
+- **No migration freeze:** No "everyone stop and migrate everything" period.
+
+The React Native integration details are in `docs/architecture/architecture.md` under Layer 2 (Component Libraries).

@@ -1,8 +1,8 @@
 # Minivoda
 
-A living interactive prototype — a digital twin of the Nivoda production platform. Minivoda is the single source of truth for how features should look and behave, replacing static Figma designs with a real, clickable application backed by a live database.
+A living interactive prototype — a digital twin of the Nivoda production platform. Minivoda is the single source of truth for how features should look and behave, replacing static Figma designs with a real, clickable application backed by hardcoded fixture data.
 
-Lives in the Clarity V2 monorepo as `packages/test-app/`. It is the first live consumer of `@nivoda/components` (the Nivoda design system) — building flows here exercises the design system in production-shaped conditions. See the root [README.md](../../README.md), [VISION.md](../../VISION.md), and [ROADMAP.md](../../ROADMAP.md) for the broader strategy.
+Lives in the Clarity V2 monorepo as `packages/test-app/`. It is the first live consumer of `@nivoda/components` (the Nivoda design system) — building flows here exercises the design system in production-shaped conditions. See the root [README.md](../../README.md) for the broader strategy.
 
 **What it's used for:**
 
@@ -10,14 +10,14 @@ Lives in the Clarity V2 monorepo as `packages/test-app/`. It is the first live c
 - **Customer-facing prototype** — share with customers for usability testing, user research, and interviews.
 - **Ahead-of-production designs** — new feature designs live here so stakeholders can interact with them directly.
 
-Deployed to Vercel with a Supabase Postgres backend.
+Deployed to Vercel. No live database — all data is hardcoded fixture arrays.
 
 ## What's Built
 
 ### Fully functional
 
 - **Marketing landing page** — public homepage with sign-in prompt
-- **Authentication** — sign in / sign out via Supabase Auth; all buyer pages are protected
+- **Authentication** — sign in / sign out via JWT cookie auth; all buyer pages are protected
 - **Buyer home** — hero carousel and product category grid
 - **Product browsing** — six categories, each with a listing page and individual product detail pages:
   - Natural diamonds, lab-grown diamonds, gemstones, natural melee, lab-grown melee, engagement rings
@@ -28,13 +28,11 @@ Deployed to Vercel with a Supabase Postgres backend.
 - **Orders** — order list with status tabs, filters, and badges; order detail with progress timeline, item breakdown, payment info, delivery address, and updates
 - **Shortlists** — shortlists list and individual shortlist detail pages
 - **Finances** — finances overview and individual finance statement detail pages
-- **Search** — global search (results page + typeahead suggest), wired to `/api/v1/search`
+- **Search** — global search (results page + typeahead suggest), substring match across all product categories
 - **Help Centre** — dedicated `/help` surface outside the buyer area
 - **Share modal** — customise, generate, and share via link, QR code, WhatsApp, or email (Minivoda branding is stripped from shared content)
 - **App shell** — header with search bar, currency selector, shortlist/cart counters, sidebar navigation, mobile drawer
 - **Dark mode** — press `d` to toggle
-- **Admin area** — full CRUD for orders, shortlists, invoices, and products; god-mode auth via `app_metadata.role`; Supabase Realtime sync pushes admin mutations to buyer-facing views; cross-tab user switching via BroadcastChannel
-- **Public REST API** — versioned under `/api/v1/` — see [`docs/api/README.md`](docs/api/README.md) for the contract
 
 ### Under construction (placeholder pages exist)
 
@@ -72,11 +70,9 @@ All buyer-facing pages require sign-in. The URL paths below are relative to the 
 | Checkout | `/buyer/checkout` |
 | Checkout confirmation | `/buyer/checkout/confirmation` |
 | Settings | `/buyer/settings` |
-| Admin — home | `/buyer/admin` |
-| Admin — orders / invoices / products / shortlists | `/buyer/admin/{orders,invoices,products,shortlists}` |
 | Component kitchen sink (dev only) | `/buyer/ui-kitchen-sink` |
 
-Buyer routes are organised into four route groups — `(shop)`, `(admin)`, `(checkout)`, `(configurator)` — each providing an independent layout while sharing the `/buyer` URL prefix.
+Buyer routes are organised into three route groups — `(shop)`, `(checkout)`, `(configurator)` — each providing an independent layout while sharing the `/buyer` URL prefix.
 
 ## Tech Stack
 
@@ -92,10 +88,8 @@ Buyer routes are organised into four route groups — `(shop)`, `(admin)`, `(che
 | Validation | Zod |
 | Icons | Tabler Icons |
 | Charts | Recharts |
-| Database | Supabase Postgres |
-| ORM | Drizzle ORM |
-| Auth | Supabase Auth |
-| Realtime | Supabase Realtime (admin → buyer view sync) |
+| Auth | JWT (`jose`) — HttpOnly cookie, 24h expiry |
+| Data | Hardcoded TypeScript fixture arrays under `fixtures/` |
 | Hosting | Vercel |
 
 ---
@@ -108,8 +102,7 @@ Everything below this line is for developers working on the codebase.
 
 ### Prerequisites
 
-- **Node.js** — a recent LTS (tested against 20+)
-- **Docker** — required to run the local Supabase database
+- **Node.js** — v22 or later (see root `package.json` `engines` field)
 
 ### Install and run
 
@@ -122,27 +115,7 @@ cd ../.. && npm install
 All remaining commands run from inside `packages/test-app/`. Copy the example environment file:
 
 ```bash
-cp .env.example .env.development.local
-```
-
-Start the local database (requires Docker to be running):
-
-```bash
-npm run db:start
-```
-
-After the containers are up, get the anon key and paste it into `.env.development.local`:
-
-```bash
-npx supabase status
-```
-
-Copy the `anon key` value into `.env.development.local` as `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-
-Apply migrations and load sample data:
-
-```bash
-npm run db:reset
+cp .env.example .env.local
 ```
 
 Start the dev server:
@@ -151,15 +124,19 @@ Start the dev server:
 npm run dev
 ```
 
-The app runs at [http://localhost:3000](http://localhost:3000).
+The app runs at [http://localhost:3000](http://localhost:3000). Sign in with the credentials in `.env.local` (defaults: `demo@minivoda.test` / `demo`).
 
 ### Environment variables
 
-| Variable | Description |
-|---|---|
-| `POSTGRES_URL` | Postgres connection string (default: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`) |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase API URL (default: `http://127.0.0.1:54321`) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key — get from `npx supabase status` after `db:start` |
+| Variable | Default | Purpose |
+|---|---|---|
+| `AUTH_USERNAME` | `demo@minivoda.test` | Login email for the demo account |
+| `AUTH_PASSWORD` | `demo` | Login password for the demo account |
+| `JWT_SECRET` | `dev-secret-not-for-production` | Signs the `minivoda_jwt` HttpOnly cookie. Use a strong random value in any shared environment. |
+| `DEMO_LATENCY_MIN_MS` | `80` | Minimum artificial latency (ms) on all data fetches |
+| `DEMO_LATENCY_MAX_MS` | `320` | Maximum artificial latency (ms) on all data fetches |
+
+The defaults work out of the box for local development. Do not commit `.env.local`.
 
 ## CLI Commands
 
@@ -172,17 +149,6 @@ npm run start      # Start production server
 npm run lint       # Run ESLint
 npm run format     # Format code with Prettier
 npm run typecheck  # Type-check without emitting output
-```
-
-### Database
-
-```bash
-npm run db:start    # Start local Supabase containers (requires Docker)
-npm run db:stop     # Stop local Supabase containers
-npm run db:reset    # Drop DB, apply all migrations, load sample data
-npm run db:generate # Generate a migration from schema changes
-npm run db:migrate  # Apply pending migrations
-npm run db:studio   # Open Drizzle Studio (browser-based DB explorer)
 ```
 
 ### Adding UI components
@@ -201,12 +167,12 @@ Missing primitives are added upstream in the components package, not here. Do no
 app/
   layout.tsx                    # Root layout (fonts, theme provider)
   page.tsx                      # Marketing landing page (public)
-  login/                        # Sign-in page (Supabase Auth)
+  login/                        # Sign-in page (JWT cookie auth)
   (help)/
     help/                       # Help Centre
   buyer/                        # Authenticated buyer area (protected by middleware)
     layout.tsx                  # Session layout
-    (shop)/                     # Buyer shell (nav, footer, realtime)
+    (shop)/                     # Buyer shell (nav, footer)
       page.tsx                  # Buyer home (hero carousel, category grid)
       browse/                   # Product categories (list + [slug] detail)
       orders/                   # Order list + [id] detail
@@ -215,10 +181,8 @@ app/
       search/                   # Search results
       settings/                 # Placeholder
       ui-kitchen-sink/          # Component showcase (dev only)
-    (admin)/admin/              # God-mode admin — orders / invoices / products / shortlists CRUD
     (checkout)/checkout/        # Checkout page + confirmation
     (configurator)/             # Engagement-ring configurator sub-flow (select-stone, etc.)
-  api/v1/                       # Public REST API — see docs/api/README.md
 
 components/
   shell/                        # App chrome: navigation bar, mobile drawer, footer
@@ -228,96 +192,56 @@ components/
   products/                     # Product-specific display components
   orders/                       # Order list/detail components
   finances/                     # Finance list/detail components
-  admin/                        # Admin area components (header, sidebar, CRUD list/modals)
   checkout/                     # Checkout-flow components
   filters/                      # Filter UI compositions
   search/                       # Search UI compositions
   *.tsx                         # Top-level providers and widgets
-                                #   theme-provider, realtime-provider, realtime-shell, realtime-status,
-                                #   broadcast-listener, home-carousel, share-modal,
+                                #   theme-provider, home-carousel, share-modal,
                                 #   product-actions, sign-out-button
 
-db/
-  schema/                       # Drizzle schema (commerce, jewelry, lookups, media, orders, products, users, enums)
-  client.ts                     # Drizzle client (postgres.js + drizzle-orm)
+fixtures/
+  types/                        # Canonical TypeScript types (one file per domain)
+                                #   diamond, gemstone, melee, engagement-ring,
+                                #   user, order, finance, shortlist
+  products/                     # Product fixture arrays (natural-diamonds, lab-grown-diamonds,
+                                #   gemstones, natural-melee, lab-grown-melee, engagement-rings)
+  user.ts                       # HARDCODED_USER + addresses
+  orders.ts                     # 10 hardcoded orders
+  shortlists.ts                 # 10 hardcoded shortlists
+  finances.ts                   # 10 hardcoded finance documents
 
 hooks/
   use-cart-store.ts             # Zustand cart store
   use-checkout-store.ts         # Zustand checkout store
   use-shortlists-state.ts       # Shortlists client state
-  use-realtime-sync.ts          # Bridges SSR data with Supabase Realtime updates
   use-search.ts                 # Search query + suggest hook
   use-mobile.ts                 # Responsive breakpoint hook
 
 lib/
   api/                          # Data-access modules — one per domain (diamonds, gemstones, melee,
-                                # jewelry/, orders, cart, shortlists, invoices, finances, search,
-                                # filters, addresses, users, auth, admin/)
-  supabase/                     # Supabase client utilities (client.ts, server.ts, middleware.ts, api.ts)
+                                # jewelry/, orders, shortlists, invoices, finances, search,
+                                # filters, addresses, users)
+  auth/                         # JWT auth utilities (config.ts, jwt.ts, current-user.ts)
   navigation.ts                 # Sidebar navigation tree
   utils.ts                      # Shared helpers
 
-docs/
-  api/                          # Public REST API documentation (contract for mobile + external consumers)
-  superpowers/                  # Plans and specs from the agent-driven development workflow
+providers/
+  user-provider.tsx             # UserProvider context + useUser() hook
 
 public/                         # Static assets
-
-supabase/
-  migrations/                   # SQL migration files (generated by drizzle-kit)
-  seed.sql                      # Sample data, applied by db:reset
 ```
 
 ## Data Layer
 
-Data flows through three layers: **schema → API → page**.
+Data flows through two layers: **fixtures → API → page**.
 
-1. **`db/schema/`** — Drizzle schema definitions. Types are inferred via `$inferSelect`. PostgreSQL conventions: `snake_case` columns, UUIDs, `TIMESTAMPTZ`, soft deletes via `deleted_at`.
-2. **`lib/api/`** — Data-access layer. Each module exposes `fetch*` functions that query via Drizzle, paginate results, and return fully resolved objects. Pages never construct raw SQL.
+1. **`fixtures/`** — Hardcoded TypeScript arrays. Each domain has a canonical type in `fixtures/types/`; full detail shapes are stored once per item; list shapes are projections via helpers (`toDiamondListItem`, etc.).
+2. **`lib/api/`** — Data-access layer. Each module exposes `fetch*` functions that filter, sort, and project the fixture arrays in memory. All functions include artificial latency (`simulateLatency()`, 80–320ms configurable via env vars). Pages never import fixtures directly.
 3. **Pages** — Server components that call `lib/api/` functions and pass data to presentational components.
 
-Sample data lives in `supabase/seed.sql` and is loaded by `npm run db:reset`.
+### Simulating error states
 
-## Database Workflow
-
-### Changing the database structure
-
-1. Edit schema files in `db/schema/`.
-2. `npm run db:generate` — creates a migration file.
-3. `npm run db:migrate` — applies it locally.
-4. Update `supabase/seed.sql` if columns or tables changed.
-5. `npm run db:reset` — verify everything rebuilds from scratch.
-6. Commit schema files, migration, and seed data together.
-
-### Cleaning up migrations
-
-If rapid iteration creates many small migrations:
-
-1. `npm run db:reset` — verify current state works.
-2. Delete all files in `supabase/migrations/`.
-3. `npm run db:generate` — produces one clean migration.
-4. `npm run db:reset` — confirm it still works.
-
-### Pushing to the live site
-
-The prototype has no real users, so the live database is replaced entirely.
-
-**First-time setup:**
-
-1. Create a project on [supabase.com](https://supabase.com).
-2. `npx supabase link --project-ref <your-project-ref>` (find the ref in the Supabase dashboard URL).
-3. Add production env vars on Vercel: `POSTGRES_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-
-**Each deployment:**
-
-```bash
-npx supabase db push            # Send migrations to the live database
-npx supabase db reset --linked  # Rebuild with sample data
-```
-
-### Important
-
-`supabase/seed.sql` is the single source of truth for all sample data. If you tweak data manually in Drizzle Studio, copy those changes back into `seed.sql` before committing.
+Any server-side page supports `?simulate=error` in the URL. This calls `checkSimulateError(searchParams)` at the top of the page, which throws a synthetic error — useful for exercising Next.js error boundary behaviour without breaking real data.
 
 ## Code Style
 
@@ -340,9 +264,9 @@ Theme tokens and dark-mode styling come from `@nivoda/components/web-theme.css`,
 ```ts
 import { cn } from "@/lib/utils"
 import { Button } from "@nivoda/components"
-import { db } from "@/db/client"
+import { HARDCODED_USER } from "@/fixtures/user"
 ```
 
 ---
 
-*Last reviewed: 2026-04-23*
+*Last reviewed: 2026-04-30*

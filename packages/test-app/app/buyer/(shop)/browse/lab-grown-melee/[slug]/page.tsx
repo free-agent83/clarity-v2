@@ -24,10 +24,16 @@ import { StonePdpSecondaryActions } from "@/components/products/stone-pdp-second
 
 import { fetchMeleeItem, fetchRelatedMelee } from "@/lib/api/melee";
 import { formatUSD } from "@/lib/utils";
+import { checkSimulateError } from "@/lib/api/_simulate";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ simulate?: string; [k: string]: unknown }>;
+};
 
-export default async function LabGrownMeleeDetailPage({ params }: Props) {
+export default async function LabGrownMeleeDetailPage({ params, searchParams }: Props) {
+  const sp = await searchParams;
+  checkSimulateError(sp);
   const { slug } = await params;
   const [item, relatedRaw] = await Promise.all([
     fetchMeleeItem(slug, true),

@@ -48,6 +48,7 @@ export function MeleePlpItem({ item, href, category }: MeleePlpItemProps) {
 
       <PlpGridItemDelivery
         variant={mock.isExpress ? "express" : "regular"}
+        businessDays={mock.businessDays}
         date={mock.deliveryDate}
         shipsFrom={mock.shipsFrom}
       />

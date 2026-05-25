@@ -24,10 +24,16 @@ import { StonePdpCta } from "@/components/products/stone-pdp-cta";
 import { StonePdpSecondaryActions } from "@/components/products/stone-pdp-secondary-actions";
 
 import { fetchGemstoneItem, fetchRelatedGemstones } from "@/lib/api/gemstones";
+import { checkSimulateError } from "@/lib/api/_simulate";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ simulate?: string; [k: string]: unknown }>;
+};
 
-export default async function GemstoneDetailPage({ params }: Props) {
+export default async function GemstoneDetailPage({ params, searchParams }: Props) {
+  const sp = await searchParams;
+  checkSimulateError(sp);
   const { slug } = await params;
   const [item, relatedRaw] = await Promise.all([
     fetchGemstoneItem(slug),
