@@ -3,7 +3,7 @@ import { Button, cn, type ButtonProps } from '@nivoda/components';
 /** Shared page-action styling for controls in `#nd-page`. */
 export const docsPageButtonProps = {
   variant: 'outline',
-  size: 'sm',
+  size: 'default',
 } as const satisfies Pick<ButtonProps, 'variant' | 'size'>;
 
 /**
