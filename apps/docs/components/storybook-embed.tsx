@@ -78,6 +78,7 @@ export function StorybookEmbed({ story, height = 480 }: StorybookEmbedProps) {
             <select
               value={selectedStory}
               onChange={(e) => setSelectedStory(e.target.value)}
+              aria-label="Select story variant"
               className="rounded border border-fd-border bg-fd-background text-fd-foreground text-xs px-2 py-1 focus:outline-none"
             >
               {stories.map((s) => (

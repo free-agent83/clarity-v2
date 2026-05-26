@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { usePathname } from 'fumadocs-core/framework';
 import { ExternalLink } from 'lucide-react';
 import { CopyMarkdownButton } from './copy-markdown-button';
@@ -12,7 +13,11 @@ type DocsActionsProps = {
 export function DocsActions({ markdownUrl }: DocsActionsProps) {
   const pathname = usePathname();
 
-  const q = `Read ${typeof window === 'undefined' ? pathname : new URL(pathname, window.location.origin)}, I want to ask questions about it.`;
+  const [q, setQ] = useState(`Read ${pathname}, I want to ask questions about it.`);
+
+  useEffect(() => {
+    setQ(`Read ${new URL(pathname, window.location.origin)}, I want to ask questions about it.`);
+  }, [pathname]);
 
   const claudeUrl = `https://claude.ai/new?${new URLSearchParams({ q })}`;
   const cursorUrl = `https://cursor.com/link/prompt?${new URLSearchParams({ text: q })}`;
