@@ -8,6 +8,7 @@ import {
 import { notFound } from 'next/navigation';
 import { DocsActions } from '@/components/docs-actions';
 import { getMDXComponents } from '@/components/mdx';
+import { StorybookEmbed } from '@/components/storybook-embed';
 import { docsBreadcrumb, docsFooter, docsTableOfContent } from '@/lib/docs-page.shared';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
@@ -39,6 +40,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       <div className="flex flex-row gap-2 items-center border-b pb-6">
         <DocsActions markdownUrl={markdownUrl} />
       </div>
+      {data.story && <StorybookEmbed story={data.story} />}
       <DocsBody>
         <MDX
           components={getMDXComponents({

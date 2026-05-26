@@ -52,6 +52,7 @@ export const components = defineDocs({
         status: z.string().optional(),
         lastUpdated: z.union([z.string(), z.date()]).optional(),
         full: z.boolean().optional(),
+        story: z.string().optional(),
       })
       .passthrough()
       .transform((data) => ({

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ExternalLink } from 'lucide-react';
 
 const DROPDOWN_PREFIXES = [
   'templates-plp-gridcontainer',
@@ -51,7 +52,7 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
   return (
     <>
       {/* Toolbar */}
-      <div className="flex flex-row items-center gap-2 px-3 py-2 bg-fd-muted/50 border-b border-fd-border">
+      <div className="flex flex-row items-center gap-2 px-3 py-2.5 bg-fd-muted/50 border-b border-fd-border">
         {/* Chips or dropdown — flex-1 so the link stays pinned right */}
         <div className="flex-1 min-w-0 flex flex-wrap gap-1.5">
           {showSwitcher && !useDropdown &&
@@ -86,24 +87,26 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
           )}
         </div>
 
-        {/* Open in Storybook link — never wraps */}
+        {/* Open in Storybook — matches action row button style */}
         <a
           href={openLink}
           target="_blank"
-          rel="noreferrer"
-          className="flex-shrink-0 whitespace-nowrap text-sm text-fd-muted-foreground underline hover:no-underline hover:text-fd-foreground"
+          rel="noreferrer noopener"
+          className="flex-shrink-0 inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-fd-border bg-fd-background px-2.5 py-1 text-xs font-medium text-fd-muted-foreground hover:text-fd-foreground transition-colors"
         >
-          Open in Storybook ↗
+          Open in Storybook
+          <ExternalLink className="size-3" />
         </a>
       </div>
 
-      {/* iframe */}
+      {/* iframe — sandbox prevents the story from navigating the parent page */}
       <iframe
         src={iframeSrc}
         title={`Storybook: ${selectedStory}`}
         loading="lazy"
         height={height}
         className="w-full block bg-white"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
       />
     </>
   );
