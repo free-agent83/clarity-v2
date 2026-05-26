@@ -12,6 +12,12 @@
   border-radius: 0 !important;
 }
 
+/* Widen the active sidebar indicator from 1px → 2px. */
+#nd-sidebar a[data-active='true']::before,
+#nd-sidebar-mobile a[data-active='true']::before {
+  width: 2px !important;
+}
+
 /*
  * Sidebar nav hover — no fill; violet text only.
  * --color-fd-primary: primitive violet-600 (light) / violet-400 (dark) via clarity-fumadocs-theme.css.
@@ -36,6 +42,20 @@
 #nd-page .docs-page-footer > a {
   background-color: var(--card);
   color: var(--card-foreground);
+}
+
+/* Unlayered — beats fumadocs hover utilities; mirrors hover:bg-fd-accent/80 hover:text-fd-accent-foreground */
+#nd-page .docs-page-footer > a:hover {
+  background-color: color-mix(in oklch, var(--color-fd-accent) 80%, transparent);
+  color: var(--color-fd-accent-foreground);
+}
+
+/*
+ * Page action buttons — violet-400 hover text in dark (matches sidebar fd-primary).
+ * Clarity outline Button sets hover:text-primary-hover; this unlayered rule wins.
+ */
+.dark #nd-page [data-slot='button']:hover:not(:disabled) {
+  color: var(--color-fd-primary) !important;
 }
 
 html > body[data-scroll-locked] {

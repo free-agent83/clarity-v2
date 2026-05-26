@@ -54,3 +54,10 @@
 #nd-toc a.prose[data-active='true'] a {
   color: var(--foreground) !important;
 }
+
+/* 2px violet bar on active TOC items — overlays the 1px grey container track (inactive). */
+#nd-toc a.prose[data-active='true'] {
+  border-inline-start: 2px solid var(--color-fd-primary) !important;
+  padding-inline-start: calc(0.75rem - 1px) !important;
+  margin-inline-start: -1px !important;
+}
