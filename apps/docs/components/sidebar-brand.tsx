@@ -1,21 +1,22 @@
-/** Sidebar / nav header brand — Clarity primary, BY NIVODA attribution. */
+/** Sidebar / nav header brand — left-aligned Clarity V2.0.1 + BY NIVODA mono. */
 export function SidebarBrand() {
   return (
     <span
       data-sidebar-brand
-      className="flex w-full min-w-0 items-center justify-between gap-3"
+      className="flex flex-col min-w-0 leading-none gap-0.5"
     >
       <span
-        className="shrink-0 text-xl font-bold tracking-normal"
+        className="text-xl font-normal tracking-normal text-fd-foreground"
         style={{ fontFamily: 'var(--font-nanum), serif' }}
       >
-        Clarity
+        Clarity{' '}
+        <span className="text-base">V2.0.1</span>
       </span>
       <span
-        className="shrink-0 text-xs uppercase tracking-wide text-fd-muted-foreground"
+        className="text-[10px] uppercase tracking-widest text-fd-muted-foreground"
         style={{ fontFamily: 'var(--font-mono), monospace' }}
       >
-        by Nivoda
+        By Nivoda
       </span>
     </span>
   );
