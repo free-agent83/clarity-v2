@@ -10,27 +10,50 @@ h1, h2, h3, h4, h5, h6,
   font-weight: 400 !important;
 }
 
+/* Page chrome — title + lede + actions share one rhythm (see docs-page-header in page.tsx) */
+#nd-page .docs-page-header h1 {
+  margin: 0;
+}
+
 h2,
 .prose h2 {
   font-size: var(--font-size-4xl) !important;
+}
+
+h3,
+.prose h3 {
+  font-size: var(--font-size-2xl) !important;
+  line-height: var(--line-height-tight) !important;
 }
 
 #nd-page .prose {
   /* Fumadocs typography sets p { color: var(--tw-prose-body) } — override the token, not just inherit */
   --tw-prose-body: var(--color-docs-prose-body);
   --tw-prose-headings: var(--foreground);
-  --tw-prose-bold: var(--foreground);
+  --tw-prose-bold: var(--color-docs-prose-body);
   color: var(--color-docs-prose-body);
 }
 
 /* Inline code — component names, token refs, etc. De-emphasised vs body text. */
-#nd-page .prose :where(code):not(:where(pre *)) {
+#nd-page .prose :where(code):not(:where(pre *)):not(.docs-swatch-hex) {
   color: var(--muted-foreground);
   background-color: var(--muted);
   border-radius: calc(var(--radius) - 4px);
   padding: 0.125em 0.35em;
   font-family: var(--font-mono, var(--font-family-mono));
   font-size: 0.875em;
+  font-weight: 400;
+}
+
+/* Palette swatch hex labels — stone.500 on stone.200, fixed regardless of theme or swatch fill. */
+#nd-page .prose code.docs-swatch-hex {
+  color: #79716b !important;
+  background-color: #e7e5e4 !important;
+  border: none !important;
+  border-radius: 0.25rem;
+  padding: 0.125em 0.35em;
+  font-family: var(--font-mono, var(--font-family-mono));
+  font-size: 0.7rem;
   font-weight: 400;
 }
 

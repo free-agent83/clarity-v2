@@ -21,7 +21,8 @@ export const docsSidebar = {
 
 /** Current page crumb: white text instead of fumadocs' text-fd-primary. */
 export const docsBreadcrumb = {
-  className: 'docs-breadcrumb',
+  /* mb-8 + #nd-page gap-4 = 48px (spacing-12), matches header → Storybook band */
+  className: 'docs-breadcrumb mb-8',
 } as const;
 
 /** Prev/next page links — elevated card surfaces in both themes. */

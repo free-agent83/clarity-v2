@@ -35,21 +35,27 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       breadcrumb={docsBreadcrumb}
       footer={docsFooter}
     >
-      <DocsTitle className="text-[64px] font-normal">{data.title}</DocsTitle>
-      <DocsDescription className="mb-0">{data.description}</DocsDescription>
-      <div className="flex flex-row gap-2 items-center border-b pb-6">
-        <DocsActions markdownUrl={markdownUrl} />
+      <div className="docs-page-content flex min-w-0 flex-col">
+        <header className="docs-page-header flex flex-col gap-6 border-b border-fd-border pb-6">
+          <div className="flex flex-col gap-4">
+            <DocsTitle className="mb-0 text-[64px] font-normal leading-none">
+              {data.title}
+            </DocsTitle>
+            <DocsDescription className="mb-0">{data.description}</DocsDescription>
+          </div>
+          <DocsActions markdownUrl={markdownUrl} />
+        </header>
+        {data.story && <StorybookEmbed story={data.story} className="my-0 mt-12" />}
+        <DocsBody className="mt-6">
+          <MDX
+            components={getMDXComponents({
+              // this allows you to link to other pages with relative file paths
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              a: createRelativeLink(source as any, page as any),
+            })}
+          />
+        </DocsBody>
       </div>
-      {data.story && <StorybookEmbed story={data.story} />}
-      <DocsBody>
-        <MDX
-          components={getMDXComponents({
-            // this allows you to link to other pages with relative file paths
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            a: createRelativeLink(source as any, page as any),
-          })}
-        />
-      </DocsBody>
     </DocsPage>
   );
 }

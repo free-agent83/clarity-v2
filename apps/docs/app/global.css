@@ -5,9 +5,15 @@
 @import 'fumadocs-ui/css/preset.css';
 @import './styles/clarity-fumadocs-theme.css';
 @import './styles/docs-brand-extensions.css';
-@import './styles/docs-content.css';
 @import './styles/docs-layout.css';
+@import './styles/docs-content.css';
 
 html {
   scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }

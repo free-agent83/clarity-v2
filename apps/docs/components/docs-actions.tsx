@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'fumadocs-core/framework';
-import { BookOpen, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { CopyMarkdownButton } from './copy-markdown-button';
 import { DocsPageButton } from './docs-page-button';
 
@@ -23,11 +23,7 @@ export function DocsActions({ markdownUrl }: DocsActionsProps) {
   const cursorUrl = `https://cursor.com/link/prompt?${new URLSearchParams({ text: q })}`;
 
   return (
-    <div className="flex flex-row gap-2 items-center">
-      <span className="mr-1 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-fd-muted-foreground">
-        <BookOpen className="size-3 shrink-0" aria-hidden />
-        Docs
-      </span>
+    <div className="flex flex-row flex-wrap gap-2 items-center">
       <CopyMarkdownButton markdownUrl={markdownUrl} />
       <DocsPageButton asChild>
         <a href={claudeUrl} target="_blank" rel="noreferrer noopener">
