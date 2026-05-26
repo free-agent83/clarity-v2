@@ -1,4 +1,4 @@
-// Resolves the public Storybook URL with a sensible default for local development.
-// In production, set NEXT_PUBLIC_STORYBOOK_URL to https://storybook.clarity.nivoda.com.
+// Resolves the public Storybook URL with a sensible default.
+// Override via NEXT_PUBLIC_STORYBOOK_URL (e.g. http://localhost:6006 for local Storybook).
 export const STORYBOOK_URL =
-  process.env.NEXT_PUBLIC_STORYBOOK_URL ?? 'https://storybook.clarity.nivoda.com';
+  process.env.NEXT_PUBLIC_STORYBOOK_URL ?? 'https://storybook-clarity-nivoda.vercel.app';
