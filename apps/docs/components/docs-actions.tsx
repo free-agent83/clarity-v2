@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'fumadocs-core/framework';
-import { ExternalLink } from 'lucide-react';
+import { BookOpen, ExternalLink } from 'lucide-react';
 import { CopyMarkdownButton } from './copy-markdown-button';
 import { DocsPageButton } from './docs-page-button';
 
@@ -24,7 +24,8 @@ export function DocsActions({ markdownUrl }: DocsActionsProps) {
 
   return (
     <div className="flex flex-row gap-2 items-center">
-      <span className="font-mono text-xs text-fd-muted-foreground uppercase tracking-widest mr-1">
+      <span className="mr-1 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-fd-muted-foreground">
+        <BookOpen className="size-3 shrink-0" aria-hidden />
         Docs
       </span>
       <CopyMarkdownButton markdownUrl={markdownUrl} />
