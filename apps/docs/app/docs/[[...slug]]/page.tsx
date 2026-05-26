@@ -4,11 +4,11 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-  MarkdownCopyButton,
-  ViewOptionsPopover,
 } from 'fumadocs-ui/layouts/docs/page';
 import { notFound } from 'next/navigation';
+import { DocsActions } from '@/components/docs-actions';
 import { getMDXComponents } from '@/components/mdx';
+import { docsBreadcrumb, docsFooter, docsTableOfContent } from '@/lib/docs-page.shared';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 
@@ -27,12 +27,17 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const markdownUrl = getPageMarkdownUrl(page as any).url;
 
   return (
-    <DocsPage toc={data.toc} full={data.full}>
-      <DocsTitle>{data.title}</DocsTitle>
+    <DocsPage
+      toc={data.toc}
+      full={data.full}
+      tableOfContent={docsTableOfContent}
+      breadcrumb={docsBreadcrumb}
+      footer={docsFooter}
+    >
+      <DocsTitle className="text-[64px] font-normal">{data.title}</DocsTitle>
       <DocsDescription className="mb-0">{data.description}</DocsDescription>
       <div className="flex flex-row gap-2 items-center border-b pb-6">
-        <MarkdownCopyButton markdownUrl={markdownUrl} />
-        <ViewOptionsPopover markdownUrl={markdownUrl} />
+        <DocsActions markdownUrl={markdownUrl} />
       </div>
       <DocsBody>
         <MDX
