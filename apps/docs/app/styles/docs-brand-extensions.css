@@ -54,3 +54,8 @@
 #nd-toc a.prose[data-active='true'] a {
   color: var(--foreground) !important;
 }
+
+/* Match TOC active indicator colour to the sidebar ::before violet. */
+#nd-toc a.prose[data-active='true'] {
+  border-inline-start-color: var(--color-fd-primary) !important;
+}
