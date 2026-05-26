@@ -4,6 +4,7 @@ slug: megamenu
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-30
+story: "navigation-megamenu--default"
 ---
 
 # Megamenu
@@ -118,7 +119,3 @@ The activation mode is per-instance, but in practice an app header should pick o
 - **Trigger styling.** Per spec, the trigger ships unstyled — consumers wire their own row-item. This is a deliberate departure from the existing `NavigationMenu` organism, which ships a styled trigger.
 - **Internal tab flatten.** On collapsed layouts, all `MegamenuTabsPanel` children render in flow with their `tabLabel` as a heading. The implementation uses CSS to unhide inactive panels rather than swapping the render tree, so consumer-set `tabLabel` props are required for legibility.
 - **Hover bridge.** v1 uses a time-based `closeDelay` only. The geometric "safe triangle" upgrade is tracked in the project backlog.
-
-## Live component
-
-<StorybookEmbed story="navigation-megamenu--default" />

@@ -4,6 +4,7 @@ slug: inline-banner
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
+story: "feedback-inline-banner--default"
 ---
 
 # InlineBanner
@@ -55,7 +56,3 @@ Use InlineBanner under a page heading to surface persistent, page-level informat
 - [x] Accessibility: `role="status"` on the root; dismiss button has `aria-label`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: the banner is full-width and the actions slot wraps below at narrow widths.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
-
-## Live component
-
-<StorybookEmbed story="feedback-inline-banner--default" />

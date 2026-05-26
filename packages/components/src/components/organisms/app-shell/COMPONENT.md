@@ -4,6 +4,7 @@ slug: app-shell
 version: 0.0.1
 status: stable
 lastUpdated: 2026-04-15
+story: "navigation-app-shell--default"
 ---
 
 # AppShell
@@ -259,7 +260,3 @@ form. If the form needs a wider layout, redesign the form.
 - [ ] Accessibility: passes axe-core, keyboard navigable, screen reader tested
 - [ ] Responsive: works at all breakpoints
 - [ ] Tokens only: no hardcoded visual values — see Known deviations (search bar surface fill uses `bg-stone-50` / `bg-stone-100`)
-
-## Live component
-
-<StorybookEmbed story="navigation-app-shell--default" />

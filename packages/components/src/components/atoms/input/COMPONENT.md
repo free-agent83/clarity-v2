@@ -4,6 +4,7 @@ slug: input
 version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
+story: "forms-input--default"
 ---
 
 # Input
@@ -44,7 +45,3 @@ Use Input for single-line free-text or numeric input. Pair every Input with a vi
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: fills its container width; no breakpoint-specific behaviour
 - [x] Tokens only: no raw literals inside arbitrary value syntax
-
-## Live component
-
-<StorybookEmbed story="forms-input--default" />

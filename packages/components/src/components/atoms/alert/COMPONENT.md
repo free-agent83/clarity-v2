@@ -4,6 +4,7 @@ slug: alert
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-17
+story: "feedback-alert--default"
 ---
 
 # Alert
@@ -57,7 +58,3 @@ Use Alert to communicate persistent, in-context information — a validation err
 - [x] Accessibility: `role="alert"` on the root; passes axe-core via `@storybook/addon-a11y`; no interactive elements inside the Alert itself (actions go in `AlertAction`).
 - [x] Responsive: description uses `text-balance` / `text-pretty`; no breakpoint-specific behaviour by design.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
-
-## Live component
-
-<StorybookEmbed story="feedback-alert--default" />

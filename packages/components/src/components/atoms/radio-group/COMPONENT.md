@@ -4,6 +4,7 @@ slug: radio-group
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-17
+story: "forms-radiogroup--default"
 ---
 
 # RadioGroup
@@ -63,7 +64,3 @@ Use RadioGroup when the user must pick **exactly one** option from a small, fixe
 - [x] Accessibility: Radix primitive handles arrow-key navigation, `role="radiogroup"`, and `aria-checked`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: vertical layout is container-width by default; horizontal layout is opt-in via `orientation` + class.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
-
-## Live component
-
-<StorybookEmbed story="forms-radiogroup--default" />

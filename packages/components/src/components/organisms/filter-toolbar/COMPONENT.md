@@ -4,6 +4,7 @@ slug: filter-toolbar
 version: 0.2.0
 status: unstable
 lastUpdated: 2026-04-21
+story: "filtering-filtertoolbar--default"
 ---
 
 <Gap>Usage guidance for this component is light — props and the live demo are accurate; written guidance is forthcoming.</Gap>
@@ -113,7 +114,3 @@ See the PLP assembly story (`templates/plp/plp.stories.tsx`) for the full patter
 - [x] Accessibility: keyboard navigable, semantic search input, semantic heading per filter section, aria-hidden on the hidden sticky chrome, focus trap in the drawer via the Sheet molecule
 - [x] Responsive: mobile condenses to All Filters + Sort; the filter row hides on `< 640px`
 - [x] Tokens only: no hardcoded visual values
-
-## Live component
-
-<StorybookEmbed story="filtering-filtertoolbar--default" />

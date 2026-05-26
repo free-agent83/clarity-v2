@@ -4,6 +4,7 @@ slug: carousel
 version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
+story: "display-carousel--default"
 ---
 
 # Carousel
@@ -28,7 +29,3 @@ lastUpdated: 2026-04-13
 - [ ] Figma parity: matches DSW-Web-Components Figma source
 - [ ] Responsive: works at all breakpoints
 - [ ] Tokens only: no hardcoded visual values
-
-## Live component
-
-<StorybookEmbed story="display-carousel--default" />

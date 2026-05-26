@@ -4,6 +4,7 @@ slug: badge
 version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
+story: "display-badge--default"
 ---
 
 # Badge
@@ -54,7 +55,3 @@ Use Badge to show short metadata or status alongside another element — a count
 ## Pending changes
 
 - **Remove `asChild` from the Badge component.** Badge is a display primitive and must not be usable as a link, a button, or any other interactive element. The current `asChild` prop (inherited from the shadcn import) lets consumers wrap Badge around an `<a>` or a button-shaped element, which contradicts this rule. The prop is documented as deprecated above and the `AsLink` story has been removed from `badge.stories.tsx`. The prop itself stays in the API for now to avoid breaking the few existing consumers; a follow-up pass will strip `asChild`, the `Slot.Root` import, and the Radix Slot dependency on Badge entirely.
-
-## Live component
-
-<StorybookEmbed story="display-badge--default" />

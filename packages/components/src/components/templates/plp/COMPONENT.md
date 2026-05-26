@@ -4,6 +4,7 @@ slug: plp
 version: 0.6.1
 status: unstable
 lastUpdated: 2026-04-23
+story: "templates-plp-gridcontainer--loading"
 ---
 
 # PLP (Product Listing Page)
@@ -105,7 +106,3 @@ Consumers should read this file, copy the pattern, and adapt it. A consumer-side
 - [x] Accessibility: semantic H1, aria-live on count, breadcrumb semantics, table semantics, sticky header in the viewport
 - [x] Responsive: 2 cols mobile / 3 cols tablet / 4 cols desktop; list falls back to grid below 1024px at the consumer's discretion
 - [x] Tokens only: no hardcoded visual values in kit pieces
-
-## Live component
-
-<StorybookEmbed story="templates-plp-gridcontainer--loading" />

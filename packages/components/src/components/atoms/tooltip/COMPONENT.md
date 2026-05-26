@@ -4,6 +4,7 @@ slug: tooltip
 version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
+story: "overlays-tooltip--default"
 ---
 
 # Tooltip
@@ -51,7 +52,3 @@ Use Tooltip to explain icon-only buttons, truncated text, and non-obvious contro
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: no breakpoint-dependent behaviour
 - [ ] Tokens only: no raw literals inside arbitrary value syntax
-
-## Live component
-
-<StorybookEmbed story="overlays-tooltip--default" />
