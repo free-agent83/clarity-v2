@@ -5,11 +5,8 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "forms-toggle--default"
+description: "[WIP]"
 ---
-
-# Toggle
-
-[WIP]
 
 ## Props
 

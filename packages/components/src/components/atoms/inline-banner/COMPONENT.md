@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
 story: "feedback-inline-banner--default"
+description: "Block-level, page-level callout that communicates persistent page-level information or promotional content. Uses solid semantic fills to declare itself boldly within page content — distinct from `Alert`, which uses tinted backgrounds for quieter section-level messages."
 ---
-
-# InlineBanner
-
-Block-level, page-level callout that communicates persistent page-level information or promotional content. Uses solid semantic fills to declare itself boldly within page content — distinct from `Alert`, which uses tinted backgrounds for quieter section-level messages.
 
 ## Props
 

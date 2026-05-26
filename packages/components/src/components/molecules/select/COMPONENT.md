@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "forms-select--default"
+description: "Dropdown control for picking a single value from a list of options."
 ---
-
-# Select
-
-Dropdown control for picking a single value from a list of options.
 
 ## Props
 

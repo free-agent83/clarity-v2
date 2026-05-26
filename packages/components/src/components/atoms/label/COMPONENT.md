@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "forms-label--default"
+description: "Accessible text label for form controls."
 ---
-
-# Label
-
-Accessible text label for form controls.
 
 ## Props
 

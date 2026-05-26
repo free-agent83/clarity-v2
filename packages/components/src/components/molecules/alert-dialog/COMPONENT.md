@@ -5,11 +5,8 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "overlays-alertdialog--default"
+description: "[WIP]"
 ---
-
-# AlertDialog
-
-[WIP]
 
 ## Props
 

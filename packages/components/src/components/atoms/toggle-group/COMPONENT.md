@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "forms-toggle-group--default"
+description: "Group of toggle buttons where one (or many) can be pressed at a time."
 ---
-
-# Toggle Group
-
-Group of toggle buttons where one (or many) can be pressed at a time.
 
 ## Props
 

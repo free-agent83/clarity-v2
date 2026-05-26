@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
 story: "feedback-progress--default"
+description: "Linear bar that communicates the completion state of an ongoing task."
 ---
-
-# Progress
-
-Linear bar that communicates the completion state of an ongoing task.
 
 ## Props
 

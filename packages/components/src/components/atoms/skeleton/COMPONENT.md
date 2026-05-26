@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "feedback-skeleton--default"
+description: "Animated placeholder shown in place of content that is still loading."
 ---
-
-# Skeleton
-
-Animated placeholder shown in place of content that is still loading.
 
 ## Props
 

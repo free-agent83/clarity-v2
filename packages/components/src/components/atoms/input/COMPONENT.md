@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "forms-input--default"
+description: "Single-line text input for form fields."
 ---
-
-# Input
-
-Single-line text input for form fields.
 
 ## Props
 

@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-17
 story: "forms-switch--default"
+description: "Binary on/off control for a setting that takes effect immediately. Wraps Radix `Switch`."
 ---
-
-# Switch
-
-Binary on/off control for a setting that takes effect immediately. Wraps Radix `Switch`.
 
 ## Props
 

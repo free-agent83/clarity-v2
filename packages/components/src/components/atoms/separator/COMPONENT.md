@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "display-separator--default"
+description: "Visual divider between groups of related content."
 ---
-
-# Separator
-
-Visual divider between groups of related content.
 
 ## Props
 

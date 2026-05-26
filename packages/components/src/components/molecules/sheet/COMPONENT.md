@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "overlays-sheet--default"
+description: "Side-anchored overlay for larger tasks, forms, and persistent panels."
 ---
-
-# Sheet
-
-Side-anchored overlay for larger tasks, forms, and persistent panels.
 
 ## Props
 

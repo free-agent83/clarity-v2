@@ -5,14 +5,8 @@ version: 0.0.1
 status: stable
 lastUpdated: 2026-04-15
 story: "foundations-brand--default"
+description: "The Nivoda brand mark, rendered as an inline SVG. Foundational — it represents the company itself, not a generic UI primitive, and should be treated as part of the design system's identity layer alongside colour and typography tokens."
 ---
-
-# Brand
-
-The Nivoda brand mark, rendered as an inline SVG. Foundational — it
-represents the company itself, not a generic UI primitive, and
-should be treated as part of the design system's identity layer
-alongside colour and typography tokens.
 
 ## Props
 

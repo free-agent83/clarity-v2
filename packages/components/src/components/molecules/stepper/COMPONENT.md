@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
 story: "navigation-stepper--default"
+description: "Displays progress through an ordered, multi-step flow. Typical use is inside a `Dialog`-based checkout, returns, or onboarding wizard. Horizontal only in v0.1."
 ---
-
-# Stepper
-
-Displays progress through an ordered, multi-step flow. Typical use is inside a `Dialog`-based checkout, returns, or onboarding wizard. Horizontal only in v0.1.
 
 ## Props
 

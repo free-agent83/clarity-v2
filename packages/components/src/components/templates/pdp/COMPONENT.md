@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
 story: "templates-pdp-delivery--regular"
+description: "A composition kit for building category-specific Product Detail Pages. Like the PLP kit, no single `<PDP>` component is exported — consumers assemble category PDPs from these primitives and reference the assembly example in their own code."
 ---
-
-# PDP (Product Detail Page)
-
-A composition kit for building category-specific Product Detail Pages. Like the PLP kit, no single `<PDP>` component is exported — consumers assemble category PDPs from these primitives and reference the assembly example in their own code.
 
 ## Props
 

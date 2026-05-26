@@ -5,13 +5,10 @@ version: 0.2.0
 status: unstable
 lastUpdated: 2026-04-21
 story: "filtering-filtertoolbar--default"
+description: "Complete filter chrome for a filterable / sortable / searchable listing view. Bundles in one organism: a search input, a wrapping row of quick-filter chips, an 'All filters' button that opens an internally-managed drawer, a sort dropdown, a right-side actions slot for extras (view toggle, etc.), and a sticky version of the filter row that pins to the top of the viewport once the main toolbar scrolls past."
 ---
 
 <Gap>Usage guidance for this component is light — props and the live demo are accurate; written guidance is forthcoming.</Gap>
-
-# FilterToolbar
-
-Complete filter chrome for a filterable / sortable / searchable listing view. Bundles in one organism: a search input, a wrapping row of quick-filter chips, an "All filters" button that opens an internally-managed drawer, a sort dropdown, a right-side actions slot for extras (view toggle, etc.), and a sticky version of the filter row that pins to the top of the viewport once the main toolbar scrolls past.
 
 The drawer, its trigger button, and the `FilterSection` wrappers used inside the drawer body are all part of this module — they always ship together because a drawer without a trigger and a trigger without a drawer both have no purpose. The consumer passes drawer content and lifecycle callbacks through the `drawer` prop; the organism owns the drawer's open state.
 

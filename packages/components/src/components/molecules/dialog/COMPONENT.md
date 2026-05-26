@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "overlays-dialog--default"
+description: "Modal overlay for focused tasks that require user attention."
 ---
-
-# Dialog
-
-Modal overlay for focused tasks that require user attention.
 
 ## Props
 

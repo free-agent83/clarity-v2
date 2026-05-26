@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "actions-button--default"
+description: "Primary interactive element for triggering actions."
 ---
-
-# Button
-
-Primary interactive element for triggering actions.
 
 ## Props
 

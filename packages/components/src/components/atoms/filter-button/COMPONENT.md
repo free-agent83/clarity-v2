@@ -5,11 +5,8 @@ version: 0.2.0
 status: unstable
 lastUpdated: 2026-04-21
 story: "filtering-filterbutton--inactive"
+description: "Generic two-state control for applied filters. Owns per-popover draft state internally and exposes a render-prop `children` API so consumers write a controlled filter component without managing the draft lifecycle themselves."
 ---
-
-# FilterButton
-
-Generic two-state control for applied filters. Owns per-popover draft state internally and exposes a render-prop `children` API so consumers write a controlled filter component without managing the draft lifecycle themselves.
 
 ## Props
 

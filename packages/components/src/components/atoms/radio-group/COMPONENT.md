@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-17
 story: "forms-radiogroup--default"
+description: "Mutually-exclusive selection from a small set of options. Wraps Radix `RadioGroup`."
 ---
-
-# RadioGroup
-
-Mutually-exclusive selection from a small set of options. Wraps Radix `RadioGroup`.
 
 ## Props
 

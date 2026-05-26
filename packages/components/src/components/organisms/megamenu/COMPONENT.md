@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-30
 story: "navigation-megamenu--default"
+description: "Trigger-agnostic compound component for app-header navigation panels. A row of triggers (some megamenu, some plain links) coordinates so only one panel is open at a time, cross-trigger handoff is instant, and the panel collapses into a bottom Sheet below `lg`."
 ---
-
-# Megamenu
-
-Trigger-agnostic compound component for app-header navigation panels. A row of triggers (some megamenu, some plain links) coordinates so only one panel is open at a time, cross-trigger handoff is instant, and the panel collapses into a bottom Sheet below `lg`.
 
 ## Props
 

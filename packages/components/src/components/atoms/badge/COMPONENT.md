@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "display-badge--default"
+description: "Small status or metadata indicator attached to another element."
 ---
-
-# Badge
-
-Small status or metadata indicator attached to another element.
 
 ## Props
 

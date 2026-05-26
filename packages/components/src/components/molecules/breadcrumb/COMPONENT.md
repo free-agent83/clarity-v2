@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "navigation-breadcrumb--default"
+description: "Navigation trail showing the user's location inside a hierarchical structure."
 ---
-
-# Breadcrumb
-
-Navigation trail showing the user's location inside a hierarchical structure.
 
 ## Props
 

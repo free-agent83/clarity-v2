@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
 story: "feedback-page-banner--default"
+description: "Full-bleed stripe that sits above the application navigation header. Communicates product-wide callouts — new features, promotions, downtime, holidays. Solid-filled for visual weight; always app-level."
 ---
-
-# PageBanner
-
-Full-bleed stripe that sits above the application navigation header. Communicates product-wide callouts — new features, promotions, downtime, holidays. Solid-filled for visual weight; always app-level.
 
 ## Props
 

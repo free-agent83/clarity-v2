@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
 story: "overlays-lightbox--with-images"
+description: "Full-screen media viewer for images and 360° video. System-wide — not PDP-specific. Any component in the system can use it."
 ---
-
-# Lightbox
-
-Full-screen media viewer for images and 360° video. System-wide — not PDP-specific. Any component in the system can use it.
 
 ## Props
 

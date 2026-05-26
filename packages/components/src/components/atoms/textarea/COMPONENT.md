@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-17
 story: "forms-textarea--default"
+description: "Multi-line text input that auto-grows to fit its content."
 ---
-
-# Textarea
-
-Multi-line text input that auto-grows to fit its content.
 
 ## Props
 

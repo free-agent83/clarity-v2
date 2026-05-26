@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-20
 story: "foundations-typography--default"
+description: "Renders text at one of the design system's role presets."
 ---
-
-# Typography
-
-Renders text at one of the design system's role presets.
 
 ## Props
 

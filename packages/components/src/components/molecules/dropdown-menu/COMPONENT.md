@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-22
 story: "actions-dropdown-menu--default"
+description: "Menu of actions that opens from a trigger button."
 ---
-
-# Dropdown Menu
-
-Menu of actions that opens from a trigger button.
 
 ## Props
 

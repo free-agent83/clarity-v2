@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
 story: "forms-segmented-control--default"
+description: "Inset pill-shaped control for switching between mutually-exclusive UI modes or values. Always single-select, always non-empty — the last selected item remains active."
 ---
-
-# SegmentedControl
-
-Inset pill-shaped control for switching between mutually-exclusive UI modes or values. Always single-select, always non-empty — the last selected item remains active.
 
 ## Props
 

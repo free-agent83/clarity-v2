@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-17
 story: "feedback-alert--default"
+description: "Inline, non-blocking message that communicates a status, warning, or piece of contextual information at the top of a surface or next to the content it relates to."
 ---
-
-# Alert
-
-Inline, non-blocking message that communicates a status, warning, or piece of contextual information at the top of a surface or next to the content it relates to.
 
 ## Props
 

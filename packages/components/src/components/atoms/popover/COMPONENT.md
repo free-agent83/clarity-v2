@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "overlays-popover--default"
+description: "Floating container anchored to a trigger element, opened on click."
 ---
-
-# Popover
-
-Floating container anchored to a trigger element, opened on click.
 
 ## Props
 

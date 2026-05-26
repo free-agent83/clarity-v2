@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-17
 story: "forms-slider--default"
+description: "Continuous numeric input controlled by dragging a thumb along a track. Supports single values and ranges, and horizontal or vertical orientation. Wraps Radix `Slider`."
 ---
-
-# Slider
-
-Continuous numeric input controlled by dragging a thumb along a track. Supports single values and ranges, and horizontal or vertical orientation. Wraps Radix `Slider`.
 
 ## Props
 

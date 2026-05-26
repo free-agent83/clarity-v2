@@ -5,11 +5,8 @@ version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-17
 story: "forms-checkbox--default"
+description: "Binary on/off control for selecting one or more options from a set, or toggling a single setting. Wraps Radix `Checkbox`."
 ---
-
-# Checkbox
-
-Binary on/off control for selecting one or more options from a set, or toggling a single setting. Wraps Radix `Checkbox`.
 
 ## Props
 

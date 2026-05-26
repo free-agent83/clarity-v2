@@ -5,11 +5,8 @@ version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
 story: "overlays-tooltip--default"
+description: "Floating label shown on hover or focus, providing a short hint about an element."
 ---
-
-# Tooltip
-
-Floating label shown on hover or focus, providing a short hint about an element.
 
 ## Props
 
