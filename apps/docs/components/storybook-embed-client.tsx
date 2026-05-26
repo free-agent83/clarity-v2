@@ -89,7 +89,7 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
         </div>
 
         {/* Open in Storybook — uses Clarity outline button via DocsPageButton */}
-        <DocsPageButton asChild>
+        <DocsPageButton asChild size="sm">
           <a href={openLink} target="_blank" rel="noreferrer noopener">
             <svg
               fill="currentColor"
