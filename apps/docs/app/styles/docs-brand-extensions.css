@@ -1,0 +1,56 @@
+/**
+ * Brand / marketing values pending tokenization in packages/tokens.
+ * See docs/design/brand-token-gaps.md
+ *
+ * When a token lands, replace each --color-docs-* alias with the matching
+ * --color-semantic-* variable and remove the literal hex.
+ */
+
+:root {
+  /* Target: color.semantic.background.warm → #f5f0ec */
+  --color-docs-content-background: #f5f0ec;
+  /* Target: color.semantic.foreground.body → stone-600 (light) / stone-400 (dark) */
+  --color-docs-prose-body: var(--color-primitive-stone-600);
+}
+
+.dark {
+  --color-docs-prose-body: var(--color-primitive-stone-400);
+}
+
+/*
+ * Docs content shell — warm surface in light theme, standard background in dark.
+ * Text uses Clarity semantic foreground tokens so theme toggle works.
+ */
+#nd-docs-layout {
+  background-color: var(--color-docs-content-background);
+  color: var(--foreground);
+}
+
+.dark #nd-docs-layout {
+  background-color: var(--background);
+}
+
+#nd-page,
+#nd-toc {
+  color: var(--foreground);
+}
+
+#nd-page .docs-breadcrumb > a:last-child,
+#nd-page .docs-breadcrumb > span:last-child {
+  color: var(--foreground) !important;
+}
+
+#nd-toc,
+#nd-toc #toc-title {
+  color: var(--muted-foreground);
+}
+
+#nd-toc a.prose,
+#nd-toc a.prose a {
+  color: var(--muted-foreground);
+}
+
+#nd-toc a.prose[data-active='true'],
+#nd-toc a.prose[data-active='true'] a {
+  color: var(--foreground) !important;
+}

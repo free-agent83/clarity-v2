@@ -1,0 +1,70 @@
+:root {
+  --font-heading: var(--font-nanum), serif;
+}
+
+/* Brand heading font — Nanum Myeongjo overrides Inter on all headings */
+h1, h2, h3, h4, h5, h6,
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6,
+.font-heading {
+  font-family: var(--font-nanum), serif !important;
+  font-weight: 400 !important;
+}
+
+h2,
+.prose h2 {
+  font-size: var(--font-size-4xl) !important;
+}
+
+#nd-page .prose {
+  /* Fumadocs typography sets p { color: var(--tw-prose-body) } — override the token, not just inherit */
+  --tw-prose-body: var(--color-docs-prose-body);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-bold: var(--foreground);
+  color: var(--color-docs-prose-body);
+}
+
+/* Inline code — component names, token refs, etc. De-emphasised vs body text. */
+#nd-page .prose :where(code):not(:where(pre *)) {
+  color: var(--muted-foreground);
+  background-color: var(--muted);
+  border-radius: calc(var(--radius) - 4px);
+  padding: 0.125em 0.35em;
+  font-family: var(--font-mono, var(--font-family-mono));
+  font-size: 0.875em;
+  font-weight: 400;
+}
+
+#toc-title {
+  font-family: var(--font-mono, var(--font-family-mono)) !important;
+  font-size: var(--font-size-xs) !important;
+  font-weight: 400 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#nd-toc a.prose,
+#nd-toc a.prose a {
+  font-weight: 400;
+}
+
+.prose :where(a:not([data-card])):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+  text-decoration-thickness: 1px;
+  /* Brand violet accent — light/dark values live in clarity-fumadocs-theme.css */
+  text-decoration-color: var(--color-fd-primary);
+}
+
+/* Table column headers — mono uppercase labels, muted foreground. */
+#nd-page .prose thead th {
+  font-family: var(--font-mono, var(--font-family-mono)) !important;
+  font-size: var(--font-size-xs) !important;
+  font-weight: 400 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground) !important;
+}
+
+/* Token swatch cards — colour strip on top, card caption surface below. */
+#nd-page .prose .color-swatch-caption {
+  background-color: var(--card);
+  color: var(--card-foreground);
+}
