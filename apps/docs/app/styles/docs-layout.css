@@ -12,12 +12,6 @@
   border-radius: 0 !important;
 }
 
-/* Widen the active sidebar indicator from 1px → 2px. */
-#nd-sidebar a[data-active='true']::before,
-#nd-sidebar-mobile a[data-active='true']::before {
-  width: 2px !important;
-}
-
 /*
  * Sidebar nav hover — no fill; violet text only.
  * --color-fd-primary: primitive violet-600 (light) / violet-400 (dark) via clarity-fumadocs-theme.css.
