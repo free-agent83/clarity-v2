@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "feedback-spinner--default"
-description: "[WIP]"
+description: "Spinner indicates an in-progress action with indeterminate duration."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use Spinner for local action feedback (button submit, inline operation). Prefer Skeleton for page/section content loading.
 
 ## Best practices
 
-[WIP]
+- Scope spinner placement to the affected UI region.
+- Pair with status text when operations exceed a brief wait.
+- Avoid full-page spinner-only states for content retrieval flows.
 
 ## Quality checklist
 

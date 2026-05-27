@@ -1,41 +1,127 @@
 ---
 title: Photography
-description: Moody, cinematic, editorial — the aesthetic and the AI prompt that produces it.
+description: Editorial photography principles and promotional banner rules.
 ---
 
-## Aesthetic
+This page covers two photography modes:
 
-Moody, cinematic, high-end editorial. Warm, diffused lighting with shallow depth of field. Premium atmosphere — think luxury boutique, not bright retail.
+1. **Editorial photography** (people, relationships, trade context)
+2. **Promotional banners** (product-only procession imagery)
 
-### Subject matter
+Use the right mode for the right job. Do not mix the rules.
 
-Real people in professional settings. Jewellers, suppliers, buyers. Genuine interaction and trust. Focus on relationships and expertise, not isolation of products.
+## Editorial photography
 
-### Lighting
+People-first editorial work is governed by three principles: **perspective, light, and palette**.
 
-Warm golden/amber tones (not cool white). Soft, diffused light with subtle bokeh. Professional studio or naturally-lit luxury spaces. Low contrast, sophisticated mood.
+### Reference example
 
-### Depth of field
+<figure>
+  <img
+    src="/brand/photography/customers/consultation-colour.jpg"
+    alt="Consultation moment from the jeweller's side of the counter with warm studio light and cinematic depth of field."
+  />
+  <figcaption>Reference editorial frame: consultation, partner-first perspective.</figcaption>
+</figure>
 
-Shallow focus — cinematic. Subject sharp, background softly blurred. Conveys attention and intimacy without coldness.
+### 1) Perspective: through the jeweller's eyes
 
-### Tone
+Shoot from inside the partner's world, looking out. The camera position should feel like standing beside the jeweller in a real consultation, not observing from outside.
 
-Editorial, aspirational but approachable. High production value. Human and relational, not sterile or overly styled.
+- Prefer jewellery-trade environments (consultation desk, showroom, workshop-adjacent spaces).
+- Keep empathy with the retailer's viewpoint.
+- Avoid generic corporate-office framing as default.
 
-## AI image generation
+### 2) Light: luxury studio, cinematic depth
 
-When generating photography via AI (Midjourney, DALL·E, etc.), use this prompt structure:
+Aim for boutique warmth and dimensionality:
+
+- soft directional lighting
+- shallow depth of field (subject sharp, surrounding planes softer)
+- layered reflections/refractions where natural (glass, vitrines, polished surfaces)
+
+This should read as premium editorial, not bright retail floodlighting.
+
+### 3) Palette: moody and golden, with measured colour
+
+Base palette should be warm and restrained: black, white, amber/golden warmth. Colour is selective accent, not constant saturation.
+
+- Avoid cool fluorescent cast and clinical whites.
+- Never push to grayscale/fully desaturated output.
+- Let occasional product colour moments earn attention.
+
+## Promotional banners (the procession)
+
+Banner imagery is a separate mode: **product only, no people**. Composition should imply scale, consistency, and repeat cadence.
+
+### Banner principles
+
+- **Scale:** receding sequence that suggests depth and ongoing supply.
+- **Consistency:** repeated product type and quality.
+- **Cadence:** spacing rhythm communicates repeat business.
+
+### Banner examples
+
+<figure>
+  <img
+    src="/brand/photography/banners/TJ%20Banner.png"
+    alt="Engagement rings arranged in a receding procession with progressive depth blur."
+  />
+  <figcaption>Engagement rings banner: cadence and repeat purchase.</figcaption>
+</figure>
+
+<figure>
+  <img
+    src="/brand/photography/banners/Tennis%20bracelets%20banner.png"
+    alt="Tennis bracelets arranged in a receding line on a near-black surface."
+  />
+  <figcaption>Tennis bracelets banner: scale and infinite supply.</figcaption>
+</figure>
+
+<figure>
+  <img
+    src="/brand/photography/banners/studs.png"
+    alt="Stud earrings arranged as a product-only procession banner with depth and rhythm."
+  />
+  <figcaption>Studs banner: product-only procession with consistent cadence.</figcaption>
+</figure>
+
+## Banner specification
+
+| Attribute | Rule |
+|---|---|
+| Aspect ratio | Wide banner format (~5:1). Never square or portrait. |
+| Background | Near-black studio surface. |
+| Subject | Product only. No humans, no environmental narrative. |
+| Arrangement | Receding sequence; line extends toward blur. |
+| Depth of field | Sharp foreground, softening into distance. |
+| Colour | Natural product tones; no artificial overlays. |
+
+## AI prompt guidance
+
+For editorial scenes:
 
 ```
-[subject/scene description] + moody lighting, high-end fashion advertising aesthetic, cinematic depth of field, premium editorial style
+[scene] + through-the-jeweller perspective, warm directional studio light, cinematic shallow depth of field, premium editorial photography, moody golden palette
 ```
 
-Example: *"Two jewellery merchants examining a diamond under warm light at a luxury counter, moody lighting, high-end fashion advertising aesthetic, cinematic depth of field, premium editorial style."*
+For promotional banners:
+
+```
+[product type] arranged in a receding procession on a near-black studio surface, ultra-wide banner composition, sharp foreground with progressive depth blur, luxury commercial product photography
+```
 
 ## Avoid
 
-- Bright overhead lighting.
-- Flat colours.
-- Sterile backgrounds.
-- Overly polished or fake appearance.
+- Bright overhead retail lighting.
+- Flat, contextless framing that removes human/trade perspective (for editorial mode).
+- Mixing people into procession banners.
+- Over-processed, fake-plastic rendering.
+
+## Asset locations
+
+To render the examples above, place assets in the docs public folder with these exact paths:
+
+- `apps/docs/public/brand/photography/customers/consultation-colour.jpg`
+- `apps/docs/public/brand/photography/banners/Tennis bracelets banner.png`
+- `apps/docs/public/brand/photography/banners/TJ Banner.png`

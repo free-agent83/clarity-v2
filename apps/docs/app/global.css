@@ -1,5 +1,5 @@
 @import '@nivoda/tokens';
-@import '@nivoda/components/web-theme.css';
+@import '../../../packages/components/src/styles/web-theme.css';
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
@@ -7,6 +7,7 @@
 @import './styles/docs-brand-extensions.css';
 @import './styles/docs-layout.css';
 @import './styles/docs-content.css';
+@import './styles/agent-spec-preview.css';
 
 html {
   scrollbar-gutter: stable;

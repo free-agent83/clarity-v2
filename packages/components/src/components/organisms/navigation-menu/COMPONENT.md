@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "navigation-navigationmenu--default"
-description: "[WIP]"
+description: "NavigationMenu exposes grouped navigation destinations and submenus."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use NavigationMenu for site/app-level navigation clusters where hierarchy and discoverability are important.
 
 ## Best practices
 
-[WIP]
+- Keep group labels stable and predictable.
+- Limit submenu depth to preserve scanability.
+- Ensure pointer and keyboard users can reach all paths equivalently.
 
 ## Quality checklist
 

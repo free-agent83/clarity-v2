@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "forms-field--default"
-description: "[WIP]"
+description: "Field composes label, control, description, and validation text."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use Field to standardize form semantics and spacing around inputs/selects/controls. Prefer Field when a control needs helper text, error text, or required/optional affordances.
 
 ## Best practices
 
-[WIP]
+- Keep one primary label per control.
+- Use description for help text and error slot for actionable validation.
+- Avoid custom spacing wrappers that break field rhythm across forms.
 
 ## Quality checklist
 

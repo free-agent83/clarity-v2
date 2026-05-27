@@ -125,6 +125,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-primary-hover-foreground: var(--primary-hover-foreground);
   --color-express: var(--express);
   --color-express-foreground: var(--express-foreground);
   --color-popover-foreground: var(--popover-foreground);

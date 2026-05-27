@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "data-table--default"
-description: "[WIP]"
+description: "Table presents dense, comparable data in rows and columns."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use Table when users need to scan, compare, or sort structured records. For single-item summaries, prefer Card/List patterns.
 
 ## Best practices
 
-[WIP]
+- Keep columns purposeful; remove low-signal fields.
+- Right-align numeric values and keep units/currency consistent.
+- Preserve header context and row focus styles for keyboard users.
 
 ## Quality checklist
 

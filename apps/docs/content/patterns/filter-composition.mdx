@@ -1,9 +1,33 @@
 ---
 title: Filter composition
-status: not-yet-written
 description: How filter primitives compose across surfaces.
 ---
 
-<Gap>Filter composition rules and URL conventions are not yet written. The subsystem is described below; the composition rules are coming.</Gap>
+The filter subsystem is intentionally decoupled from result presentation. The same filter controls should work for grid, list, and any future view mode without re-authoring filter logic.
 
-The filter subsystem is decoupled from any specific result view — the same toolbar drives a PLP grid, a list, or a comparison table. Detailed composition rules, URL-state conventions, and chip behaviour are coming as the subsystem stabilises; for now see [`filter-toolbar`](../components/organisms/filter-toolbar) and the PLP pattern.
+## Composition stack
+
+- `filter-toolbar`: shell for count, actions, and mobile/desktop behavior
+- `filter-button`: per-filter trigger and chip state
+- `range-filter` / other control primitives: value capture
+- result view: consumes canonical filter state; never owns filter UI rules
+
+## Rules
+
+- Keep filter state in one canonical model per page.
+- Filter UI reads/writes that model; result layouts subscribe to it.
+- Preserve applied state across grid/list switches.
+- Show active filter count and clear-all affordance consistently.
+- Mobile and desktop can differ in layout, not semantics.
+
+## URL and state guidance
+
+- Use URL query params for shareable filters where possible.
+- Keep query keys stable across view modes.
+- Apply values explicitly (on Apply) for expensive filters; avoid accidental live updates on every keystroke in heavy flows.
+
+## Related references
+
+- [`filter-toolbar`](../components/organisms/filter-toolbar)
+- [`range-filter`](../components/molecules/range-filter)
+- [Product listing page pattern](./product-listing-page)

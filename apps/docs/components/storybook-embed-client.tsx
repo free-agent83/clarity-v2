@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTheme } from 'fumadocs-ui/provider/base';
 import { ExternalLink } from 'lucide-react';
 import { DocsPageButton } from './docs-page-button';
 
@@ -22,8 +23,14 @@ interface StorybookEmbedClientProps {
 }
 
 export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookEmbedClientProps) {
+  const { resolvedTheme } = useTheme();
   const [selectedStory, setSelectedStory] = useState(story);
   const [stories, setStories] = useState<StoryEntry[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const prefix = story.includes('--') ? story.slice(0, story.lastIndexOf('--')) : story;
   const useDropdown = DROPDOWN_PREFIXES.includes(prefix);
@@ -45,8 +52,16 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
       });
   }, [prefix, storybookUrl]);
 
-  const iframeSrc = `${storybookUrl}/iframe.html?id=${encodeURIComponent(selectedStory)}&viewMode=story`;
-  const openLink = `${storybookUrl}/?path=/story/${encodeURIComponent(selectedStory)}`;
+  const colorMode = mounted && resolvedTheme === 'light' ? 'light' : 'dark';
+  const iframeParams = new URLSearchParams({
+    id: selectedStory,
+    viewMode: 'story',
+    globals: `theme:${colorMode}`,
+  });
+  const iframeSrc = `${storybookUrl}/iframe.html?${iframeParams.toString()}`;
+  const openLink =
+    `${storybookUrl}/?path=/story/${encodeURIComponent(selectedStory)}` +
+    `&globals=theme:${colorMode}`;
 
   const showSwitcher = stories.length > 1;
 
@@ -109,11 +124,12 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
 
       {/* iframe — sandbox prevents the story from navigating the parent page */}
       <iframe
+        key={`${selectedStory}-${colorMode}`}
         src={iframeSrc}
         title={`Storybook: ${selectedStory}`}
         loading="lazy"
         height={height}
-        className="w-full block bg-white"
+        className="w-full block bg-background"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
       />
     </>

@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "display-collapsible--default"
-description: "[WIP]"
+description: "Collapsible toggles visibility of inline content regions."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use Collapsible for compact disclosure of secondary details within a flow. Prefer Accordion when you have multiple peer sections.
 
 ## Best practices
 
-[WIP]
+- Keep trigger labels explicit about hidden content.
+- Preserve focus order when content opens/closes.
+- Avoid nesting collapsibles unless interaction is tested thoroughly.
 
 ## Quality checklist
 
