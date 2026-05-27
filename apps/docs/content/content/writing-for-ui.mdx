@@ -1,9 +1,41 @@
 ---
 title: Writing for UI
-status: not-yet-written
 description: Microcopy patterns for buttons, labels, errors, and empty states.
 ---
 
-<Gap>UI microcopy patterns are not yet written. The discipline is described below; concrete rules and lint surface are coming.</Gap>
+Writing for UI is product behavior, not decoration. In Clarity, copy should be concise, actionable, and consistent enough that both humans and agents can produce the same quality bar.
 
-Writing for UI is its own discipline — sentence-case, action verbs, no trailing punctuation in buttons, errors that say what to do next. Clarity by Nivoda will publish concrete patterns and a small lint surface so AI agents producing copy hit the same bar as humans. Until then, the rule is: read it aloud; if it sounds like marketing, rewrite.
+## Core rules
+
+- Use sentence case for all UI labels, actions, and helper text.
+- Start actions with verbs: "Save changes", "Add supplier", "Apply filters".
+- Keep button labels short (1-3 words) unless clarity requires more.
+- Avoid trailing punctuation in button labels and field labels.
+- Write errors that explain what happened and what to do next.
+- Prefer concrete nouns over abstract language ("certificate number" over "identifier").
+- Prefer direct language, but not cold language.
+
+## Do / don't examples
+
+- **Do:** "Apply filters"  
+  **Don't:** "Confirm selection now"
+- **Do:** "Email is required"  
+  **Don't:** "There was an error with your input"
+- **Do:** "No results for \"oval\""  
+  **Don't:** "Nothing found"
+- **Do:** "No results yet. Try clearing one filter."  
+  **Don't:** "No matching inventory exists for your selected constraints."
+
+## Surface-specific guidance
+
+- **Buttons:** verbs only; no filler ("click", "submit form").
+- **Inputs:** placeholders are examples, not instructions.
+- **Errors:** one line for issue, one line for recovery when needed.
+- **Empty states:** state what is empty, why, and one next action.
+
+## Review checklist
+
+- Is the action clear without additional context?
+- Is wording consistent with existing marketplace terminology?
+- Can the sentence be shortened without losing meaning?
+- Does the copy avoid marketing tone inside product flows?

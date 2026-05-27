@@ -1,9 +1,29 @@
 ---
 title: Empty states
-status: not-yet-written
 description: When there's nothing to show, what to show instead.
 ---
 
-<Gap>Recipes for empty states by surface are not yet written. The principle is below; pattern-by-pattern guidance is coming.</Gap>
+Empty states are part of the core flow, not an edge case. A good empty state explains what is empty, why, and what to do next.
 
-Empty states are first-class — never a blank surface and never a shrugging "no results". The system's rule is: surface the active filters, show one clear next action, and keep the visual weight of the empty surface aligned with the populated surface so layout doesn't jump. Concrete recipes per pattern (PLP, search, inbox, dashboard) are coming.
+## Pattern structure
+
+Every empty state should include:
+
+1. **Title:** what is empty ("No results found")
+2. **Context line:** why this is happening ("No stones match the selected filters")
+3. **Primary action:** one clear next step ("Clear filters")
+4. **Optional secondary action:** lower-priority recovery ("Edit search")
+
+## Rules
+
+- Never render a blank area with no explanation.
+- Reflect active filters/search criteria in the message where relevant.
+- Keep layout dimensions stable versus the populated state to reduce visual jump.
+- Avoid blame language; keep copy neutral and action-oriented.
+
+## Do / don't examples
+
+- **Do:** "No results for 'oval'. Try removing one or more filters."
+- **Don't:** "Nothing found."
+- **Do:** Show active chips with a "Clear all" action.
+- **Don't:** Hide the active filter context in the empty state.

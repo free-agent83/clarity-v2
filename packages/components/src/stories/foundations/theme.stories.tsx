@@ -101,8 +101,8 @@ const colourGroups: ColourGroup[] = [
       },
       {
         token: "secondary-hover",
-        light: "oklch(0.4679 0.2562 283.19)",
-        dark: "oklch(0.97 0.001 106.424)",
+        light: "oklch(0.69 0.1729 287.8)",
+        dark: "oklch(0.69 0.1729 287.8)",
       },
       {
         token: "secondary-foreground",

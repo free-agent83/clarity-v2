@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "overlays-hovercard--default"
-description: "[WIP]"
+description: "HoverCard reveals supporting information on hover or focus."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use HoverCard for supplemental, non-blocking context tied to an anchor element. Do not use it for critical actions or mandatory content.
 
 ## Best practices
 
-[WIP]
+- Keep content concise and scannable.
+- Ensure the same information is available via keyboard focus, not hover-only.
+- Prefer Tooltip for one-line hints; use HoverCard for richer detail.
 
 ## Quality checklist
 

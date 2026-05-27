@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "display-avatar--default"
-description: "[WIP]"
+description: "Avatar surfaces identity using an image or fallback initials."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use Avatar for people or account identity in list rows, headers, and message-like UI. Use initials/fallback when no image is available so layout stays stable.
 
 ## Best practices
 
-[WIP]
+- Keep avatar size consistent within a single surface.
+- Always provide meaningful alt/fallback context where identity matters.
+- Do not use Avatar as the only status indicator; pair with text or Badge when needed.
 
 ## Quality checklist
 

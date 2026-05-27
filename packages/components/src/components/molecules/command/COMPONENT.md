@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "actions-command--default"
-description: "[WIP]"
+description: "Command provides searchable action/result lists for quick navigation."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use Command for command palette patterns and high-speed option search. It is best for keyboard-first power interactions.
 
 ## Best practices
 
-[WIP]
+- Group commands with clear headings and concise labels.
+- Keep result text specific so filtering remains useful.
+- Always support keyboard selection and clear empty-search feedback.
 
 ## Quality checklist
 

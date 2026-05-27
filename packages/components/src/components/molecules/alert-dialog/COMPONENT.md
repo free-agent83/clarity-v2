@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "overlays-alertdialog--default"
-description: "[WIP]"
+description: "AlertDialog confirms high-risk actions before irreversible outcomes."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use AlertDialog for destructive or high-impact operations that require explicit acknowledgement before proceeding.
 
 ## Best practices
 
-[WIP]
+- Keep title and description specific to the exact consequence.
+- Use destructive styling only on the irreversible action button.
+- Provide a safe cancel path with clear focus default.
 
 ## Quality checklist
 

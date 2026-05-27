@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "navigation-pagination--default"
-description: "[WIP]"
+description: "Pagination controls navigation through large, ordered result sets."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use Pagination for list/table/grid results that are split into pages. Prefer infinite loading only where continuous browsing is measurably better.
 
 ## Best practices
 
-[WIP]
+- Show current page clearly and keep controls predictable.
+- Pair with result count and page size context where possible.
+- Keep URL/state in sync so paging is shareable and back-button friendly.
 
 ## Quality checklist
 

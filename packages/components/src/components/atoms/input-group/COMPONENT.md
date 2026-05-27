@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "forms-inputgroup--default"
-description: "[WIP]"
+description: "InputGroup composes text inputs with inline leading/trailing elements."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use InputGroup when an input needs contextual prefix/suffix UI (icons, units, static text, actions) inside a single visual control.
 
 ## Best practices
 
-[WIP]
+- Keep inline addons short and non-blocking.
+- Preserve input focus behavior and keyboard interaction for appended actions.
+- Prefer InputGroup over ad-hoc flex wrappers for consistent radius and borders.
 
 ## Quality checklist
 

@@ -1,4 +1,4 @@
-import { getPageImage, getPageMarkdownUrl, resolveSource, componentsSource, guidesSource, iaSource } from '@/lib/source';
+import { getPageImage, resolveSource, componentsSource, guidesSource, iaSource } from '@/lib/source';
 import {
   DocsBody,
   DocsDescription,
@@ -6,7 +6,7 @@ import {
   DocsTitle,
 } from 'fumadocs-ui/layouts/docs/page';
 import { notFound } from 'next/navigation';
-import { DocsActions } from '@/components/docs-actions';
+import { AgentSpecActions } from '@/components/agent-spec-actions';
 import { getMDXComponents } from '@/components/mdx';
 import { StorybookEmbed } from '@/components/storybook-embed';
 import { docsBreadcrumb, docsFooter, docsTableOfContent } from '@/lib/docs-page.shared';
@@ -15,7 +15,7 @@ import { createRelativeLink } from 'fumadocs-ui/mdx';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
-  const { source, slug } = resolveSource(params.slug);
+  const { source, slug, section } = resolveSource(params.slug);
   const page = source.getPage(slug);
   if (!page) notFound();
 
@@ -24,8 +24,8 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = page.data as any;
   const MDX = data.body;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const markdownUrl = getPageMarkdownUrl(page as any).url;
+  const agentSpecMarkdown =
+    section === 'components' ? await data.getText('raw') : null;
 
   return (
     <DocsPage
@@ -43,7 +43,9 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
             </DocsTitle>
             <DocsDescription className="mb-0">{data.description}</DocsDescription>
           </div>
-          <DocsActions markdownUrl={markdownUrl} />
+          {agentSpecMarkdown ? (
+            <AgentSpecActions markdown={agentSpecMarkdown} />
+          ) : null}
         </header>
         {data.story && <StorybookEmbed story={data.story} className="my-0 mt-12" />}
         <DocsBody className="mt-6">

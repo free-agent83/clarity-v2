@@ -5,20 +5,22 @@ version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
 story: "display-scrollarea--default"
-description: "[WIP]"
+description: "ScrollArea provides styled overflow regions with consistent scroll affordance."
 ---
 
 ## Props
 
-[WIP]
+Refer to the TypeScript props in the source file and the linked Storybook story for the exact API surface. This page captures usage intent and implementation guardrails.
 
 ## Usage guidelines
 
-[WIP]
+Use ScrollArea when a bounded container needs independent scrolling without shifting page layout.
 
 ## Best practices
 
-[WIP]
+- Keep container height explicit to avoid accidental double scrollbars.
+- Ensure keyboard and wheel/touch interactions remain natural.
+- Avoid nesting multiple scroll regions unless necessary for UX.
 
 ## Quality checklist
 

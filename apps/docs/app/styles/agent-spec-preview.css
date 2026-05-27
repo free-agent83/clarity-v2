@@ -1,0 +1,22 @@
+/* Agent spec preview — JetBrains Mono for title, subtitle, and body only */
+.agent-spec-modal [data-slot="dialog-title"],
+.agent-spec-modal [data-slot="dialog-description"],
+.agent-spec-preview,
+.agent-spec-preview * {
+  font-family: var(--font-mono), monospace !important;
+  font-weight: 400;
+}
+
+.agent-spec-modal [data-slot="dialog-title"] {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+}
+
+.agent-spec-preview [role="heading"] {
+  font-weight: 600 !important;
+}
+
+.agent-spec-preview dt {
+  font-weight: 500 !important;
+}

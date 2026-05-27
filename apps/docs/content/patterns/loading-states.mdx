@@ -1,9 +1,29 @@
 ---
 title: Loading states
-status: not-yet-written
 description: Skeletons that promise the shape of what's coming.
 ---
 
-<Gap>Loading-state timing and shimmer behaviour are not yet specified. The skeleton-over-spinner preference is described below; concrete timings are coming.</Gap>
+Loading states should preserve layout and user orientation while data is being fetched.
 
-Loading states prefer skeletons over spinners — the skeleton promises what's about to render, so layout doesn't shift and the user's eye stays anchored. Spinners are reserved for action feedback (button submitting, inline operation), not page loads. Detailed timing thresholds and shimmer behaviour will follow.
+## Default policy
+
+- Prefer **skeletons** for page/section content loading.
+- Use **spinners** for in-progress user actions (submit, save, retry).
+- Avoid swapping between radically different loading layouts and final layouts.
+
+## Timing guidance
+
+- If expected load is very short, avoid flashing a skeleton for a single frame.
+- For longer loads, keep skeleton shape close to final content.
+- Keep motion subtle; honor `prefers-reduced-motion`.
+
+## Do / don't examples
+
+- **Do:** show PLP card skeletons with the same card dimensions as final items.
+- **Don't:** show a centered spinner for full-page catalog loads.
+- **Do:** show button-level spinner while an action is being submitted.
+- **Don't:** freeze the whole page for a local action that can be scoped.
+
+## Implementation notes
+
+Use component-level primitives where available (`skeleton`, loading variants) and keep token usage consistent with surrounding surfaces.
