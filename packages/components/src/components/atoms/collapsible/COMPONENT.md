@@ -4,11 +4,9 @@ slug: collapsible
 version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
+story: "display-collapsible--default"
+description: "[WIP]"
 ---
-
-# Collapsible
-
-[WIP]
 
 ## Props
 
@@ -28,7 +26,3 @@ lastUpdated: 2026-04-13
 - [ ] Figma parity: matches DSW-Web-Components Figma source
 - [ ] Responsive: works at all breakpoints
 - [ ] Tokens only: no hardcoded visual values
-
-## Live component
-
-<StorybookEmbed story="display-collapsible--default" />

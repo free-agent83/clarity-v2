@@ -4,18 +4,18 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
-  MarkdownCopyButton,
-  ViewOptionsPopover,
 } from 'fumadocs-ui/layouts/docs/page';
 import { notFound } from 'next/navigation';
+import { DocsActions } from '@/components/docs-actions';
 import { getMDXComponents } from '@/components/mdx';
+import { StorybookEmbed } from '@/components/storybook-embed';
+import { docsBreadcrumb, docsFooter, docsTableOfContent } from '@/lib/docs-page.shared';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
-import { gitConfig } from '@/lib/shared';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
-  const { source, slug, section } = resolveSource(params.slug);
+  const { source, slug } = resolveSource(params.slug);
   const page = source.getPage(slug);
   if (!page) notFound();
 
@@ -26,33 +26,36 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const MDX = data.body;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const markdownUrl = getPageMarkdownUrl(page as any).url;
-  const sourceSubdir =
-    section === 'components'
-      ? 'packages/components/src/components'
-      : section === 'guides'
-        ? 'docs'
-        : 'apps/docs/content';
 
   return (
-    <DocsPage toc={data.toc} full={data.full}>
-      <DocsTitle>{data.title}</DocsTitle>
-      <DocsDescription className="mb-0">{data.description}</DocsDescription>
-      <div className="flex flex-row gap-2 items-center border-b pb-6">
-        <MarkdownCopyButton markdownUrl={markdownUrl} />
-        <ViewOptionsPopover
-          markdownUrl={markdownUrl}
-          githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/${sourceSubdir}/${page.path}`}
-        />
+    <DocsPage
+      toc={data.toc}
+      full={data.full}
+      tableOfContent={docsTableOfContent}
+      breadcrumb={docsBreadcrumb}
+      footer={docsFooter}
+    >
+      <div className="docs-page-content flex min-w-0 flex-col">
+        <header className="docs-page-header flex flex-col gap-6 border-b border-fd-border pb-6">
+          <div className="flex flex-col gap-4">
+            <DocsTitle className="mb-0 text-[64px] font-normal leading-none">
+              {data.title}
+            </DocsTitle>
+            <DocsDescription className="mb-0">{data.description}</DocsDescription>
+          </div>
+          <DocsActions markdownUrl={markdownUrl} />
+        </header>
+        {data.story && <StorybookEmbed story={data.story} className="my-0 mt-12" />}
+        <DocsBody className="mt-6">
+          <MDX
+            components={getMDXComponents({
+              // this allows you to link to other pages with relative file paths
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              a: createRelativeLink(source as any, page as any),
+            })}
+          />
+        </DocsBody>
       </div>
-      <DocsBody>
-        <MDX
-          components={getMDXComponents({
-            // this allows you to link to other pages with relative file paths
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            a: createRelativeLink(source as any, page as any),
-          })}
-        />
-      </DocsBody>
     </DocsPage>
   );
 }

@@ -4,11 +4,9 @@ slug: stepper
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
+story: "navigation-stepper--default"
+description: "Displays progress through an ordered, multi-step flow. Typical use is inside a `Dialog`-based checkout, returns, or onboarding wizard. Horizontal only in v0.1."
 ---
-
-# Stepper
-
-Displays progress through an ordered, multi-step flow. Typical use is inside a `Dialog`-based checkout, returns, or onboarding wizard. Horizontal only in v0.1.
 
 ## Props
 
@@ -52,7 +50,3 @@ Use Stepper inside modal or dialog-based flows where the user completes a series
 - [x] Accessibility: clickable items get `role="button"`, `tabIndex={0}`, and keyboard activation (Enter / Space); current step gets `aria-current="step"`. Passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: the component is flex-based and fills its container; individual items do not shrink below their content width.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
-
-## Live component
-
-<StorybookEmbed story="navigation-stepper--default" />

@@ -4,11 +4,9 @@ slug: chart
 version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
+story: "data-chart--default"
+description: "[WIP]"
 ---
-
-# ChartContainer
-
-[WIP]
 
 ## Props
 
@@ -29,7 +27,3 @@ lastUpdated: 2026-04-13
 - [ ] Responsive: works at all breakpoints
 - [ ] Tokens only: no hardcoded visual values
 - [ ] render: Default story disabled — ChartContainer requires a non-optional `config` prop and Recharts children; skeleton mount throws. Needs a real story with Recharts config + data; see future ticket.
-
-## Live component
-
-<StorybookEmbed story="data-chart--default" />

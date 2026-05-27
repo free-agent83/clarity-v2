@@ -4,14 +4,9 @@ slug: brand
 version: 0.0.1
 status: stable
 lastUpdated: 2026-04-15
+story: "foundations-brand--default"
+description: "The Nivoda brand mark, rendered as an inline SVG. Foundational — it represents the company itself, not a generic UI primitive, and should be treated as part of the design system's identity layer alongside colour and typography tokens."
 ---
-
-# Brand
-
-The Nivoda brand mark, rendered as an inline SVG. Foundational — it
-represents the company itself, not a generic UI primitive, and
-should be treated as part of the design system's identity layer
-alongside colour and typography tokens.
 
 ## Props
 
@@ -101,7 +96,3 @@ colour. Apply the `text-*` class directly to the `Brand` element.
 - [x] Accessibility: `role="img"` + `aria-label` default; overridable to `aria-hidden` for decorative use
 - [ ] Responsive: works at all breakpoints (via consumer-controlled height utilities)
 - [x] Tokens only: no hardcoded visual values (colour via `currentColor`, size via spacing utilities)
-
-## Live component
-
-<StorybookEmbed story="foundations-brand--default" />

@@ -4,11 +4,9 @@ slug: pdp
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
+story: "templates-pdp-delivery--regular"
+description: "A composition kit for building category-specific Product Detail Pages. Like the PLP kit, no single `<PDP>` component is exported — consumers assemble category PDPs from these primitives and reference the assembly example in their own code."
 ---
-
-# PDP (Product Detail Page)
-
-A composition kit for building category-specific Product Detail Pages. Like the PLP kit, no single `<PDP>` component is exported — consumers assemble category PDPs from these primitives and reference the assembly example in their own code.
 
 ## Props
 
@@ -80,7 +78,3 @@ function TennisBraceletPDP() {
 - [x] Tokens only — no hardcoded visual values
 - [x] 360° scrub: hover-only in gallery, always visible in `Lightbox`
 - [x] TypeScript: zero `tsc --noEmit` errors
-
-## Live component
-
-<StorybookEmbed story="templates-pdp-delivery--regular" />

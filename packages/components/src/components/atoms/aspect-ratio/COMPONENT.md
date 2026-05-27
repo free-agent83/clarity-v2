@@ -4,11 +4,9 @@ slug: aspect-ratio
 version: 0.0.0
 status: unstable
 lastUpdated: 2026-04-13
+story: "display-aspectratio--default"
+description: "[WIP]"
 ---
-
-# AspectRatio
-
-[WIP]
 
 ## Props
 
@@ -28,7 +26,3 @@ lastUpdated: 2026-04-13
 - [ ] Figma parity: matches DSW-Web-Components Figma source
 - [ ] Responsive: works at all breakpoints
 - [ ] Tokens only: no hardcoded visual values
-
-## Live component
-
-<StorybookEmbed story="display-aspectratio--default" />

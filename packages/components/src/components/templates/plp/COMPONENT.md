@@ -4,11 +4,9 @@ slug: plp
 version: 0.6.1
 status: unstable
 lastUpdated: 2026-04-23
+story: "templates-plp-gridcontainer--loading"
+description: "Conceptually, the PLP is a single template — the product-listing page. In practice the library does not ship a unified `PlpTemplate` component; consumers assemble the page in their own code from a small set of PLP-specific building blocks (this folder) plus the filter subsystem and other library primitives. This doc covers the whole template: every kit piece and how they fit together."
 ---
-
-# PLP (Product Listing Page)
-
-Conceptually, the PLP is a single template — the product-listing page. In practice the library does not ship a unified `PlpTemplate` component; consumers assemble the page in their own code from a small set of PLP-specific building blocks (this folder) plus the filter subsystem and other library primitives. This doc covers the whole template: every kit piece and how they fit together.
 
 The refactor that produced this shape was deliberate. A fixed library-side `PlpTemplate` couldn't accommodate the insertion points consumers inevitably need — category intro banners, promos, recommendation strips, interstitials — without growing a prop for each one. Shipping the kit instead of a template lets each consumer wrap the assembly as tightly or loosely as its surfaces require, while still leaning on the library for the hard parts (sticky filter chrome, responsive grid, skeleton loading, drawer draft lifecycle).
 
@@ -105,7 +103,3 @@ Consumers should read this file, copy the pattern, and adapt it. A consumer-side
 - [x] Accessibility: semantic H1, aria-live on count, breadcrumb semantics, table semantics, sticky header in the viewport
 - [x] Responsive: 2 cols mobile / 3 cols tablet / 4 cols desktop; list falls back to grid below 1024px at the consumer's discretion
 - [x] Tokens only: no hardcoded visual values in kit pieces
-
-## Live component
-
-<StorybookEmbed story="templates-plp-gridcontainer--loading" />

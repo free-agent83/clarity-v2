@@ -4,11 +4,9 @@ slug: dropdown-menu
 version: 0.1.0
 status: stable
 lastUpdated: 2026-04-22
+story: "actions-dropdown-menu--default"
+description: "Menu of actions that opens from a trigger button."
 ---
-
-# Dropdown Menu
-
-Menu of actions that opens from a trigger button.
 
 ## Props
 
@@ -58,7 +56,3 @@ Use Dropdown Menu for a list of actions related to a trigger — typically a but
 ## Known deviations
 
 - **`DropdownMenuSubContent` — `min-w-[96px]`** (line ~300 in `dropdown-menu.tsx`): raw pixel literal in Tailwind arbitrary value syntax. Flagged with `// clarity-v2: token-gap` inline comment. Originated from the shadcn/ui scaffold. Replace with a spacing token when one covering 96px (6rem) is available in the token system.
-
-## Live component
-
-<StorybookEmbed story="actions-dropdown-menu--default" />

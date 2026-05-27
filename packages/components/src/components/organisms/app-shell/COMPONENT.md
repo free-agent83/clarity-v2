@@ -4,16 +4,9 @@ slug: app-shell
 version: 0.0.1
 status: stable
 lastUpdated: 2026-04-15
+story: "navigation-app-shell--default"
+description: "Top-level page shell — a sticky header with branding, a hardcoded search bar, and a controls slot; a left-anchored navigation sheet that owns its own three-region layout (fixed header, scrollable body, fixed footer with user identity and sign-out); and a main page area with a constrained inner container. The base chrome for every Nivoda app, internal or external."
 ---
-
-# AppShell
-
-Top-level page shell — a sticky header with branding, a hardcoded
-search bar, and a controls slot; a left-anchored navigation sheet
-that owns its own three-region layout (fixed header, scrollable
-body, fixed footer with user identity and sign-out); and a main
-page area with a constrained inner container. The base chrome for
-every Nivoda app, internal or external.
 
 ## Props
 
@@ -259,7 +252,3 @@ form. If the form needs a wider layout, redesign the form.
 - [ ] Accessibility: passes axe-core, keyboard navigable, screen reader tested
 - [ ] Responsive: works at all breakpoints
 - [ ] Tokens only: no hardcoded visual values — see Known deviations (search bar surface fill uses `bg-stone-50` / `bg-stone-100`)
-
-## Live component
-
-<StorybookEmbed story="navigation-app-shell--default" />

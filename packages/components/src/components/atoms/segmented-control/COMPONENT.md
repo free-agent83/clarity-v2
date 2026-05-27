@@ -4,11 +4,9 @@ slug: segmented-control
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
+story: "forms-segmented-control--default"
+description: "Inset pill-shaped control for switching between mutually-exclusive UI modes or values. Always single-select, always non-empty — the last selected item remains active."
 ---
-
-# SegmentedControl
-
-Inset pill-shaped control for switching between mutually-exclusive UI modes or values. Always single-select, always non-empty — the last selected item remains active.
 
 ## Props
 
@@ -56,7 +54,3 @@ Use SegmentedControl for choosing between a small, fixed set of mutually-exclusi
 - [x] Accessibility: Radix `ToggleGroup` with `type="single"` exposes `role="radiogroup"` and `role="radio"` on items; passes axe-core via `@storybook/addon-a11y`; keyboard navigable (arrow keys).
 - [x] Responsive: the component is `w-fit` and does not wrap; use a wrapper to constrain width if necessary.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
-
-## Live component
-
-<StorybookEmbed story="forms-segmented-control--default" />

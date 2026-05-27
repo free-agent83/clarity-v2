@@ -1,40 +1,26 @@
 import { STORYBOOK_URL } from '@/lib/env';
+import { twMerge } from 'tailwind-merge';
+import { StorybookEmbedClient } from './storybook-embed-client';
 
 interface StorybookEmbedProps {
-  /** Storybook story ID, e.g. "atoms-button--default". Find it in the Storybook URL bar. */
+  /** Storybook story ID, e.g. "actions-button--default". Find it in the Storybook URL bar. */
   story: string;
-  /** Iframe height in px. Defaults to 480. */
+  /** Iframe height in px. Defaults to 320. */
   height?: number;
-  /** Visible label below the iframe — defaults to "Live component". */
+  /** Kept for backwards compatibility — unused in new UI. */
   label?: string;
+  className?: string;
 }
 
-export function StorybookEmbed({
-  story,
-  height = 480,
-  label = 'Live component',
-}: StorybookEmbedProps) {
-  const src = `${STORYBOOK_URL}/iframe.html?id=${encodeURIComponent(story)}&viewMode=story`;
+export function StorybookEmbed({ story, height = 320, className }: StorybookEmbedProps) {
   return (
-    <figure className="my-6 rounded-md border border-fd-border overflow-hidden">
-      <iframe
-        src={src}
-        title={`Storybook: ${story}`}
-        loading="lazy"
-        height={height}
-        className="w-full block bg-white"
-      />
-      <figcaption className="text-xs text-fd-muted-foreground px-3 py-2 border-t border-fd-border flex items-center justify-between">
-        <span>{label}</span>
-        <a
-          href={`${STORYBOOK_URL}/?path=/story/${encodeURIComponent(story)}`}
-          target="_blank"
-          rel="noreferrer"
-          className="underline hover:no-underline"
-        >
-          Open in Storybook ↗
-        </a>
-      </figcaption>
+    <figure
+      className={twMerge(
+        'my-6 rounded-lg border border-fd-border overflow-hidden',
+        className,
+      )}
+    >
+      <StorybookEmbedClient story={story} height={height} storybookUrl={STORYBOOK_URL} />
     </figure>
   );
 }

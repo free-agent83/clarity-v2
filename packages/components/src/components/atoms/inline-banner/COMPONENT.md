@@ -4,11 +4,9 @@ slug: inline-banner
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
+story: "feedback-inline-banner--default"
+description: "Block-level, page-level callout that communicates persistent page-level information or promotional content. Uses solid semantic fills to declare itself boldly within page content — distinct from `Alert`, which uses tinted backgrounds for quieter section-level messages."
 ---
-
-# InlineBanner
-
-Block-level, page-level callout that communicates persistent page-level information or promotional content. Uses solid semantic fills to declare itself boldly within page content — distinct from `Alert`, which uses tinted backgrounds for quieter section-level messages.
 
 ## Props
 
@@ -55,7 +53,3 @@ Use InlineBanner under a page heading to surface persistent, page-level informat
 - [x] Accessibility: `role="status"` on the root; dismiss button has `aria-label`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: the banner is full-width and the actions slot wraps below at narrow widths.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
-
-## Live component
-
-<StorybookEmbed story="feedback-inline-banner--default" />

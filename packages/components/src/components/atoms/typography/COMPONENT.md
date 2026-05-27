@@ -4,11 +4,9 @@ slug: typography
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-20
+story: "foundations-typography--default"
+description: "Renders text at one of the design system's role presets."
 ---
-
-# Typography
-
-Renders text at one of the design system's role presets.
 
 ## Props
 
@@ -50,7 +48,3 @@ Typography does not provide a colour prop or default margins. Colour inherits fr
 - The `text-typography-*` theme utilities are defined in `packages/components/src/styles/web-theme.css` using Tailwind v4's `--text-*` modifier convention. Each entry applies font-size, line-height, font-weight and letter-spacing as a single utility.
 - `packages/tokens/src/typography.tokens.json` is knowingly stale relative to the DSW Web Components Figma file and is **not** consumed by this component. Aligning the tokens package is tracked separately.
 - Link and Dashed Link treatments from the Figma "Theme Styles" frame are out of scope here. They belong to a future Link atom that will compose Typography.
-
-## Live component
-
-<StorybookEmbed story="foundations-typography--default" />

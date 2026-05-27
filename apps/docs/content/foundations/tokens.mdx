@@ -34,7 +34,7 @@ The script reads the six source files, merges them, resolves `{ref}` strings, an
 
 ## Consumption
 
-**Web (Tailwind v4 + shadcn/ui):** `@nivoda/components` publishes `web-theme.css` which imports the generated CSS custom properties. Import it once in your app's root and every `bg-primary`, `text-muted-foreground`, `rounded-lg` utility resolves against Clarity V2 tokens. No Tailwind config required — Tailwind v4 reads `@theme` directives from the CSS.
+**Web (Tailwind v4 + shadcn/ui):** `@nivoda/components` publishes `web-theme.css` which imports the generated CSS custom properties. Import it once in your app's root and every `bg-primary`, `text-muted-foreground`, `rounded-lg` utility resolves against Clarity by Nivoda tokens. No Tailwind config required — Tailwind v4 reads `@theme` directives from the CSS.
 
 **React Native:** import named constants from `@nivoda/tokens/react-native`. Colours arrive as hex strings; dimensions as numbers. Consumption is deferred until the first RN surface lands.
 

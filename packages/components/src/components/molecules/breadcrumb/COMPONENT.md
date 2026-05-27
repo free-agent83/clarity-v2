@@ -4,11 +4,9 @@ slug: breadcrumb
 version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
+story: "navigation-breadcrumb--default"
+description: "Navigation trail showing the user's location inside a hierarchical structure."
 ---
-
-# Breadcrumb
-
-Navigation trail showing the user's location inside a hierarchical structure.
 
 ## Props
 
@@ -51,7 +49,3 @@ Use Breadcrumb to show the user's position in a hierarchical app structure (cate
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: wraps to a new line in narrow containers
 - [x] Tokens only: no raw literals inside arbitrary value syntax
-
-## Live component
-
-<StorybookEmbed story="navigation-breadcrumb--default" />

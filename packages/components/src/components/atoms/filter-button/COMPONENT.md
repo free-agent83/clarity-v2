@@ -4,11 +4,9 @@ slug: filter-button
 version: 0.2.0
 status: unstable
 lastUpdated: 2026-04-21
+story: "filtering-filterbutton--inactive"
+description: "Generic two-state control for applied filters. Owns per-popover draft state internally and exposes a render-prop `children` API so consumers write a controlled filter component without managing the draft lifecycle themselves."
 ---
-
-# FilterButton
-
-Generic two-state control for applied filters. Owns per-popover draft state internally and exposes a render-prop `children` API so consumers write a controlled filter component without managing the draft lifecycle themselves.
 
 ## Props
 
@@ -61,7 +59,3 @@ The component is generic over the filter value type `V`. Consumers declare the t
 - [x] Accessibility: both regions are keyboard-focusable; dismiss X has `aria-label="Remove filter: {label}"`; popover inherits accessible name from the filter label
 - [x] Responsive: no breakpoint-specific behaviour; consumers handle layout wrapping in the surrounding container
 - [x] Tokens only: border/background/text styles use semantic utility classes; no raw colour or spacing literals
-
-## Live component
-
-<StorybookEmbed story="filtering-filterbutton--inactive" />

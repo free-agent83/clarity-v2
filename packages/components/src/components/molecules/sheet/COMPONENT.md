@@ -4,11 +4,9 @@ slug: sheet
 version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
+story: "overlays-sheet--default"
+description: "Side-anchored overlay for larger tasks, forms, and persistent panels."
 ---
-
-# Sheet
-
-Side-anchored overlay for larger tasks, forms, and persistent panels.
 
 ## Props
 
@@ -56,7 +54,3 @@ Use Sheet for tasks or panels that need more room than a Dialog but shouldn't na
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: anchors and sizes adapt to the chosen `side` variant
 - [x] Tokens only: no raw literals inside arbitrary value syntax
-
-## Live component
-
-<StorybookEmbed story="overlays-sheet--default" />

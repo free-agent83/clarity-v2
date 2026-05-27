@@ -4,11 +4,9 @@ slug: page-banner
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
+story: "feedback-page-banner--default"
+description: "Full-bleed stripe that sits above the application navigation header. Communicates product-wide callouts — new features, promotions, downtime, holidays. Solid-filled for visual weight; always app-level."
 ---
-
-# PageBanner
-
-Full-bleed stripe that sits above the application navigation header. Communicates product-wide callouts — new features, promotions, downtime, holidays. Solid-filled for visual weight; always app-level.
 
 ## Props
 
@@ -56,7 +54,3 @@ Use PageBanner for announcements that apply to the entire application: new featu
 - [x] Accessibility: `role="status"` on the root; dismiss button has `aria-label`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: full-width, single-line with ellipsis at narrow widths.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
-
-## Live component
-
-<StorybookEmbed story="feedback-page-banner--default" />

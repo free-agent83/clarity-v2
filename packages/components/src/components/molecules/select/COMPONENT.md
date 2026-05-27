@@ -4,11 +4,9 @@ slug: select
 version: 0.1.0
 status: stable
 lastUpdated: 2026-04-14
+story: "forms-select--default"
+description: "Dropdown control for picking a single value from a list of options."
 ---
-
-# Select
-
-Dropdown control for picking a single value from a list of options.
 
 ## Props
 
@@ -52,7 +50,3 @@ Use Select for single-value picks from a moderate list of options (~5–50). Alw
 - [x] Accessibility: passes axe-core via @storybook/addon-a11y on all stories
 - [x] Responsive: listbox repositions near edges via Radix
 - [x] Tokens only: no raw literals inside arbitrary value syntax
-
-## Live component
-
-<StorybookEmbed story="forms-select--default" />

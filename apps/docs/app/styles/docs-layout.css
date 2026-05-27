@@ -1,0 +1,91 @@
+#nd-sidebar a:has([data-sidebar-brand]) {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+}
+
+/* Sidebar active links — text-only at rest (no fill or radius). Unlayered so it beats fumadocs utilities. */
+#nd-sidebar a[data-active='true'],
+#nd-sidebar-mobile a[data-active='true'] {
+  color: var(--foreground) !important;
+  background: none !important;
+  border-radius: 0 !important;
+}
+
+/*
+ * Sidebar nav hover — no fill; violet text only.
+ * --color-fd-primary: primitive violet-600 (light) / violet-400 (dark) via clarity-fumadocs-theme.css.
+ */
+#nd-sidebar .overscroll-contain a:hover,
+#nd-sidebar .overscroll-contain button:hover,
+#nd-sidebar-mobile .overscroll-contain a:hover,
+#nd-sidebar-mobile .overscroll-contain button:hover,
+#nd-sidebar button[class*='bg-fd-secondary']:hover,
+#nd-sidebar-mobile button[class*='bg-fd-secondary']:hover {
+  background: none !important;
+  background-color: transparent !important;
+  color: var(--color-fd-primary) !important;
+}
+
+#nd-sidebar button[class*='bg-fd-secondary'][data-state='open'],
+#nd-sidebar-mobile button[class*='bg-fd-secondary'][data-state='open'] {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+#nd-page .docs-page-footer > a {
+  background-color: var(--card);
+  color: var(--card-foreground);
+}
+
+/* Unlayered — beats fumadocs hover utilities; mirrors hover:bg-fd-accent/80 hover:text-fd-accent-foreground */
+#nd-page .docs-page-footer > a:hover {
+  background-color: color-mix(in oklch, var(--color-fd-accent) 80%, transparent);
+  color: var(--color-fd-accent-foreground);
+}
+
+/*
+ * Page action buttons — violet-400 hover text in dark (matches sidebar fd-primary).
+ * Clarity outline Button sets hover:text-primary-hover; this unlayered rule wins.
+ */
+.dark #nd-page [data-slot='button']:hover:not(:disabled) {
+  color: var(--color-fd-primary) !important;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}
+
+/*
+ * Floating TOC — card surface on the warm content field (xl+ where TOC is visible).
+ * Height hugs link list; max-height scrolls the whole card on long pages.
+ */
+@media (min-width: 1280px) {
+  #nd-toc {
+    top: calc(var(--fd-docs-row-1) + var(--spacing-4)) !important;
+    height: fit-content !important;
+    max-height: calc(var(--fd-docs-height) - var(--fd-docs-row-1) - (2 * var(--spacing-4)));
+    align-self: start !important;
+    justify-self: stretch;
+    margin-inline-end: var(--spacing-4);
+    padding-block: var(--spacing-8) !important;
+    padding-inline-end: var(--spacing-4) !important;
+    padding-inline-start: var(--spacing-8) !important;
+    background-color: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--color-fd-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: auto;
+  }
+
+  /* Fumadocs TOCScrollArea — disable inner column fill + edge fade mask */
+  #nd-toc > div[class*='overflow-auto'] {
+    overflow: visible !important;
+    min-height: 0 !important;
+    flex: 0 0 auto !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+}

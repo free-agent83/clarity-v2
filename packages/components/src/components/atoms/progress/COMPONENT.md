@@ -4,11 +4,9 @@ slug: progress
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
+story: "feedback-progress--default"
+description: "Linear bar that communicates the completion state of an ongoing task."
 ---
-
-# Progress
-
-Linear bar that communicates the completion state of an ongoing task.
 
 ## Props
 
@@ -41,7 +39,3 @@ Use Progress when a task has a determinate percentage of completion — uploads,
 - [x] Accessibility: Radix `Progress.Root` exposes `role="progressbar"` and the appropriate `aria-valuenow` / `aria-valuemin` / `aria-valuemax`; passes axe-core via `@storybook/addon-a11y`.
 - [x] Responsive: the track is 100% width of its container; no breakpoint-specific behaviour by design.
 - [x] Tokens only: no raw literals inside arbitrary value syntax.
-
-## Live component
-
-<StorybookEmbed story="feedback-progress--default" />

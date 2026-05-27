@@ -4,11 +4,9 @@ slug: lightbox
 version: 0.1.0
 status: unstable
 lastUpdated: 2026-04-22
+story: "overlays-lightbox--with-images"
+description: "Full-screen media viewer for images and 360° video. System-wide — not PDP-specific. Any component in the system can use it."
 ---
-
-# Lightbox
-
-Full-screen media viewer for images and 360° video. System-wide — not PDP-specific. Any component in the system can use it.
 
 ## Props
 
@@ -56,7 +54,3 @@ When a `video360` item is active, a scrub bar is always visible (desktop and mob
 - [x] Close and nav buttons have `aria-label`
 - [x] Scrub bar always visible for 360° items (no hover dependency inside Lightbox)
 - [x] Tokens only — no hardcoded colours
-
-## Live component
-
-<StorybookEmbed story="overlays-lightbox--with-images" />
