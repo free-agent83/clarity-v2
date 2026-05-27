@@ -1,10 +1,13 @@
 import type { Preview } from "@storybook/react";
 import "../src/styles/globals.css";
 import { AppUserProvider, type AppUserContextValue } from "./app-user-context";
+import { ClarityDocsContainer } from "./docs-container";
+import { applyThemeClass } from "./theme-utils";
 
 const preview: Preview = {
   decorators: [
     (Story, context) => {
+      applyThemeClass(context.globals.theme as string | undefined);
       const fromGlobals = {
         currency: context.globals.currency as string | undefined,
         location: context.globals.location as string | undefined,
@@ -17,12 +20,27 @@ const preview: Preview = {
       >;
       return (
         <AppUserProvider value={{ ...fromGlobals, ...fromParams }}>
-          <Story />
+          <div className="min-h-full w-full bg-background text-foreground">
+            <Story />
+          </div>
         </AppUserProvider>
       );
     },
   ],
   globalTypes: {
+    theme: {
+      name: "Theme",
+      description: "Light or dark color mode",
+      defaultValue: "dark",
+      toolbar: {
+        icon: "mirror",
+        items: [
+          { value: "light", icon: "sun", title: "Light" },
+          { value: "dark", icon: "moon", title: "Dark" },
+        ],
+        dynamicTitle: true,
+      },
+    },
     currency: {
       name: "Currency",
       description: "App user currency",
@@ -55,6 +73,10 @@ const preview: Preview = {
     },
   },
   parameters: {
+    backgrounds: { disable: true },
+    docs: {
+      container: ClarityDocsContainer,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

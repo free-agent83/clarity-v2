@@ -21,7 +21,8 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "storybook"],
       "cwd": "packages/components",
-      "port": 6006
+      "port": 6006,
+      "autoPort": true
     }
   ]
 }
