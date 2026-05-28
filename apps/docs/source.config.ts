@@ -72,32 +72,6 @@ export const components = defineDocs({
   },
 });
 
-// Guides collection: repo-level docs/
-export const guides = defineDocs({
-  dir: '../../docs',
-  docs: {
-    files: ['**/*.md'],
-    schema: z
-      .object({
-        title: z.string().optional(),
-        description: z.string().optional(),
-        full: z.boolean().optional(),
-      })
-      .passthrough()
-      .transform((data) => ({
-        ...data,
-        // Fallback title if frontmatter missing — loader will be unhappy otherwise.
-        title: data.title ?? 'Untitled',
-      })),
-    postprocess: {
-      includeProcessedMarkdown: true,
-    },
-  },
-  meta: {
-    schema: metaSchema,
-  },
-});
-
 // In-tree IA collection: stub + landing pages authored under apps/docs/content/.
 // Provides the 7-section sidebar shape (Get started / Foundations / Patterns /
 // Content / Brand / Resources). The Components section is rendered separately

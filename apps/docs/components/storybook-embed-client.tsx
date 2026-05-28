@@ -36,11 +36,13 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
   const useDropdown = DROPDOWN_PREFIXES.includes(prefix);
 
   useEffect(() => {
-    fetch(`${storybookUrl}/stories.json`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`stories.json fetch failed: ${res.status}`);
-        return res.json();
-      })
+    // Storybook 7+ uses index.json; older builds used stories.json — try both.
+    const tryFetch = (url: string): Promise<Response> =>
+      fetch(url).then((r) => (r.ok ? r : Promise.reject(new Error(`${r.status}`))));
+
+    tryFetch(`${storybookUrl}/index.json`)
+      .catch(() => tryFetch(`${storybookUrl}/stories.json`))
+      .then((res) => res.json())
       .then((data: { entries: Record<string, { id: string; name: string; type: string }> }) => {
         const filtered = Object.values(data.entries).filter(
           (entry) => entry.id.startsWith(prefix + '--') && entry.type === 'story',
@@ -48,7 +50,7 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
         setStories(filtered.map((e) => ({ id: e.id, name: e.name })));
       })
       .catch((err) => {
-        console.warn('[StorybookEmbed] Could not load stories.json:', err);
+        console.warn('[StorybookEmbed] Could not load story index:', err);
       });
   }, [prefix, storybookUrl]);
 

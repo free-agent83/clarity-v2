@@ -33,16 +33,6 @@
   background-color: transparent !important;
 }
 
-#nd-page .docs-page-footer > a {
-  background-color: var(--card);
-  color: var(--card-foreground);
-}
-
-/* Unlayered — beats fumadocs hover utilities; mirrors hover:bg-fd-accent/80 hover:text-fd-accent-foreground */
-#nd-page .docs-page-footer > a:hover {
-  background-color: color-mix(in oklch, var(--color-fd-accent) 80%, transparent);
-  color: var(--color-fd-accent-foreground);
-}
 
 /*
  * Page action buttons — violet-400 hover text in dark (matches sidebar fd-primary).

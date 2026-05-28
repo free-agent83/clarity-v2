@@ -1,6 +1,14 @@
+function splitAgentSpecMarkdown(markdown: string) {
+  const match = markdown.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  if (match) {
+    return { frontmatter: match[1], body: match[2] };
+  }
+  // Library map and other repo files have no frontmatter — render the full file.
+  return { frontmatter: "", body: markdown };
+}
+
 export function AgentSpecPreview({ markdown }: { markdown: string }) {
-  const [, frontmatter = "", body = ""] =
-    markdown.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/) ?? [];
+  const { frontmatter, body } = splitAgentSpecMarkdown(markdown);
 
   const meta = frontmatter
     .trim()

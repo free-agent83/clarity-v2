@@ -1,3 +1,5 @@
+import { DocsPageFooter } from '@/components/docs-page-footer';
+
 /** Shared DocsPage slot overrides for all doc routes. */
 export const docsTableOfContent = {
   container: {
@@ -25,7 +27,11 @@ export const docsBreadcrumb = {
   className: 'docs-breadcrumb mb-8',
 } as const;
 
-/** Prev/next page links — elevated card surfaces in both themes. */
+/** Prev/next page links — outline-style tiles; see docs-layout.css */
+export const docsPageSlots = {
+  footer: DocsPageFooter,
+} as const;
+
 export const docsFooter = {
-  className: 'docs-page-footer',
+  enabled: true,
 } as const;

@@ -1,4 +1,4 @@
-import { getPageImage, resolveSource, componentsSource, guidesSource, iaSource } from '@/lib/source';
+import { getPageImage, resolveSource, componentsSource, iaSource } from '@/lib/source';
 import {
   DocsBody,
   DocsDescription,
@@ -8,13 +8,16 @@ import {
 import { notFound } from 'next/navigation';
 import { AgentSpecActions } from '@/components/agent-spec-actions';
 import { getMDXComponents } from '@/components/mdx';
+import { readRepoMarkdown } from '@/lib/repo-markdown';
 import { StorybookEmbed } from '@/components/storybook-embed';
-import { docsBreadcrumb, docsFooter, docsTableOfContent } from '@/lib/docs-page.shared';
+import { docsBreadcrumb, docsFooter, docsPageSlots, docsTableOfContent } from '@/lib/docs-page.shared';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
+  if (params.slug?.[0] === 'guides') notFound();
+
   const { source, slug, section } = resolveSource(params.slug);
   const page = source.getPage(slug);
   if (!page) notFound();
@@ -24,8 +27,19 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = page.data as any;
   const MDX = data.body;
-  const agentSpecMarkdown =
-    section === 'components' ? await data.getText('raw') : null;
+  const slugPath = slug.join('/');
+  const isAgentWorkflowPage =
+    section === 'ia' && slugPath === 'get-started/working-with-ai-agents';
+
+  const agentSpecMarkdown = isAgentWorkflowPage
+    ? await readRepoMarkdown('packages/components/COMPONENTS.md')
+    : section === 'components'
+      ? await data.getText('raw')
+      : null;
+
+  const agentSpecDownloadFilename = isAgentWorkflowPage
+    ? 'COMPONENTS.md'
+    : 'COMPONENT.md';
 
   return (
     <DocsPage
@@ -33,6 +47,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
       full={data.full}
       tableOfContent={docsTableOfContent}
       breadcrumb={docsBreadcrumb}
+      slots={docsPageSlots}
       footer={docsFooter}
     >
       <div className="docs-page-content flex min-w-0 flex-col">
@@ -44,7 +59,10 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
             <DocsDescription className="mb-0">{data.description}</DocsDescription>
           </div>
           {agentSpecMarkdown ? (
-            <AgentSpecActions markdown={agentSpecMarkdown} />
+            <AgentSpecActions
+              markdown={agentSpecMarkdown}
+              downloadFilename={agentSpecDownloadFilename}
+            />
           ) : null}
         </header>
         {data.story && <StorybookEmbed story={data.story} className="my-0 mt-12" />}
@@ -67,14 +85,10 @@ export async function generateStaticParams() {
     ...p,
     slug: ['components', ...(p.slug ?? [])],
   }));
-  const guidesParams = guidesSource.generateParams().map((p) => ({
-    ...p,
-    slug: ['guides', ...(p.slug ?? [])],
-  }));
   // iaSource pages already include their section as the first slug segment
   // (e.g. ['foundations', 'typography']), so use them as-is.
   const iaParams = iaSource.generateParams();
-  return [...componentsParams, ...guidesParams, ...iaParams];
+  return [...componentsParams, ...iaParams];
 }
 
 export async function generateMetadata(props: PageProps<'/docs/[[...slug]]'>): Promise<Metadata> {

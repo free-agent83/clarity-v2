@@ -1,4 +1,4 @@
-import { components, guides, ia } from 'collections/server';
+import { components, ia } from 'collections/server';
 import { loader } from 'fumadocs-core/source';
 import { lucideIconsPlugin } from 'fumadocs-core/source/lucide-icons';
 import { docsContentRoute, docsImageRoute, docsRoute } from './shared';
@@ -20,12 +20,6 @@ export const componentsSource = loader({
   }) as any,
 });
 
-export const guidesSource = loader({
-  baseUrl: `${docsRoute}/guides`,
-  source: guides.toFumadocsSource(),
-  plugins: [lucideIconsPlugin()],
-});
-
 // In-tree IA pages live under apps/docs/content/<section>/<slug>.mdx and serve
 // the URL space /docs/<section>/<slug>. The first path segment IS the section
 // (get-started, principles, foundations, patterns, content, brand).
@@ -35,10 +29,7 @@ export const iaSource = loader({
   plugins: [lucideIconsPlugin()],
 });
 
-export type DocsSource =
-  | typeof componentsSource
-  | typeof guidesSource
-  | typeof iaSource;
+export type DocsSource = typeof componentsSource | typeof iaSource;
 
 // Top-level URL segments routed to the in-tree IA collection.
 const IA_SECTIONS = new Set([
@@ -57,7 +48,7 @@ const IA_SECTIONS = new Set([
 export function resolveSource(slug: string[] | undefined): {
   source: DocsSource;
   slug: string[];
-  section: 'components' | 'guides' | 'ia';
+  section: 'components' | 'ia';
 } {
   const segs = slug ?? [];
   // /docs/components itself (no sub-path) renders the in-tree landing at
@@ -65,9 +56,6 @@ export function resolveSource(slug: string[] | undefined): {
   // to componentsSource (the external COMPONENT.md collection).
   if (segs.length === 1 && segs[0] === 'components') {
     return { source: iaSource, slug: segs, section: 'ia' };
-  }
-  if (segs[0] === 'guides') {
-    return { source: guidesSource, slug: segs.slice(1), section: 'guides' };
   }
   if (segs[0] === 'components') {
     return { source: componentsSource, slug: segs.slice(1), section: 'components' };
@@ -246,6 +234,7 @@ const IA_SECTION_LABELS: Record<string, string> = {
 // appear in the given order; anything not listed falls back to alphabetical
 // after the explicit block.
 const IA_SECTION_CHILD_ORDER: Record<string, string[]> = {
+  'get-started': ['working-with-ai-agents'],
   brand: [
     'direction',
     'logo',
@@ -309,11 +298,10 @@ function buildIaSectionChildren(section: string): SidebarNode[] {
 }
 
 /**
- * Combined tree used by the docs layout sidebar. Renders the 6-section IA:
+ * Combined tree used by the docs layout sidebar. Renders the public IA:
  * Get started / Principles / Foundations / Components / Patterns / Content /
- * Brand. Components are regrouped functionally (not atomically). The
- * external `guides` collection is appended at the bottom under "Guides
- * (internal)" so authored docs/* files remain reachable but don't dominate.
+ * Brand. Components are regrouped functionally (not atomically).
+ * Repo `docs/` plans and specs are not listed here — they stay in Git only.
  */
 export function getCombinedPageTree() {
   const componentsChildren = buildFunctionalComponentsChildren();
@@ -347,16 +335,6 @@ export function getCombinedPageTree() {
       });
     }
   }
-
-  // Keep the external guides collection reachable but tucked at the bottom.
-  const guidesTree = guidesSource.getPageTree();
-  sections.push({
-    type: 'folder',
-    name: 'Guides (internal)',
-    root: false,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    children: guidesTree.children as any,
-  });
 
   return {
     name: 'Docs',
@@ -407,7 +385,6 @@ ${processed}`;
 export function getAllPages(): AnyPage[] {
   return [
     ...componentsSource.getPages(),
-    ...guidesSource.getPages(),
     ...iaSource.getPages(),
   ] as unknown as AnyPage[];
 }
