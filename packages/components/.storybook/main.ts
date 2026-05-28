@@ -24,6 +24,13 @@ const config: StorybookConfig = {
       ...(config.resolve.alias || {}),
       "@": resolve(dir, "../src"),
     };
+    config.server = {
+      ...config.server,
+      headers: {
+        ...config.server?.headers,
+        "Access-Control-Allow-Origin": "*",
+      },
+    };
     return config;
   },
 };

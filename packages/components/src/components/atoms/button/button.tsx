@@ -20,7 +20,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground hover:bg-primary-hover dark:hover:text-primary-hover-foreground",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-primary-hover aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50 dark:hover:border-secondary-hover dark:hover:text-secondary-hover",
+          "border-border bg-background hover:bg-muted hover:text-primary-hover aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50 dark:hover:text-secondary-hover",
         secondary:
           "bg-secondary text-secondary-foreground hover:text-secondary-hover hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:

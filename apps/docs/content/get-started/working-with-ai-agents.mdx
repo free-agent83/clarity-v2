@@ -1,0 +1,35 @@
+---
+title: Working with AI agents
+description: How Clarity is meant to be used with coding agents — the repo is the interface, and this site explains the approach.
+---
+
+Clarity is built for two readers at once. **You** use this site to understand the system, browse components, and grab snippets. **Your coding agent** reads markdown and TypeScript **from the cloned repo** — not from this website. That split is intentional.
+
+Use the **Preview / Copy / Download** actions in the page header to open the full `COMPONENTS.md` library map from the repo — the same file you would attach in your IDE.
+
+## Two surfaces
+
+| Surface | Who | Purpose |
+|---------|-----|---------|
+| **This docs site** | Humans | Case study, narrative, Storybook embeds, principles |
+| **Files in the repo** | Agents (and you in the IDE) | Machine-readable specs, library map, tokens, source |
+
+After you have oriented yourself here, the typical workflow is: clone the monorepo, point Cursor or Claude Code at the relevant markdown files, and build. You can return to this site any time for live demos and written guidance.
+
+## Two-tier read model
+
+Agents should not open all 62 component specs up front. The library uses two layers:
+
+1. **`COMPONENTS.md`** — the library map at `packages/components/COMPONENTS.md`. Theme summary, operating principles, and a full index with “for / not for” one-liners for every component. **Read this first** (header actions above).
+2. **`COMPONENT.md`** — one file per component, colocated with source. Props, usage, best practices, and checklists. Read only the specs you need.
+
+Each [component page](/docs/components) exposes the same header actions for that component’s `COMPONENT.md` — for example [Field](/docs/components/atoms/field) when you are implementing a form field.
+
+## What else lives in the repo
+
+- **`CONTRIBUTING.md`** (`packages/components/`) — rules for changing the library, not for consuming it.
+- **Token JSON** (`packages/tokens/src/`) — W3C DTCG source; compiled to CSS for components.
+- **Storybook stories** — executable composition examples next to each component.
+- **Nx project graph** — package boundaries and dependencies for agents that query the workspace.
+
+For the philosophy behind this model, see [Built for agents](/docs/principles/built-for-agents). For the component catalogue, see [Components](/docs/components).

@@ -1,10 +1,10 @@
-import { componentsSource, guidesSource } from '@/lib/source';
+import { componentsSource, iaSource } from '@/lib/source';
 import { createSearchAPI } from 'fumadocs-core/search/server';
 import type { StructuredData } from 'fumadocs-core/mdx-plugins';
 
 const EMPTY_STRUCTURED_DATA: StructuredData = { headings: [], contents: [] };
 
-function indexesFor(source: typeof componentsSource | typeof guidesSource) {
+function indexesFor(source: typeof componentsSource | typeof iaSource) {
   return source.getPages().map((page) => {
     const data = page.data as { title: string; description?: string; structuredData?: StructuredData };
     return {
@@ -20,5 +20,5 @@ function indexesFor(source: typeof componentsSource | typeof guidesSource) {
 export const { GET } = createSearchAPI('advanced', {
   // https://docs.orama.com/docs/orama-js/supported-languages
   language: 'english',
-  indexes: [...indexesFor(componentsSource), ...indexesFor(guidesSource)],
+  indexes: [...indexesFor(componentsSource), ...indexesFor(iaSource)],
 });

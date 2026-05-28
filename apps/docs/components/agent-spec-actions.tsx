@@ -18,13 +18,18 @@ import {
 import { AgentSpecPreview } from "./agent-spec-preview";
 import { DocsPageButton } from "./docs-page-button";
 
-const AGENT_SPEC_FILENAME = "COMPONENT.md";
+const DEFAULT_DOWNLOAD_FILENAME = "COMPONENT.md";
 
 type AgentSpecActionsProps = {
   markdown: string;
+  /** Used for the downloaded file only — not shown in the preview UI. */
+  downloadFilename?: string;
 };
 
-export function AgentSpecActions({ markdown }: AgentSpecActionsProps) {
+export function AgentSpecActions({
+  markdown,
+  downloadFilename = DEFAULT_DOWNLOAD_FILENAME,
+}: AgentSpecActionsProps) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copyLoading, setCopyLoading] = useState(false);
@@ -67,10 +72,10 @@ export function AgentSpecActions({ markdown }: AgentSpecActionsProps) {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = AGENT_SPEC_FILENAME;
+    anchor.download = downloadFilename;
     anchor.click();
     URL.revokeObjectURL(url);
-  }, [markdown]);
+  }, [markdown, downloadFilename]);
 
   return (
     <>
@@ -120,12 +125,12 @@ export function AgentSpecActions({ markdown }: AgentSpecActionsProps) {
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="agent-spec-modal flex max-h-[min(85vh,720px)] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl">
           <DialogHeader className="flex flex-row items-start justify-between gap-4 border-b border-neutral-200 py-4 pl-6 pr-14 dark:border-neutral-700">
-            <div className="min-w-0 space-y-1">
+            <div className="min-w-0">
               <DialogTitle className="text-[13px] leading-normal text-neutral-900 dark:text-neutral-100">
-                {AGENT_SPEC_FILENAME}
-              </DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground">
                 Agent spec markdown
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Full markdown source for agents
               </DialogDescription>
             </div>
             <DocsPageButton className="shrink-0" onClick={onDownload}>

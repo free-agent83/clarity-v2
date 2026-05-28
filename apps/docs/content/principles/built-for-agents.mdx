@@ -9,6 +9,7 @@ AI coding agents do not need a special endpoint to use Clarity. They open the re
 
 What agents read is the same machine-readable surface engineers and tools rely on:
 
+- **`COMPONENTS.md`** — the library map at `packages/components/COMPONENTS.md`. Theme summary plus a for/not-for index of every component. Agents read this first; see [Working with AI agents](/docs/get-started/working-with-ai-agents) for the workflow and to preview or download the file from the docs site.
 - **Tokens** as W3C DTCG JSON — queryable by name, by category, by reference. The colour, spacing, and typography contracts of the system, in a format that does not require interpretation.
 - **Component contracts** as TypeScript source — props, variants, slots, and types, all expressed in code. The contract is the implementation.
 - **Usage guidance** as `COMPONENT.md` files colocated with each component. Sixty-two components, sixty-two markdown files, sitting next to the source they describe.
@@ -17,7 +18,7 @@ What agents read is the same machine-readable surface engineers and tools rely o
 
 Because all of this lives in the repo, agents always read the current state. There is no version of the design system that is "true" elsewhere. The truth is the file the engineer just edited.
 
-This is what makes the agentic delivery path real. A designer prompting Claude Code to build a checkout step does not get hallucinated components — the agent reads `button/COMPONENT.md`, sees the variants, reads the token file, and composes the right thing. The same is true for any future agent or tool that arrives. The interface is open, file-based, and standard. The repo is the API.
+This is what makes the agentic delivery path real. A designer prompting Claude Code to build a checkout step does not get hallucinated components — the agent reads `COMPONENTS.md` to pick the right primitives, then `button/COMPONENT.md` for variants and usage, then the token files as needed. The same is true for any future agent or tool that arrives. The interface is open, file-based, and standard. The repo is the API.
 
 The lesson generalises. A design system that is legible to humans through documentation, and legible to machines through structure, does not need a separate strategy for either audience. It just needs to be honest about being made of files.
 
@@ -53,6 +54,6 @@ Do not use for navigation — use a link styled as a button via the asChild patt
 <StorybookEmbed story="actions-button--default" />
 ```
 
-The agent reads this file, knows the available variants and sizes, knows when not to use the component, and can see a live rendered example. No other surface is needed.
+The agent reads this file, knows the available variants and sizes, knows when not to use the component, and can see a live rendered example. No other *website* surface is needed — the repo files are the interface.
 
-See it live: [Button →](/docs/components/atoms/button)
+See it live: [Button →](/docs/components/atoms/button) · [Working with AI agents →](/docs/get-started/working-with-ai-agents)
