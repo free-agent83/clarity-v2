@@ -1,4 +1,77 @@
+<script>
+  /* Apply theme before first paint — prevents a white flash when docs embeds
+     reload the iframe on variant switch (Storybook's loader defaults to white). */
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var globals = params.get("globals") || "";
+    var match = globals.match(/(?:^|[;,])theme:([^;,]+)/);
+    /* Storybook preview default is dark; match preview.tsx globalTypes.theme.defaultValue */
+    var theme = match ? match[1] : "dark";
+    if (theme !== "light") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.style.colorScheme = "dark";
+    }
+
+    /* Docs site embeds — hug story content instead of filling the iframe viewport. */
+    if (window.parent !== window) {
+      document.documentElement.classList.add("sb-embed");
+    }
+  })();
+
+  /* Report rendered story height so the docs iframe can resize (see StorybookEmbedClient). */
+  (function () {
+    if (window.parent === window) return;
+
+    var RESIZE_TYPE = "clarity-storybook-embed:resize";
+
+    function measureHeight() {
+      var root = document.getElementById("storybook-root");
+      if (!root) return 0;
+      var main = document.querySelector(".sb-show-main");
+      var mainRect = main ? main.getBoundingClientRect() : { height: 0 };
+      var rootRect = root.getBoundingClientRect();
+      return Math.ceil(Math.max(mainRect.height, rootRect.height, root.scrollHeight));
+    }
+
+    function postHeight() {
+      var height = measureHeight();
+      if (height > 0) {
+        window.parent.postMessage({ type: RESIZE_TYPE, height: height }, "*");
+      }
+    }
+
+    function observe() {
+      var root = document.getElementById("storybook-root");
+      if (!root) {
+        requestAnimationFrame(observe);
+        return;
+      }
+      var observer = new ResizeObserver(function () {
+        postHeight();
+      });
+      observer.observe(root);
+      if (root.firstElementChild) observer.observe(root.firstElementChild);
+      postHeight();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", observe);
+    } else {
+      observe();
+    }
+  })();
+</script>
 <style>
+  /* Clarity dark surface — matches primitives.css .dark --background */
+  html.dark {
+    color-scheme: dark;
+    background-color: oklch(0.147 0.004 49.25);
+  }
+
+  html.dark body {
+    background-color: oklch(0.147 0.004 49.25);
+  }
+
   /* Story canvas (iframe embed + in-app preview) — use Clarity tokens, not SB default white */
   html,
   body,
@@ -7,5 +80,30 @@
   .sb-main-padded {
     background: var(--background) !important;
     color: var(--foreground);
+  }
+
+  /* Storybook hardcodes white on its preparing loader — override for dark embeds */
+  html.dark .sb-preparing-story,
+  html.dark .sb-preparing-docs {
+    background-color: var(--background, oklch(0.147 0.004 49.25)) !important;
+  }
+
+  html.dark .sb-loader {
+    border-color: oklch(0.985 0.001 106.423 / 0.2);
+    border-top-color: oklch(0.985 0.001 106.423 / 0.55);
+    mix-blend-mode: normal;
+  }
+
+  /* Docs embed — drop Storybook's full-viewport canvas so height follows the story */
+  html.sb-embed .sb-show-main,
+  html.sb-embed .sb-show-main.sb-main-centered,
+  html.sb-embed .sb-main-padded {
+    min-height: 0 !important;
+    align-items: flex-start !important;
+  }
+
+  html.sb-embed .sb-show-main.sb-main-centered #storybook-root {
+    margin: 0 !important;
+    padding: 0 !important;
   }
 </style>
