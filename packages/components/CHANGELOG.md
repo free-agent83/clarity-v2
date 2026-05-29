@@ -6,6 +6,10 @@ For cross-cutting monorepo changes, see the root [`CHANGELOG.md`](../../CHANGELO
 
 ---
 
+## 2026-05-29
+
+- **Storybook preview (docs embeds)** — `preview-head.html` applies theme and `sb-embed` layout before first paint, overrides Storybook’s white preparing loader in dark mode, and posts rendered story height to the parent frame for adaptive docs iframes.
+
 ## 2026-05-07
 
 - **`web-theme.css` self-declares Tailwind v4 source paths.** Added `@source ".."` to the public CSS entry, so Tailwind discovers the utility classes baked into compiled library components automatically. Removes the requirement for every consumer to ship their own `@source ".../node_modules/@nivoda/components/dist"` line — that pattern was fragile (relative paths broke in git worktrees and any non-canonical project layout) and a leaky abstraction. Resolves the "broken styling everywhere in Minivoda" symptom seen when running from a worktree.

@@ -2,12 +2,23 @@
   --font-heading: var(--font-nanum), serif;
 }
 
-/* Brand heading font — Nanum Myeongjo overrides Inter on all headings */
-h1, h2, h3, h4, h5, h6,
-.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6,
+/* Brand heading font — Nanum Myeongjo. Heading weight (400) is set by the
+   clarity-prose-headings Tailwind plugin (see global.css), which beats Fumadocs'
+   prose defaults in the cascade without !important. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6,
 .font-heading {
   font-family: var(--font-nanum), serif !important;
-  font-weight: 400 !important;
 }
 
 /* Page chrome — title + lede + actions share one rhythm (see docs-page-header in page.tsx) */
@@ -15,15 +26,18 @@ h1, h2, h3, h4, h5, h6,
   margin: 0;
 }
 
-h2,
-.prose h2 {
+#nd-page h2,
+#nd-page .prose h2 {
   font-size: var(--font-size-4xl) !important;
 }
 
-h3,
-.prose h3 {
-  font-size: var(--font-size-2xl) !important;
-  line-height: var(--line-height-tight) !important;
+/* Editorial h3 — editorial-guidelines.html (matches home-card section titles) */
+#nd-page h3,
+#nd-page .prose h3 {
+  font-size: 36px !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+  margin: 80px 0 28px 0 !important;
 }
 
 #nd-page .prose {

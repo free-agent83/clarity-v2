@@ -16,17 +16,26 @@ interface StoryEntry {
   name: string;
 }
 
+const EMBED_RESIZE_MESSAGE = 'clarity-storybook-embed:resize';
+
 interface StorybookEmbedClientProps {
   story: string;
-  height: number;
+  minHeight: number;
+  maxHeight: number;
   storybookUrl: string;
 }
 
-export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookEmbedClientProps) {
+export function StorybookEmbedClient({
+  story,
+  minHeight,
+  maxHeight,
+  storybookUrl,
+}: StorybookEmbedClientProps) {
   const { resolvedTheme } = useTheme();
   const [selectedStory, setSelectedStory] = useState(story);
   const [stories, setStories] = useState<StoryEntry[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [iframeHeight, setIframeHeight] = useState(minHeight);
 
   useEffect(() => {
     setMounted(true);
@@ -55,6 +64,37 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
   }, [prefix, storybookUrl]);
 
   const colorMode = mounted && resolvedTheme === 'light' ? 'light' : 'dark';
+
+  useEffect(() => {
+    setIframeHeight(minHeight);
+  }, [selectedStory, colorMode, minHeight]);
+
+  useEffect(() => {
+    let storybookOrigin: string;
+    try {
+      storybookOrigin = new URL(storybookUrl).origin;
+    } catch {
+      return;
+    }
+
+    function onMessage(event: MessageEvent) {
+      if (event.origin !== storybookOrigin) return;
+      if (
+        typeof event.data !== 'object' ||
+        event.data === null ||
+        event.data.type !== EMBED_RESIZE_MESSAGE ||
+        typeof event.data.height !== 'number'
+      ) {
+        return;
+      }
+      const next = Math.min(maxHeight, Math.max(minHeight, Math.ceil(event.data.height)));
+      setIframeHeight(next);
+    }
+
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [storybookUrl, minHeight, maxHeight]);
+
   const iframeParams = new URLSearchParams({
     id: selectedStory,
     viewMode: 'story',
@@ -81,8 +121,8 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
                 onClick={() => setSelectedStory(s.id)}
                 className={
                   s.id === selectedStory
-                    ? 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-foreground text-background'
-                    : 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border border-fd-border bg-fd-background text-fd-muted-foreground hover:text-fd-foreground'
+                    ? 'inline-flex h-8 items-center rounded-full px-3 text-sm font-medium bg-foreground text-background'
+                    : 'inline-flex h-8 items-center rounded-full px-3 text-sm font-medium border border-fd-border bg-fd-background text-fd-muted-foreground hover:text-fd-foreground'
                 }
               >
                 {s.name}
@@ -94,7 +134,7 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
               value={selectedStory}
               onChange={(e) => setSelectedStory(e.target.value)}
               aria-label="Select story variant"
-              className="rounded border border-fd-border bg-fd-background text-fd-foreground text-xs px-2 py-1 focus:outline-none"
+              className="h-8 rounded border border-fd-border bg-fd-background px-3 text-sm font-medium text-fd-foreground focus:outline-none"
             >
               {stories.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -130,8 +170,12 @@ export function StorybookEmbedClient({ story, height, storybookUrl }: StorybookE
         src={iframeSrc}
         title={`Storybook: ${selectedStory}`}
         loading="lazy"
-        height={height}
-        className="w-full block bg-background"
+        height={iframeHeight}
+        className={
+          colorMode === 'dark'
+            ? 'block w-full bg-[oklch(0.147_0.004_49.25)] transition-[height] duration-200 ease-out'
+            : 'block w-full bg-background transition-[height] duration-200 ease-out'
+        }
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
       />
     </>

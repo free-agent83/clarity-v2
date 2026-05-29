@@ -1,8 +1,13 @@
 import type { Preview } from "@storybook/react";
 import "../src/styles/globals.css";
+import { cn } from "@/lib/utils";
 import { AppUserProvider, type AppUserContextValue } from "./app-user-context";
 import { ClarityDocsContainer } from "./docs-container";
 import { applyThemeClass } from "./theme-utils";
+
+const isDocsEmbed =
+  typeof document !== "undefined" &&
+  document.documentElement.classList.contains("sb-embed");
 
 const preview: Preview = {
   decorators: [
@@ -20,7 +25,12 @@ const preview: Preview = {
       >;
       return (
         <AppUserProvider value={{ ...fromGlobals, ...fromParams }}>
-          <div className="min-h-full w-full bg-background text-foreground">
+          <div
+            className={cn(
+              "w-full bg-background text-foreground",
+              isDocsEmbed ? "min-h-0 p-4" : "min-h-full",
+            )}
+          >
             <Story />
           </div>
         </AppUserProvider>
