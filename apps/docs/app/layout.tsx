@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={`${inter.className} ${jetbrainsMono.variable} ${nanumMyeongjo.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`antialiased ${inter.className} ${jetbrainsMono.variable} ${nanumMyeongjo.variable}`} suppressHydrationWarning>
       <body className="flex flex-col min-h-screen">
         <RootProvider
           theme={{

@@ -52,7 +52,7 @@ export function AgentSpecPreview({ markdown }: { markdown: string }) {
                 <p
                   role="heading"
                   aria-level={2}
-                  className="m-0 text-[13px] font-semibold text-neutral-900 dark:text-neutral-100"
+                  className="m-0 text-[13px] font-normal text-neutral-900 dark:text-neutral-100"
                 >
                   {lines[0].slice(3)}
                 </p>

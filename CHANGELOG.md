@@ -8,6 +8,11 @@ Pre-1.0 entries are grouped by date; post-1.0 will switch to release-version sub
 
 ---
 
+## 2026-05-29
+
+- **Docs Storybook embeds** — toolbar variant chips match the Open in Storybook button height; iframe loads in dark mode without a white flash on variant switch; height adapts to story content (120–720px) via a resize message from the Storybook preview.
+- **Docs typography** — editorial h3 scale in page content; Nanum Myeongjo heading weight moved into a small Tailwind plugin so it wins over Fumadocs prose defaults without `!important` on weight.
+
 ## 2026-05-07
 
 - **`@nivoda/components/web-theme.css` self-declares its Tailwind v4 source paths.** Added a single `@source ".."` directive inside the package's public CSS entry — Tailwind now discovers the utility classes used inside compiled library components without each consumer adding their own `@source` line. Caught when Minivoda was run from a git worktree: the previous setup needed `@source "../../../node_modules/@nivoda/components/dist"` in every consumer's `globals.css`, and that relative path didn't resolve from a worktree (no local `node_modules`), silently dropping every library-internal class from the generated CSS — broken header, broken slider, no megamenu hover, generally wrong styling. Library-side fix; consumers (test-app today, any future repo) just import and Tailwind picks up the right files in any directory layout.
