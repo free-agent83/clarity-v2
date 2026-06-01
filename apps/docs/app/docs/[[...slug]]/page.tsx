@@ -28,16 +28,16 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const data = page.data as any;
   const MDX = data.body;
   const slugPath = slug.join('/');
-  const isAgentWorkflowPage =
-    section === 'ia' && slugPath === 'get-started/working-with-ai-agents';
+  const isComponentsIndexPage =
+    section === 'ia' && slugPath === 'components';
 
-  const agentSpecMarkdown = isAgentWorkflowPage
+  const agentSpecMarkdown = isComponentsIndexPage
     ? await readRepoMarkdown('packages/components/COMPONENTS.md')
     : section === 'components'
       ? await data.getText('raw')
       : null;
 
-  const agentSpecDownloadFilename = isAgentWorkflowPage
+  const agentSpecDownloadFilename = isComponentsIndexPage
     ? 'COMPONENTS.md'
     : 'COMPONENT.md';
 
