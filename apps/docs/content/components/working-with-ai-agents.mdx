@@ -1,0 +1,25 @@
+---
+title: Working with AI agents
+description: How to use the Clarity component library with a coding agent — the two-tier read model.
+---
+
+Clarity is built for two readers at once. **You** use this site to browse components, read usage guidance, and grab snippets. **Your coding agent** reads markdown directly from the cloned repo — not from this website. That split is intentional.
+
+Use the **Preview / Copy / Open in Claude** actions on the [Components overview](/docs/components) to access the full `COMPONENTS.md` library map — the same file you'd attach in your IDE.
+
+## Two-tier read model
+
+Agents should not open all component specs upfront. The library uses two layers:
+
+1. **`COMPONENTS.md`** — the library map at `packages/components/COMPONENTS.md`. Theme summary, operating principles, and a full index with "for / not for" one-liners for every component. **Read this first.**
+2. **`COMPONENT.md`** — one file per component, colocated with source. Props, usage, best practices, and checklists. Read only the specs you need.
+
+Each component page in this section exposes the same header actions for that component's `COMPONENT.md` — for example [Field](/docs/components/atoms/field) when implementing a form field.
+
+## What else lives in the repo
+
+- **`CONTRIBUTING.md`** (`packages/components/`) — rules for changing the library, not for consuming it.
+- **Token JSON** (`packages/tokens/src/`) — W3C DTCG source; compiled to CSS for components.
+- **Storybook stories** — executable composition examples next to each component.
+
+For the philosophy behind this model, see [Built for agents](/docs/principles/built-for-agents). For the cross-cutting overview of how agents work across all sections of Clarity, see [Working with AI agents](/docs/get-started/working-with-ai-agents).
