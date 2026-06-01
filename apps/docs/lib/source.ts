@@ -243,7 +243,6 @@ const IA_SECTION_CHILD_ORDER: Record<string, string[]> = {
     'photography',
     'iconography',
     'application-rules',
-    'illustration',
   ],
   principles: [
     'code-first',
