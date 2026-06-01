@@ -58,6 +58,14 @@ export function resolveSource(slug: string[] | undefined): {
     return { source: iaSource, slug: segs, section: 'ia' };
   }
   if (segs[0] === 'components') {
+    // IA editorial pages colocated under content/components/ (e.g. working-with-ai-agents)
+    // must be served from iaSource, not componentsSource.
+    if (segs.length > 1) {
+      const iaPage = iaSource.getPage(segs);
+      if (iaPage) {
+        return { source: iaSource, slug: segs, section: 'ia' };
+      }
+    }
     return { source: componentsSource, slug: segs.slice(1), section: 'components' };
   }
   if (segs[0] && IA_SECTIONS.has(segs[0])) {
@@ -297,6 +305,23 @@ function buildIaSectionChildren(section: string): SidebarNode[] {
 }
 
 /**
+ * Returns IA pages nested under a given section that are NOT the section index.
+ * Used to prepend editorial pages (e.g. "Working with AI agents") to a
+ * sidebar folder whose children are otherwise built from a different collection.
+ */
+function getIaEditorialPages(sectionKey: string): SidebarNode[] {
+  return iaSource
+    .getPages()
+    .filter((p) => p.slugs[0] === sectionKey && p.slugs.length > 1)
+    .map((p) => ({
+      type: 'page' as const,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      name: (p.data as any).title ?? p.slugs[p.slugs.length - 1],
+      url: p.url,
+    }));
+}
+
+/**
  * Combined tree used by the docs layout sidebar. Renders the public IA:
  * Get started / Principles / Foundations / Components / Patterns / Content /
  * Brand. Components are regrouped functionally (not atomically).
@@ -326,11 +351,12 @@ export function getCombinedPageTree() {
     });
     // Insert Components folder right after Foundations.
     if (sectionKey === 'foundations') {
+      const componentsEditorialPages = getIaEditorialPages('components');
       sections.push({
         type: 'folder',
         name: 'Components',
         root: false,
-        children: componentsChildren,
+        children: [...componentsEditorialPages, ...componentsChildren],
       });
     }
   }
