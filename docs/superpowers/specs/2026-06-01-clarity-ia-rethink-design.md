@@ -36,7 +36,7 @@ Remove the three principle cards (Code-first, Two delivery paths, Built for agen
 ### Get started
 
 - **Overview** (index) — unchanged.
-- **Working with AI agents** — rewritten. Currently scoped narrowly to the component library. New scope: the broad cross-cutting principle that every section of Clarity has a machine-readable form for agent consumption. Components, tokens, brand standards, and UX copy guidelines are all designed to be consumed by agents — not just the component library. Links to per-section guidance.
+- **Working with AI agents** — rewritten. Currently scoped narrowly to the component library. New scope: the broad cross-cutting principle that every section of Clarity has a machine-readable form for agent consumption. Components, tokens, brand standards, and UX copy guidelines are all designed to be consumed by agents — not just the component library. Links to the per-section "Working with AI agents" pages in Foundations, Components, Patterns, Content, and Brand — including stubs. Links to stubs are intentional: they show the complete picture and signal what is coming.
 
 ### Principles
 
@@ -49,7 +49,7 @@ Unchanged. Code-first, Two delivery paths, Built for agents. These pages already
 
 ### Components
 
-- **Overview/index** — move the Preview/Copy/Download button set here. Currently these buttons live on the "Working with AI agents" page under Get started; they belong on the component library landing where someone browsing components would actually use them.
+- **Overview/index** — move the Preview/Copy/Download button set here. Currently these buttons live on the "Working with AI agents" page under Get started; they are removed from that page and placed on the component library landing where someone browsing components would actually use them.
 - **Working with AI agents** — the existing content from the Get started page (two-tier read model: COMPONENTS.md first, then per-component COMPONENT.md files), refined and scoped to components specifically. This is the most complete "Working with AI agents" page in the system.
 - All component pages unchanged.
 
@@ -62,14 +62,14 @@ Unchanged. Code-first, Two delivery paths, Built for agents. These pages already
 
 Scope clarified: **UX copywriting only**. Button labels, error messages, empty states, form copy, in-product terminology. Brand content and marketing copy belong in Plasma.
 
-- Existing content reviewed and rescoped to UX copywriting.
+- Existing pages (terminology, voice-and-tone, writing-for-ui) are already UX copywriting in scope — no pages need to be removed. The "rescope" means reviewing the index and section framing to confirm the stated scope, not deleting pages.
 - Add: **Working with AI agents** (stub) — how agents consume UX copy standards when building UI.
 
 ### Brand
 
 Scope clarified: **implementation of fixed brand standards only**. Logo usage, colour tokens, typography tokens, photography usage/selection, iconography, application rules. Creation of new brand assets (photography generation, illustration creation) belongs in Plasma.
 
-- **Illustration page removed** from the public site. Illustration is a creation discipline — it belongs in Plasma.
+- **Illustration page deleted** (`apps/docs/content/brand/illustration.mdx`). The page is currently empty. Illustration is a creation discipline — it belongs in Plasma. No content needs to be preserved or migrated.
 - Existing pages (direction, logo, colour, typography, photography, iconography, application rules) retained as-is — these are usage/implementation guidelines.
 - Add: **Working with AI agents** (stub) — how agents consume brand standards correctly. Scoped to implementation: applying brand rules, not generating brand assets.
 
