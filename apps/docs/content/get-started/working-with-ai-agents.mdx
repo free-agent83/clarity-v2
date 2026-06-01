@@ -1,35 +1,30 @@
 ---
 title: Working with AI agents
-description: How Clarity is meant to be used with coding agents — the repo is the interface, and this site explains the approach.
+description: How Clarity is designed for machine consumption — every section has a repo-native, agent-readable form.
 ---
 
-Clarity is built for two readers at once. **You** use this site to understand the system, browse components, and grab snippets. **Your coding agent** reads markdown and TypeScript **from the cloned repo** — not from this website. That split is intentional.
+Clarity is designed for two readers at once: humans using this site, and coding agents reading files from the cloned repo. That split runs across every section — not just components.
 
-Use the **Preview / Copy / Download** actions in the page header to open the full `COMPONENTS.md` library map from the repo — the same file you would attach in your IDE.
+Every section of Clarity has a machine-readable form:
 
-## Two surfaces
+| Section | What agents read |
+|---------|-----------------|
+| **Components** | `packages/components/COMPONENTS.md` (library map) + per-component `COMPONENT.md` files |
+| **Foundations** | Token JSON at `packages/tokens/src/` — W3C DTCG format |
+| **Patterns** | Pattern specs colocated with source |
+| **Content** | UX copy guidelines consumable as plain text |
+| **Brand** | Brand standards in structured form |
 
-| Surface | Who | Purpose |
-|---------|-----|---------|
-| **This docs site** | Humans | Case study, narrative, Storybook embeds, principles |
-| **Files in the repo** | Agents (and you in the IDE) | Machine-readable specs, library map, tokens, source |
+Each section has its own "Working with AI agents" page with specifics. Start with the section you are working in:
 
-After you have oriented yourself here, the typical workflow is: clone the monorepo, point Cursor or Claude Code at the relevant markdown files, and build. You can return to this site any time for live demos and written guidance.
+- [Components → Working with AI agents](/docs/components/working-with-ai-agents)
+- [Foundations → Working with AI agents](/docs/foundations/working-with-ai-agents)
+- [Patterns → Working with AI agents](/docs/patterns/working-with-ai-agents)
+- [Content → Working with AI agents](/docs/content/working-with-ai-agents)
+- [Brand → Working with AI agents](/docs/brand/working-with-ai-agents)
 
-## Two-tier read model
+## The repo is the interface
 
-Agents should not open all 62 component specs up front. The library uses two layers:
+Agents do not read this website. They read files from the repo. This site is for humans — it explains the system, shows live demos, and provides context. When you hand a task to a coding agent, point it at the relevant repo files, not at this URL.
 
-1. **`COMPONENTS.md`** — the library map at `packages/components/COMPONENTS.md`. Theme summary, operating principles, and a full index with “for / not for” one-liners for every component. **Read this first** (header actions above).
-2. **`COMPONENT.md`** — one file per component, colocated with source. Props, usage, best practices, and checklists. Read only the specs you need.
-
-Each [component page](/docs/components) exposes the same header actions for that component’s `COMPONENT.md` — for example [Field](/docs/components/atoms/field) when you are implementing a form field.
-
-## What else lives in the repo
-
-- **`CONTRIBUTING.md`** (`packages/components/`) — rules for changing the library, not for consuming it.
-- **Token JSON** (`packages/tokens/src/`) — W3C DTCG source; compiled to CSS for components.
-- **Storybook stories** — executable composition examples next to each component.
-- **Nx project graph** — package boundaries and dependencies for agents that query the workspace.
-
-For the philosophy behind this model, see [Built for agents](/docs/principles/built-for-agents). For the component catalogue, see [Components](/docs/components).
+For the principles behind this design, see [Built for agents](/docs/principles/built-for-agents).
