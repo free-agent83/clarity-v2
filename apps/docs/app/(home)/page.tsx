@@ -12,7 +12,7 @@ const principles = [
   {
     href: '/docs/principles/two-delivery-paths',
     kicker: 'Two delivery paths',
-    title: 'Engineers and agents, same library underneath',
+    title: 'Agents and engineers, same library underneath',
     body: 'Engineers ship UI without design gates. Design and product use AI agents to build real working UI. Same library underneath.',
   },
   {
@@ -29,7 +29,7 @@ export default function HomePage() {
       <div className="home-hero max-w-4xl w-full text-center">
         <ThemeWordmark className="h-8 mx-auto mb-10 opacity-90" />
         <h1 className="home-hero-title">
-          Clarity is an <em>agentic design system.</em>
+          Clarity is an <em>AI-native design system.</em>
         </h1>
         <p className="home-lede w-full mx-auto">
           Code-first and agent-readable. Tokens, components, and docs live in
