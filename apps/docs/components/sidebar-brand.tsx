@@ -1,4 +1,4 @@
-/** Sidebar / nav header brand — left-aligned Clarity AI V2.0.1. */
+/** Sidebar / nav header brand — left-aligned ClarityAI V2.0.1. */
 export function SidebarBrand() {
   return (
     <span
@@ -9,7 +9,7 @@ export function SidebarBrand() {
         className="text-xl font-normal tracking-normal text-fd-foreground"
         style={{ fontFamily: 'var(--font-nanum), serif' }}
       >
-        Clarity AI{' '}
+        ClarityAI{' '}
         <span className="text-base">V2.0.1</span>
       </span>
     </span>

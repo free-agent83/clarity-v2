@@ -29,7 +29,7 @@ export default function HomePage() {
       <div className="home-hero max-w-4xl w-full text-center">
         <ThemeWordmark className="h-8 mx-auto mb-10 opacity-90" />
         <h1 className="home-hero-title">
-          Clarity is an <em>AI-native design system.</em>
+          Clarity is an <em>AI-first design system</em>
         </h1>
         <p className="home-lede w-full mx-auto">
           Code-first and agent-readable. Tokens, components, and docs live in
