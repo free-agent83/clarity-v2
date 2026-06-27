@@ -19,10 +19,28 @@ const nanumMyeongjo = Nanum_Myeongjo({
   variable: '--font-nanum',
 });
 
+const siteUrl = 'https://clarityai.design';
+const ogDescription =
+  'Code-first and agent-readable. Tokens, components, and docs live in one repo, so whoever builds UI ships design-correct output by construction.';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   icons: { icon: '/favicon.svg' },
   title: 'Clarity by Nivoda',
   description: "Nivoda's design system — tokens, components, patterns.",
+  openGraph: {
+    type: 'website',
+    url: siteUrl,
+    siteName: 'ClarityAI',
+    title: 'ClarityAI — an AI-first design system',
+    description: ogDescription,
+    // og:image is supplied automatically by app/opengraph-image.tsx
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ClarityAI — an AI-first design system',
+    description: ogDescription,
+  },
 };
 
 export default function Layout({ children }: LayoutProps<'/'>) {
