@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import './global.css';
 import { Inter, JetBrains_Mono, Nanum_Myeongjo } from 'next/font/google';
@@ -55,6 +56,17 @@ export default function Layout({ children }: LayoutProps<'/'>) {
         >
           {children}
         </RootProvider>
+        {/* Google Analytics (GA4) — clarityai.design */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-KTEP1BWDZY"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-KTEP1BWDZY');`}
+        </Script>
       </body>
     </html>
   );
